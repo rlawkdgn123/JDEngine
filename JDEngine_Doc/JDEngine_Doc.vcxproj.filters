@@ -4,6 +4,9 @@
     <Filter Include="참고 자료">
       <UniqueIdentifier>{11e0d0a0-9fa5-4fce-8b3b-3dbf7a70ad17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="규칙">
+      <UniqueIdentifier>{ff0a58ef-449a-43b3-b382-7fb211631e6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="1Q~2Q 수업 흐름.txt">
@@ -23,6 +26,9 @@
     </Text>
     <Text Include="문법 백과사전.txt">
       <Filter>참고 자료</Filter>
+    </Text>
+    <Text Include="솔루션 규칙&amp;관리법.txt">
+      <Filter>규칙</Filter>
     </Text>
   </ItemGroup>
 </Project>

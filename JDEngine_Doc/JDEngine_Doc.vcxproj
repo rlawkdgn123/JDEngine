@@ -130,6 +130,7 @@
     <Text Include="추가정보.txt" />
     <Text Include="텍스트.txt" />
     <Text Include="문법 백과사전.txt" />
+    <Text Include="솔루션 규칙&amp;관리법.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

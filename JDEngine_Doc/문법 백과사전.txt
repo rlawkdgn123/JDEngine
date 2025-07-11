@@ -8,3 +8,10 @@ HWND : 윈도우 핸들 자료형
 순수 가상 함수 (Pure Virtual Function)
 abstract : 순수가상함수 설명용 표기. 
 func() = 0 : 순수가상함수화
+
+
+// (선택) 특정 할당 번호에서 중단점 걸기
+_CrtSetBreakAlloc(5504);
+
+_CrtSetBreakAlloc(5504);는
+Visual C++ 디버그에서 5504번째 메모리 할당 시 자동으로 중단시켜 디버깅을 쉽게 해주는 기능입니다.

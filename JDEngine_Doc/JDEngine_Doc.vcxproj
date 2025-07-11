@@ -127,8 +127,9 @@
     <Text Include="1Q~2Q 수업 흐름.txt" />
     <Text Include="JDEngine 프로젝트 계층.txt" />
     <Text Include="계층 구조.txt" />
+    <Text Include="짚고넘어갈점%28SavePoint%29.txt" />
     <Text Include="추가정보.txt" />
-    <Text Include="텍스트.txt" />
+    <Text Include="URL모음.txt" />
     <Text Include="문법 백과사전.txt" />
     <Text Include="솔루션 규칙&amp;관리법.txt" />
   </ItemGroup>

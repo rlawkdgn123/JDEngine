@@ -123,10 +123,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameTimer.h" />
     <ClInclude Include="JDWndBase.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="JDWndBase.cpp" />
     <ClCompile Include="pch.cpp" />
   </ItemGroup>

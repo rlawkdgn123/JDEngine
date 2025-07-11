@@ -1,0 +1,10 @@
+코딩 백과사전
+
+윈도우
+HWND : 윈도우 핸들 자료형
+
+
+
+순수 가상 함수 (Pure Virtual Function)
+abstract : 순수가상함수 설명용 표기. 
+func() = 0 : 순수가상함수화

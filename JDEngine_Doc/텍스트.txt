@@ -1,0 +1,4 @@
+DirectX 게임 프로그래밍(1) - 게임 엔진 설계 원칙
+https://kabu0129.tistory.com/69#:~:text=2,%EB%A1%9C%EB%93%9C%20%EB%B0%8F%20%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98%20%EA%B8%B0%EB%8A%A5%20%EC%A7%80%EC%9B%90
+
+

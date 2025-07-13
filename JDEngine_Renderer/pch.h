@@ -3,34 +3,15 @@
 // 코드 컴파일 및 여러 코드 검색 기능을 포함하여 IntelliSense 성능에도 영향을 미칩니다.
 // 그러나 여기에 나열된 파일은 빌드 간 업데이트되는 경우 모두 다시 컴파일됩니다.
 // 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.
-#pragma once
-
-#define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 
 #ifndef PCH_H
 #define PCH_H
 
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN
-#endif
-
 // 여기에 미리 컴파일하려는 헤더 추가
-
+#include "framework.h"
+#define _CRTDBG_MAP_ALLOC
 // Windows
 #include <windows.h>
-#include <objbase.h> // CoInitializeEx, CoUninitialize
-
-#include <stdio.h>
-#include <iostream>
-
-#include <cassert>
-#include <exception>
-#include <crtdbg.h>
-
-#include <array>
-#include <list>
-#include <vector>
-#include <string>
 
 // COM 및 DirectX 인터페이스
 #include <wrl/client.h>              // ComPtr
@@ -41,17 +22,14 @@
 #include <dwrite_3.h>                // DirectWrite (최신 텍스트 엔진)
 #include <wincodec.h>                // WIC (이미지 로딩)
 
-#define _USE_MATH_DEFINES
-#include <cmath>
-
+#include <stdio.h>
 #include <stdexcept>
 
-// DirectX 개발에서 자주 쓰이는 HRESULT 기반 오류 처리를 간편하게 예외(Exception)로 전환하기 위한 도우미(Helper)
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed
 namespace DX
 {
     // Helper class for COM exceptions
-    class com_exception : public std::exception // excption 오류코드 추가 (What()을 오버라이드 함)
+    class com_exception : public std::exception
     {
     public:
         com_exception(HRESULT hr) : result(hr) {}
@@ -77,7 +55,5 @@ namespace DX
         }
     }
 }
-
-#define _CRTDBG_MAP_ALLOC
 
 #endif //PCH_H

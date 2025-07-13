@@ -1,2 +1,5 @@
 mainapp.h
 D2DTransform 주석
+
+현재는 교수님 파일 따라가느라 쓰지만, animation manager 부분은 분리할 것임
+아무래도 02_contents쪽 갈 예정

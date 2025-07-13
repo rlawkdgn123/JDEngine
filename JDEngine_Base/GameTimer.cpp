@@ -72,26 +72,25 @@ void GameTimer::Stop()
 	}
 }
 
-void GameTimer::Tick()
+void GameTimer::Tick() // 틱카운트 갱신
 {
-	if (m_stopped)
+	if (m_stopped) // 타이머가 멈춘 상태인 경우
 	{
-		m_deltaTIme = 0.0;
-		return;
+		m_deltaTIme = 0.0; // 델타 타임을 0으로 설정
+		return; // 함수 종료
 	}
 
-	__int64 currTime;
-	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
-	m_currTime = currTime;
+	__int64 currTime; // 현재 시간을 저장할 변수
+	QueryPerformanceCounter((LARGE_INTEGER*)&currTime); // 고정 주파수 카운터를 사용하여 현재 시간 획득
+	m_currTime = currTime; // 멤버 변수에 현재 시간 저장
 
-	m_deltaTIme = (m_currTime - m_prevTime) * m_secondsPerCount;
+	m_deltaTIme = (m_currTime - m_prevTime) * m_secondsPerCount; // 델타 타임 계산
 
-	m_prevTime = m_currTime;
+	m_prevTime = m_currTime; // 다음 프레임을 위해 현재 시간을 이전 시간으로 업데이트
 
-	if (m_deltaTIme < 0.0)
+	if (m_deltaTIme < 0.0) // 델타 타임이 음수일 경우 (예외 상황)
 	{
-		m_deltaTIme = 0.0;
+		m_deltaTIme = 0.0; // 델타 타임을 0으로 설정
 	}
 }
-
 

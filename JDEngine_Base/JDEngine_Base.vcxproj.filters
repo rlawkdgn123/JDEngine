@@ -30,6 +30,9 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="WinPlatformApp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JDWndBase.cpp">
@@ -40,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="WinPlatformApp.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

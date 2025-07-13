@@ -20,6 +20,8 @@ protected:
 
 	friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam); // friend 선언 (외부 함수 접근 허용)
 
+	virtual bool OnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) { return false; } // 추후 IMGUI 추가 시 살펴보기
+
 	virtual void OnResize(int width, int height); // 윈도우 사이즈 재조정
 	virtual void OnClose() abstract;
 

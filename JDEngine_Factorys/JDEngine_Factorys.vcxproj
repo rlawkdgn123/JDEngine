@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{055fa857-5298-4351-91ca-f8e57a5cf2b8}</ProjectGuid>
-    <RootNamespace>JDEngineInterfaces</RootNamespace>
+    <ProjectGuid>{65111236-cd4c-409e-aef6-b696cf201f7c}</ProjectGuid>
+    <RootNamespace>JDEngineFactorys</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)JDEngine_Interfaces\;$(SolutionDir)JDEngine_Core;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)JDEngine_Interfaces\;$(SolutionDir)JDEngine_Core;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -123,8 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AppInterface.h" />
-    <ClInclude Include="BaseInterface.h" />
+    <ClInclude Include="BaseFactory.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

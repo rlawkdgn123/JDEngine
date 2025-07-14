@@ -14,37 +14,25 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Time">
-      <UniqueIdentifier>{0f55d076-4eec-48c2-a80a-652a7de2e28d}</UniqueIdentifier>
+      <UniqueIdentifier>{eaa418be-c0b8-4a88-ade1-a12620f02d62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pre-Compile">
-      <UniqueIdentifier>{6d450a91-9201-4975-864e-b3dd23d80b81}</UniqueIdentifier>
+    <Filter Include="Math">
+      <UniqueIdentifier>{36564e0a-7793-4ba6-aba6-bfd9bced91c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="JDWndBase.h">
+    <ClInclude Include="framework.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Pre-Compile</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>Time</Filter>
-    </ClInclude>
-    <ClInclude Include="WinPlatformApp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="JDWndBase.cpp">
+    <ClCompile Include="JDEngine_Base.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Pre-Compile</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>Time</Filter>
-    </ClCompile>
-    <ClCompile Include="WinPlatformApp.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

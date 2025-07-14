@@ -1,16 +1,5 @@
-// pch.cpp: ¹Ì¸® ÄÄÆÄÀÏµÈ Çì´õ¿¡ ÇØ´çÇÏ´Â ¼Ò½º ÆÄÀÏ
+ï»¿// pch.cpp: ë¯¸ë¦¬ ì»´íŒŒì¼ëœ í—¤ë”ì— í•´ë‹¹í•˜ëŠ” ì†ŒìŠ¤ íŒŒì¼
 
 #include "pch.h"
 
-// ¹Ì¸® ÄÄÆÄÀÏµÈ Çì´õ¸¦ »ç¿ëÇÏ´Â °æ¿ì ÄÄÆÄÀÏÀÌ ¼º°øÇÏ·Á¸é ÀÌ ¼Ò½º ÆÄÀÏÀÌ ÇÊ¿äÇÕ´Ï´Ù.
-// Direct3D & DXGI
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-//#pragma comment(lib, "d3dcompiler.lib")
-
-// Direct2D & DirectWrite
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dwrite.lib")
-
-// WIC (Windows Imaging Component)
-#pragma comment(lib, "windowscodecs.lib")
+// ë¯¸ë¦¬ ì»´íŒŒì¼ëœ í—¤ë”ë¥¼ ì‚¬ìš©í•˜ëŠ” ê²½ìš° ì»´íŒŒì¼ì´ ì„±ê³µí•˜ë ¤ë©´ ì´ ì†ŒìŠ¤ íŒŒì¼ì´ í•„ìš”í•©ë‹ˆë‹¤.

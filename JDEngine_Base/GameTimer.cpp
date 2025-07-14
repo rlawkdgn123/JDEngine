@@ -6,7 +6,7 @@
 /// 
 /// QueryPerformanceCounter : 고해상도 타이머 기능 제공
 /// </summary>
-GameTimer::GameTimer()
+Module::GameTimer::GameTimer()
 	: m_secondsPerCount(0.0), m_deltaTIme(-1.0), m_baseTime(0),
 	m_pausedTime(0), m_prevTime(0), m_currTime(0), m_stopped(false)
 {
@@ -15,7 +15,7 @@ GameTimer::GameTimer()
 	m_secondsPerCount = 1.0 / (double)countsPerSec;
 }
 
-float GameTimer::TotalTime() const
+float Module::GameTimer::TotalTime() const
 {
 	if (m_stopped) // 멈췄을 경우
 	{
@@ -23,18 +23,18 @@ float GameTimer::TotalTime() const
 	}
 }
 
-float GameTimer::DeltaTime() const
+float Module::GameTimer::DeltaTime() const
 {
 	return (float)m_deltaTIme;
 }
 
 
-float GameTimer::DeltaTimeMS() const
+float Module::GameTimer::DeltaTimeMS() const
 {
 	return (float)(m_deltaTIme * 1000.0);
 }
 
-void GameTimer::Reset()
+void Module::GameTimer::Reset()
 {
 	__int64 currTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currTime); 
@@ -45,7 +45,7 @@ void GameTimer::Reset()
 	m_stopped = false;
 }
 
-void GameTimer::Start()
+void Module::GameTimer::Start()
 {
 	__int64 startTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
@@ -60,7 +60,7 @@ void GameTimer::Start()
 	}
 }
 
-void GameTimer::Stop()
+void Module::GameTimer::Stop()
 {
 	if (!m_stopped)
 	{
@@ -72,7 +72,7 @@ void GameTimer::Stop()
 	}
 }
 
-void GameTimer::Tick() // 틱카운트 갱신
+void Module::GameTimer::Tick() // 틱카운트 갱신
 {
 	if (m_stopped) // 타이머가 멈춘 상태인 경우
 	{

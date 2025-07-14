@@ -4,7 +4,7 @@
 // 함수 선언
 LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-class JDWndBase : public IJDWndBase {
+class JDWndBase : public Interface::JDWndBase {
 public:
 	JDWndBase() = default;
 	virtual ~JDWndBase() = default;

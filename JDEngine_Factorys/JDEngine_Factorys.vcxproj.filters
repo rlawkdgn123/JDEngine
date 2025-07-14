@@ -25,6 +25,9 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
+    <ClInclude Include="BaseFactory.h">
+      <Filter>01_JDEngine_Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

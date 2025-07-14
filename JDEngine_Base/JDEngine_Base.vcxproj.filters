@@ -19,13 +19,19 @@
     <Filter Include="Math">
       <UniqueIdentifier>{36564e0a-7793-4ba6-aba6-bfd9bced91c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pre-Compile">
+      <UniqueIdentifier>{cb521fd6-1487-44ac-aa8a-48b17e8b98ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -33,7 +39,10 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Pre-Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Time</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

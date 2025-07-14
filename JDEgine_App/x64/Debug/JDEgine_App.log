@@ -1,0 +1,10 @@
+﻿  Main.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(2,10): error C1083: 포함 파일을 열 수 없습니다. 'AppInterface.h': No such file or directory
+  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
+  
+  MainApp.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(2,10): error C1083: 포함 파일을 열 수 없습니다. 'AppInterface.h': No such file or directory
+  (소스 파일 'MainApp.cpp'을(를) 컴파일하는 중)
+  
+  코드를 생성하고 있습니다...

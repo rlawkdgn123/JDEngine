@@ -30,10 +30,10 @@ namespace Module {
 		void BrowseForFolder();
 		void UpdateFileList();
 
-		std::unique_ptr<GameTimer> m_TimerPtr = nullptr;
-
-		GameTimer       m_GameTimer;
+		//Interface::GameTimer       m_GameTimer ;
+        std::shared_ptr<Interface::GameTimer> m_GameTimer;
 		//AssetManager    m_AssetManager;
+		//std::shared_ptr<Interface::Renderer> m_Renderer;
 
 		std::string     m_pathInput;
 		std::wstring    m_folderPath;

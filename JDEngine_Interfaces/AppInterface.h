@@ -1,9 +1,10 @@
 #pragma once
 #include "pch.h"
 #include "BaseInterface.h"
+#include "JDWndBase.h"
 
 namespace Interface {
-    class MainApp : public Interface::JDWndBase {
+    class MainApp : public Window::JDWndBase {
     public:
         virtual ~MainApp() = default;
 

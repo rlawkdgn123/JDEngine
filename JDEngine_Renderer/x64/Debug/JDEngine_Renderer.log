@@ -1,1 +1,5 @@
-﻿  JDEngine_Renderer.vcxproj -> C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Debug\JDEngine_Renderer.lib
+﻿  D2DRenderer.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Renderer\D2DRenderer.cpp(1,10): error C1083: 미리 컴파일된 헤더 파일을 열 수 없습니다. 'x64\Debug\JDEngine_Renderer.pch': No such file or directory
+  pch.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Renderer\pch.cpp(3,10): error C1083: 미리 컴파일된 헤더 파일을 열 수 없습니다. 'x64\Debug\JDEngine_Renderer.pch': No such file or directory
+  코드를 생성하고 있습니다...

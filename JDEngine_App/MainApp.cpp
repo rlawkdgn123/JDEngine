@@ -1,6 +1,5 @@
 #include "pch.h"
-#include "GameTimer.h"
-#include "D2DRender.h"
+#include "Framework.h"
 ////////////////////////////////////////////////////////////////////////////
 /*
 #include "imgui.h"
@@ -48,7 +47,7 @@ std::string WStringToString(const std::wstring& wstr)
 }
 
 /////////////////////////////////////////////////////////////////////////
-bool MainApp::Initalize()
+bool Module::MainApp::Initalize()
 {   
     // 유니코드 기반의 윈도우 클래스 이름과 윈도우 이름 설정
     const wchar_t* className = L"JDEngine";
@@ -80,7 +79,7 @@ bool MainApp::Initalize()
     ImGui_ImplWin32_Init(m_hWnd);
     */
 
-    D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
+    ID3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
 
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -95,7 +94,7 @@ bool MainApp::Initalize()
     return true;
 }
 
-void MainApp::Run()
+void Module::MainApp::Run()
 {
     MSG msg = { 0 };
 
@@ -119,7 +118,7 @@ void MainApp::Run()
 
 }
 
-void MainApp::Finalize()
+void Module::MainApp::Finalize()
 {
     // [ImGUI] DirectX 11 백엔드 정리
     //ImGui_ImplDX11_Shutdown();
@@ -133,7 +132,7 @@ void MainApp::Finalize()
     }
 }
 
-bool MainApp::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+bool Module::MainApp::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     /*
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
@@ -144,16 +143,16 @@ bool MainApp::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return false;
 }
 
-void MainApp::UpdateTime()
+void Module::MainApp::UpdateTime()
 {
     m_GameTimer.Tick(); 
 }
 
-void MainApp::UpdateInput() // 인풋 매니저에게 위임 예정
+void Module::MainApp::UpdateInput() // 인풋 매니저에게 위임 예정
 {
 }
 
-void MainApp::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
+void Module::MainApp::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
 {
     LoadAssets();
     
@@ -187,14 +186,14 @@ void MainApp::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
     //}
 }
 
-void MainApp::Render()
+void Module::MainApp::Render()
 {
     if (m_Renderer == nullptr) return;
 
     m_Renderer->RenderBegin();
 }
 
-void MainApp::RenderImGUI()
+void Module::MainApp::RenderImGUI()
 {
     /*
      ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -291,7 +290,7 @@ void MainApp::RenderImGUI()
     */
 }
 
-void MainApp::LoadAssets()
+void Module::MainApp::LoadAssets()
 {
     /*
      std::filesystem::path fullPath =
@@ -325,19 +324,19 @@ void MainApp::LoadAssets()
     */
 }
 
-void MainApp::OnResize(int width, int height) // 창 크기 재조정
+void Module::MainApp::OnResize(int width, int height) // 창 크기 재조정
 {
     __super::OnResize(width, height); 
 
     if (m_Renderer != nullptr) m_Renderer->Resize(width, height);
 }
 
-void MainApp::OnClose()
+void Module::MainApp::OnClose()
 {
     std::cout << "OnClose" << std::endl;
 }
 
-void MainApp::BrowseForFolder()
+void Module::MainApp::BrowseForFolder()
 {
     /*
     HRESULT hr;
@@ -382,7 +381,7 @@ void MainApp::BrowseForFolder()
     */
 }
 
-void MainApp::UpdateFileList()
+void Module::MainApp::UpdateFileList()
 {
     /*
      m_fileList.clear();

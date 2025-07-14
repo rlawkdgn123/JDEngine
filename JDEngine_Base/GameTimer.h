@@ -4,7 +4,7 @@
 #define GAMETIMER_H  
 
 namespace Module {
-	class GameTimer : Interface::GameTimer
+	class GameTimer : public Interface::GameTimer
 	{
 	public:
 		GameTimer();

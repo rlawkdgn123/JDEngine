@@ -1,19 +1,16 @@
 #pragma once
-#include "BaseInterface.h"
+#include "pch.h"
 
-// 함수 선언
-LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
-class JDWndBase : public IJDWndBase {
+class IJDWndBase {
 public:
-	JDWndBase() = default;
-	virtual ~JDWndBase() = default;
+	IJDWndBase() = default;
+	virtual ~IJDWndBase() = default;
 
 	bool Create(const wchar_t* className, const wchar_t* windowName, int width, int height); // 윈도우 생성
 	void Destroy();  // 윈도우 제거
 
 	void* GetHandle() const { return m_hWnd; } // 
-	
+
 protected:
 
 	friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam); // friend 선언 (외부 함수 접근 허용)
@@ -27,8 +24,8 @@ protected:
 	int m_width = 0;		// 윈도우 가로넓이
 	int m_height = 0;		// 윈도우 세로넓이
 
-	JDWndBase(const JDWndBase&) = delete; // 복사 생성자 제거
-	JDWndBase& operator=(const JDWndBase&) = delete; // 복사 대입 연산자 제거
-	JDWndBase(JDWndBase&&) = delete; // 이동 생성자 제거 
-	JDWndBase& operator=(JDWndBase&&) = delete; // 이동 대입 연산자 제거
+	IJDWndBase(const IJDWndBase&) = delete; // 복사 생성자 제거
+	IJDWndBase& operator=(const IJDWndBase&) = delete; // 복사 대입 연산자 제거
+	IJDWndBase(IJDWndBase&&) = delete; // 이동 생성자 제거
+	IJDWndBase& operator=(IJDWndBase&&) = delete; // 이동 대입 연산자 제거
 };

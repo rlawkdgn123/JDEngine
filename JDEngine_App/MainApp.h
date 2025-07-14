@@ -4,7 +4,7 @@
 //#include "D2DTransform.h"
 #include "GameTimer.h"
 
-class MainApp : public JDWndBase{
+//class MainApp : public JDWndBase{
 public :
 	MainApp() = default;
 	virtual ~MainApp() = default;

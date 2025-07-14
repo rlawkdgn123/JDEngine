@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="01_Interface_JDEngine_Base">
+      <UniqueIdentifier>{ce802ae2-029a-4b7b-9561-acca77c49301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Interface_JDEngine_Core">
+      <UniqueIdentifier>{55d53910-f030-4669-a24c-e20a11575680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Interface_JDEngine_Contents">
+      <UniqueIdentifier>{fabbb762-4571-4b4b-a03b-137b7843f590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04_Interface_JDEngineApp">
+      <UniqueIdentifier>{c5e73a12-0ace-407f-bbac-ecf7af02dce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05_Interface_JDEngine_Wnd">
+      <UniqueIdentifier>{dc6a5dde-aae6-4a06-b1d3-6ef87ee5fdb1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="JDEngine_Interfaces.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

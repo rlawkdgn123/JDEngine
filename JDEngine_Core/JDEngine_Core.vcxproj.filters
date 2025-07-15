@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SceneManager">
+      <UniqueIdentifier>{7a76c744-1cd6-4380-bafd-b0ad843b8f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreUtility">
+      <UniqueIdentifier>{ec105981-620b-42b9-b8ba-e59e7f5a36a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,6 +27,15 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreUtility.h">
+      <Filter>CoreUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>SceneManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JDEngine_Core.cpp">
@@ -28,6 +43,12 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
+      <Filter>SceneManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

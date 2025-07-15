@@ -6,10 +6,10 @@ namespace Window {
 	class JDWndBase;
 }
 
-class MainApp : public Window::JDWndBase {
+class EngineCore : public Window::JDWndBase {
 public:
-	MainApp() = default;
-	virtual ~MainApp() = default;
+	EngineCore() = default;
+	virtual ~EngineCore() = default;
 
 	bool Initialize();
 	void Run();
@@ -54,6 +54,7 @@ private:
 	bool m_bChangedFile = false;
 
 	//std::shared_ptr<OnlyForTestScene> m_TestScenePtr = nullptr; //씬은 지금 분리해야함
+	
 };
 
 

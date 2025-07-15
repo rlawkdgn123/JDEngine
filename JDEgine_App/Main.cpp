@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Framework.h"
-#include "MainApp.h"
+#include "EngineCore.h"
 
 using namespace std;
 
@@ -15,32 +15,32 @@ using namespace std;
 */
 namespace
 {
-	std::unique_ptr<MainApp> g_pMainApp = nullptr;
+	std::unique_ptr<EngineCore> g_pEngineCore = nullptr;
 	
 }
 
 int main(void) {
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // 메모리 릭(누수) 검사
 
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); // CPU 스레드를 COM 객체와 연결시키기 위한 COM 라이브러리 초기화
 	if (FAILED(hr))
 		return -1; // -1 실패 신호 반환 후 종료
 
-	//g_pMainApp = new Module::MainApp();
-	g_pMainApp = make_unique<MainApp>();
+	//g_pEngineCore = new Module::EngineCore();
+	g_pEngineCore = make_unique<EngineCore>();
 
-
-	if (!g_pMainApp->Initialize())
+	if (!g_pEngineCore->Initialize())
 	{
 		std::cerr << "Failed to initialize sample code." << std::endl;
 		return -1;
 	}
 
-	g_pMainApp->Run();
+	g_pEngineCore->Run();
 
-	g_pMainApp->Finalize();
+	g_pEngineCore->Finalize();
 
-	//delete g_pMainApp; // 스마트ptr이 제거
+	//delete g_pEngineCore; // 스마트ptr이 제거
 
 	CoUninitialize();
 

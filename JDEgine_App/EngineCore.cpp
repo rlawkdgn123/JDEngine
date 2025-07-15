@@ -12,7 +12,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #include <filesystem>            // C++17 std::filesystem
 
 /////////////////////////////////////////////////////////////////////////
-#include "MainApp.h"
+#include "EngineCore.h"
 /////////////////////////////////////////////////////////////////////////
 
 // 추후 애니메이션 부분은 분리 예정
@@ -49,10 +49,10 @@ std::string WStringToString(const std::wstring& wstr)
 /////////////////////////////////////////////////////////////////////////
 
 
-// MainApp 클래스의 멤버 함수 정의는 전역 네임스페이스에 있어야 합니다.
+// EngineCore 클래스의 멤버 함수 정의는 전역 네임스페이스에 있어야 합니다.
 // 파일 끝에 있던 익명 네임스페이스를 제거했습니다.
 
-bool MainApp::Initialize()
+bool EngineCore::Initialize()
 {
     // 유니코드 기반의 윈도우 클래스 이름과 윈도우 이름 설정
     const wchar_t* className = L"JDEngine";
@@ -72,11 +72,9 @@ bool MainApp::Initialize()
     m_EngineTimer = BaseFactory::GameTimerFactory::CreateUnique(); // 팩토리에서 타이머 unique 형태로 할당
 
     //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer 객체를 shared_ptr로 생성 뒤 m_Renderer에 저장
+
     m_Renderer = CoreFactory::D2DRendererFactory::CreateShared(); // 팩토리에서 렌더러 shared 형태로 할당
-
-
-    //방금 생성된 Renderer에 윈도우 핸들 전달 → Direct2D 초기화 작업(디바이스 생성) 수행
-    m_Renderer->Initialize(m_hWnd);
+    m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
@@ -89,7 +87,7 @@ bool MainApp::Initialize()
     */
 
     //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
-    m_Renderer->Initialize(m_hWnd);
+    //m_Renderer->Initialize(m_hWnd);
 
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -104,7 +102,7 @@ bool MainApp::Initialize()
     return true;
 }
 
-void MainApp::Run()
+void EngineCore::Run()
 {
     MSG msg = { 0 };
 
@@ -128,7 +126,7 @@ void MainApp::Run()
 
 }
 
-void MainApp::Finalize()
+void EngineCore::Finalize()
 {
     // [ImGUI] DirectX 11 백엔드 정리
     //ImGui_ImplDX11_Shutdown();
@@ -142,7 +140,7 @@ void MainApp::Finalize()
     }
 }
 
-bool MainApp::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     /*
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
@@ -153,16 +151,16 @@ bool MainApp::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return false;
 }
 
-void MainApp::UpdateTime()
+void EngineCore::UpdateTime()
 {
     m_EngineTimer->Tick();
 }
 
-void MainApp::UpdateInput() // 인풋 매니저에게 위임 예정
+void EngineCore::UpdateInput() // 인풋 매니저에게 위임 예정
 {
 }
 
-void MainApp::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
+void EngineCore::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
 {
     LoadAssets();
 
@@ -196,14 +194,19 @@ void MainApp::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
     //}
 }
 
-void MainApp::Render()
+void EngineCore::Render()
 {
     if (m_Renderer == nullptr) return;
 
     m_Renderer->RenderBegin();
+
+    m_Renderer->RenderEnd(false);
+
+
+    m_Renderer->Present();
 }
 
-void MainApp::RenderImGUI()
+void EngineCore::RenderImGUI()
 {
     /*
      ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -300,7 +303,7 @@ void MainApp::RenderImGUI()
     */
 }
 
-void MainApp::LoadAssets()
+void EngineCore::LoadAssets()
 {
     /*
      std::filesystem::path fullPath =
@@ -334,19 +337,19 @@ void MainApp::LoadAssets()
     */
 }
 
-void MainApp::OnResize(int width, int height) // 창 크기 재조정
+void EngineCore::OnResize(int width, int height) // 창 크기 재조정
 {
     __super::OnResize(width, height);
 
     if (m_Renderer != nullptr) m_Renderer->Resize(width, height);
 }
 
-void MainApp::OnClose()
+void EngineCore::OnClose()
 {
     std::cout << "OnClose" << std::endl;
 }
 
-void MainApp::BrowseForFolder()
+void EngineCore::BrowseForFolder()
 {
     /*
     HRESULT hr;
@@ -391,7 +394,7 @@ void MainApp::BrowseForFolder()
     */
 }
 
-void MainApp::UpdateFileList()
+void EngineCore::UpdateFileList()
 {
     /*
      m_fileList.clear();

@@ -16,18 +16,27 @@
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{7163b68e-168d-44f5-aefe-ebef6aa43de9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="D2DRenderer">
+      <UniqueIdentifier>{9f4ade1d-dcab-4253-9b0b-fa4d91a6837d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DRenderer.h">
+      <Filter>D2DRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp">
+      <Filter>D2DRenderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

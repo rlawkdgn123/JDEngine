@@ -1,7 +1,6 @@
 ﻿#include <Windows.h>
 #include "JDWndBase.h" // 윈도우 관련
 
-
 namespace Window {
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{

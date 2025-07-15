@@ -7,32 +7,41 @@ namespace Window {
 	// 함수 선언
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	class JDWndBase{
-	public:
-		JDWndBase() = default;
-		virtual ~JDWndBase() = default;
+    class JDWndBase {
+    public:
+        JDWndBase() = default;
+        virtual ~JDWndBase() = default;
 
-		bool Create(const wchar_t* className, const wchar_t* windowName, int width, int height); // 윈도우 생성
-		void Destroy();  // 윈도우 제거
+        // 윈도우 생성
+        bool Create(const wchar_t* className, const wchar_t* windowName, int width, int height);
 
-		void* GetHandle() const { return m_hWnd; } // 
+        // 윈도우 제거
+        void Destroy();
 
-	protected:
+        // 윈도우 핸들 반환
+        void* GetHandle() const { return m_hWnd; }
 
-		friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam); // friend 선언 (외부 함수 접근 허용)
+    protected:
+        // 외부 함수에서 이 클래스의 private/protected 멤버 접근 허용
+        friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-		virtual bool OnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) { return false; } // 추후 IMGUI 추가 시 살펴보기
+        // 윈도우 프로시저 (기본 구현: false 반환)
+        virtual bool OnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) { return false; }
 
-		virtual void OnResize(int width, int height); // 윈도우 사이즈 재조정
-		virtual void OnClose() abstract;
+        // 윈도우 사이즈 재조정 (기본 구현이 있을 경우 구현)
+        virtual void OnResize(int width, int height) { /* 기본 구현 가능 */ }
 
-		HWND m_hWnd = nullptr;	// 윈도우 핸들
-		int m_width = 0;		// 윈도우 가로넓이
-		int m_height = 0;		// 윈도우 세로넓이
+        // 윈도우 종료 처리 - 순수 가상 함수 (추상화)
+        virtual void OnClose() = 0;
 
-		JDWndBase(const JDWndBase&) = delete; // 복사 생성자 제거
-		JDWndBase& operator=(const JDWndBase&) = delete; // 복사 대입 연산자 제거
-		JDWndBase(JDWndBase&&) = delete; // 이동 생성자 제거 
-		JDWndBase& operator=(JDWndBase&&) = delete; // 이동 대입 연산자 제거
-	};
+        HWND m_hWnd = nullptr;  // 윈도우 핸들
+        int m_width = 0;        // 윈도우 가로넓이
+        int m_height = 0;       // 윈도우 세로넓이
+
+        // 복사 및 이동 연산자 삭제
+        JDWndBase(const JDWndBase&) = delete;
+        JDWndBase& operator=(const JDWndBase&) = delete;
+        JDWndBase(JDWndBase&&) = delete;
+        JDWndBase& operator=(JDWndBase&&) = delete;
+    };
 }

@@ -1,2 +1,5 @@
 #pragma once
-#include "AppInterface.h"
+#include "BaseInterface.h"
+#include "BaseFactory.h"
+#include "CoreFactory.h"
+#include "JDWndBase.h"

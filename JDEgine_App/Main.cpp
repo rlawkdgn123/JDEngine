@@ -1,6 +1,5 @@
 #include "pch.h"
-#include ""
-#include "MainApp.h"
+#include "Framework.h"
 
 using namespace std;
 
@@ -15,7 +14,7 @@ using namespace std;
 */
 namespace
 {
-	Interface::MainApp* g_pMainApp = nullptr;
+	std::unique_ptr<MainApp> g_pMainApp = nullptr;
 }
 
 int main(void) {
@@ -25,7 +24,9 @@ int main(void) {
 	if (FAILED(hr))
 		return -1; // -1 실패 신호 반환 후 종료
 
-	g_pMainApp = new Module::MainApp();
+	//g_pMainApp = new Module::MainApp();
+	g_pMainApp = make_unique<
+
 
 	if (!g_pMainApp->Initialize())
 	{
@@ -37,7 +38,7 @@ int main(void) {
 
 	g_pMainApp->Finalize();
 
-	delete g_pMainApp;
+	//delete g_pMainApp; // 스마트ptr이 제거
 
 	CoUninitialize();
 

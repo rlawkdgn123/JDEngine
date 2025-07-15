@@ -10,9 +10,6 @@
     <Filter Include="03_Interface_JDEngine_Contents">
       <UniqueIdentifier>{fabbb762-4571-4b4b-a03b-137b7843f590}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04_Interface_JDEngineApp">
-      <UniqueIdentifier>{c5e73a12-0ace-407f-bbac-ecf7af02dce0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{b7d9f154-d432-4712-9e38-e2fd7768f18b}</UniqueIdentifier>
     </Filter>
@@ -27,8 +24,14 @@
     <ClInclude Include="BaseInterface.h">
       <Filter>01_Interface_JDEngine_Base</Filter>
     </ClInclude>
-    <ClInclude Include="AppInterface.h">
-      <Filter>04_Interface_JDEngineApp</Filter>
+    <ClInclude Include="RenderInterface.h">
+      <Filter>02_Interface_JDEngine_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderframework.h">
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreInterface.h">
+      <Filter>02_Interface_JDEngine_Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,11 +5,15 @@
 
 using namespace std;
 
-namespace Factory {
+namespace BaseFactory {
     class GameTimerFactory {
     public:
-        static shared_ptr<Interface::GameTimer> Create() {
-            return make_shared<Module::GameTimer>();
+        static std::unique_ptr<Interface::GameTimer> CreateUnique() {
+            return std::make_unique<Module::GameTimer>();
+        }
+
+        static std::shared_ptr<Interface::GameTimer> CreateShared() {
+            return std::make_shared<Module::GameTimer>();
         }
     };
 }

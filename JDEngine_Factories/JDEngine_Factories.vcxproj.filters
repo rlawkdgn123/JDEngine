@@ -10,9 +10,6 @@
     <Filter Include="03_JDEngine_Contents">
       <UniqueIdentifier>{77153e6f-e4df-434a-a479-4eed8e8e9502}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04_JDEngineApp">
-      <UniqueIdentifier>{60d12f4b-82c3-4e07-94ce-32986a32e82e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{e2189e94-7ed5-4fd1-aae4-d8643fa1764b}</UniqueIdentifier>
     </Filter>
@@ -29,6 +26,12 @@
     </ClInclude>
     <ClInclude Include="BaseFactoryFramework.h">
       <Filter>01_JDEngine_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreFactory.h">
+      <Filter>02_JDEngine_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreFactoryFramework.h">
+      <Filter>02_JDEngine_Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

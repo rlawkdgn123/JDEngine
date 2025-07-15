@@ -143,6 +143,8 @@
   <ItemGroup>
     <ClInclude Include="BaseFactory.h" />
     <ClInclude Include="BaseFactoryFramework.h" />
+    <ClInclude Include="CoreFactory.h" />
+    <ClInclude Include="CoreFactoryFramework.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

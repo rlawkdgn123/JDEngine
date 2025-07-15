@@ -1,10 +1,7 @@
 #pragma once
-#include "AppInterface.h"
-#include "BaseInterface.h"
-#include "BaseFactory.h"
 
 namespace Module {
-	class MainApp : public Interface::MainApp {
+	class MainApp : public Window::JDWndBase {
 	public:
 		MainApp() = default;
 		virtual ~MainApp() = default;
@@ -32,14 +29,15 @@ namespace Module {
 		void BrowseForFolder();
 		void UpdateFileList();
 
-		std::shared_ptr<GameTimer> m_GameTimer = nullptr;
+		unique_ptr<Interface::GameTimer> m_EngineTimer = nullptr;
+		shared_ptr<Interface::D2DRenderer> m_Renderer = nullptr;
 
 		//GameTimer       m_GameTimer;
 		//AssetManager    m_AssetManager;
 
-		std::string     m_pathInput;
-		std::wstring    m_folderPath;
-		std::wstring    m_selectedFile;
+		//string     m_pathInput;
+		//wstring    m_folderPath;
+		//wstring    m_selectedFile;
 
 		std::wstring    m_selectedAssetKey;
 

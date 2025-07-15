@@ -141,10 +141,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AppInterface.h" />
     <ClInclude Include="BaseInterface.h" />
+    <ClInclude Include="CoreInterface.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Renderframework.h" />
+    <ClInclude Include="RenderInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

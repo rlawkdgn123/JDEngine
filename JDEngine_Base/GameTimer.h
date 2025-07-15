@@ -1,5 +1,6 @@
 #pragma once  
-#include "BaseInterface.h"
+#include "pch.h"
+#include "framework.h"
 #ifndef GAMETIMER_H  
 #define GAMETIMER_H  
 

@@ -35,5 +35,8 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
+    <ClInclude Include="Framework.h">
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

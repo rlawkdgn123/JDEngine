@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDWndBase;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -130,6 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

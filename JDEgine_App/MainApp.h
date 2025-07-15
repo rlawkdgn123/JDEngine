@@ -1,5 +1,6 @@
 #pragma once
 #include "AppInterface.h"
+#include "BaseInterface.h"
 #include "BaseFactory.h"
 
 namespace Module {
@@ -31,7 +32,7 @@ namespace Module {
 		void BrowseForFolder();
 		void UpdateFileList();
 
-		std::shared_ptr<Module::GameTimer> m_GameTimer = nullptr;
+		std::shared_ptr<GameTimer> m_GameTimer = nullptr;
 
 		//GameTimer       m_GameTimer;
 		//AssetManager    m_AssetManager;

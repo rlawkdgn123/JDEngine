@@ -1,4 +1,5 @@
 #include "pch.h"
+#include ""
 #include "MainApp.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ using namespace std;
 */
 namespace
 {
-	Module::MainApp* g_pMainApp = nullptr;
+	Interface::MainApp* g_pMainApp = nullptr;
 }
 
 int main(void) {

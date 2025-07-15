@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "BaseInterface.h"
+#include "../JDEngine_Windows/JDWndBase.h"
 namespace Interface {
     class MainApp : public Window::JDWndBase {
     public:
@@ -31,5 +32,4 @@ namespace Interface {
         virtual void BrowseForFolder() = 0;
         virtual void UpdateFileList() = 0;
     };
-
 }

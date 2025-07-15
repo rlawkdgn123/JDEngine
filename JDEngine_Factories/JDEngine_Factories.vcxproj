@@ -169,9 +169,6 @@
     <ProjectReference Include="..\JDEngine_Renderer\JDEngine_Renderer.vcxproj">
       <Project>{43f6a818-a9ee-4fbc-8bcb-256f9253a824}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\JDWndBase\JDWndBase.vcxproj">
-      <Project>{9ebfd3c2-4a63-4a99-9b47-171f2dbb1f09}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

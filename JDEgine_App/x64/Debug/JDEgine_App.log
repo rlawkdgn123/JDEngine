@@ -1,10 +1,68 @@
 ﻿  Main.cpp
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(2,10): error C1083: 포함 파일을 열 수 없습니다. 'AppInterface.h': No such file or directory
-  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
-  
   MainApp.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(2,10): error C1083: 포함 파일을 열 수 없습니다. 'AppInterface.h': No such file or directory
-  (소스 파일 'MainApp.cpp'을(를) 컴파일하는 중)
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\AppInterface.h(5,36): error C2039: 'JDWndBase': 'Window'의 멤버가 아닙니다.
+  (소스 파일 '../JDEgine_App/Main.cpp'을(를) 컴파일하는 중)
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\BaseInterface.h(4,11):
+      'Window' 선언을 참조하십시오.
   
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,27): error C2259: 'Window::Module::MainApp': 추상 클래스를 인스턴스화할 수 없습니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(6,8):
+      'Window::Module::MainApp' 선언을 참조하십시오.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,27):
+      다음 멤버가 원인입니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,27):
+      'bool Window::Interface::MainApp::Initialize(void)': abstract입니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\AppInterface.h(9,22):
+      'Window::Interface::MainApp::Initialize' 선언을 참조하십시오.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,34): error C2259: 'Window::Module::MainApp': 추상 클래스를 인스턴스화할 수 없습니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.h(6,8):
+      'Window::Module::MainApp' 선언을 참조하십시오.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,34):
+      다음 멤버가 원인입니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\Main.cpp(27,34):
+      'bool Window::Interface::MainApp::Initialize(void)': abstract입니다.
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\AppInterface.h(9,22):
+      'Window::Interface::MainApp::Initialize' 선언을 참조하십시오.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\BaseInterface.h(4,18): error C1075: '{': 일치하는 토큰을 찾을 수 없습니다.
+  (소스 파일 '../JDEgine_App/Main.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\AppInterface.h(5,36): error C2039: 'JDWndBase': 'Window'의 멤버가 아닙니다.
+  (소스 파일 '../JDEgine_App/MainApp.cpp'을(를) 컴파일하는 중)
+      C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\BaseInterface.h(4,11):
+      'Window' 선언을 참조하십시오.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(66,5): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(66,35): error C2065: 'D2DRenderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(66,23): error C2672: 'std::make_shared': 일치하는 오버로드된 함수가 없습니다.
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(2912,44):
+      'std::shared_ptr<_Ty> std::make_shared(_Types ...)'일 수 있습니다.
+          C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(66,35):
+          'std::make_shared': '_Ty'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(69,5): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(81,5): error C2065: 'D3D11Device': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(81,18): error C2065: 'pd3dDevice': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(81,31): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(85,25): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(91,17): error C2039: 'Reset': 'std::shared_ptr<Window::Module::GameTimer>'의 멤버가 아닙니다.
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(1565,7):
+      'std::shared_ptr<Window::Module::GameTimer>' 선언을 참조하십시오.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(127,9): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(129,9): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(130,9): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(147,17): error C2039: 'Tick': 'std::shared_ptr<Window::Module::GameTimer>'의 멤버가 아닙니다.
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(1565,7):
+      'std::shared_ptr<Window::Module::GameTimer>' 선언을 참조하십시오.
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(190,9): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(192,5): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(330,9): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\MainApp.cpp(330,32): error C2065: 'm_Renderer': 선언되지 않은 식별자입니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Interfaces\BaseInterface.h(4,18): error C1075: '{': 일치하는 토큰을 찾을 수 없습니다.
+  (소스 파일 '../JDEgine_App/MainApp.cpp'을(를) 컴파일하는 중)
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
   코드를 생성하고 있습니다...

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Framework.h"
+#include "MainApp.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ using namespace std;
 namespace
 {
 	std::unique_ptr<MainApp> g_pMainApp = nullptr;
+	
 }
 
 int main(void) {
@@ -25,7 +27,7 @@ int main(void) {
 		return -1; // -1 실패 신호 반환 후 종료
 
 	//g_pMainApp = new Module::MainApp();
-	g_pMainApp = make_unique<
+	g_pMainApp = make_unique<MainApp>();
 
 
 	if (!g_pMainApp->Initialize())

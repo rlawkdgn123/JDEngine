@@ -21,6 +21,9 @@ namespace Window {
         // 윈도우 핸들 반환
         void* GetHandle() const { return m_hWnd; }
 
+        int GetWidth() const { return m_width; }
+        int GetHeight() const { return m_height; }
+
     protected:
         // 외부 함수에서 이 클래스의 private/protected 멤버 접근 허용
         friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -28,8 +31,8 @@ namespace Window {
         // 윈도우 프로시저 (기본 구현: false 반환)
         virtual bool OnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) { return false; }
 
-        // 윈도우 사이즈 재조정 (기본 구현이 있을 경우 구현)
-        virtual void OnResize(int width, int height) { /* 기본 구현 가능 */ }
+        // 윈도우 사이즈 재조정
+        virtual void OnResize(int width, int height);
 
         // 윈도우 종료 처리 - 순수 가상 함수 (추상화)
         virtual void OnClose() = 0;

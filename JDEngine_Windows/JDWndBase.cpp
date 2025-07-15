@@ -1,7 +1,7 @@
 ﻿#include <Windows.h>
 #include "JDWndBase.h" // 윈도우 관련
 
-namespace Window {
+namespace Window { // 이 네임스페이스를 추가하여 JDWndBase::Create 및 OnResize 정의를 포함합니다.
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		// friend 키워드로 JDWndBase 접근 가능
@@ -50,7 +50,6 @@ namespace Window {
 		// AdjustWindowRect()
 		// Win32 API에서 클라이언트 영역 크기를 기준으로, 실제 윈도우 전체 크기(프레임, 타이틀바 포함)를 계산하는 함수
 
-		// AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false); // 기본 형태. 아래 코드는 리사이즈/최대화가 막혀있다. 왜??
 		AdjustWindowRect(&rc,
 			WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, FALSE);
 
@@ -86,5 +85,4 @@ namespace Window {
 		m_height = height;
 	}
 
-}
-
+} // Window 네임스페이스 끝

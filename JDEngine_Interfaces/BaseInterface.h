@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-namespace Interface {
+namespace JDInterface {
 
     /// <summary>
     /// Timer.h

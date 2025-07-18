@@ -1,3 +1,28 @@
-﻿  EngineCore.cpp
+﻿  Main.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,19): error C2143: 구문 오류: ';'이(가) '<' 앞에 없습니다.
+  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,13): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,62): error C2238: ';' 앞에 예기치 않은 토큰이 있습니다.
+  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Factories\CoreFactory.h(31,39): error C2061: 구문 오류: 식별자 'Scene'
+  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
+  
+  EngineCore.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,19): error C2143: 구문 오류: ';'이(가) '<' 앞에 없습니다.
+  (소스 파일 'EngineCore.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,13): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+  (소스 파일 'EngineCore.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\SceneBase.h(46,62): error C2238: ';' 앞에 예기치 않은 토큰이 있습니다.
+  (소스 파일 'EngineCore.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Factories\CoreFactory.h(31,39): error C2061: 구문 오류: 식별자 'Scene'
+  (소스 파일 'EngineCore.cpp'을(를) 컴파일하는 중)
+  
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
-  JDEgine_App.vcxproj -> C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Debug\JDEgine_App.exe
+  코드를 생성하고 있습니다...

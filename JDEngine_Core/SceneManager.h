@@ -1,51 +1,62 @@
 #pragma once
 #include "pch.h"
 #include "framework.h"
-#include "SceneBase.h"
 
-// SceneManager.h
+// SceneManager.h`
 
-using namespace std;
-class SceneManager
-{
-private:
-    SceneManager() : m_SceneCount(0), m_CurrentScene(nullptr) {} // 외부 생성 불가
+using namespace CoreGlobal;
+using SceneBase = JDInterface::Scene::SceneBase;
 
-    //struct SceneEntry
-    //{
-    //    const char* id;
-    //    SceneBase* ptr;
-    //};
-
-    //SceneEntry m_SceneTable[MAX_SCENES];
-    
-    // Scene 모음 unordered_map
-    // SceneList - enum, SceneBase - class
-    // 기존 열거형의 암시적 형변환을 이용하여 int형 맵을 만든다.
-    unordered_map<SceneList, SceneBase*> m_SceneTable; 
-
-    int        m_SceneCount;
-
-    SceneBase* m_CurrentScene; // 활성화된 씬에 대한 RawPtr
-public:
-    static SceneManager& Instance() // 씬 매니저 단일화 (싱글톤)
+namespace JDModule {
+    class SceneManager : public JDInterface::SceneManager
     {
-        static SceneManager instance;
-        return instance;
-    }
+    public:
+        SceneManager() : m_CurrentScene(nullptr) {} // 외부 생성 불가
+    private:
+        // 복사 생성자, 복사 대입 연산자 삭제 (객체 복사 금지)
+        SceneManager(const SceneManager&) = delete;
+        SceneManager& operator=(const SceneManager&) = delete;
 
-    ~SceneManager() = default; // scene Ptr이라 delete 안해도 됨. 
+        // 이동 생성자, 이동 대입 연산자 삭제 (객체 이동 금지)
+        SceneManager(SceneManager&&) = delete;
+        SceneManager& operator=(SceneManager&&) = delete;
 
-    void Initalize();
+    public:
+        //static SceneManager& Instance() // 씬 매니저 단일화 (싱글톤)
+        //{
+        //    static SceneManager instance;
+        //    return instance;
+        //}
 
-    void RegisterScene(unique_ptr<SceneBase> scene);
+        ~SceneManager() = default; // m_SceneTable 스마트 포인터라 delete 안해도 됨. 
 
-    void ChangeScene(const char* id);
+        void RegisterScene(std::unique_ptr<SceneBase> scene); // 씬 생성
 
-    void Update(float deltaTime);
+        void ChangeScene(const std::string& id); // 씬 전환
 
-    void Render();
+        void Update(float deltaTime);
 
-    const SceneBase* GetCurrentScene() const { return m_CurrentScene; }
-};
+        void Render();
+
+        const SceneBase* GetCurrentScene() const { return m_CurrentScene; }
+
+    private:
+
+        struct SceneEntry
+        {
+            std::string id;
+            std::unique_ptr<SceneBase> ptr;
+
+        public:
+            SceneEntry(std::string id, std::unique_ptr<SceneBase> ptr)
+                : id(std::move(id)), ptr(std::move(ptr)) { // string과 unique_ptr 이전
+            }
+        };
+
+        std::vector<SceneEntry> m_SceneTable;
+
+        SceneBase* m_CurrentScene; // 활성화된 씬에 대한 RawPtr
+
+    };
+}
 

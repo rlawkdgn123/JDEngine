@@ -11,6 +11,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{83fd4a97-77e0-4db6-b753-e47550d9a0d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{99b1d05c-bc71-42e5-826b-25c54e282758}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -19,10 +22,22 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

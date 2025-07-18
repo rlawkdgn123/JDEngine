@@ -16,7 +16,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 /////////////////////////////////////////////////////////////////////////
 
 // 추후 애니메이션 부분은 분리 예정
-
+using namespace std;
 
 // (일반적으로 UTF-8 또는 로케일별 멀티바이트 인코딩)과
 // std::wstring (일반적으로 Windows에서 UTF-16) 간의 변환을 위한 두 가지 유틸리티 함수
@@ -76,6 +76,9 @@ bool EngineCore::Initialize()
     m_Renderer = CoreFactory::D2DRendererFactory::CreateShared(); // 팩토리에서 렌더러 shared 형태로 할당
     m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
+    m_SceneManager = CoreFactory::SceneManagerFactory::CreateUnique(); // 팩토리에서 씬 매니저 unique 형태로 할당
+
+
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
     // ImGui 컨텍스트 생성
@@ -112,7 +115,6 @@ void EngineCore::Run()
             // PeekMessage가 검색한 메시지(msg)를 분석하여
             // 가상 키 코드 메시지(예: WM_KEYDOWN, WM_KEYUP)를 문자 메시지(예: WM_CHAR)로 변환
             TranslateMessage(&msg);
-
             DispatchMessage(&msg); // 메세지를 윈도우 프로시저에 전달
         }
         else {
@@ -154,6 +156,7 @@ bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void EngineCore::UpdateTime()
 {
     m_EngineTimer->Tick();
+    m_SceneManager->Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
 }
 
 void EngineCore::UpdateInput() // 인풋 매니저에게 위임 예정

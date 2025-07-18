@@ -141,14 +141,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CoreUtility.h" />
+    <ClInclude Include="CoreGlobals.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SceneBase.h" />
+    <ClInclude Include="SceneList.h" />
     <ClInclude Include="SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="JDEngine_Core.cpp" />
+    <ClCompile Include="GameObjectBase.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -165,6 +167,9 @@
     <ProjectReference Include="..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj">
       <Project>{a5b64d14-6fe7-49e5-b5b5-c7358523842a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

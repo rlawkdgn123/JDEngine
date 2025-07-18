@@ -4,9 +4,9 @@
 #include <d2d1helper.h>
 using namespace Microsoft::WRL;
 
-namespace Module
+namespace JDModule
 {
-    class D2DRenderer : public Interface::D2DRenderer
+    class D2DRenderer : public JDInterface::D2DRenderer
     {
     public:
         D2DRenderer() = default;

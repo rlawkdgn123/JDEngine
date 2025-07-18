@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="01_Interface_JDEngine_Base">
+    <Filter Include="01_JDInterface_JDEngine_Base">
       <UniqueIdentifier>{ce802ae2-029a-4b7b-9561-acca77c49301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02_Interface_JDEngine_Core">
+    <Filter Include="02_JDInterface_JDEngine_Core">
       <UniqueIdentifier>{55d53910-f030-4669-a24c-e20a11575680}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_Interface_JDEngine_Contents">
+    <Filter Include="03_JDInterface_JDEngine_Contents">
       <UniqueIdentifier>{fabbb762-4571-4b4b-a03b-137b7843f590}</UniqueIdentifier>
     </Filter>
     <Filter Include="Pre-Compile">
@@ -21,17 +21,17 @@
     <ClInclude Include="framework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
-    <ClInclude Include="BaseInterface.h">
-      <Filter>01_Interface_JDEngine_Base</Filter>
+    <ClInclude Include="BaseJDInterface.h">
+      <Filter>01_JDInterface_JDEngine_Base</Filter>
     </ClInclude>
-    <ClInclude Include="RenderInterface.h">
-      <Filter>02_Interface_JDEngine_Core</Filter>
+    <ClInclude Include="RenderJDInterface.h">
+      <Filter>02_JDInterface_JDEngine_Core</Filter>
     </ClInclude>
     <ClInclude Include="Renderframework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
-    <ClInclude Include="CoreInterface.h">
-      <Filter>02_Interface_JDEngine_Core</Filter>
+    <ClInclude Include="CoreJDInterface.h">
+      <Filter>02_JDInterface_JDEngine_Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

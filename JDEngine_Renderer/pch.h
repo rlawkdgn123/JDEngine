@@ -23,6 +23,7 @@
 #include <wincodec.h>                // WIC (이미지 로딩)
 
 #include <stdio.h>
+#include <iostream>
 #include <stdexcept>
 
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed

@@ -3,7 +3,7 @@
 #include "Renderframework.h"
 
 
-namespace Interface {
+namespace JDInterface {
     class D2DRenderer {
     public:
         virtual ~D2DRenderer() = default;

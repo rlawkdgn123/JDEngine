@@ -2,18 +2,15 @@
 #include "pch.h"
 #include "BaseFactoryFramework.h"
 
-
-using namespace std;
-
 namespace BaseFactory {
     class GameTimerFactory {
     public:
-        static std::unique_ptr<Interface::GameTimer> CreateUnique() {
-            return std::make_unique<Module::GameTimer>();
+        static std::unique_ptr<JDInterface::GameTimer> CreateUnique() {
+            return std::make_unique<JDModule::GameTimer>();
         }
 
-        static std::shared_ptr<Interface::GameTimer> CreateShared() {
-            return std::make_shared<Module::GameTimer>();
+        static std::shared_ptr<JDInterface::GameTimer> CreateShared() {
+            return std::make_shared<JDModule::GameTimer>();
         }
     };
 }

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D2DRenderer.h"
 
-namespace Module
+namespace JDModule
 {
     void D2DRenderer::Initialize(HWND hwnd)
     {
@@ -21,6 +21,7 @@ namespace Module
         DX::ThrowIfFailed(hr);
 
         m_wicFactory = wicFactory;
+        
     }
 
     void D2DRenderer::Uninitialize()
@@ -152,7 +153,7 @@ namespace Module
         HRESULT hr = D3D11CreateDevice(
             nullptr,                            //[in, optional]  IDXGIAdapter* pAdapter
             D3D_DRIVER_TYPE_HARDWARE,           //D3D_DRIVER_TYPE DriverType
-            nullptr,                            //HMODULE         Software
+            nullptr,                            //HJDModule         Software
             D3D11_CREATE_DEVICE_BGRA_SUPPORT,   //UINT            Flags
             featureLevels,                      //[in, optional]  const D3D_FEATURE_LEVEL* pFeatureLevels
             ARRAYSIZE(featureLevels),           //UINT            FeatureLevels

@@ -34,8 +34,9 @@ private:
 	void BrowseForFolder();
 	void UpdateFileList();
 
-	unique_ptr<Interface::GameTimer> m_EngineTimer = nullptr;
-	shared_ptr<Interface::D2DRenderer> m_Renderer = nullptr;
+	std::unique_ptr<JDInterface::GameTimer> m_EngineTimer = nullptr;
+	std::shared_ptr<JDInterface::D2DRenderer> m_Renderer = nullptr;
+	std::unique_ptr<JDInterface::SceneManager> m_SceneManager = nullptr;
 
 	//GameTimer       m_GameTimer;
 	//AssetManager    m_AssetManager;

@@ -11,8 +11,11 @@
     <Filter Include="Math">
       <UniqueIdentifier>{83fd4a97-77e0-4db6-b753-e47550d9a0d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{99b1d05c-bc71-42e5-826b-25c54e282758}</UniqueIdentifier>
+    <Filter Include="OutputHeader">
+      <UniqueIdentifier>{f86cdab6-55a7-417c-b9b4-848da7d3e05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Color">
+      <UniqueIdentifier>{f453b1d9-429a-491b-bf41-e1bdfcd53d0d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,22 +25,22 @@
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
-    <ClInclude Include="Math.h">
+    <ClInclude Include="MathType.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>Utility</Filter>
+    <ClInclude Include="MathUtil.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="JDMath.h">
+      <Filter>OutputHeader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
     </ClCompile>
-    <ClCompile Include="Math.cpp">
+    <ClCompile Include="MathUtil.cpp">
       <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility.cpp">
-      <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

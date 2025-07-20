@@ -3,6 +3,7 @@
 
 namespace CoreGlobal {
 
+	
 
 	// Scenes
 	enum class SceneType : int { // 범위가 있는 class 열거형 // C++11
@@ -26,5 +27,8 @@ namespace CoreGlobal {
 	//	Line
 	//};
 
+	// GameObjects
+	using MessageID = uint32_t;
+	constexpr int OBJECT_NAME_LEN_MAX = 15; // 객체 이름 최대치
 }
 

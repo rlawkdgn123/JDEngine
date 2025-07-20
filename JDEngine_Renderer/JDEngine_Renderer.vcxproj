@@ -24,6 +24,7 @@
     <ProjectGuid>{43f6a818-a9ee-4fbc-8bcb-256f9253a824}</ProjectGuid>
     <RootNamespace>JDEngineRenderer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>01_JDEngine_Renderer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

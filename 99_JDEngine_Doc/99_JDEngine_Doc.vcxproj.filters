@@ -20,4 +20,15 @@
       <UniqueIdentifier>{c8561bb7-42f2-414e-8bba-ca63305a5b9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="SAL.txt">
+      <Filter>김장후</Filter>
+    </Text>
+    <Text Include="아직 안한.txt">
+      <Filter>김장후</Filter>
+    </Text>
+    <Text Include="노트.txt">
+      <Filter>김장후</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

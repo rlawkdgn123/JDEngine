@@ -1,0 +1,37 @@
+﻿  D2DTransform.cpp
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(52,18): error C2535: 'void Compontnts::D2DTM::Transform::SetPosition(const Compontnts::D2DTM::Transform::Vec2 &)': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(44,18):
+      'Compontnts::D2DTM::Transform::SetPosition' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(53,18): error C2535: 'void Compontnts::D2DTM::Transform::SetRotation(float)': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(45,18):
+      'Compontnts::D2DTM::Transform::SetRotation' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(54,18): error C2535: 'void Compontnts::D2DTM::Transform::SetScale(const Compontnts::D2DTM::Transform::Vec2 &)': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(46,18):
+      'Compontnts::D2DTM::Transform::SetScale' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(56,25): error C2535: 'const Compontnts::D2DTM::Transform::Vec2 &Compontnts::D2DTM::Transform::GetPosition(void) const': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(48,25):
+      'Compontnts::D2DTM::Transform::GetPosition' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(57,19): error C2535: 'float Compontnts::D2DTM::Transform::GetRotation(void) const': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(49,19):
+      'Compontnts::D2DTM::Transform::GetRotation' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(58,25): error C2535: 'const Compontnts::D2DTM::Transform::Vec2 &Compontnts::D2DTM::Transform::GetScale(void) const': 멤버 함수를 이미 정의했거나 선언했습니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+      D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(50,25):
+      'Compontnts::D2DTM::Transform::GetScale' 선언을 참조하십시오.
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(37,17): error C2065: 'newParent': 선언되지 않은 식별자입니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+  
+D:\AllProjects\GameInJaeWon\2학기\D2D\JDEngine\JDEngine_Components\D2DTransform.h(38,17): error C2065: 'm_parent': 선언되지 않은 식별자입니다.
+  (소스 파일 'D2DTransform.cpp'을(를) 컴파일하는 중)
+  

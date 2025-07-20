@@ -19,9 +19,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "99_JDEngine_Doc", "99_JDEng
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Contents", "JDEngine_Contents\JDEngine_Contents.vcxproj", "{4A624634-A2D9-4563-952B-6F5D85BD7757}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Core", "JDEngine_Core\JDEngine_Core.vcxproj", "{8E94777F-CD1E-4CA0-8012-C78F82C6E6EC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "00_JDEngine_Core", "JDEngine_Core\JDEngine_Core.vcxproj", "{8E94777F-CD1E-4CA0-8012-C78F82C6E6EC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Renderer", "JDEngine_Renderer\JDEngine_Renderer.vcxproj", "{43F6A818-A9EE-4FBC-8BCB-256F9253A824}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_JDEngine_Renderer", "JDEngine_Renderer\JDEngine_Renderer.vcxproj", "{43F6A818-A9EE-4FBC-8BCB-256F9253A824}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Base", "JDEngine_Base\JDEngine_Base.vcxproj", "{678AF937-7D2A-4E5C-B2BB-5DFE94D94BDF}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Windows", "JDEngine_Windows\JDEngine_Windows.vcxproj", "{1A5BAFD9-547C-43C0-A275-12F19298BDD4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Common", "JDEngine_Common\JDEngine_Common.vcxproj", "{DF76876E-303E-4054-B3AF-4E4AF33EDFB7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_JDEngine_Components", "JDEngine_Components\JDEngine_Components.vcxproj", "{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +125,14 @@ Global
 		{DF76876E-303E-4054-B3AF-4E4AF33EDFB7}.Release|x64.Build.0 = Release|x64
 		{DF76876E-303E-4054-B3AF-4E4AF33EDFB7}.Release|x86.ActiveCfg = Release|Win32
 		{DF76876E-303E-4054-B3AF-4E4AF33EDFB7}.Release|x86.Build.0 = Release|Win32
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Debug|x64.ActiveCfg = Debug|x64
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Debug|x64.Build.0 = Debug|x64
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Debug|x86.ActiveCfg = Debug|Win32
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Debug|x86.Build.0 = Debug|Win32
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Release|x64.ActiveCfg = Release|x64
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Release|x64.Build.0 = Release|x64
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Release|x86.ActiveCfg = Release|Win32
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +147,7 @@ Global
 		{A5B64D14-6FE7-49E5-B5B5-C7358523842A} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 		{1A5BAFD9-547C-43C0-A275-12F19298BDD4} = {C6656A86-B2AA-425E-AAC2-CCF6DDC035AE}
 		{DF76876E-303E-4054-B3AF-4E4AF33EDFB7} = {C6656A86-B2AA-425E-AAC2-CCF6DDC035AE}
+		{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23} = {5466DFC8-3527-4539-805D-F08476521228}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2898C4AC-C152-4BD2-9EDB-65F5CBB64651}

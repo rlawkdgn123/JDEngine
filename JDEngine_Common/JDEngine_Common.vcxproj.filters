@@ -17,6 +17,9 @@
     <Filter Include="Color">
       <UniqueIdentifier>{f453b1d9-429a-491b-bf41-e1bdfcd53d0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{1396d460-6ea1-4871-addd-35ba34628ea3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -33,6 +36,9 @@
     </ClInclude>
     <ClInclude Include="JDMath.h">
       <Filter>OutputHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreGlobals.h">
+      <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -21,16 +21,16 @@
     <ClInclude Include="framework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
-    <ClInclude Include="BaseJDInterface.h">
-      <Filter>01_JDInterface_JDEngine_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderJDInterface.h">
-      <Filter>02_JDInterface_JDEngine_Core</Filter>
-    </ClInclude>
     <ClInclude Include="Renderframework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
-    <ClInclude Include="CoreJDInterface.h">
+    <ClInclude Include="BaseInterface.h">
+      <Filter>01_JDInterface_JDEngine_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreInterface.h">
+      <Filter>02_JDInterface_JDEngine_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderInterface.h">
       <Filter>02_JDInterface_JDEngine_Core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,4 +13,8 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
+
+class pch
+{
+};
 #endif //PCH_H

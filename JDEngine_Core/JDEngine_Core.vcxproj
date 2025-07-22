@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Components</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,7 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Components</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,13 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CoreGlobals.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneList.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="GameObjectList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObjectBase.cpp" />
@@ -159,6 +159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneBase.cpp" />
+    <ClCompile Include="SceneList.cpp" />
     <ClCompile Include="SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,9 @@
     <ProjectReference Include="..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj">
       <Project>{a5b64d14-6fe7-49e5-b5b5-c7358523842a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameObjectBase.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

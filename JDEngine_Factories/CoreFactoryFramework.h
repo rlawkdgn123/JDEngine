@@ -2,7 +2,7 @@
 #include "CoreInterface.h"
 #include "RenderInterface.h"
 
-#include "../JDEngine_Core/CoreGlobals.h"
+#include "../JDEngine_Common/CoreGlobals.h"
 
 #include "../JDEngine_Renderer/D2DRenderer.h"
 

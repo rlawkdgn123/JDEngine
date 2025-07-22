@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="CoreGlobals">
-      <UniqueIdentifier>{ec105981-620b-42b9-b8ba-e59e7f5a36a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{f3f011e4-49bf-466e-91ae-af8317b0957d}</UniqueIdentifier>
     </Filter>
@@ -28,34 +25,34 @@
     <Filter Include="GameObject">
       <UniqueIdentifier>{3a04721d-aaa3-4211-b91f-dd17a6b85b1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pre-Compile">
+      <UniqueIdentifier>{b0581a58-6bf9-4021-9734-84532e2daf9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Scene\SceneManager</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreGlobals.h">
-      <Filter>CoreGlobals</Filter>
     </ClInclude>
     <ClInclude Include="SceneBase.h">
       <Filter>Scene\SceneBase</Filter>
     </ClInclude>
-    <ClInclude Include="SceneList.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectBase.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectList.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneList.h">
+      <Filter>Scene\SceneBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Scene\SceneManager</Filter>
     </ClCompile>
@@ -65,5 +62,16 @@
     <ClCompile Include="GameObjectBase.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Pre-Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneList.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameObjectBase.inl">
+      <Filter>GameObject</Filter>
+    </None>
   </ItemGroup>
 </Project>

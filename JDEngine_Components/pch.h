@@ -11,10 +11,15 @@
 #endif
 
 #include <vector>
+#include <string>
+#include <functional>
+#include <unordered_map>
 #include <algorithm>
+
 #include <D2D1Helper.h> // d2d 구조체 및 Util 모음
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 
 #include <stdexcept>
+

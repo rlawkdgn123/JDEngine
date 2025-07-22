@@ -1,122 +1,202 @@
 #pragma once
 #include <cassert>
 
-namespace Compontnts {
-    namespace D2DTM
-    {
-        enum class PivotPreset
+
+namespace JDMath = JDGlobal::Math;
+
+namespace JDModule {
+    namespace JDComponent {
+        namespace D2DTM
         {
-            TopLeft,
-            TopRight,
-            BottomLeft,
-            BottomRight,
-            Center
-        };
-
-        class Transform : Interface::Comonent::Transform{
-        public:
-            using Vec2 = JDGlobal::Math::Vector2F;
-            using Mat3x2 = D2D1::Matrix3x2F;
-
-            Transform()
-                : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
-                m_dirty(true), m_parentTM(nullptr) {
-                m_matrixLocal = D2D1::Matrix3x2F::Identity();
-                m_matrixWorld = D2D1::Matrix3x2F::Identity();
-            }
-
-            ~Transform() = default;
-
-        public:
-            // 부모 Transform 참조 (계층 관리 X, 소유권 없음)
-            void SetParentTransform(Transform* parentTM) {
-                // GameObject가 관계를 설정해주므로, 여기서는 단순 참조만 갱신
-                m_parentTM = parentTM;
-                MarkAsDirty(); // 부모가 바뀌었으니 월드 행렬 재계산 필요
-            }
-
-            // 트랜스폼 설정 
-            void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
-            void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
-            void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
-
-            const Vec2& GetPosition() const { return m_position; }
-            float GetRotation() const { return m_rotation; }
-            const Vec2& GetScale() const { return m_scale; }
-
-            void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
-            void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
-            void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
-
-            const Vec2& GetPosition() const { return m_position; }
-            float GetRotation() const { return m_rotation; }
-            const Vec2& GetScale() const { return m_scale; }
-
-            void Translate(const Vec2& delta)
+            enum class PivotPreset
             {
-                m_position.x += delta.x;
-                m_position.y += delta.y;
-                SetDirty();
-            }
-            void Translate(const float x, const float y)
-            {
-                m_position.x += x;
-                m_position.y += y;
-                SetDirty();
-            }
+                TopLeft,
+                TopRight,
+                BottomLeft,
+                BottomRight,
+                Center
+            };
 
-            void Rotate(float degree)
-            {
-                m_rotation += degree;
-                SetDirty();
-            }
+            class Transform : public JDModule::JDComponent::Component {
+            public:
+                using Vec2 = JDGlobal::Math::Vector2F;
+                using Mat3x2 = D2D1::Matrix3x2F;
 
-            // ** 변환 행렬 **
-            const Mat3x2& GetLocalMatrix()
-            {
-                if (m_dirty) UpdateMatrices();
-                return m_matrixLocal;
-            }
+                Transform()
+                    : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
+                    m_dirty(false), m_parent(nullptr)
+                {
+                    m_matrixLocal = D2D1::Matrix3x2F::Identity();
+                    m_matrixWorld = D2D1::Matrix3x2F::Identity();
+                }
 
-            const Mat3x2& GetWorldMatrix()
-            {
-                if (m_dirty) UpdateMatrices();
-                return m_matrixWorld;
-            }
+                Transform(Vec2 tr)
+                    : m_position{ tr.x, tr.y }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
+                    m_dirty(false), m_parent(nullptr)
+                {
+                    m_matrixLocal = D2D1::Matrix3x2F::Identity();
+                    m_matrixWorld = D2D1::Matrix3x2F::Identity();
+                }
+                ~Transform()
+                {
+                    for (auto* child : m_children)
+                        child->m_parent = nullptr;
+                }
 
-            Mat3x2 GetInverseWorldMatrix()
-            {
-                Mat3x2 inv = GetWorldMatrix();
-                inv.Invert();
-                return inv;
-            }
+                Transform* GetParent() const { return m_parent; }
 
-            // ** 회전과 스케일을 위한 피봇 설정 **
-            void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
-            D2D1_POINT_2F GetPivotPoint() const { return m_pivot; }
+                void SetParent(Transform* newParent)
+                {
+                    assert(newParent != this); // 자기 자신을 부모로 설정할 수 없음
+                    assert(m_parent == nullptr); // DetachFromParent 를 먼저 호출하고 다시 SetParent를 호출해야 함
+                    if (newParent == m_parent) return;
+                    if (m_parent) DetachFromParent();
 
-        private:
-            void SetDirty()
-            {
-                m_dirty = true;
-                // 자식 전파는 GameObject 계층에서 처리해야 함
-            }
+                    m_parent = newParent;
+                    m_parent->AddChild(this);
 
-            void UpdateMatrices(); // 정의는 외부에 있음
+                    SetDirty();
+                }
 
-        private:
-            Vec2    m_position = { 0.f, 0.f };  // 위치값 (Position)
-            float   m_rotation = 0.f;           // 회전값 (Rotation)
-            Vec2    m_scale = { 1.f, 1.f };     // 크기값 (Scale) 
+                void DetachFromParent()
+                {
+                    if (m_parent == nullptr) return;
 
-            Transform* m_parentTM = nullptr;    // 부모 Transform 참조 (계층 X)
+                    m_parent->RemoveChild(this);
 
-            Mat3x2 m_matrixLocal;
-            Mat3x2 m_matrixWorld;
-            D2D1_POINT_2F m_pivot;
-            bool m_dirty;
-        };
+                    m_parent = nullptr;
+
+                    SetDirty();
+                }
+
+                void AddChild(Transform* child)
+                {
+                    // 자식의 로컬 좌표를 부모 좌표계로 변환
+                    // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
+                    D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                    chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
+
+                    auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                    JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                    m_children.push_back(child);
+                }
+
+                void RemoveChild(Transform* child)
+                {
+                    // 월드로 보낸다.
+                    D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                    chiledLocalTM = chiledLocalTM * GetWorldMatrix();
+
+                    auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                    JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                    m_children.erase(
+                        std::remove(m_children.begin(), m_children.end(), child),
+                        m_children.end()
+                    );
+                }
+
+                // ** 트랜스폼 설정 **
+                void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
+                void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
+                void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
+
+                const Vec2& GetPosition() const { return m_position; }
+                float GetRotation() const { return m_rotation; }
+                const Vec2& GetScale() const { return m_scale; }
+
+                void Translate(const Vec2& delta)
+                {
+                    m_position.x += delta.x;
+                    m_position.y += delta.y;
+                    SetDirty();
+                }
+
+                void Translate(const float x, const float y)
+                {
+                    m_position.x += x;
+                    m_position.y += y;
+                    SetDirty();
+                }
+
+                void Rotate(float degree)
+                {
+                    m_rotation += degree;
+                    SetDirty();
+                }
+
+                // ** 방향 벡터 **
+                Vec2 GetForward() const
+                {
+                    float radian = JDMath::DegreeToRadian(m_rotation);
+                    return { std::cosf(radian), std::sinf(radian) };
+                }
+
+                // ** 변환 행렬 **
+                const Mat3x2& GetLocalMatrix()
+                {
+                    if (m_dirty) UpdateMatrices();
+
+                    return m_matrixLocal;
+                }
+
+                const Mat3x2& GetWorldMatrix()
+                {
+                    if (m_dirty) UpdateMatrices();
+
+                    return m_matrixWorld;
+                }
+
+                Mat3x2 GetInverseWorldMatrix()
+                {
+                    Mat3x2 inv = GetWorldMatrix();
+                    inv.Invert();
+                    return inv;
+                }
+
+                // ** 회전과 스케일을 위한 피봇 설정 **
+                void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
+
+                D2D1_POINT_2F GetPivotPoint() const
+                {
+                    return m_pivot;
+                }
+
+            private:
+                void SetDirty()
+                {
+                    m_dirty = true;
+                    for (auto* child : m_children)
+                    {
+                        child->SetDirty();
+                    }
+                }
+
+                void UpdateMatrices();
+
+                void Update(float dt) override {}
+
+                void OnEvent(const std::string& ev) override {}
+
+            private:
+
+                bool m_dirty;
+
+                Vec2     m_position = { 0.f, 0.f }; // translation position
+                float    m_rotation = 0.f;          // in degrees
+                Vec2     m_scale = { 1.f, 1.f };
+
+
+                Transform* m_parent;
+                std::vector<Transform*> m_children;
+
+                Mat3x2 m_matrixLocal;
+                Mat3x2 m_matrixWorld;
+
+                D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
+            };
+        }
     }
-
 
 }

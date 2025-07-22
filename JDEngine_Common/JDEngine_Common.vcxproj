@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CoreGlobals.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="JDMath.h" />
     <ClInclude Include="MathType.h" />

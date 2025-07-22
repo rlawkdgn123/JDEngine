@@ -2,6 +2,10 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cassert>
+#include <tuple>
+#include "ComponentList.h"
+
 // 클래스 구현 설계도
 /*
 클래스 구현 설계도 (수정 아직 안함 이거 아님)
@@ -16,78 +20,77 @@
     (사각형 객체)					 (원 객체)
 =============================================================
 */
-class Component; // 추후 추가하기
+
+
 
 namespace JDModule{
-	//class GameObjectBase : public JDInterface::GameObjectBase {
-	class GameObjectBase {
-    protected:
-        GameObjectBase() { };   // 직접 객체 생성 불가, 파생에서만 가능
-        GameObjectBase(const GameObjectBase&) = delete;
+    namespace JDGameObject {
+        class GameObjectBase : public JDInterface::JDGameObject::GameObjectBase {
+        public:
+            using Component = JDModule::JDComponent::Component;
+            using Transform = JDModule::JDComponent::D2DTM::Transform;
+            using Vector2f = JDGlobal::Math::Vector2F;
+            using MessageID = uint32_t;
+        public:
+            virtual ~GameObjectBase() {}
 
-    public:
-        template<typename T, typename... Args>
-        T* AddComponent(Args&&... args)
-        {
-            static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+        protected:
+            GameObjectBase() = default;
+            GameObjectBase(const GameObjectBase&) = delete;
 
-            auto comp = std::make_unique<T>(std::forward<Args>(args)...);
+        public:
+            template<typename T, typename... Args>
+            T* AddComponent(Args&&... args);
 
-            comp->SetOwner(this);
+            template<typename T>
+            T* GetComponent() const; // 같은 컴포넌트가 여러 개면 어떻게 뒷순번 컴포넌트를 반환시킬까??
 
-            T* ptr = comp.get();
+            virtual void Update(float deltaTime) override;
 
-            m_Components.emplace_back(std::move(comp));
+            virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) override;
+            virtual void SendComPonentEvent(const std::string& ev) override;
 
-            return ptr;
-        }
+            std::wstring GetName() const { return m_name; }
 
-        template<typename T>
-        T* GetComponent() const
-        {
-            for (auto& com : m_Components)
-            {
-                if (auto ptr = dynamic_cast<T*>(com.get()))
-                {
-                    return ptr;
-                }
-            }
+            bool IsActive() const { return m_active; }
+            void SetActive(bool active) { m_active = active; }
 
-            return nullptr;
-        }
+            void SetTag(const std::wstring& tag) { m_tag = tag; }
+            const std::wstring& GetTag() const { return m_tag; }
 
-        void Update(float deltaTime);
+            void SetLayer(int layer) { m_layer = layer; }
+            int GetLayer() const { return m_layer; }
 
-        void SendMessage(const CoreGlobal::MessageID msg, void* data = nullptr);
+        protected:
 
-        void SendEvent(const std::string& ev);
+            std::vector<std::unique_ptr<Component>> m_components; // 컴포넌트 리스트
+            Vector2f m_direction = { 0.0f, 0.0f }; // 방향 (단위 벡터) : 필요한가? 고민해보자
+            std::wstring m_name;
+            std::wstring m_tag = L"";
+            int m_layer = 0;
+            bool m_active = true;
 
-        void SetDirty()
-        {
-            m_dirty = true;
-            for (auto* child : m_children)
-            {
-                child->SetDirty();
-            }
-        }
-
-    protected:
-        
-        Compontnts::D2DTM::Transform* m_tr;
-        Vector2f m_dir = { 0.0f, 0.0f }; // 방향 (단위 벡터) : 필요한가? 고민해보자
-
-        bool m_dirty; // 자식이 있는지 없는지 구분
-        Transform* m_parent; // 부모 저장 변수 // 오브젝트로 바꾸기
-        std::vector<Transform*> m_children; // 자식 저장 변수
-
-        // 입력 청취자 여부 컴포넌트도 추가할지 고민해보자.
-        std::vector<std::unique_ptr<Component>> m_Components;
-
-    };
-
-	};
-
-
-
+        };
+    }
 }
 
+namespace JDModule {
+    namespace JDGameObject {
+        class GameObject : public JDModule::JDGameObject::GameObjectBase {
+        public:
+            GameObject() { AddComponent<Transform>(); };
+            GameObject(Vector2f pos) { AddComponent<Transform>(pos); }
+
+            virtual ~GameObject() = default;
+
+            // 파생에서 필요한 특화 기능 정의
+            void SetName(const std::wstring& name) { m_name = name; }
+            void SetDirection(const Vector2f& dir) { m_direction = dir; }
+
+            //tuple RenderPresentGet() override;
+            // 혹은 추가 Update 오버라이드 가능
+        protected:
+        };
+    }
+}
+#include "GameObjectBase.inl"

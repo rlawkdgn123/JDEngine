@@ -7,6 +7,7 @@ using namespace CoreGlobal;
 
 namespace JDModule {
     namespace Scene {
+        using GameObjectBase = JDInterface::JDGameObject::GameObjectBase;
         class SceneBase : public JDInterface::Scene::SceneBase
         {
         public:
@@ -42,7 +43,6 @@ namespace JDModule {
 
             const SceneType m_Type;
             const std::string m_ID = "None";
-
             std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
             //vector<unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 필요한 정보만 복사해서 받아온다.
 

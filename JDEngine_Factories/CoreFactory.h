@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "CoreFactoryFramework.h"
+namespace JDScene = JDModule::Scene;
+
 
 namespace CoreFactory {
     class D2DRendererFactory {
@@ -24,14 +26,15 @@ namespace CoreFactory {
             return std::make_shared<JDModule::SceneManager>();
         }
     };
-
+    
     namespace Scene {
         class SceneFactory {
             using SceneType = CoreGlobal::SceneType;
-            using JDScene = JDModule::Scene;
         public:
-            static std::unique_ptr<JDInterface::Scene::SceneBase> CreateUnique(SceneType type) {
+            static std::unique_ptr<JDInterface::Scene::SceneBase> CreateUnique(SceneType type, std::string id) {
                 switch (type) {
+                case SceneType::SCENE_TEST:
+                    return std::make_unique<JDScene::TestScene>(CoreGlobal::SceneType::SCENE_TEST,id);
                 case SceneType::SCENE_TITLE:
                     //return std::make_unique<JDScene::SceneTitle>();
                 case SceneType::SCENE_PLAY:

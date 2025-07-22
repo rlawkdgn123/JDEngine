@@ -36,6 +36,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JDEngine_Common", "JDEngine_Common\JDEngine_Common.vcxproj", "{DF76876E-303E-4054-B3AF-4E4AF33EDFB7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_JDEngine_Components", "JDEngine_Components\JDEngine_Components.vcxproj", "{BE95FC1A-B536-476C-9E4A-DE90E6D3BF23}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DF76876E-303E-4054-B3AF-4E4AF33EDFB7} = {DF76876E-303E-4054-B3AF-4E4AF33EDFB7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

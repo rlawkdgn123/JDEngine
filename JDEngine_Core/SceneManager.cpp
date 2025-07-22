@@ -10,6 +10,8 @@ namespace JDModule {
         assert(scene != nullptr);
         assert(!scene->GetID().empty());
 
+        std::cout << "씬 생성 : " << scene->GetID() << std::endl;
+
         if (m_SceneTable.size() >= MAX_SCENES)
         {
             assert(false && "씬 개수 제한 초과. 해결하려면 MAX_SCENES의 값을 변경하세요.");

@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -130,7 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Renderer;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -159,6 +159,9 @@
   <ItemGroup>
     <ProjectReference Include="..\JDEngine_Base\JDEngine_Base.vcxproj">
       <Project>{678af937-7d2a-4e5c-b2bb-5dfe94d94bdf}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\JDEngine_Common\JDEngine_Common.vcxproj">
+      <Project>{df76876e-303e-4054-b3af-4e4af33edfb7}</Project>
     </ProjectReference>
     <ProjectReference Include="..\JDEngine_Contents\JDEngine_Contents.vcxproj">
       <Project>{4a624634-a2d9-4563-952b-6f5d85bd7757}</Project>

@@ -78,7 +78,7 @@ bool EngineCore::Initialize()
 
     m_SceneManager = CoreFactory::SceneManagerFactory::CreateUnique(); // 팩토리에서 씬 매니저 unique 형태로 할당
 
-
+    m_SceneManager->RegisterScene(CoreFactory::Scene::SceneFactory::CreateUnique(SceneType::SCENE_TEST,"TestScene01"));
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
     // ImGui 컨텍스트 생성

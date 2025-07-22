@@ -3,11 +3,11 @@
 #include "framework.h"
 #include "SceneBase.h"
 
-using namespace JDModule::Scene;
+using namespace JDModule::JDScene;
 using namespace CoreGlobal;
 
 namespace JDModule {
-	namespace Scene {
+	namespace JDScene {
 
         class DefaultScene : public SceneBase
         {

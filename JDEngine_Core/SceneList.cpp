@@ -3,7 +3,7 @@
 
 
 namespace JDModule {
-    namespace Scene {
+    namespace JDScene {
 
 
         void DefaultScene::OnEnter() {}

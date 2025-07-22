@@ -6,9 +6,9 @@
 using namespace CoreGlobal;
 
 namespace JDModule {
-    namespace Scene {
+    namespace JDScene {
         using GameObjectBase = JDInterface::JDGameObject::GameObjectBase;
-        class SceneBase : public JDInterface::Scene::SceneBase
+        class SceneBase : public JDInterface::JDScene::SceneBase
         {
         public:
             SceneBase(SceneType type, std::string id)

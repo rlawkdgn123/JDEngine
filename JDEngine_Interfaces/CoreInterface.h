@@ -5,7 +5,7 @@
 
 namespace JDInterface {
 
-    namespace Scene {
+    namespace JDScene {
         class SceneBase {
         public:
             virtual ~SceneBase() = default;
@@ -19,7 +19,7 @@ namespace JDInterface {
     class SceneManager
     {
     public:
-        using SceneBase = Scene::SceneBase;
+        using SceneBase = JDScene::SceneBase;
 
         virtual ~SceneManager() = default;
 

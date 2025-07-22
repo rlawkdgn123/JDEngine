@@ -4,7 +4,7 @@
 // SceneManager.h`
 
 using namespace CoreGlobal;
-using SceneBase = JDInterface::Scene::SceneBase;
+using SceneBase = JDInterface::JDScene::SceneBase;
 
 namespace JDModule {
     class SceneManager : public JDInterface::SceneManager

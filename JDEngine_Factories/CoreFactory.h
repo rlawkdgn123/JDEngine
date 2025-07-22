@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "CoreFactoryFramework.h"
-namespace JDScene = JDModule::Scene;
+namespace JDScene = JDModule::JDScene;
 
 
 namespace CoreFactory {
@@ -27,14 +27,14 @@ namespace CoreFactory {
         }
     };
     
-    namespace Scene {
+    namespace JDScene {
         class SceneFactory {
             using SceneType = CoreGlobal::SceneType;
         public:
-            static std::unique_ptr<JDInterface::Scene::SceneBase> CreateUnique(SceneType type, std::string id) {
+            static std::unique_ptr<JDInterface::JDScene::SceneBase> CreateUnique(SceneType type, std::string id) {
                 switch (type) {
                 case SceneType::SCENE_TEST:
-                    return std::make_unique<JDScene::TestScene>(CoreGlobal::SceneType::SCENE_TEST,id);
+                    return std::make_unique<JDModule::JDScene::TestScene>(CoreGlobal::SceneType::SCENE_TEST,id);
                 case SceneType::SCENE_TITLE:
                     //return std::make_unique<JDScene::SceneTitle>();
                 case SceneType::SCENE_PLAY:

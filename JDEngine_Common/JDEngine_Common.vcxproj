@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="CoreGlobals.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="InputUtil.h" />
     <ClInclude Include="JDMath.h" />
     <ClInclude Include="MathType.h" />
     <ClInclude Include="MathUtil.h" />

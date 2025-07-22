@@ -7,14 +7,18 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define _CRTDBG_MAP_ALLOC
+// Windows
+#define WIN32_LEAN_AND_MEAN 
 // 여기에 미리 컴파일하려는 헤더 추가
+#include <Windows.h>
+#include <stdio.h>
+#include <stdexcept>
 #include <iostream>
 #include <cassert>
 #include <unordered_map>
 #include <memory>
 #include <vector>
+#include <array>
 
-class pch
-{
-};
 #endif //PCH_H

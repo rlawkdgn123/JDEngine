@@ -28,6 +28,9 @@
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{b0581a58-6bf9-4021-9734-84532e2daf9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{574d771b-c077-4145-9d81-a040fb11829e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="SceneList.h">
       <Filter>Scene\SceneBase</Filter>
     </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -67,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="SceneList.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

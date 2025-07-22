@@ -2,7 +2,7 @@
 #include "SceneBase.h"
 
 namespace JDModule {
-	namespace Scene {
+	namespace JDScene {
 
 	}
 }

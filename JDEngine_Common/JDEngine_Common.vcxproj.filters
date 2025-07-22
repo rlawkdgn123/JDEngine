@@ -40,6 +40,9 @@
     <ClInclude Include="CoreGlobals.h">
       <Filter>Global</Filter>
     </ClInclude>
+    <ClInclude Include="InputUtil.h">
+      <Filter>OutputHeader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

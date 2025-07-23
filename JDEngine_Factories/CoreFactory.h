@@ -27,6 +27,17 @@ namespace CoreFactory {
         }
     };
     
+    class InputManagerFactory {
+    public:
+        static std::unique_ptr<JDInterface::InputManager> CreateUnique() {
+            return std::make_unique<JDModule::InputManager>();
+        }
+
+        static std::shared_ptr<JDInterface::InputManager> CreateShared() {
+            return std::make_shared<JDModule::InputManager>();
+        }
+    };
+
     namespace JDScene {
         class SceneFactory {
             using SceneType = CoreGlobal::SceneType;

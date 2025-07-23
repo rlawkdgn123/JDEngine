@@ -35,9 +35,11 @@ private:
 	void UpdateFileList();
 
 	std::unique_ptr<JDInterface::GameTimer> m_EngineTimer = nullptr;
-	std::shared_ptr<JDInterface::D2DRenderer> m_Renderer = nullptr;
 	std::unique_ptr<JDInterface::SceneManager> m_SceneManager = nullptr;
-
+	std::shared_ptr<JDInterface::D2DRenderer> m_Renderer = nullptr;
+	std::shared_ptr<JDInterface::InputManager> m_InputManager = nullptr;
+	
+	
 	//GameTimer       m_GameTimer;
 	//AssetManager    m_AssetManager;
 

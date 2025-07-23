@@ -12,6 +12,10 @@ namespace JDModule {
 
         void DefaultScene::Update(float dt) {}
 
+        void DefaultScene::FixedUpdate(float fixedDeltaTime) {}
+
+        void DefaultScene::LateUpdate(float deltaTime) {}
+
         void DefaultScene::Render() {}
 
         void DefaultScene::GameObjCreate() {}
@@ -24,6 +28,10 @@ namespace JDModule {
         void TestScene::OnLeave() {}
 
         void TestScene::Update(float dt) {}
+
+        void TestScene::FixedUpdate(float fixedDeltaTime) {}
+
+        void TestScene::LateUpdate(float deltaTime) {}
 
         void TestScene::Render() {}
 

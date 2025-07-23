@@ -71,11 +71,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
     </ClCompile>
-    <ClCompile Include="SceneList.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneList.cpp">
+      <Filter>Scene\SceneBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

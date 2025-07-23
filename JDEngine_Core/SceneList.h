@@ -22,6 +22,10 @@ namespace JDModule {
 
             void Update(float dt) override;
 
+            void FixedUpdate(float fixedDeltaTime);
+
+            void LateUpdate(float deltaTime);
+
             void Render() override;
 
             void GameObjCreate();
@@ -39,6 +43,10 @@ namespace JDModule {
             void OnLeave() override;
 
             void Update(float dt) override;
+
+            void FixedUpdate(float fixedDeltaTime);
+
+            void LateUpdate(float deltaTime);
 
             void Render() override;
 

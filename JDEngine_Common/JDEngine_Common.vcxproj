@@ -142,6 +142,7 @@
     <ClInclude Include="MathType.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Global.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathUtil.cpp" />

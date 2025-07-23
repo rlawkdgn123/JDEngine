@@ -58,6 +58,18 @@ namespace JDModule {
             m_CurrentScene->Update(deltaTime);
     }
 
+    void SceneManager::FixedUpdate(float fixedDeltaTime)
+    {
+        if (m_CurrentScene)
+            m_CurrentScene->Update(fixedDeltaTime);
+    }
+
+    void SceneManager::LateUpdate(float deltaTime)
+    {
+        if (m_CurrentScene)
+            m_CurrentScene->Update(deltaTime);
+    }
+
     void SceneManager::Render()
     {
         if (m_CurrentScene)

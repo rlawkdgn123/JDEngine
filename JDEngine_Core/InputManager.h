@@ -17,16 +17,16 @@ struct KeyEdge
 };
 
 namespace JDModule {
-	class InputManager
+	class InputManager : public JDInterface::InputManager
 	{
 	public:
-		static InputManager& Instance()
-		{
-			// Simple singleton implementation
-			static InputManager instance;
+		InputManager() = default;
+		~InputManager() = default;
 
-			return instance;
-		}
+		InputManager(const InputManager&) = delete;
+		InputManager& operator=(const InputManager&) = delete;
+
+	public:
 
 		bool Initialize(HWND hwnd); // 인풋매니저 초기화
 
@@ -52,14 +52,7 @@ namespace JDModule {
 
 		std::array<bool, 256>    m_keyDown = {};   // 현재 Down 상태
 		std::array<KeyEdge, 256> m_keyEdge = {};   // 이번 프레임 Edge 결과
-
-	private:
-
-		InputManager() = default;
-		~InputManager() = default;
-
-		InputManager(const InputManager&) = delete;
-		InputManager& operator=(const InputManager&) = delete;
+		
 	};
 }
 

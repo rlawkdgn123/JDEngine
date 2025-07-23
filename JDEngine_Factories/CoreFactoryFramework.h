@@ -9,3 +9,5 @@
 #include "../JDEngine_Core/SceneManager.h"
 #include "../JDEngine_Core/SceneBase.h"
 #include "../JDEngine_Core\SceneList.h"
+
+#include "../JDEngine_Core/InputManager.h"

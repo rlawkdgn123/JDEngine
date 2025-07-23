@@ -12,6 +12,8 @@ namespace JDInterface {
             virtual void OnEnter() = 0;
             virtual void OnLeave() = 0;
             virtual void Update(float deltaTime) = 0;
+            virtual void FixedUpdate(float fixedDeltaTime) = 0;
+            virtual void LateUpdate(float deltaTime) = 0;
             virtual void Render() = 0;
             virtual const std::string& GetID() const = 0;
         };
@@ -32,12 +34,28 @@ namespace JDInterface {
         // 매 프레임 씬 업데이트
         virtual void Update(float deltaTime) = 0;
 
+        virtual void FixedUpdate(float fixedDeltaTime) = 0;
+
+        virtual void LateUpdate(float deltaTime) = 0;
+
         // 매 프레임 씬 렌더링
         virtual void Render() = 0;
 
         // 현재 활성 씬 조회 (상수 포인터)
         virtual const SceneBase* GetCurrentScene() const = 0;
     };
+
+    class InputManager {
+    public:
+        virtual ~InputManager() = default;
+
+        virtual bool Initialize(HWND hwnd) = 0;
+
+        virtual bool OnHandleMessage(const MSG& msg) = 0;
+
+        virtual bool GetKeyPressed(UINT vk) = 0;
+    };
+
     namespace JDGameObject {
         class GameObjectBase {
         public:

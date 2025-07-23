@@ -35,6 +35,10 @@ namespace JDModule {
 
         void Update(float deltaTime);
 
+        void FixedUpdate(float fixedDeltaTime);
+
+        void LateUpdate(float deltaTime);
+
         void Render();
 
         const SceneBase* GetCurrentScene() const { return m_CurrentScene; }

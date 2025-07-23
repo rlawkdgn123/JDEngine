@@ -10,7 +10,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 /////////////////////////////////////////////////////////////////////////
 #include <shobjidl.h>            // IFileOpenDialog
 #include <filesystem>            // C++17 std::filesystem
-
+#include <assert.h>
 /////////////////////////////////////////////////////////////////////////
 #include "EngineCore.h"
 /////////////////////////////////////////////////////////////////////////
@@ -71,14 +71,19 @@ bool EngineCore::Initialize()
 
     m_EngineTimer = BaseFactory::GameTimerFactory::CreateUnique(); // 팩토리에서 타이머 unique 형태로 할당
 
+
     //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer 객체를 shared_ptr로 생성 뒤 m_Renderer에 저장
 
     m_Renderer = CoreFactory::D2DRendererFactory::CreateShared(); // 팩토리에서 렌더러 shared 형태로 할당
     m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
-    m_SceneManager = CoreFactory::SceneManagerFactory::CreateUnique(); // 팩토리에서 씬 매니저 unique 형태로 할당
+    m_SceneManager = CoreFactory::SceneManagerFactory::CreateUnique(); // 팩토리에서 SceneManager unique 형태로 할당
+    m_InputManager = CoreFactory::InputManagerFactory::CreateShared(); // 팩토리에서 InputManager shared 형태로 할당
 
-    m_SceneManager->RegisterScene(CoreFactory::JDScene::SceneFactory::CreateUnique(SceneType::SCENE_TEST,"TestScene01"));
+
+
+
+    m_SceneManager->RegisterScene(CoreFactory::JDScene::SceneFactory::CreateUnique(SceneType::SCENE_TEST, "TestScene01"));
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
     // ImGui 컨텍스트 생성
@@ -120,7 +125,6 @@ void EngineCore::Run()
         else {
             // 키 메세지 입력이 없으면 기본 업데이트(반복) 로직 실행
             UpdateTime();
-            UpdateInput();
             UpdateLogic();
             Render();
         }
@@ -155,46 +159,18 @@ bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void EngineCore::UpdateTime()
 {
+    assert(m_EngineTimer != nullptr);
+
     m_EngineTimer->Tick();
     m_SceneManager->Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
+    constexpr float FixedDeltaTime = 1.0f / 60.0f;
+    m_SceneManager->FixedUpdate(FixedDeltaTime);
+    m_SceneManager->LateUpdate(m_EngineTimer->DeltaTime());
 }
 
-void EngineCore::UpdateInput() // 인풋 매니저에게 위임 예정
+void EngineCore::UpdateLogic()
 {
-}
-
-void EngineCore::UpdateLogic() // 추후 애니메이션 매니저 만들어서 위임 예정
-{
-    LoadAssets();
-
-    //if (m_selectedAssetKey.empty()) return; // 선택된 애셋 키가 비어있으면 리턴
-
-    //const AnimationClips& clips = m_AssetManager.GetClips(m_selectedAssetKey);
-
-    //if (clips.empty()) return; // 클립이 없으면 리턴
-
-    //if (m_bChangedFile)
-    //{
-    //    // 파일이 변경되었으면 애니메이션 정보 초기화
-    //    m_curSprites.clear();
-    //    m_bChangedFile = false;
-
-    //    // 애니메이션 플레이어 생성 및 클립 설정
-    //    for (const auto& [name, clip] : clips)
-    //    {
-    //        SpriteAnimator ap;
-
-    //        ap.SetClip(&clip);
-
-    //        m_curSprites.push_back(ap);
-    //    }
-    //}
-
-    //// 애니메이션 플레이어 업데이트
-    //for (auto& sprite : m_curSprites)
-    //{
-    //    sprite.Update(m_GameTimer.DeltaTime());
-    //}
+    assert(m_SceneManager != nullptr);
 }
 
 void EngineCore::Render()
@@ -205,140 +181,9 @@ void EngineCore::Render()
 
     m_Renderer->RenderEnd(false);
 
-
     m_Renderer->Present();
 }
 
-void EngineCore::RenderImGUI()
-{
-    /*
-     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
-    pd3dDeviceContext = m_Renderer->GetD3DContext();
-    ID3D11RenderTargetView* rtvs[] = { m_Renderer->GetD3DRenderTargetView() };
-
-    if (pd3dDeviceContext == nullptr || rtvs[0] == nullptr)
-    {
-        return; // 렌더링 컨텍스트나 뷰가 없으면 리턴
-    }
-    m_Renderer->GetD3DContext()->OMSetRenderTargets(1, rtvs, nullptr);
-
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-
-    // 데모 UI 창 표시
-    //static bool showDemo = true;
-    //ImGui::ShowDemoWindow(&showDemo);
-
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            // 메뉴 아이템을 누르면 패널 열기 플래그 토글
-            if (ImGui::MenuItem("Open Folder", "Ctrl+O"))
-            {
-                m_showFolderPanel = true;
-            }
-
-            ImGui::EndMenu();
-        }
-
-        ImGui::EndMainMenuBar();
-    }
-
-    // 모달리스 패널로 변경
-    if (m_showFolderPanel)
-    {
-        ImGui::Begin("Folder Browser", &m_showFolderPanel, ImGuiWindowFlags_AlwaysAutoResize);
-
-        if (ImGui::Button("Browse..."))
-        {
-            BrowseForFolder();
-            m_pathInput = std::filesystem::path(m_folderPath).u8string();
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Load"))
-        {
-            if (false == m_folderPath.empty())
-            {
-                UpdateFileList();
-                m_selectedFile.clear();
-            }
-        }
-
-        ImGui::Text("Folder: %ls", m_folderPath.c_str());
-
-        // 파일 목록 렌더링
-        if (false == m_folderPath.empty())
-        {
-            if (ImGui::BeginListBox("Files", ImVec2(300.0f, 8 * ImGui::GetTextLineHeightWithSpacing())))
-            {
-                for (const auto& name : m_fileList)
-                {
-                    bool isSelected = (m_selectedFile == name);
-                    if (ImGui::Selectable(WStringToString(name).c_str(), isSelected, ImGuiSelectableFlags_AllowDoubleClick))
-                    {
-                        m_selectedFile = name;
-                    }
-
-                    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-                    {
-                        m_selectedFile = name;
-                    }
-                }
-
-                ImGui::EndListBox();
-            }
-
-            if (!m_selectedFile.empty())
-            {
-                ImGui::Text("Selected File: %ls", m_selectedFile.c_str());
-            }
-        }
-
-        ImGui::End(); // Folder Browser 패널 끝
-    }
-
-    // ImGui 렌더링
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-    */
-}
-
-void EngineCore::LoadAssets()
-{
-    /*
-     std::filesystem::path fullPath =
-        m_folderPath / std::filesystem::path(m_selectedFile);
-
-    auto ext = fullPath.extension();
-    if (ext.empty()) return; // 확장자가 없으면 리턴
-
-    std::filesystem::path keyPath = fullPath;
-    keyPath.replace_extension(); // 확장자 제거하고 키로 쓸꺼에요
-
-    std::wstring keyWide = keyPath.wstring();
-
-    if (keyWide == m_selectedAssetKey)
-    {
-        // 이미 로드된 파일이면 다시 로드하지 않음
-        return;
-    }
-    m_selectedAssetKey = keyWide; // 선택된 파일 키 저장
-
-    if (ext == L".png")
-    {
-        m_AssetManager.LoadTexture(m_Renderer.get(), keyWide, fullPath);
-    }
-    else if (ext == L".json")
-    {
-        m_AssetManager.LoadAseprite(m_Renderer.get(), keyWide, fullPath);
-    }
-
-    m_bChangedFile = true; // 파일이 변경되었음을 표시
-    */
-}
 
 void EngineCore::OnResize(int width, int height) // 창 크기 재조정
 {
@@ -352,65 +197,3 @@ void EngineCore::OnClose()
     std::cout << "OnClose" << std::endl;
 }
 
-void EngineCore::BrowseForFolder()
-{
-    /*
-    HRESULT hr;
-    IFileOpenDialog* pDialog = nullptr;
-
-    // COM 대화상자 생성
-    hr = CoCreateInstance(
-        CLSID_FileOpenDialog, nullptr,
-        CLSCTX_INPROC_SERVER,
-        IID_PPV_ARGS(&pDialog)
-    );
-
-    if (FAILED(hr) || !pDialog) return;
-
-    // 폴더 선택 모드로 설정
-    DWORD opts = 0;
-    if (SUCCEEDED(pDialog->GetOptions(&opts)))
-        pDialog->SetOptions(opts | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
-
-    // 다이얼로그 표시
-    hr = pDialog->Show(m_hWnd);
-
-    if (SUCCEEDED(hr))
-    {
-        IShellItem* pItem = nullptr;
-        hr = pDialog->GetResult(&pItem);
-
-        if (SUCCEEDED(hr) && pItem)
-        {
-            PWSTR pszFolder = nullptr;
-            hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolder);
-            if (SUCCEEDED(hr) && pszFolder)
-            {
-                m_folderPath = pszFolder;        // 선택된 폴더 경로 저장
-                CoTaskMemFree(pszFolder);
-            }
-            pItem->Release();
-        }
-    }
-
-    pDialog->Release();
-    */
-}
-
-void EngineCore::UpdateFileList()
-{
-    /*
-     m_fileList.clear();
-    for (const auto& entry : std::filesystem::directory_iterator(m_folderPath))
-    {
-        if (entry.is_regular_file())
-        {
-            // 파일만 추가, 디렉토리는 제외
-            if (entry.path().extension() == L".png" ||
-                entry.path().extension() == L".json")
-                // 이미지 파일만 추가
-                m_fileList.push_back(entry.path().filename().wstring());
-        }
-    }
-    */
-}

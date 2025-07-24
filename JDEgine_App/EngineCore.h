@@ -16,7 +16,6 @@ class EngineCore : public Window::JDWndBase {
 public:
 	using GameTimer = JDEngine::GameTimer;
 	using D2DRenderer = JDEngine::D2DRenderer;
-	using InputManager = JDEngine::InputManager;
 	using SceneManager = JDEngine::SceneManager;
 public:
 	EngineCore() = default;
@@ -34,8 +33,8 @@ private:
 	void UpdateInput();
 	void UpdateLogic();
 
-	void Render();
-	void RenderImGUI();
+	void Render(); // 렌더러에 위임할 예정
+	void RenderImGUI(); // 고민중
 
 	void LoadAssets();
 
@@ -47,9 +46,6 @@ private:
 
 	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
 	std::unique_ptr<SceneManager> m_SceneManager = nullptr;
-	std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
-	std::shared_ptr<InputManager> m_InputManager = nullptr;
-	
 	
 	//GameTimer       m_GameTimer;
 	//AssetManager    m_AssetManager;
@@ -58,6 +54,7 @@ private:
 	//wstring    m_folderPath;
 	//wstring    m_selectedFile;
 
+private:
 	std::wstring    m_selectedAssetKey;
 
 	//std::vector<SpriteAnimator> m_curSprites;

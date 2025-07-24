@@ -20,11 +20,12 @@ namespace JDEngine {
 	class InputManager
 	{
 	public:
-		InputManager() = default;
-		~InputManager() = default;
+		static InputManager& Instance()
+		{
+			static InputManager instance;
 
-		InputManager(const InputManager&) = delete;
-		InputManager& operator=(const InputManager&) = delete;
+			return instance;
+		}
 
 	public:
 
@@ -33,6 +34,9 @@ namespace JDEngine {
 		bool OnHandleMessage(const MSG& msg); // 키 입력 정보를 핸들에 넘기기
 
 		bool GetKeyPressed(UINT vk);
+
+		MouseState GetMouseState() const { return m_CurMouse; }
+
 
 	protected:
 
@@ -52,7 +56,12 @@ namespace JDEngine {
 
 		std::array<bool, 256>    m_keyDown = {};   // 현재 Down 상태
 		std::array<KeyEdge, 256> m_keyEdge = {};   // 이번 프레임 Edge 결과
-		
+
+	private:
+		InputManager() = default;
+		~InputManager() = default;
+
+		InputManager(const InputManager&) = delete;
+		InputManager& operator=(const InputManager&) = delete;
 	};
 }
-

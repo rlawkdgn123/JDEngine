@@ -25,13 +25,11 @@ namespace JDEngine {
 
         public:
 
-            virtual void OnEnter() = 0;
+            virtual void OnEnter() {};
 
-            virtual void OnLeave() = 0;
+            virtual void OnLeave() {};
 
-            virtual void Update(float deltaTime) = 0;
-
-            virtual void Render() = 0; // 렌더는 렌더러에 위임 (지금으로서는 사실상 쓰지 않을 것 같다)
+            virtual void Update(float deltaTime) {};
 
             SceneType GetType() const { return m_Type; }
 

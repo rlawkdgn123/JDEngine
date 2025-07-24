@@ -58,8 +58,6 @@ namespace JDEngine {
         std::vector<SceneEntry> m_SceneTable;
 
         SceneBase* m_CurrentScene; // 활성화된 씬에 대한 RawPtr
-
-        
     };
 }
 

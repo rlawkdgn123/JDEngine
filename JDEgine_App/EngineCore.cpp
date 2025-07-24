@@ -70,11 +70,11 @@ bool EngineCore::Initialize()
     if (false == __super::Create(className, windowName, 1204, 800)) {
         return false;
     }
-    
-    if (false == InputManager::Instance().Initialize(m_hWnd)) // 인풋 매니저 초기화
-    {
-        return false;
-    }
+
+    //if (false == InputManager::Instance().Initialize(m_hWnd))
+    //{
+    //    return false;
+    //}
 
     m_EngineTimer = make_unique<GameTimer>(); // 팩토리에서 타이머 unique 형태로 할당
 
@@ -86,6 +86,8 @@ bool EngineCore::Initialize()
 
     m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
+
+    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     m_ResourceManager = make_shared<ResourceManager>();
 
     ID2D1RenderTarget* renderTarget = m_Renderer->GetRenderTarget();
@@ -129,8 +131,6 @@ bool EngineCore::Initialize()
 
     // [ImGUI] DirectX 11 백엔드 초기화
     //ImGui_ImplDX11_Init(pd3dDevice, pd3dDeviceContext);
-
-    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
     // 타이머 초기화
     m_EngineTimer->Reset();

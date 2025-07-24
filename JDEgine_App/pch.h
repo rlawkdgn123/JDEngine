@@ -40,7 +40,8 @@
 #include <d2d1_3helper.h>            // D2D1::Helper 클래스들
 #include <dwrite_3.h>                // DirectWrite (최신 텍스트 엔진)
 #include <wincodec.h>                // WIC (이미지 로딩)
-
+#include <d2d1effects.h>             // 이펙트
+#include <d2d1effecthelpers.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
 

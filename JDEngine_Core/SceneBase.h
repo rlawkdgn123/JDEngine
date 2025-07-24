@@ -30,6 +30,8 @@ namespace JDEngine {
             virtual void OnLeave() {};
 
             virtual void Update(float deltaTime) {};
+            
+            virtual void Render() {};
 
             SceneType GetType() const { return m_Type; }
 

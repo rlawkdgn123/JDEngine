@@ -46,7 +46,10 @@ private:
 
 	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
 	std::unique_ptr<SceneManager> m_SceneManager = nullptr;
-	
+	std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
+	//std::shared_ptr<InputManager> m_InputManager = nullptr;
+	std::shared_ptr<ResourceManager> m_ResourceManager = nullptr;
+
 	//GameTimer       m_GameTimer;
 	//AssetManager    m_AssetManager;
 

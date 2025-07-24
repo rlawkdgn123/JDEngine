@@ -21,7 +21,7 @@ namespace JDEngine
         DX::ThrowIfFailed(hr);
 
         m_wicFactory = wicFactory;
-        
+
     }
 
     void D2DRenderer::Uninitialize()
@@ -84,6 +84,63 @@ namespace JDEngine
             srcRect
         );
     }
+
+    ComPtr<ID2D1Effect> D2DRenderer::CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount)
+    {
+        ComPtr<ID2D1Effect> blurEffect;
+        HRESULT hr = m_d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, &blurEffect);
+        if (FAILED(hr)) return nullptr;
+
+        blurEffect->SetInput(0, srcBitmap);
+        blurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount);
+        return blurEffect;
+    }
+
+    ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect)
+    {
+        if (!src) return nullptr;
+
+        D2D1_SIZE_U size = {
+            static_cast<UINT32>(cropRect.right - cropRect.left),
+            static_cast<UINT32>(cropRect.bottom - cropRect.top)
+        };
+
+        if (size.width == 0 || size.height == 0) return nullptr;
+
+        D2D1_SIZE_F srcSize = src->GetSize();
+        if (cropRect.left < 0 || cropRect.top < 0 || cropRect.right > srcSize.width || cropRect.bottom > srcSize.height)
+            return nullptr;
+
+        D2D1_BITMAP_PROPERTIES1 props = {};
+        props.pixelFormat = src->GetPixelFormat();
+
+        props.bitmapOptions = D2D1_BITMAP_OPTIONS_NONE;
+
+        src->GetDpi(&props.dpiX, &props.dpiY);
+
+        auto context = GetD2DContext();
+
+        ComPtr<ID2D1Bitmap1> cropped;
+        HRESULT hr = context->CreateBitmap(size, nullptr, 0, &props, &cropped);
+        if (FAILED(hr)) {
+            std::cout << "[CreateCroppedBitmap] CreateBitmap ½ÇÆÐ. HRESULT: 0x" << std::hex << hr << std::endl;
+            return nullptr;
+        }
+
+        D2D1_POINT_2U destPoint = { 0, 0 };
+        D2D1_RECT_U srcRect = {
+            static_cast<UINT32>(cropRect.left),
+            static_cast<UINT32>(cropRect.top),
+            static_cast<UINT32>(cropRect.right),
+            static_cast<UINT32>(cropRect.bottom)
+        };
+
+        hr = cropped->CopyFromBitmap(&destPoint, src, &srcRect);
+        if (FAILED(hr)) return nullptr;
+
+        return cropped;
+    }
+
 
 
     void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color)

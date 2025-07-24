@@ -46,6 +46,13 @@ namespace JDEngine
 
         ID3D11RenderTargetView* GetD3DRenderTargetView() const { return m_d3dRenderTV.Get(); }
 
+        ID2D1RenderTarget* GetRenderTarget() const { return m_d2dContext.Get(); }
+
+        ComPtr<ID2D1Effect> CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount);// ¿Ã∆Â∆Æ
+
+        ID2D1DeviceContext* GetD2DContext() const { return m_d2dContext.Get(); }
+
+        Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
     private:
 
         void CreateDeviceAndSwapChain(HWND hwnd);

@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <unordered_map>
+#include <fstream>
 #include <memory>
 #include <vector>
 #include <array>

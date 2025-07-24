@@ -40,6 +40,9 @@
     <Filter Include="Component\Transform">
       <UniqueIdentifier>{24402111-92c9-4c3d-962d-9aea2efba1b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{ecdacdf6-8bfa-4a9a-a1ed-4a7772a6aef6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -78,6 +81,9 @@
     <ClInclude Include="D2DTransform.h">
       <Filter>Component\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -106,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

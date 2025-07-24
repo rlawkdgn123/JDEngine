@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Framework.h"
+///////////////////////////////////////////////////////////////////////////
+#pragma comment(lib, "dxguid.lib")
 ////////////////////////////////////////////////////////////////////////////
 /*
 #include "imgui.h"
@@ -10,6 +12,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 /////////////////////////////////////////////////////////////////////////
 #include <shobjidl.h>            // IFileOpenDialog
 #include <filesystem>            // C++17 std::filesystem
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>//C++14
 #include <assert.h>
 /////////////////////////////////////////////////////////////////////////
 #include "EngineCore.h"
@@ -81,12 +85,33 @@ bool EngineCore::Initialize()
     m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
     m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
-    m_InputManager = make_unique<InputManager>(); // 팩토리에서 InputManager shared 형태로 할당
 
 
+    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    m_ResourceManager = make_shared<ResourceManager>();
 
+    ID2D1RenderTarget* renderTarget = m_Renderer->GetRenderTarget();
 
-    m_SceneManager->RegisterScene(SceneType::SCENE_TEST, "TestScene01");
+    if (!m_ResourceManager->Initialize(renderTarget)) {
+        return false;
+    }
+    //파일 위치 확인용(디버그용)
+    if (!std::experimental::filesystem::exists("../Resource/Test.png"))
+        std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;
+
+    if (!m_ResourceManager->LoadTexture("Test", L"../Resource/Test.png")) {
+        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
+    }
+    if (!m_ResourceManager->LoadTexture("cat", L"../Resource/cat.png")) {
+        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!m_ResourceManager->LoadTexture("graybirdsheet", L"../Resource/graybirdsheet.png")) {
+        std::cout << "[ERROR] graybirdsheet 텍스처 로드 실패" << std::endl;
+    }
+    if (!m_ResourceManager->LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
+        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
+    }
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
     // ImGui 컨텍스트 생성
@@ -122,7 +147,7 @@ void EngineCore::Run()
         {
             // PeekMessage가 검색한 메시지(msg)를 분석하여
             // 가상 키 코드 메시지(예: WM_KEYDOWN, WM_KEYUP)를 문자 메시지(예: WM_CHAR)로 변환
-            if (false == m_InputManager->OnHandleMessage(msg))
+            if (false == InputManager. OnHandleMessage(msg))
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
@@ -184,11 +209,97 @@ void EngineCore::Render()
 {
     if (m_Renderer == nullptr) return;
 
+    static float elapsed = 0.0f;
+    static size_t frameIndex = 0;
+
+    float deltaTime = m_EngineTimer->DeltaTime();
+
     m_Renderer->RenderBegin();
+
+    ID2D1Bitmap* bitmap = m_ResourceManager->GetTexture("graybirdsheet"); // PNG 이름
+    const AnimationClip* clip = m_ResourceManager->GetAnimation("GrayBird"); // JSON 애니메이션 이름
+
+    if (bitmap && clip && !clip->frames.empty())
+    {
+        elapsed += deltaTime;
+
+        if (elapsed >= clip->frames[frameIndex].duration)
+        {
+            elapsed = 0.0f;
+            frameIndex++;
+            if (frameIndex >= clip->frames.size())
+            {
+                frameIndex = clip->loop ? 0 : clip->frames.size() - 1;
+            }
+        }
+
+        const D2D1_RECT_F& src = clip->frames[frameIndex].srcRect;
+        D2D1_RECT_F dest = D2D1::RectF(100, 100,
+            100 + (src.right - src.left),
+            100 + (src.bottom - src.top));
+
+        auto context = m_Renderer->GetD2DContext();
+
+        // 1. 현재 프레임만 잘라낸 임시 비트맵 생성
+        ComPtr<ID2D1Bitmap1> cropped = m_Renderer->CreateCroppedBitmap(static_cast<ID2D1Bitmap1*>(bitmap), src);
+        if (cropped) {
+            auto effect = m_Renderer->CreateGaussianBlurEffect(cropped.Get(), 5.0f);
+            if (effect) {
+                m_Renderer->GetD2DContext()->DrawImage(effect.Get(), D2D1::Point2F(dest.left, dest.top));
+            }
+            else {
+                m_Renderer->DrawBitmap(cropped.Get(), dest);
+            }
+        }
+        else {
+            m_Renderer->DrawBitmap(static_cast<ID2D1Bitmap1*>(bitmap), dest, src, 1.0f);
+        }
+
+        // 2. 블러 이펙트 생성
+        auto effect = m_Renderer->CreateGaussianBlurEffect(cropped.Get(), 5.0f);
+
+        // 3. 출력
+        if (effect)
+            context->DrawImage(effect.Get(), D2D1::Point2F(dest.left, dest.top));
+        else
+            m_Renderer->DrawBitmap(cropped.Get(), dest);
+    }
+
+    ID2D1Bitmap* bitmap1 = m_ResourceManager->GetTexture("Test");
+    if (bitmap1)
+    {
+        D2D1_RECT_F dest1 = D2D1::RectF(400, 100, 400 + bitmap1->GetSize().width, 100 + bitmap1->GetSize().height);
+        m_Renderer->DrawBitmap(static_cast<ID2D1Bitmap1*>(bitmap1), dest1);
+    }
+
+    ID2D1Bitmap* bitmap2 = m_ResourceManager->GetTexture("cat");
+    if (bitmap2)
+    {
+        auto context = m_Renderer->GetD2DContext();
+
+        // 1. 원본 비트맵에서 그레이스케일 효과 생성
+        ComPtr<ID2D1Effect> grayEffect;
+        HRESULT hr = context->CreateEffect(CLSID_D2D1Grayscale, &grayEffect);
+        if (FAILED(hr)) {
+            std::cout << "그레이스케일 효과 생성 실패" << std::endl;
+            return;
+        }
+
+        grayEffect->SetInput(0, bitmap2);
+
+        // 2. 출력 위치 지정
+        D2D1_POINT_2F destPos = { 600.f, 200.f };
+
+        // 3. 그레이스케일 효과 출력
+        context->DrawImage(grayEffect.Get(), destPos);
+    }
 
     m_Renderer->RenderEnd(false);
 
+
     m_Renderer->Present();
+
+
 }
 
 

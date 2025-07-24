@@ -3,8 +3,6 @@
 #include "framework.h"
 #include "SceneBase.h"
 
-using namespace JDEngine::JDScene;
-
 namespace JDEngine {
 	namespace JDScene {
 

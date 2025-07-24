@@ -3,8 +3,7 @@
 #include "SceneBase.h"
 #include "SceneManager.h"
 
-namespace JDEngine {
-
+ 
     // 참고 : 인터페이스에서 SceneBase의 Using선언 되어있음
     void SceneManager::RegisterScene(std::unique_ptr<SceneBase> scene)
     {
@@ -76,6 +75,4 @@ namespace JDEngine {
         if (m_CurrentScene)
             m_CurrentScene->Render();
     }
-   
-}
 

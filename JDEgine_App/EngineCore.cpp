@@ -21,10 +21,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 // 추후 애니메이션 부분은 분리 예정
 using namespace std;
 
-using GameTimer = JDEngine::GameTimer;
-using D2DRenderer = JDEngine::D2DRenderer;
-using InputManager = JDEngine::InputManager;
-using SceneManager = JDEngine::SceneManager;
 // (일반적으로 UTF-8 또는 로케일별 멀티바이트 인코딩)과
 // std::wstring (일반적으로 Windows에서 UTF-16) 간의 변환을 위한 두 가지 유틸리티 함수
 
@@ -84,10 +80,12 @@ bool EngineCore::Initialize()
     m_Renderer = make_shared<D2DRenderer>(); // 팩토리에서 렌더러 shared 형태로 할당
     m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
-    m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
+    //m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
+    
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
 
-    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     m_ResourceManager = make_shared<ResourceManager>();
 
     ID2D1RenderTarget* renderTarget = m_Renderer->GetRenderTarget();
@@ -191,13 +189,13 @@ bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void EngineCore::UpdateTime()
 {
     assert(m_EngineTimer != nullptr);
-    assert(m_SceneManager != nullptr);
 
     m_EngineTimer->Tick();
-    m_SceneManager->Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
+    SceneManager::Instance().Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
     constexpr float FixedDeltaTime = 1.0f / 60.0f;
-    m_SceneManager->FixedUpdate(FixedDeltaTime);
-    m_SceneManager->LateUpdate(m_EngineTimer->DeltaTime());
+    SceneManager::Instance().FixedUpdate(FixedDeltaTime);
+    SceneManager::Instance().LateUpdate(m_EngineTimer->DeltaTime());
+    SceneManager::Instance().Render();
 }
 
 void EngineCore::UpdateLogic()

@@ -3,8 +3,7 @@
 #include "GameObjectBase.h"
 #include "SceneBase.h"
 
-namespace JDEngine {
+ 
 	namespace JDScene {
 
 	}
-}

@@ -1,12 +1,12 @@
 #pragma once
 #include "JDWndBase.h"
 
-namespace JDEngine {
-	class GameTimer;
-	class SceneManager;
-	class D2DRenderer;
-	class InputManager;
-}
+ 
+class GameTimer;
+class SceneManager;
+class D2DRenderer;
+class InputManager;
+
 
 namespace Window {
 	class JDWndBase;
@@ -14,10 +14,12 @@ namespace Window {
 
 class EngineCore : public Window::JDWndBase {
 public:
-	using GameTimer = JDEngine::GameTimer;
-	using D2DRenderer = JDEngine::D2DRenderer;
-	using SceneManager = JDEngine::SceneManager;
+	using GameTimer =  GameTimer;
+	using D2DRenderer =  D2DRenderer;
+	using SceneManager =  SceneManager;
 public:
+
+
 	EngineCore() = default;
 	virtual ~EngineCore() = default;
 
@@ -26,26 +28,18 @@ public:
 	void Finalize();
 
 	bool OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) override; // 추후 IMGUI 추가 시 살펴보기
-
 private:
 
 	void UpdateTime();
-	void UpdateInput();
 	void UpdateLogic();
 
 	void Render(); // 렌더러에 위임할 예정
-	void RenderImGUI(); // 고민중
-
-	void LoadAssets();
 
 	void OnResize(int width, int height) override;
 	void OnClose() override;
 
-	void BrowseForFolder();
-	void UpdateFileList();
-
 	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
-	std::unique_ptr<SceneManager> m_SceneManager = nullptr;
+	//std::unique_ptr<SceneManager> m_SceneManager = nullptr;
 	std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
 	//std::shared_ptr<InputManager> m_InputManager = nullptr;
 	std::shared_ptr<ResourceManager> m_ResourceManager = nullptr;

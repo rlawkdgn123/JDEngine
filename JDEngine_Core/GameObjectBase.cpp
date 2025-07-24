@@ -2,31 +2,30 @@
 #include "framework.h"
 #include "GameObjectBase.h"
 
-namespace JDEngine {
-	namespace JDGameObject {
-		using MessageID = JDGlobal::Core::MessageID;
+ 
+namespace JDGameObject {
+	using MessageID = JDGlobal::Core::MessageID;
 
-		void GameObjectBase::Update(float deltaTime) {
-			for (auto& com : m_components)
-			{
-				com->Update(deltaTime);
-			}
-		}
-
-		void GameObjectBase::SendComPonentMessage(const MessageID msg, void* data)
+	void GameObjectBase::Update(float deltaTime) {
+		for (auto& com : m_components)
 		{
-			for (auto& com : m_components)
-			{
-				com->HandleMessage(msg, data);
-			}
+			com->Update(deltaTime);
 		}
+	}
 
-		void GameObjectBase::SendComPonentEvent(const std::string& ev)
+	void GameObjectBase::SendComPonentMessage(const MessageID msg, void* data)
+	{
+		for (auto& com : m_components)
 		{
-			for (auto& com : m_components)
-			{
-				com->OnEvent(ev);
-			}
+			com->HandleMessage(msg, data);
+		}
+	}
+
+	void GameObjectBase::SendComPonentEvent(const std::string& ev)
+	{
+		for (auto& com : m_components)
+		{
+			com->OnEvent(ev);
 		}
 	}
 }

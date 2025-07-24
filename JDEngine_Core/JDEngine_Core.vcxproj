@@ -152,9 +152,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneBase.h" />
-    <ClInclude Include="SceneList.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="GameObjectList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Component.cpp" />
@@ -170,7 +168,6 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneBase.cpp" />
-    <ClCompile Include="SceneList.cpp" />
     <ClCompile Include="SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -5,9 +5,9 @@
 // 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.
 
 #ifndef PCH_H
+
 #define PCH_H
 
-// 여기에 미리 컴파일하려는 헤더 추가
-#include "framework.h"
-
+#include <memory>
+#include <iostream>
 #endif //PCH_H

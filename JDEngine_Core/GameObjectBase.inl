@@ -16,30 +16,29 @@
 
 // GameObjectBase.inl
 
-namespace JDEngine {
-    namespace JDGameObject {
-        template<typename T, typename... Args>
-        T* GameObjectBase::AddComponent(Args&&... args)
+ 
+namespace JDGameObject {
+    template<typename T, typename... Args>
+    T* GameObjectBase::AddComponent(Args&&... args)
+    {
+        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+        auto comp = std::make_unique<T>(std::forward<Args>(args)...);
+        comp->SetOwner(this);
+
+        T* ptr = comp.get();
+        m_components.emplace_back(std::move(comp));
+        return ptr;
+    }
+
+    template<typename T>
+    T* GameObjectBase::GetComponent() const
+    {
+        for (auto& com : m_components)
         {
-            static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
-
-            auto comp = std::make_unique<T>(std::forward<Args>(args)...);
-            comp->SetOwner(this);
-
-            T* ptr = comp.get();
-            m_components.emplace_back(std::move(comp));
-            return ptr;
+            if (auto ptr = dynamic_cast<T*>(com.get()))
+                return ptr;
         }
-
-        template<typename T>
-        T* GameObjectBase::GetComponent() const
-        {
-            for (auto& com : m_components)
-            {
-                if (auto ptr = dynamic_cast<T*>(com.get()))
-                    return ptr;
-            }
-            return nullptr;
-        }
+        return nullptr;
     }
 }

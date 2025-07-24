@@ -54,17 +54,11 @@
     <ClInclude Include="GameObjectBase.h">
       <Filter>GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectList.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Pre-Compile</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneList.h">
-      <Filter>Scene\SceneBase</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>Input</Filter>
@@ -100,9 +94,6 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneList.cpp">
-      <Filter>Scene\SceneBase</Filter>
     </ClCompile>
     <ClCompile Include="D2DRenderer.cpp">
       <Filter>D2DRenderer</Filter>

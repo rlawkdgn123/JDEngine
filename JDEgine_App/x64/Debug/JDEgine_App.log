@@ -1,10 +1,5 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(2190,5): warning MSB9008: 참조된 프로젝트 ..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj 없습니다.
+﻿  EngineCore.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
   Main.cpp
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\ResourceManager.h(5,10): error C1083: 포함 파일을 열 수 없습니다. 'json.hpp': No such file or directory
-  (소스 파일 'Main.cpp'을(를) 컴파일하는 중)
-  
-  EngineCore.cpp
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\ResourceManager.h(5,10): error C1083: 포함 파일을 열 수 없습니다. 'json.hpp': No such file or directory
-  (소스 파일 'EngineCore.cpp'을(를) 컴파일하는 중)
-  
   코드를 생성하고 있습니다...
+  JDEgine_App.vcxproj -> C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Debug\JDEgine_App.exe

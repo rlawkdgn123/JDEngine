@@ -16,8 +16,8 @@ struct KeyEdge
 	bool released = false;
 };
 
-namespace JDModule {
-	class InputManager : public JDInterface::InputManager
+namespace JDEngine {
+	class InputManager
 	{
 	public:
 		InputManager() = default;

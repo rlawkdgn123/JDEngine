@@ -2,7 +2,7 @@
 #include "framework.h"
 #include "InputManager.h"
 
-namespace JDModule {
+namespace JDEngine {
 	inline void GetVkName(const RAWKEYBOARD& kb, WCHAR* out, int cch) {
         if (cch <= 0 || !out) return;
 

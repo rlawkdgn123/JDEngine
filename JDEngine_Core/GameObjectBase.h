@@ -1,11 +1,10 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <memory>
-#include <cassert>
-#include <tuple>
+#include "pch.h"
+#include "Component.h"
+#include "D2DTransform.h"
 #include "ComponentList.h"
-
+#include "Global.h"
+#include "framework.h"
 // 클래스 구현 설계도
 /*
 클래스 구현 설계도 (수정 아직 안함 이거 아님)
@@ -22,15 +21,14 @@
 */
 
 
-
-namespace JDModule{
+namespace JDEngine{
     namespace JDGameObject {
-        class GameObjectBase : public JDInterface::JDGameObject::GameObjectBase {
+        class GameObjectBase {
         public:
-            using Component = JDModule::JDComponent::Component;
-            using Transform = JDModule::JDComponent::D2DTM::Transform;
             using Vector2f = JDGlobal::Math::Vector2F;
-            using MessageID = uint32_t;
+            using MessageID = JDGlobal::Core::MessageID;
+            using Component = JDEngine::JDComponent::Component;
+            using Transform = JDEngine::JDComponent::D2DTM::Transform;
         public:
             virtual ~GameObjectBase() {}
 
@@ -45,10 +43,10 @@ namespace JDModule{
             template<typename T>
             T* GetComponent() const; // 같은 컴포넌트가 여러 개면 어떻게 뒷순번 컴포넌트를 반환시킬까??
 
-            virtual void Update(float deltaTime) override;
+            virtual void Update(float deltaTime);
 
-            virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) override;
-            virtual void SendComPonentEvent(const std::string& ev) override;
+            virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) ;
+            virtual void SendComPonentEvent(const std::string& ev);
 
             std::wstring GetName() const { return m_name; }
 
@@ -74,9 +72,9 @@ namespace JDModule{
     }
 }
 
-namespace JDModule {
+namespace  {
     namespace JDGameObject {
-        class GameObject : public JDModule::JDGameObject::GameObjectBase {
+        class GameObject : public JDEngine::JDGameObject::GameObjectBase {
         public:
             GameObject() { AddComponent<Transform>(); };
             GameObject(Vector2f pos) { AddComponent<Transform>(pos); }

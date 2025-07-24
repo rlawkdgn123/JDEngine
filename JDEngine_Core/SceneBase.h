@@ -1,16 +1,17 @@
 #pragma once
 #include "pch.h"
 #include "framework.h"
+#include "GameObjectBase.h"
 //GameObjectBase; // 전방 선언
 
-using namespace CoreGlobal;
-
-namespace JDModule {
+namespace JDEngine {
     namespace JDScene {
-        using GameObjectBase = JDInterface::JDGameObject::GameObjectBase;
-        class SceneBase : public JDInterface::JDScene::SceneBase
+        class SceneBase
         {
         public:
+            using SceneType = JDGlobal::Core::SceneType;
+            using GameObjectBase = JDEngine::JDGameObject::GameObjectBase;
+
             SceneBase(SceneType type, std::string id)
                 : m_Type(type), m_ID(id) {
             }

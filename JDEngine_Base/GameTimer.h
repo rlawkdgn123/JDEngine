@@ -4,8 +4,8 @@
 #ifndef GAMETIMER_H  
 #define GAMETIMER_H  
 
-namespace JDModule {
-	class GameTimer : public JDInterface::GameTimer
+namespace JDEngine {
+	class GameTimer
 	{
 	public:
 		GameTimer();

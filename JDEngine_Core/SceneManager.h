@@ -1,15 +1,14 @@
 #pragma once
 #include "pch.h"
-
+#include "SceneBase.h"
 // SceneManager.h`
 
-using namespace CoreGlobal;
-using SceneBase = JDInterface::JDScene::SceneBase;
-
-namespace JDModule {
-    class SceneManager : public JDInterface::SceneManager
+namespace JDEngine {
+    class SceneManager 
     {
     public:
+        using SceneBase = JDEngine::JDScene::SceneBase;
+
         SceneManager() : m_CurrentScene(nullptr) {} // 외부 생성 불가
     private:
         // 복사 생성자, 복사 대입 연산자 삭제 (객체 복사 금지)
@@ -60,6 +59,7 @@ namespace JDModule {
 
         SceneBase* m_CurrentScene; // 활성화된 씬에 대한 RawPtr
 
+        
     };
 }
 

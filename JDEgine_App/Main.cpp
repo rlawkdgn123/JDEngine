@@ -27,7 +27,7 @@ int main(void) {
 	if (FAILED(hr))
 		return -1; // -1 실패 신호 반환 후 종료
 
-	//g_pEngineCore = new JDModule::EngineCore();
+	//g_pEngineCore = new JDEngine::EngineCore();
 	g_pEngineCore = make_unique<EngineCore>();
 
 	if (!g_pEngineCore->Initialize())

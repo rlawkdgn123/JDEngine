@@ -3,10 +3,9 @@
 #include "framework.h"
 #include "SceneBase.h"
 
-using namespace JDModule::JDScene;
-using namespace CoreGlobal;
+using namespace JDEngine::JDScene;
 
-namespace JDModule {
+namespace JDEngine {
 	namespace JDScene {
 
         class DefaultScene : public SceneBase

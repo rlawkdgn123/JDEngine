@@ -1,12 +1,23 @@
 #pragma once
-
 #include "JDWndBase.h"
+
+namespace JDEngine {
+	class GameTimer;
+	class SceneManager;
+	class D2DRenderer;
+	class InputManager;
+}
 
 namespace Window {
 	class JDWndBase;
 }
 
 class EngineCore : public Window::JDWndBase {
+public:
+	using GameTimer = JDEngine::GameTimer;
+	using D2DRenderer = JDEngine::D2DRenderer;
+	using InputManager = JDEngine::InputManager;
+	using SceneManager = JDEngine::SceneManager;
 public:
 	EngineCore() = default;
 	virtual ~EngineCore() = default;
@@ -34,10 +45,10 @@ private:
 	void BrowseForFolder();
 	void UpdateFileList();
 
-	std::unique_ptr<JDInterface::GameTimer> m_EngineTimer = nullptr;
-	std::unique_ptr<JDInterface::SceneManager> m_SceneManager = nullptr;
-	std::shared_ptr<JDInterface::D2DRenderer> m_Renderer = nullptr;
-	std::shared_ptr<JDInterface::InputManager> m_InputManager = nullptr;
+	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
+	std::unique_ptr<SceneManager> m_SceneManager = nullptr;
+	std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
+	std::shared_ptr<InputManager> m_InputManager = nullptr;
 	
 	
 	//GameTimer       m_GameTimer;

@@ -31,6 +31,15 @@
     <Filter Include="Input">
       <UniqueIdentifier>{574d771b-c077-4145-9d81-a040fb11829e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="D2DRenderer">
+      <UniqueIdentifier>{5a7c0105-6768-4977-a0eb-b483b83642b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{167c6cb7-f356-4fa0-9577-a24ddf944dd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\Transform">
+      <UniqueIdentifier>{24402111-92c9-4c3d-962d-9aea2efba1b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -57,6 +66,18 @@
     <ClInclude Include="InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="D2DRenderer.h">
+      <Filter>D2DRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentList.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DTransform.h">
+      <Filter>Component\Transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -76,6 +97,15 @@
     </ClCompile>
     <ClCompile Include="SceneList.cpp">
       <Filter>Scene\SceneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp">
+      <Filter>D2DRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DTransform.cpp">
+      <Filter>Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

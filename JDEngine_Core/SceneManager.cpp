@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "framework.h"
+#include "SceneBase.h"
+
 #include "SceneManager.h"
 
-namespace JDModule {
+namespace JDEngine {
 
     // 참고 : 인터페이스에서 SceneBase의 Using선언 되어있음
     void SceneManager::RegisterScene(std::unique_ptr<SceneBase> scene)
@@ -12,7 +14,7 @@ namespace JDModule {
 
         std::cout << "씬 생성 : " << scene->GetID() << std::endl;
 
-        if (m_SceneTable.size() >= MAX_SCENES)
+        if (m_SceneTable.size() >= JDGlobal::Core::MAX_SCENES)
         {
             assert(false && "씬 개수 제한 초과. 해결하려면 MAX_SCENES의 값을 변경하세요.");
             return;

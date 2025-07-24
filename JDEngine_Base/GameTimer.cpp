@@ -7,7 +7,7 @@
 /// QueryPerformanceCounter : 고해상도 타이머 기능 제공
 /// </summary>
 
-namespace JDModule {
+namespace JDEngine {
 	GameTimer::GameTimer()
 		: m_secondsPerCount(0.0), m_deltaTIme(-1.0), m_baseTime(0), m_stopTime(0),
 		m_pausedTime(0), m_prevTime(0), m_currTime(0), m_stopped(false)

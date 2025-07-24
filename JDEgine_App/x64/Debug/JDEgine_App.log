@@ -1,7 +1,9 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(JDEngine_Core.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(JDEngine_Renderer.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(00_JDEngine_Core.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(2190,5): warning MSB9008: 참조된 프로젝트 ..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj 없습니다.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(2190,5): warning MSB9008: 참조된 프로젝트 ..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj 없습니다.
+  Main.cpp
   EngineCore.cpp
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
-  Main.cpp
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\EngineCore.cpp(89,35): error C2653: 'SceneType': 클래스 또는 네임스페이스 이름이 아닙니다.
+C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEgine_App\EngineCore.cpp(89,46): error C2065: 'SCENE_TEST': 선언되지 않은 식별자입니다.
   코드를 생성하고 있습니다...
-  JDEgine_App.vcxproj -> C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Debug\JDEgine_App.exe

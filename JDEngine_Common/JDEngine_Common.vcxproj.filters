@@ -37,9 +37,6 @@
     <ClInclude Include="JDMath.h">
       <Filter>OutputHeader</Filter>
     </ClInclude>
-    <ClInclude Include="CoreGlobals.h">
-      <Filter>Global</Filter>
-    </ClInclude>
     <ClInclude Include="InputUtil.h">
       <Filter>OutputHeader</Filter>
     </ClInclude>

@@ -24,7 +24,7 @@
     <ProjectGuid>{8e94777f-cd1e-4ca0-8012-c78f82c6e6ec}</ProjectGuid>
     <RootNamespace>JDEngineCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>00_JDEngine_Core</ProjectName>
+    <ProjectName>JDEngine_Core</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Components</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Common</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,7 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Interfaces;$(SolutionDir)JDEngine_Components</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Common</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,6 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentList.h" />
+    <ClInclude Include="D2DRenderer.h" />
+    <ClInclude Include="D2DTransform.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="InputManager.h" />
@@ -152,6 +156,9 @@
     <ClInclude Include="GameObjectList.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="D2DRenderer.cpp" />
+    <ClCompile Include="D2DTransform.cpp" />
     <ClCompile Include="GameObjectBase.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="pch.cpp">
@@ -165,14 +172,11 @@
     <ClCompile Include="SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JDEngine_Base\JDEngine_Base.vcxproj">
+      <Project>{678af937-7d2a-4e5c-b2bb-5dfe94d94bdf}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\JDEngine_Common\JDEngine_Common.vcxproj">
       <Project>{df76876e-303e-4054-b3af-4e4af33edfb7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\JDEngine_Components\JDEngine_Components.vcxproj">
-      <Project>{be95fc1a-b536-476c-9e4a-de90e6d3bf23}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\JDEngine_Interfaces\JDEngine_Interfaces.vcxproj">
-      <Project>{a5b64d14-6fe7-49e5-b5b5-c7358523842a}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

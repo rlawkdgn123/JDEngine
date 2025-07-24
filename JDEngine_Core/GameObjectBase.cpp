@@ -2,10 +2,9 @@
 #include "framework.h"
 #include "GameObjectBase.h"
 
-namespace JDModule {
+namespace JDEngine {
 	namespace JDGameObject {
-		using MessageID = uint32_t;
-		using Component = JDInterface::JDComponent::Component;
+		using MessageID = JDGlobal::Core::MessageID;
 
 		void GameObjectBase::Update(float deltaTime) {
 			for (auto& com : m_components)

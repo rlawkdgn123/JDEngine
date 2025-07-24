@@ -1,5 +1,7 @@
 #pragma once
-#include "BaseInterface.h"
-#include "CoreInterface.h"
-#include "BaseFactory.h"
-#include "CoreFactory.h"
+
+#include "Global.h"
+#include "GameTimer.h"
+#include "D2DRenderer.h"
+#include "InputManager.h"
+#include "SceneManager.h"

@@ -15,7 +15,8 @@
 */
 
 // GameObjectBase.inl
-namespace JDModule {
+
+namespace JDEngine {
     namespace JDGameObject {
         template<typename T, typename... Args>
         T* GameObjectBase::AddComponent(Args&&... args)

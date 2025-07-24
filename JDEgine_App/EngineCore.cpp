@@ -14,10 +14,13 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 /////////////////////////////////////////////////////////////////////////
 #include "EngineCore.h"
 /////////////////////////////////////////////////////////////////////////
-
 // 추후 애니메이션 부분은 분리 예정
 using namespace std;
 
+using GameTimer = JDEngine::GameTimer;
+using D2DRenderer = JDEngine::D2DRenderer;
+using InputManager = JDEngine::InputManager;
+using SceneManager = JDEngine::SceneManager;
 // (일반적으로 UTF-8 또는 로케일별 멀티바이트 인코딩)과
 // std::wstring (일반적으로 Windows에서 UTF-16) 간의 변환을 위한 두 가지 유틸리티 함수
 
@@ -69,21 +72,21 @@ bool EngineCore::Initialize()
     //    return false;
     //}
 
-    m_EngineTimer = BaseFactory::GameTimerFactory::CreateUnique(); // 팩토리에서 타이머 unique 형태로 할당
+    m_EngineTimer = make_unique<GameTimer>(); // 팩토리에서 타이머 unique 형태로 할당
 
 
     //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer 객체를 shared_ptr로 생성 뒤 m_Renderer에 저장
 
-    m_Renderer = CoreFactory::D2DRendererFactory::CreateShared(); // 팩토리에서 렌더러 shared 형태로 할당
+    m_Renderer = make_shared<D2DRenderer>(); // 팩토리에서 렌더러 shared 형태로 할당
     m_Renderer->Initialize(m_hWnd);//Direct2D 초기화 작업(디바이스 생성) 수행
 
-    m_SceneManager = CoreFactory::SceneManagerFactory::CreateUnique(); // 팩토리에서 SceneManager unique 형태로 할당
-    m_InputManager = CoreFactory::InputManagerFactory::CreateShared(); // 팩토리에서 InputManager shared 형태로 할당
+    m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
+    m_InputManager = make_unique<InputManager>(); // 팩토리에서 InputManager shared 형태로 할당
 
 
 
 
-    m_SceneManager->RegisterScene(CoreFactory::JDScene::SceneFactory::CreateUnique(SceneType::SCENE_TEST, "TestScene01"));
+    m_SceneManager->RegisterScene(SceneType::SCENE_TEST, "TestScene01");
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
     // ImGui 컨텍스트 생성
@@ -119,8 +122,11 @@ void EngineCore::Run()
         {
             // PeekMessage가 검색한 메시지(msg)를 분석하여
             // 가상 키 코드 메시지(예: WM_KEYDOWN, WM_KEYUP)를 문자 메시지(예: WM_CHAR)로 변환
-            TranslateMessage(&msg);
-            DispatchMessage(&msg); // 메세지를 윈도우 프로시저에 전달
+            if (false == m_InputManager->OnHandleMessage(msg))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
         }
         else {
             // 키 메세지 입력이 없으면 기본 업데이트(반복) 로직 실행
@@ -160,6 +166,7 @@ bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void EngineCore::UpdateTime()
 {
     assert(m_EngineTimer != nullptr);
+    assert(m_SceneManager != nullptr);
 
     m_EngineTimer->Tick();
     m_SceneManager->Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
@@ -170,7 +177,7 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
-    assert(m_SceneManager != nullptr);
+    
 }
 
 void EngineCore::Render()

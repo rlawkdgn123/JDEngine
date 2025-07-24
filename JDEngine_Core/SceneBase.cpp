@@ -1,7 +1,9 @@
 #include "pch.h"
+#include "Component.h"
+#include "GameObjectBase.h"
 #include "SceneBase.h"
 
-namespace JDModule {
+namespace JDEngine {
 	namespace JDScene {
 
 	}

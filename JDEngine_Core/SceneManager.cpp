@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
-
 #include "SceneManager.h"
 
 namespace JDEngine {

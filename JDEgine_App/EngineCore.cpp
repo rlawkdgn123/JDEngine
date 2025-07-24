@@ -70,11 +70,11 @@ bool EngineCore::Initialize()
     if (false == __super::Create(className, windowName, 1204, 800)) {
         return false;
     }
-
-    //if (false == InputManager::Instance().Initialize(m_hWnd))
-    //{
-    //    return false;
-    //}
+    
+    if (false == InputManager::Instance().Initialize(m_hWnd)) // 인풋 매니저 초기화
+    {
+        return false;
+    }
 
     m_EngineTimer = make_unique<GameTimer>(); // 팩토리에서 타이머 unique 형태로 할당
 
@@ -86,8 +86,6 @@ bool EngineCore::Initialize()
 
     m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
-
-    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     m_ResourceManager = make_shared<ResourceManager>();
 
     ID2D1RenderTarget* renderTarget = m_Renderer->GetRenderTarget();
@@ -132,6 +130,8 @@ bool EngineCore::Initialize()
     // [ImGUI] DirectX 11 백엔드 초기화
     //ImGui_ImplDX11_Init(pd3dDevice, pd3dDeviceContext);
 
+    m_SceneManager->RegisterScene(make_unique<JDEngine::JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+
     // 타이머 초기화
     m_EngineTimer->Reset();
 
@@ -147,7 +147,7 @@ void EngineCore::Run()
         {
             // PeekMessage가 검색한 메시지(msg)를 분석하여
             // 가상 키 코드 메시지(예: WM_KEYDOWN, WM_KEYUP)를 문자 메시지(예: WM_CHAR)로 변환
-            if (false == InputManager. OnHandleMessage(msg))
+            if (false == InputManager::Instance().OnHandleMessage(msg))
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);

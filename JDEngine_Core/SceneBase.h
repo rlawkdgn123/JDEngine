@@ -6,17 +6,29 @@
 
 //GameObjectBase; // 전방 선언
 
- 
 namespace JDScene {
+    using Transform = JDComponent::D2DTM::Transform;
+    using ShapeType = JDGlobal::Core::SceneType;
+
+    struct RenderPresent {
+        RenderPresent(const Transform& tr, const ShapeType& shape) : tr(tr), shape(shape) {}
+
+    private:
+        RenderPresent() = delete;
+        const Transform& tr;
+        const ShapeType shape;
+    public:
+        Transform TransformGet() const { return tr; }
+        ShapeType ShapeTypeGet() const { return shape; }
+    };
+
     class SceneBase
     {
     public:
         using SceneType = JDGlobal::Core::SceneType;
         using GameObjectBase =  JDGameObject::GameObjectBase;
 
-        SceneBase(SceneType type, std::string id)
-            : m_Type(type), m_ID(id) {
-        }
+        SceneBase(SceneType type, std::string id) : m_Type(type), m_ID(id) {}
         virtual ~SceneBase() {}
 
     private:
@@ -34,10 +46,14 @@ namespace JDScene {
         virtual void Update(float deltaTime) {};
             
         virtual void Render() {};
+        
+        template <typename T>
+        void CreateGameObject(T gameObject);
 
         SceneType GetType() const { return m_Type; }
 
         const std::string& GetID() const { return m_ID; }
+
 
         //sceneObjects라는 GameObjectBase* 포인터들을 담고 있는 벡터를 수정할 수 없는(const) 참조자(&) 형태로 반환
         //const std::vector<GamebjectBase*>& GetSceneObjects() const { return sceneObjects; };
@@ -47,10 +63,8 @@ namespace JDScene {
         const SceneType m_Type;
         const std::string m_ID = "None";
         std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
-        //vector<unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 필요한 정보만 복사해서 받아온다.
+        std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
 
         int m_objectCount = 0; // 각 씬의 객체 카운팅
     };
 }
-
-

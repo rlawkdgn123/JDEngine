@@ -5,5 +5,8 @@
 
  
 	namespace JDScene {
-
+		template<typename T>
+		inline void SceneBase::CreateGameObject(T gameObject)
+		{
+		}
 	}

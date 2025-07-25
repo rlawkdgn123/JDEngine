@@ -30,8 +30,8 @@ namespace JDGameObject {
         using Component = JDComponent::Component;
         using Transform = JDComponent::D2DTM::Transform;
     public:
+        GameObjectBase(const std::wstring& name) : m_name(name) {}
         virtual ~GameObjectBase() {}
-
     protected:
         GameObjectBase() = default;
         GameObjectBase(const GameObjectBase&) = delete;
@@ -81,16 +81,14 @@ namespace JDGameObject {
         std::wstring m_tag = L"";
         int m_layer = 0;
         bool m_active = true;
-
     };
 }
-
 
 namespace JDGameObject {
     class GameObject : public  JDGameObject::GameObjectBase {
     public:
-        GameObject() { AddComponent<Transform>(); };
-        GameObject(Vector2f pos) { AddComponent<Transform>(pos); }
+        GameObject() = delete;
+        GameObject(std::wstring name) { m_name = name; AddComponent<Transform>();  };
 
         virtual ~GameObject() = default;
 

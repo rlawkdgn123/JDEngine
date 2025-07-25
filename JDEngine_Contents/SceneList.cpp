@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "SceneList.h"
-
 using namespace std;
 
 namespace JDScene {
@@ -17,8 +16,6 @@ namespace JDScene {
     void DefaultScene::LateUpdate(float deltaTime) {}
 
     void DefaultScene::Render() {}
-
-    void DefaultScene::GameObjCreate() {}
 
 
 
@@ -46,10 +43,6 @@ namespace JDScene {
     void TestScene::Render() {
        //cout << "[TestScene] Render()\n";
 
-    }
-
-    void TestScene::GameObjCreate() {
-        cout << "[TestScene] GameObjCreate()\n";
     }
 
 }

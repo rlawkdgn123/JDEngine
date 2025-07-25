@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-
+#include "framework.h"
 namespace JDGlobal {
 
 	namespace Core {
@@ -30,8 +30,7 @@ namespace JDGlobal {
 		using MessageID = uint32_t;
 
 		constexpr int OBJECT_NAME_LEN_MAX = 15; // 객체 이름 최대치
+
+
 	}
-
-	
-
 }

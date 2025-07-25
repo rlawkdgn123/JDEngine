@@ -23,13 +23,11 @@ namespace JDScene {
         void LateUpdate(float deltaTime);
 
         void Render() override;
-
-        void GameObjCreate();
     };
 
     class TestScene : public SceneBase
     {
-    public:
+    public: 
         TestScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
         ~TestScene() override {}
@@ -46,7 +44,6 @@ namespace JDScene {
 
         void Render() override;
 
-        void GameObjCreate();
     };
 
 }

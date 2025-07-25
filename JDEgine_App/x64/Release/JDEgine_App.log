@@ -1,7 +1,0 @@
-﻿  Main.cpp
-  MainApp.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
-  pch.cpp
-Main.obj : error LNK2001: 확인할 수 없는 외부 기호 "protected: virtual void __cdecl Window::JDWndBase::OnResize(int,int)" (?OnResize@JDWndBase@Window@@MEAAXHH@Z)
-MainApp.obj : error LNK2001: 확인할 수 없는 외부 기호 "public: bool __cdecl Window::JDWndBase::Create(wchar_t const *,wchar_t const *,int,int)" (?Create@JDWndBase@Window@@QEAA_NPEB_W0HH@Z)
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Release\JDEgine_App.exe : fatal error LNK1120: 2개의 확인할 수 없는 외부 참조입니다.

@@ -48,7 +48,10 @@ namespace JDScene {
         virtual void Render() {};
         
         template <typename T>
-        void CreateGameObject(T gameObject);
+        inline void CreateGameObject(T&& gameObject);
+        
+        template <typename T>
+        void CreateUIObject(T uiObject);
 
         SceneType GetType() const { return m_Type; }
 
@@ -64,6 +67,7 @@ namespace JDScene {
         const std::string m_ID = "None";
         std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
         std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
+        
 
         int m_objectCount = 0; // 각 씬의 객체 카운팅
     };

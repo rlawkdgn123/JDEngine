@@ -4,6 +4,9 @@
 
  
 namespace JDGameObject {
+
+	ULONG64 GameObjectBase::idCount = 0;
+
 	using MessageID = JDGlobal::Core::MessageID;
 
 	void GameObjectBase::Update(float deltaTime) {

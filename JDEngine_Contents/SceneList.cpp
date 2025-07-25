@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "framework.h"
 #include "SceneList.h"
 using namespace std;
 
@@ -22,6 +23,7 @@ namespace JDScene {
     // TestScene
     void TestScene::OnEnter() {
         cout << "[TestScene] OnEnter()\n";
+       // CreateGameObject(Player("¤±¤¤¤·"));
     }
 
     void TestScene::OnLeave() {

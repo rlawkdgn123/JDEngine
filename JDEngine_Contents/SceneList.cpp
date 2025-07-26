@@ -11,11 +11,11 @@ namespace JDScene {
 
     void DefaultScene::OnLeave() {}
 
-    void DefaultScene::Update(float dt) {}
+    void DefaultScene::Update(float deltaTime) { SceneBase::Update(deltaTime); }
 
-    void DefaultScene::FixedUpdate(float fixedDeltaTime) {}
+    void DefaultScene::FixedUpdate(float fixedDeltaTime) { SceneBase::FixedUpdate(fixedDeltaTime); }
 
-    void DefaultScene::LateUpdate(float deltaTime) {}
+    void DefaultScene::LateUpdate(float deltaTime) { SceneBase::LateUpdate(deltaTime); }
 
     void DefaultScene::Render() {}
 
@@ -31,15 +31,18 @@ namespace JDScene {
         cout << "[TestScene] OnLeave()\n";
     }
 
-    void TestScene::Update(float dt) {
+    void TestScene::Update(float deltaTime) {
+        SceneBase::Update(deltaTime);
         //cout << "[TestScene] Update() - dt: " << dt << "\n";
     }
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
-        //cout << "[TestScene] FixedUpdate() - dt: " << fixedDeltaTime << "\n";
+        SceneBase::FixedUpdate(fixedDeltaTime);
+        cout << "[TestScene] FixedUpdate() - dt: " << fixedDeltaTime << "\n";
     }
 
     void TestScene::LateUpdate(float deltaTime) {
+        SceneBase::LateUpdate(deltaTime);
         //cout << "[TestScene] LateUpdate() - dt: " << deltaTime << "\n";
     }
 

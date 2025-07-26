@@ -61,13 +61,13 @@
     void SceneManager::FixedUpdate(float fixedDeltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->Update(fixedDeltaTime);
+            m_CurrentScene->FixedUpdate(fixedDeltaTime);
     }
 
     void SceneManager::LateUpdate(float deltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->Update(deltaTime);
+            m_CurrentScene->LateUpdate(deltaTime);
     }
 
     void SceneManager::Render()

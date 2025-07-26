@@ -191,10 +191,18 @@ void EngineCore::UpdateTime()
     assert(m_EngineTimer != nullptr);
 
     m_EngineTimer->Tick();
-    SceneManager::Instance().Update(m_EngineTimer->DeltaTime()); // 0.016f : fixedUpdate
-    constexpr float FixedDeltaTime = 1.0f / 60.0f;
-    SceneManager::Instance().FixedUpdate(FixedDeltaTime);
-    SceneManager::Instance().LateUpdate(m_EngineTimer->DeltaTime());
+    float deltaTime = m_EngineTimer->DeltaTime();
+    float fixedDeltaTime = 1.0f/60.0f;
+
+    SceneManager::Instance().Update(deltaTime); // 0.016f : fixedUpdate
+    // FixedUpdate 누적 처리
+    m_FixedTimeAccumulator += deltaTime;
+    while (m_FixedTimeAccumulator >= fixedDeltaTime)
+    {
+        SceneManager::Instance().FixedUpdate(fixedDeltaTime);
+        m_FixedTimeAccumulator -= fixedDeltaTime;
+    }
+    SceneManager::Instance().LateUpdate(deltaTime);
     SceneManager::Instance().Render();
 }
 

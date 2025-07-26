@@ -14,9 +14,6 @@ namespace Window {
 
 class EngineCore : public Window::JDWndBase {
 public:
-	using GameTimer =  GameTimer;
-	using D2DRenderer =  D2DRenderer;
-	using SceneManager =  SceneManager;
 public:
 
 
@@ -60,6 +57,7 @@ private:
 
 	bool m_showFolderPanel = false;
 	bool m_bChangedFile = false;
+	float m_FixedTimeAccumulator = 0.0f;
 
 	//std::shared_ptr<OnlyForTestScene> m_TestScenePtr = nullptr; //씬은 지금 분리해야함
 	

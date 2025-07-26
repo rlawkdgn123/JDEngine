@@ -10,11 +10,10 @@ class GameTimer
 public:
 	GameTimer();
 
-	float TotalTime()const;		// 현재까지 흐른 전체 시간(초 단위).
-	float DeltaTime()const;		// 한 프레임이 처리되는 데 걸리는 시간.
-
-	float DeltaTimeMS()const;	// 위와 동일하지만 밀리초 단위로 반환 (추가된 메서드).
-
+	float TotalTime()const;		 // 현재까지 흐른 전체 시간(초 단위).
+	float DeltaTime()const;		 // 한 프레임이 처리되는 데 걸리는 시간.
+	float DeltaTimeMS()const;	 // 위와 동일하지만 밀리초 단위로 반환 (추가된 메서드).
+	
 	void Reset();	// 타이머 리셋 (기준 시점 초기화)
 	void Start();	// 타이머 시작
 	void Stop();	// 타이머 일시 정지

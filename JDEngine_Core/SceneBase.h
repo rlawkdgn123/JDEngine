@@ -47,7 +47,7 @@ namespace JDScene {
 
         virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); } };
         
-        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } ProcessDestroyQueue(); }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
+        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } std::cout << "LateUpdate" << std::endl; ProcessDestroyQueue(); std::cout << "큐초기화" << std::endl;}; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
         
         virtual void Render() {};
         
@@ -76,9 +76,12 @@ namespace JDScene {
                        밀린 삭제될 요소 시작 인덱스부터 맨 끝 인덱스까지 제거
                     */
                     m_sceneObjects.erase(
-                        std::remove_if(m_sceneObjects.begin(), m_sceneObjects.end(),
-                            [&](const unique_ptr<GameObjectBase>& target)
-                            { return target.get() == obj; }),
+                        std::remove_if(
+                            m_sceneObjects.begin(), 
+                            m_sceneObjects.end(),
+                            [&](const std::unique_ptr<GameObjectBase>& target) {
+                                return target.get() == obj; 
+                            }),
                         m_sceneObjects.end()
                     );
                 }

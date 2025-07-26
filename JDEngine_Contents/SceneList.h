@@ -16,7 +16,7 @@ namespace JDScene {
 
         void OnLeave() override;
 
-        void Update(float dt) override;
+        void Update(float deltaTime) override;
 
         void FixedUpdate(float fixedDeltaTime) override;
 
@@ -36,7 +36,7 @@ namespace JDScene {
 
         void OnLeave() override;
 
-        void Update(float dt) override;
+        void Update(float deltaTime) override;
 
         void FixedUpdate(float fixedDeltaTime) override;
 

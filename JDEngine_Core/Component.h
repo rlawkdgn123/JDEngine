@@ -46,6 +46,7 @@ namespace JDComponent {
         GameObjectBase* m_Owner = nullptr;
 
         std::unordered_map<MessageID, std::vector<HandlerType>> m_MessageHandlers;
+
     };
 }
 

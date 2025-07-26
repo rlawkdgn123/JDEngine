@@ -18,9 +18,9 @@ namespace JDScene {
 
         void Update(float dt) override;
 
-        void FixedUpdate(float fixedDeltaTime);
+        void FixedUpdate(float fixedDeltaTime) override;
 
-        void LateUpdate(float deltaTime);
+        void LateUpdate(float deltaTime) override;
 
         void Render() override;
     };
@@ -38,9 +38,9 @@ namespace JDScene {
 
         void Update(float dt) override;
 
-        void FixedUpdate(float fixedDeltaTime);
+        void FixedUpdate(float fixedDeltaTime) override;
 
-        void LateUpdate(float deltaTime);
+        void LateUpdate(float deltaTime) override;
 
         void Render() override;
 

@@ -20,6 +20,8 @@ namespace
 }
 
 int main(void) {
+	//std::wcout이 시스템의 현재 로케일(locale) 설정을 따르도록 설정하는 코드
+	std::wcout.imbue(std::locale("")); // 시스템 로케일 자동 적용
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // 메모리 릭(누수) 검사
 

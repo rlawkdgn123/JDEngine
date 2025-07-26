@@ -100,5 +100,8 @@
     <None Include="GameObjectBase.inl">
       <Filter>GameObject</Filter>
     </None>
+    <None Include="SceneBase.Inl">
+      <Filter>Scene\SceneBase</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -31,10 +31,11 @@ namespace JDGameObject {
         using MessageID = JDGlobal::Core::MessageID;
         using Component = JDComponent::Component;
         using Transform = JDComponent::D2DTM::Transform;
-        
+
     public:
         GameObjectBase(const std::wstring& name) : m_name(name) {}
         virtual ~GameObjectBase() {}
+
     protected:
         GameObjectBase() = default;
         GameObjectBase(const GameObjectBase&) = delete;
@@ -46,65 +47,90 @@ namespace JDGameObject {
         template<typename T>
         T* GetComponent() const; // 같은 컴포넌트가 여러 개면 어떻게 뒷순번 컴포넌트를 반환시킬까??
 
-        virtual void Start();                   // 최초 1회만 호출
-        virtual void Update(float deltaTime);   // Update
-        virtual void LateUpdate(float deltaTime); // Update 후 호출
-        virtual void FixedUpdate(float fixedDeltaTime); // 물리 계산용
-        virtual void OnDestroy();              // 삭제 직전
-        virtual void OnEnable();               // 활성화 시
-        virtual void OnDisable();              // 비활성화 시
+        virtual void Awake() = 0;                    // 오브젝트가 처음 씬에 등장 시, Active 상관없이 무조건 실행
+        virtual void Start() = 0;                    // 활성화가 된 첫 프레임에서
+        virtual void Update(float deltaTime) = 0;    // 매 프레임 Update
+        virtual void LateUpdate(float deltaTime) = 0; // Update 후 호출
+        virtual void FixedUpdate(float fixedDeltaTime) = 0; // 물리 계산용
+        virtual void OnDestroy() = 0;               // 삭제 직전
 
-        virtual void OnCollisionEnter(GameObjectBase* other);
-        virtual void OnCollisionStay(GameObjectBase* other);
-        virtual void OnCollisionExit(GameObjectBase* other);
+        virtual void OnCollisionEnter(GameObjectBase* other) = 0;
+        virtual void OnCollisionStay(GameObjectBase* other) = 0;
+        virtual void OnCollisionExit(GameObjectBase* other) = 0;
 
-        virtual void OnTriggerEnter(GameObjectBase* other);
-        virtual void OnTriggerStay(GameObjectBase* other);
-        virtual void OnTriggerExit(GameObjectBase* other);
+        virtual void OnTriggerEnter(GameObjectBase* other) = 0;
+        virtual void OnTriggerStay(GameObjectBase* other) = 0;
+        virtual void OnTriggerExit(GameObjectBase* other) = 0;
 
-        virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr);
-        virtual void SendComPonentEvent(const std::string& ev);
+        virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) = 0;
+        virtual void SendComPonentEvent(const std::string& ev) = 0;
 
+        std::wstring GetID() const { return std::to_wstring(m_id); }
         std::wstring GetName() const { return m_name; }
 
-        bool IsActive() const { return m_active; }
-        void SetActive(bool active) { m_active = active; }
-
-        void SetTag(const std::wstring& tag) { m_tag = tag; }
-        const std::wstring& GetTag() const { return m_tag; }
-
-        void SetLayer(int layer) { m_layer = layer; }
         int GetLayer() const { return m_layer; }
+    bool IsActive() const { return m_active; }
+
+    void SetTag(const std::wstring& tag) { m_tag = tag; }
+    void SetLayer(int layer) { m_layer = layer; }
+    void SetActive(bool active) { 
+        if (m_active == active) return; 
+        m_active = active;
+    }
 
     protected:
-
-        Transform* m_transform; // 트랜스폼 RawPointer ( 사용 주의 )
+        Transform* m_transform = nullptr; // 트랜스폼 RawPointer ( 사용 주의 )
         std::vector<std::unique_ptr<Component>> m_components; // 컴포넌트 리스트
         Vector2f m_direction = { 0.0f, 0.0f }; // 방향 (단위 벡터) : 필요한가? 고민해보자
         std::wstring m_name;
         std::wstring m_tag = L"";
         int m_layer = 0;
-        int m_id;
-        bool m_active = true;
-        
+        int m_id = -1;
+        bool m_active = true; // 게임 오브젝트 전체의 활성/비활성
+        bool m_isAwaked = false;
+        bool m_isStarted = false;
     };
 }
 
 namespace JDGameObject {
-    class GameObject : public  JDGameObject::GameObjectBase {
+    class GameObject : public JDGameObject::GameObjectBase {
     public:
-        GameObject() = delete;
-        GameObject(std::wstring name) { m_name = name; AddComponent<Transform>(); m_transform = GetComponent<Transform>(); m_id = idCount++; };
+        GameObject() {
+            m_name = L"GameObject";
+            AddComponent<Transform>();
+            m_transform = GetComponent<Transform>();
+            m_id = idCount++;
+        }
+
+        GameObject(const std::wstring& name) {
+            m_name = name;
+            AddComponent<Transform>();
+            m_transform = GetComponent<Transform>();
+            m_id = idCount++;
+        }
+
+        virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }
+        virtual void Start() override { if (m_isStarted || !m_active) { return; } m_isStarted = true;}
+        virtual void Update(float deltaTime) override { if (!m_active) { return; } }
+        virtual void LateUpdate(float deltaTime) override { if (!m_active) { return; } }
+        virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
+        virtual void OnDestroy() override {}
+
+        virtual void OnCollisionEnter(GameObjectBase* other) override {}
+        virtual void OnCollisionStay(GameObjectBase* other) override {}
+        virtual void OnCollisionExit(GameObjectBase* other) override {}
+
+        virtual void OnTriggerEnter(GameObjectBase* other) override {}
+        virtual void OnTriggerStay(GameObjectBase* other) override {}
+        virtual void OnTriggerExit(GameObjectBase* other) override {}
+
+        virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) override {}
+        virtual void SendComPonentEvent(const std::string& ev) override {}
 
         virtual ~GameObject() = default;
 
-        // 파생에서 필요한 특화 기능 정의
         void SetName(const std::wstring& name) { m_name = name; }
         void SetDirection(const Vector2f& dir) { m_direction = dir; }
-
-        //tuple RenderPresentGet() override;
-        // 혹은 추가 Update 오버라이드 가능
-    protected:
     };
 }
 #include "GameObjectBase.inl"

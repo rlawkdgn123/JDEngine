@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "SceneList.h"
 using namespace std;
+using namespace JDGameObject::InGame;
 
 namespace JDScene {
 
@@ -23,7 +24,7 @@ namespace JDScene {
     // TestScene
     void TestScene::OnEnter() {
         cout << "[TestScene] OnEnter()\n";
-       // CreateGameObject(Player("けいし"));
+        CreateGameObject<Player>(L"けいし");
     }
 
     void TestScene::OnLeave() {

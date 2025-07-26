@@ -38,7 +38,7 @@ namespace JDScene {
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
         SceneBase::FixedUpdate(fixedDeltaTime);
-        cout << "[TestScene] FixedUpdate() - dt: " << fixedDeltaTime << "\n";
+        //cout << "[TestScene] FixedUpdate() - dt: " << fixedDeltaTime << "\n";
     }
 
     void TestScene::LateUpdate(float deltaTime) {

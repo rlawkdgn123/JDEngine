@@ -31,6 +31,9 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{ecdacdf6-8bfa-4a9a-a1ed-4a7772a6aef6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\Input">
+      <UniqueIdentifier>{1926a039-1673-41ef-9205-073e814bbabc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -66,6 +69,9 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerInput.h">
+      <Filter>Component\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -94,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInput.cpp">
+      <Filter>Component\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

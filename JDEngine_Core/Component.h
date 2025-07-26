@@ -23,8 +23,11 @@ namespace JDComponent {
     public:
         virtual ~Component() = default;
         virtual void Update(float dt) = 0;
-        virtual void OnEvent(const std::string& ev) abstract;
-
+        virtual void OnEvent(const std::string& ev) = 0;
+        virtual void OnEnable() = 0;
+        virtual void OnDisable() = 0;
+        bool GetEnabled() const { return m_enabled; }
+        void SetEnabled(bool value) { m_enabled = value; }
         void HandleMessage(MessageID msg, void* data)
         {
             auto it = m_MessageHandlers.find(msg);
@@ -42,11 +45,12 @@ namespace JDComponent {
 
         void SetOwner(GameObjectBase* owner) { m_Owner = owner; }
 
+    public:
+        bool m_enabled = true;
     protected:
         GameObjectBase* m_Owner = nullptr;
 
         std::unordered_map<MessageID, std::vector<HandlerType>> m_MessageHandlers;
-
     };
 }
 

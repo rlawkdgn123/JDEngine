@@ -179,6 +179,11 @@ namespace JDComponent {
 
             void OnEvent(const std::string& ev) override {}
 
+            void OnEnable() override {}
+
+            void OnDisable() override {}
+
+
         private:
 
             bool m_dirty;

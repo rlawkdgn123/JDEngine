@@ -74,8 +74,12 @@ namespace JDGameObject {
     void SetTag(const std::wstring& tag) { m_tag = tag; }
     void SetLayer(int layer) { m_layer = layer; }
     void SetActive(bool active) { 
-        if (m_active == active) return; 
+        if (m_active == active) return; // 변경이 없으면 무시
         m_active = active;
+        for (auto& comp : m_components) {
+            if (active && comp->GetEnabled()) { comp->OnEnable(); }
+            else if (!active && comp->GetEnabled()) { comp->OnDisable(); }
+        }
     }
 
     protected:

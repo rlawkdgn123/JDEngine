@@ -37,7 +37,9 @@ namespace JDGameObject {
             }
             else { return; }
         }                   
-        void Player::Update(float deltaTime) {}
+        void Player::Update(float deltaTime) {
+        
+        }
         void Player::LateUpdate(float deltaTime) {}
         void Player::FixedUpdate(float fixedDeltaTime) {}
     

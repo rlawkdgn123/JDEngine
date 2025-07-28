@@ -83,7 +83,7 @@ bool EngineCore::Initialize()
     //m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
     JDGlobal::Window::GlobalWindowSize::Instance().Set(this);
-    
+
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     SceneManager::Instance().ChangeScene("TestScene01");
 

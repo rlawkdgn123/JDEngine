@@ -2,12 +2,12 @@
 #include "JDWndBase.h"
 #include "WindowGlobal.h"
 
-void JDGlobal::Window::WindowSIze::Set(WindowSizeProvider* provider)
+void JDGlobal::Window::WindowSize::Set(WindowSizeProvider* provider)
 {
 	m_instance = provider;
 }
 
-JDWindow::WindowSizeProvider* JDGlobal::Window::WindowSIze::Get()
+JDWindow::WindowSizeProvider* JDGlobal::Window::WindowSize::Get()
 {
 	return m_instance;
 }

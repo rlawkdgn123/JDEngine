@@ -56,44 +56,5 @@ namespace JDGlobal {
 			XStretch,
 			YStretch
 		};
-
-		struct Anchor
-		{
-			AnchorPreset m_anchor = AnchorPreset::TopLeft;
-			JDMath::Vector2F min;
-			JDMath::Vector2F max;
-
-
-			JDMath::Vector2F GetAnchorOffset(const D2D1_SIZE_F& parentSize) const
-			{
-				switch (m_anchor)
-				{
-				case AnchorPreset::TopLeft:
-					return { 0.f, 0.f };
-				case AnchorPreset::TopCenter:
-					return { parentSize.width * 0.5f, 0.f };
-				case AnchorPreset::TopRight:
-					return { parentSize.width, 0.f };
-				case AnchorPreset::CenterLeft:
-					return { 0.f, parentSize.height * 0.5f };
-				case AnchorPreset::Center:
-					return { parentSize.width * 0.5f, parentSize.height * 0.5f };
-				case AnchorPreset::CenterRight:
-					return { parentSize.width, parentSize.height * 0.5f };
-				case AnchorPreset::BottomLeft:
-					return { 0.f, parentSize.height };
-				case AnchorPreset::BottomCenter:
-					return { parentSize.width * 0.5f, parentSize.height };
-				case AnchorPreset::BottomRight:
-					return { parentSize.width, parentSize.height };
-				case AnchorPreset::XStretch:
-					return { parentSize.width * 0.5f, 0.f };
-				case AnchorPreset::YStretch:
-					return { 0.f, parentSize.height * 0.5f };
-				default:
-					return { 0.f, 0.f };
-				}
-			}
-		};
 	}
 }

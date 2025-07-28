@@ -8,15 +8,13 @@ namespace JDMath = JDGlobal::Math;
 namespace JDComponent {
     namespace D2DTM
     {
-        
-
         class RectTransform : public  JDComponent::Component {
         public:
             using Vec2 = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
             using AnchorPreset = JDGlobal::Core::AnchorPreset;
             using PivotPreset = JDGlobal::Core::PivotPreset;
-            using Anchor = JDGlobal::Core::Anchor;
+
 
             RectTransform()
                 : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
@@ -26,7 +24,7 @@ namespace JDComponent {
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
             }
 
-            RectTransform(Anchor anchor)
+            RectTransform(AnchorPreset anchor)
                 : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
                 m_dirty(false), m_parent(nullptr), m_anchor(anchor)
             {
@@ -70,7 +68,7 @@ namespace JDComponent {
                 // 자식의 로컬 좌표를 부모 좌표계로 변환
                 // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
+                //chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
 
                 auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
                 JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
@@ -82,7 +80,7 @@ namespace JDComponent {
             {
                 // 월드로 보낸다.
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetWorldMatrix();
+                //chiledLocalTM = chiledLocalTM * GetWorldMatrix();
 
                 auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
                 JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
@@ -97,10 +95,11 @@ namespace JDComponent {
             void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
             void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
-
+            void SetSize(const Vec2& size) { m_size = size; SetDirty(); }
             const Vec2& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }
             const Vec2& GetScale() const { return m_scale; }
+            const Vec2& GetSize() const { return m_size; }
 
             void Translate(const Vec2& delta)
             {
@@ -137,27 +136,36 @@ namespace JDComponent {
                 return m_matrixLocal;
             }
 
+            //UI는 로컬은 몰라도 월드는 굳이 필요 없음 (스크린&뷰 기준이기 때문)
+        
             const Mat3x2& GetWorldMatrix()
             {
                 if (m_dirty) UpdateMatrices();
 
                 return m_matrixWorld;
             }
+        
 
-            Mat3x2 GetInverseWorldMatrix()
+           Mat3x2 GetInverseWorldMatrix()
             {
                 Mat3x2 inv = GetWorldMatrix();
                 inv.Invert();
                 return inv;
             }
+        
 
             // ** 회전과 스케일을 위한 피봇 설정 **
             void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
+
+            JDMath::Vector2F SetAnchorOffset(const D2D1_SIZE_F& parentSize);
 
             D2D1_POINT_2F GetPivotPoint() const
             {
                 return m_pivot;
             }
+
+            
+
 
         private:
             void SetDirty()
@@ -171,7 +179,7 @@ namespace JDComponent {
 
             void UpdateMatrices();
 
-            void Update(float dt) override {}
+            void Update(float dt) override { }
 
             void OnEvent(const std::string& ev) override {}
 
@@ -181,19 +189,23 @@ namespace JDComponent {
         private:
 
             bool m_dirty;
+            Vec2     m_size = { 0.f, 0.f }; // Width, Height // 사각형 자체의 크기
 
             Vec2     m_position = { 0.f, 0.f }; // 앵커를 기준으로 한 사각형의 피벗 포인트 포지션.
             float    m_rotation = 0.f;          // in degrees
             Vec2     m_scale = { 1.f, 1.f };
 
-            Anchor m_anchor;
+            AnchorPreset m_anchor = AnchorPreset::TopLeft;
+
+            JDMath::Vector2F min;
+            JDMath::Vector2F max;
             RectTransform* m_parent;
             std::vector<RectTransform*> m_children;
 
             Mat3x2 m_matrixLocal;
             Mat3x2 m_matrixWorld;
 
-            D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
+            D2D1_POINT_2F m_pivot{ 100.0f, 100.0f }; // 사각형의 기준점 (회전 + 스케일 중심점)
         };
     }
 }

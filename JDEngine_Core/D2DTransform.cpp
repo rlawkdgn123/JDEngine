@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Framework.h"
 #include "D2DTransform.h"
- 
+#include "RectTransform.h"
+
 namespace JDComponent {
 	namespace D2DTM
 	{
@@ -28,7 +29,7 @@ namespace JDComponent {
 			}
 		}
 
-
+		
 		/*void Transform::UpdateMatrices()
 		{
 			const auto P = D2D1::Matrix3x2F::Translation(-m_pivot.x, -m_pivot.y);

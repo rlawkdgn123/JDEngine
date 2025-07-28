@@ -155,7 +155,7 @@ void InputManager::HandleMsgMouse(const MSG& msg)
         "MOUSE (%d,%d)  left=%d right=%d\n",
         x, y, m_CurMouse.leftPressed, m_CurMouse.rightPressed);
 
-    //std::cout << buf;
+    std::cout << buf;
 }
 
 void InputManager::HandleRawInput(LPARAM lParam)

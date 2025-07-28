@@ -1,7 +1,9 @@
 #pragma once
 #include "pch.h"
 #include "framework.h"
-namespace JDGlobal {
+namespace JDMath = JDGlobal::Math;
+
+namespace JDGlobal {	
 
 	namespace Core {
 		// Scenes
@@ -31,6 +33,67 @@ namespace JDGlobal {
 
 		constexpr int OBJECT_NAME_LEN_MAX = 15; // 객체 이름 최대치
 
+		enum class PivotPreset
+		{
+			TopLeft,
+			TopRight,
+			BottomLeft,
+			BottomRight,
+			Center
+		};
 
+		// 스크린 기준의 앵커. RectTransform의 m_position은 해당 앵커 기준으로 +보정이 된다.
+		enum class AnchorPreset {
+			TopLeft,
+			TopCenter,
+			TopRight,
+			CenterLeft,
+			Center,
+			CenterRight,
+			BottomLeft,
+			BottomCenter,
+			BottomRight,
+			XStretch,
+			YStretch
+		};
+
+		struct Anchor
+		{
+			AnchorPreset m_anchor = AnchorPreset::TopLeft;
+			JDMath::Vector2F min;
+			JDMath::Vector2F max;
+
+
+			JDMath::Vector2F GetAnchorOffset(const D2D1_SIZE_F& parentSize) const
+			{
+				switch (m_anchor)
+				{
+				case AnchorPreset::TopLeft:
+					return { 0.f, 0.f };
+				case AnchorPreset::TopCenter:
+					return { parentSize.width * 0.5f, 0.f };
+				case AnchorPreset::TopRight:
+					return { parentSize.width, 0.f };
+				case AnchorPreset::CenterLeft:
+					return { 0.f, parentSize.height * 0.5f };
+				case AnchorPreset::Center:
+					return { parentSize.width * 0.5f, parentSize.height * 0.5f };
+				case AnchorPreset::CenterRight:
+					return { parentSize.width, parentSize.height * 0.5f };
+				case AnchorPreset::BottomLeft:
+					return { 0.f, parentSize.height };
+				case AnchorPreset::BottomCenter:
+					return { parentSize.width * 0.5f, parentSize.height };
+				case AnchorPreset::BottomRight:
+					return { parentSize.width, parentSize.height };
+				case AnchorPreset::XStretch:
+					return { parentSize.width * 0.5f, 0.f };
+				case AnchorPreset::YStretch:
+					return { 0.f, parentSize.height * 0.5f };
+				default:
+					return { 0.f, 0.f };
+				}
+			}
+		};
 	}
 }

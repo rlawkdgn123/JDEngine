@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "WindowGlobal.h"
 #include "GameTimer.h"
 #include "D2DRenderer.h"
 #include "InputManager.h"

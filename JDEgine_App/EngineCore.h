@@ -8,11 +8,11 @@ class D2DRenderer;
 class InputManager;
 
 
-namespace Window {
+namespace JDWindow {
 	class JDWndBase;
 }
 
-class EngineCore : public Window::JDWndBase {
+class EngineCore : public JDWindow::JDWndBase {
 public:
 public:
 

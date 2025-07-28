@@ -8,20 +8,12 @@ namespace JDMath = JDGlobal::Math;
 namespace JDComponent {
     namespace D2DTM
     {
-        enum class PivotPreset
-        {
-            TopLeft,
-            TopRight,
-            BottomLeft,
-            BottomRight,
-            Center
-        };
 
         class Transform : public  JDComponent::Component {
         public:
             using Vec2 = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
-
+            using PivotPreset = JDGlobal::Core::PivotPreset;
             Transform()
                 : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
                 m_dirty(false), m_parent(nullptr)

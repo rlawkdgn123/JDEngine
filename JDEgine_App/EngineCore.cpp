@@ -71,7 +71,7 @@ bool EngineCore::Initialize()
     //{
     //    return false;
     //}
-
+    
     m_EngineTimer = make_unique<GameTimer>(); // 팩토리에서 타이머 unique 형태로 할당
 
 
@@ -82,6 +82,7 @@ bool EngineCore::Initialize()
 
     //m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
+    JDGlobal::Window::GlobalWindowSize::Instance().Set(this);
     
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     SceneManager::Instance().ChangeScene("TestScene01");
@@ -167,6 +168,8 @@ void EngineCore::Finalize()
     //ImGui_ImplDX11_Shutdown();
     //ImGui_ImplWin32_Shutdown();
     //ImGui::DestroyContext();
+    
+    JDGlobal::Window::GlobalWindowSize::Instance().Set(nullptr); // 종료 시 해제 권장
 
     if (m_Renderer != nullptr) // 렌더러 종료
     {
@@ -208,7 +211,6 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
-    
 }
 
 void EngineCore::Render()

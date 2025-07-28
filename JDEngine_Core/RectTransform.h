@@ -8,34 +8,27 @@ namespace JDMath = JDGlobal::Math;
 namespace JDComponent {
     namespace D2DTM
     {
-        enum class RectAnchor {
-            
-        };
-        enum class PivotPreset
-        {
-            TopLeft,
-            TopRight,
-            BottomLeft,
-            BottomRight,
-            Center
-        };
+        
 
         class RectTransform : public  JDComponent::Component {
         public:
             using Vec2 = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
+            using AnchorPreset = JDGlobal::Core::AnchorPreset;
+            using PivotPreset = JDGlobal::Core::PivotPreset;
+            using Anchor = JDGlobal::Core::Anchor;
 
             RectTransform()
                 : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
-                m_dirty(false), m_parent(nullptr)
+                m_dirty(false), m_parent(nullptr), m_anchor()
             {
                 m_matrixLocal = D2D1::Matrix3x2F::Identity();
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
             }
 
-            RectTransform(Vec2 tr)
-                : m_position{ tr.x, tr.y }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
-                m_dirty(false), m_parent(nullptr)
+            RectTransform(Anchor anchor)
+                : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
+                m_dirty(false), m_parent(nullptr), m_anchor(anchor)
             {
                 m_matrixLocal = D2D1::Matrix3x2F::Identity();
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
@@ -184,18 +177,16 @@ namespace JDComponent {
 
             void OnEnable() override {}
 
-            void OnDisable() override {}
-
 
         private:
 
             bool m_dirty;
 
-            Vec2     m_position = { 0.f, 0.f }; // translation position
+            Vec2     m_position = { 0.f, 0.f }; // 앵커를 기준으로 한 사각형의 피벗 포인트 포지션.
             float    m_rotation = 0.f;          // in degrees
             Vec2     m_scale = { 1.f, 1.f };
 
-
+            Anchor m_anchor;
             RectTransform* m_parent;
             std::vector<RectTransform*> m_children;
 

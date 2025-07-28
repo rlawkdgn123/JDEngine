@@ -18,11 +18,12 @@
 
 // 여기에 미리 컴파일하려는 헤더 추가
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
 #include <d2d1helper.h>
-
+#include <functional>
 
 #define _USE_MATH_DEFINES
 #include <cmath>

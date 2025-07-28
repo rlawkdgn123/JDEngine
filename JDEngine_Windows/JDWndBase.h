@@ -1,13 +1,19 @@
 #pragma once
-
+#include "pch.h"
 // 인터페이스 축약어
 
-namespace Window {
+namespace JDWindow {
 
 	// 함수 선언
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
-    class JDWndBase {
+    
+    class WindowSizeProvider { //컴포넌트 등에 의존성 역전 원칙을 고수하면서 인자를 주입하기 위한 용도 (아직 미사용)
+    public:
+        virtual ~WindowSizeProvider() = default;
+        virtual int GetWidth() const = 0;
+        virtual int GetHeight() const = 0;
+    };
+    class JDWndBase : public WindowSizeProvider{
     public:
         JDWndBase() = default;
         virtual ~JDWndBase() = default;
@@ -25,6 +31,7 @@ namespace Window {
         int GetHeight() const { return m_height; }
 
     protected:
+
         // 외부 함수에서 이 클래스의 private/protected 멤버 접근 허용
         friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 

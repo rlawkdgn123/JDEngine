@@ -1,5 +1,4 @@
-﻿  pch.cpp
-  GameObjectList.cpp
+﻿  GameObjectList.cpp
 C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\GameObjectBase.h(106,27): warning C4244: '=': 'ULONG64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 '/GameObjectList.cpp'을(를) 컴파일하는 중)
   

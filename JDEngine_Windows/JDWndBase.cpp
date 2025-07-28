@@ -1,7 +1,7 @@
-﻿#include <Windows.h>
+﻿#include "pch.h"
 #include "JDWndBase.h" // 윈도우 관련
 
-namespace Window { // 이 네임스페이스를 추가하여 JDWndBase::Create 및 OnResize 정의를 포함합니다.
+namespace JDWindow { // 이 네임스페이스를 추가하여 JDWndBase::Create 및 OnResize 정의를 포함합니다.
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		// friend 키워드로 JDWndBase 접근 가능

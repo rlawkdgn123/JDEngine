@@ -3,7 +3,7 @@
 #include "JDWndBase.h"
 #include "WindowGlobal.h"
 
-using WinSize = JDGlobal::Window::GlobalWindowSize;
+using WinSize = JDGlobal::Window::WindowSIze;
 namespace JDUtil {
     
 }

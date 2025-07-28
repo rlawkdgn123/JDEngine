@@ -6,12 +6,12 @@
 //}
 namespace JDGlobal {
     namespace Window {
-        class GlobalWindowSize {
+        class WindowSIze {
         public:
             using WindowSizeProvider = JDWindow::WindowSizeProvider;
-            static GlobalWindowSize& Instance()
+            static WindowSIze& Instance()
             {
-                static GlobalWindowSize instance;
+                static WindowSIze instance;
 
                 return instance;
             }
@@ -22,11 +22,11 @@ namespace JDGlobal {
              int GetHeight() const { assert(m_instance); return m_instance->GetHeight(); }
              D2D1::Matrix3x2F GetViewTM() { assert(m_instance); return D2D1::Matrix3x2F::Translation(m_instance->GetWidth()* 0.5f, m_instance->GetHeight() * 0.5f); }
         private:
-            GlobalWindowSize() = default;
-            ~GlobalWindowSize() = default;
+            WindowSIze() = default;
+            ~WindowSIze() = default;
 
-            GlobalWindowSize(const GlobalWindowSize&) = delete;
-            GlobalWindowSize& operator=(const GlobalWindowSize&) = delete;
+            WindowSIze(const WindowSIze&) = delete;
+            WindowSIze& operator=(const WindowSIze&) = delete;
 
             WindowSizeProvider* m_instance = nullptr;
         };

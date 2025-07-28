@@ -47,7 +47,7 @@ namespace JDScene {
 
         virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); } };
         
-        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } std::cout << "LateUpdate" << std::endl; ProcessDestroyQueue(); std::cout << "큐초기화" << std::endl;}; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
+        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
         
         virtual void Render() {};
         

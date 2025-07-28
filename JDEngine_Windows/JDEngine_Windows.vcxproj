@@ -133,11 +133,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WindowGlobal.cpp" />
+    <ClCompile Include="WindowUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JDWndBase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="WindowGlobal.h" />
+    <ClInclude Include="WindowUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

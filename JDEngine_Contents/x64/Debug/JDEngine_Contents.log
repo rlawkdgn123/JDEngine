@@ -1,16 +1,8 @@
-﻿  GameObjectList.cpp
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\GameObjectBase.h(106,27): warning C4244: '=': 'ULONG64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  (소스 파일 '/GameObjectList.cpp'을(를) 컴파일하는 중)
-  
-C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\GameObjectBase.h(113,27): warning C4244: '=': 'ULONG64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  (소스 파일 '/GameObjectList.cpp'을(를) 컴파일하는 중)
-  
-  SceneList.cpp
+﻿  SceneList.cpp
 C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\GameObjectBase.h(106,27): warning C4244: '=': 'ULONG64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 '/SceneList.cpp'을(를) 컴파일하는 중)
   
 C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\JDEngine_Core\GameObjectBase.h(113,27): warning C4244: '=': 'ULONG64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 '/SceneList.cpp'을(를) 컴파일하는 중)
   
-  코드를 생성하고 있습니다...
   JDEngine_Contents.vcxproj -> C:\Users\User\Desktop\김장후\D2D\Engine\JDEngine\x64\Debug\JDEngine_Contents.lib

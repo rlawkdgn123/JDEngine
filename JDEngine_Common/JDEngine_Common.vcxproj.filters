@@ -40,6 +40,9 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="SingletonBase.h" />
+    <ClInclude Include="Util.h">
+      <Filter>Global</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

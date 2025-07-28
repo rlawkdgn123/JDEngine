@@ -10,9 +10,6 @@
     <Filter Include="Scene\SceneManager">
       <UniqueIdentifier>{7a76c744-1cd6-4380-bafd-b0ad843b8f4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject">
-      <UniqueIdentifier>{3a04721d-aaa3-4211-b91f-dd17a6b85b1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{b0581a58-6bf9-4021-9734-84532e2daf9f}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,18 @@
     <Filter Include="Component\Input">
       <UniqueIdentifier>{1926a039-1673-41ef-9205-073e814bbabc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{3a04721d-aaa3-4211-b91f-dd17a6b85b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\UI">
+      <UniqueIdentifier>{8ca99405-2556-4950-af32-e788e9726318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject">
+      <UniqueIdentifier>{f9aa6267-0422-4c91-817e-3018a12296bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\UI">
+      <UniqueIdentifier>{6e3a5067-6ec2-44f7-b0d8-cd350b899b74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -41,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="SceneBase.h">
       <Filter>Scene\SceneBase</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectBase.h">
-      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
@@ -75,6 +81,9 @@
     <ClInclude Include="InputAction.h">
       <Filter>Component\Input</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectBase.h">
+      <Filter>Object\GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -82,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="SceneBase.cpp">
       <Filter>Scene\SceneBase</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectBase.cpp">
-      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
@@ -110,13 +116,16 @@
     <ClCompile Include="InputAction.cpp">
       <Filter>Component\Input</Filter>
     </ClCompile>
+    <ClCompile Include="GameObjectBase.cpp">
+      <Filter>Object\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameObjectBase.inl">
-      <Filter>GameObject</Filter>
-    </None>
     <None Include="SceneBase.Inl">
       <Filter>Scene\SceneBase</Filter>
+    </None>
+    <None Include="GameObjectBase.inl">
+      <Filter>Object\GameObject</Filter>
     </None>
   </ItemGroup>
 </Project>

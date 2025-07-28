@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,7 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -180,6 +180,9 @@
     </ProjectReference>
     <ProjectReference Include="..\JDEngine_Common\JDEngine_Common.vcxproj">
       <Project>{df76876e-303e-4054-b3af-4e4af33edfb7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\JDEngine_Windows\JDEngine_Windows.vcxproj">
+      <Project>{1a5bafd9-547c-43c0-a275-12f19298bdd4}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

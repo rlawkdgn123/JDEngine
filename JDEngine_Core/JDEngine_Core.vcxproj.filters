@@ -69,7 +69,10 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInput.h">
+    <ClInclude Include="RectTransform.h">
+      <Filter>Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="InputAction.h">
       <Filter>Component\Input</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,7 +104,10 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerInput.cpp">
+    <ClCompile Include="RectTransform.cpp">
+      <Filter>Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="InputAction.cpp">
       <Filter>Component\Input</Filter>
     </ClCompile>
   </ItemGroup>

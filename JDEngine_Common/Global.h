@@ -53,8 +53,9 @@ namespace JDGlobal {
 			BottomLeft,
 			BottomCenter,
 			BottomRight,
-			XStretch,
-			YStretch
+			StretchHorizontal,
+			StretchVertical,
+			StretchAll
 		};
 	}
 }

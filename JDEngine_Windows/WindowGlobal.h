@@ -16,12 +16,34 @@ namespace JDGlobal {
                 return instance;
             }
         public:
-             void Set(WindowSizeProvider* p);
-             WindowSizeProvider* Get();
-             int GetWidth() const { assert(m_instance); return m_instance->GetWidth(); }
-             int GetHeight() const { assert(m_instance); return m_instance->GetHeight(); }
-             D2D1_SIZE_F GetSize() const { assert(m_instance); return D2D1_SIZE_F{ static_cast<float>(m_instance->GetWidth()),static_cast<float>(m_instance->GetHeight()) }; }
-             D2D1::Matrix3x2F GetViewTM() { assert(m_instance); return D2D1::Matrix3x2F::Translation(m_instance->GetWidth()* 0.5f, m_instance->GetHeight() * 0.5f); }
+            void Set(WindowSizeProvider* p);
+            WindowSizeProvider* Get();
+
+            int GetWidth() const {
+                assert(m_instance);
+                return m_instance->GetWidth();
+            }
+
+            int GetHeight() const {
+                assert(m_instance);
+                return m_instance->GetHeight();
+            }
+
+            D2D1_SIZE_F GetSize() const {
+                assert(m_instance);
+                return D2D1_SIZE_F{
+                    static_cast<float>(m_instance->GetWidth()),
+                    static_cast<float>(m_instance->GetHeight())
+                };
+            }
+
+            D2D1::Matrix3x2F GetViewTM() const{
+                assert(m_instance);
+                return D2D1::Matrix3x2F::Translation(
+                    m_instance->GetWidth() * 0.5f,
+                    m_instance->GetHeight() * 0.5f
+                );
+            }
         private:
             WindowSize() = default;
             ~WindowSize() = default;

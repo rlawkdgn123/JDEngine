@@ -52,12 +52,23 @@ namespace JDGlobal {
 
 			Vector2F& operator=(const Vector2F&) = default;
 
+			Vector2F& operator=(const D2D1_POINT_2F& point) {
+				this->x = point.x;
+				this->y = point.y;
+				return *this;
+			}
+
 			Vector2F(Vector2F&&) = default;
 
 			Vector2F& operator=(Vector2F&&) = default;
 
 			~Vector2F() = default;
 
+			Vector2F operator-() const
+			{
+				return Vector2F(-this->x, -this->y);
+			}
+			
 			Vector2F operator+(const Vector2F& vector) const
 			{
 				return Vector2F(this->x + vector.x, this->y + vector.y);

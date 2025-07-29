@@ -6,44 +6,41 @@ namespace JDComponent {
     namespace D2DTM
     {
 		using WindowSize = JDGlobal::Window::WindowSize;
-
+		using Vector2F = JDMath::Vector2F;
         void RectTransform::UpdateMatrices()
 		{
 			// 부모가 있다면 부모의 RectSize가 기준이 됨
 			// 부모가 없다면 윈도우 사이즈가 기준이 됨
-			D2D1_SIZE_F parentSize =
-				m_parent ? D2D1_SIZE_F{ m_parent->GetSize().x, m_parent->GetSize().y }
-			: WindowSize::Instance().GetSize();
+			D2D1_SIZE_F baseSize = { 0, 0 };
 
-			auto anchorOffset = SetAnchorOffset(parentSize);
+			if (m_parent)
+				baseSize = m_parent->GetD2D1Size();
+			else
+				baseSize = WindowSize::Instance().GetSize(); // 전체 화면
 
-			auto finalPosition = anchorOffset + m_position; // 앵커 오프셋 + 위치값
+			// 2. 앵커 기준 위치를 기준 좌표계에서 계산
+			Vector2F anchorOffset = SetAnchorOffset(baseSize); // 부모 사이즈 기준 앵커 위치
 
-			// 1) 피벗 기준 스케일
+			// 3. 스케일 (Pivot 기준)
 			auto M_scale = D2D1::Matrix3x2F::Scale(
 				m_scale.x, m_scale.y,
-				D2D1::Point2F(m_pivot.x, m_pivot.y)
+				m_pivot
 			);
-
-			// 2) 피벗 기준 회전
+			// 4. 회전 (Pivot 기준)
 			auto M_rot = D2D1::Matrix3x2F::Rotation(
 				m_rotation,
-				D2D1::Point2F(m_pivot.x, m_pivot.y)
+				m_pivot
 			);
 
-			// 3) 위치 이동
+			// 5. 최종 위치 = 앵커 위치 + 로컬 오프셋 (Position)
+			auto finalPos = anchorOffset + m_position;
+
 			auto M_trans = D2D1::Matrix3x2F::Translation(
-				finalPosition.x, finalPosition.y
+				finalPos.x, finalPos.y
 			);
 
-			// 4) 로컬 행렬 = 스케일 * 회전 * 이동
+			// 6. 최종 행렬 = Scale → Rotate → Translate
 			m_matrixLocal = M_scale * M_rot * M_trans;
-
-			// 5) 부모가 있으면 월드 매트릭스 계산
-			if (m_parent)
-				m_matrixWorld = m_matrixLocal * m_parent->GetWorldMatrix();
-			else
-				m_matrixWorld = m_matrixLocal;
 
 			m_dirty = false;
 		}
@@ -103,5 +100,6 @@ namespace JDComponent {
 				}
 			}
 		}
+
     }
 }

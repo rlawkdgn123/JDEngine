@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include <cassert>
 #include "Component.h"
 
@@ -40,8 +40,8 @@ namespace JDComponent {
 
             void SetParent(RectTransform* newParent)
             {
-                assert(newParent != this); // ¿⁄±‚ ¿⁄Ω≈¿ª ∫Œ∏∑Œ º≥¡§«“ ºˆ æ¯¿Ω
-                assert(m_parent == nullptr); // DetachFromParent ∏¶ ∏’¿˙ »£√‚«œ∞Ì ¥ŸΩ√ SetParent∏¶ »£√‚«ÿæﬂ «‘
+                assert(newParent != this); // ÏûêÍ∏∞ ÏûêÏã†ÏùÑ Î∂ÄÎ™®Î°ú ÏÑ§Ï†ïÌï† Ïàò ÏóÜÏùå
+                assert(m_parent == nullptr); // DetachFromParent Î•º Î®ºÏ†Ä Ìò∏Ï∂úÌïòÍ≥† Îã§Ïãú SetParentÎ•º Ìò∏Ï∂úÌï¥Ïïº Ìï®
                 if (newParent == m_parent) return;
                 if (m_parent) DetachFromParent();
 
@@ -64,8 +64,8 @@ namespace JDComponent {
 
             void AddChild(RectTransform* child)
             {
-                // ¿⁄Ωƒ¿« ∑Œƒ√ ¡¬«•∏¶ ∫Œ∏ ¡¬«•∞Ë∑Œ ∫Ø»Ø
-                // ¿⁄Ωƒ¿« ∑Œƒ√ ∆Æ ∑£Ω∫∆˚ * ∫Œ∏¿« ø˘µÂ ∆Æ∑£Ω∫∆˚¿« ø™«‡∑ƒ¿ª ∞ˆ«œ∞Ì ø¯º“ √ﬂ√‚
+                // ÏûêÏãùÏùò Î°úÏª¨ Ï¢åÌëúÎ•º Î∂ÄÎ™® Ï¢åÌëúÍ≥ÑÎ°ú Î≥ÄÌôò
+                // ÏûêÏãùÏùò Î°úÏª¨ Ìä∏ ÎûúÏä§Ìèº * Î∂ÄÎ™®Ïùò ÏõîÎìú Ìä∏ÎûúÏä§ÌèºÏùò Ïó≠ÌñâÎ†¨ÏùÑ Í≥±ÌïòÍ≥† ÏõêÏÜå Ï∂îÏ∂ú
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
                 chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
 
@@ -77,7 +77,7 @@ namespace JDComponent {
 
             void RemoveChild(RectTransform* child)
             {
-                // ø˘µÂ∑Œ ∫∏≥Ω¥Ÿ.
+                // ÏõîÎìúÎ°ú Î≥¥ÎÇ∏Îã§.
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
                 chiledLocalTM = chiledLocalTM * GetWorldMatrix();
 
@@ -90,12 +90,18 @@ namespace JDComponent {
                 );
             }
 
-            // ** ∆Æ∑£Ω∫∆˚ º≥¡§ **
+            // ** Ìä∏ÎûúÏä§Ìèº ÏÑ§Ï†ï **
             void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
             void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
             
-            const RECT& GetRect() const { return m_rect; }
+            // ** Rect ÏÑ§Ï†ï **
+            /*const RECT& GetRect() const { return m_rect; }*/
+            float GetLeft() const { return m_Left; }
+            float GetRight() const { return m_Right; }
+            float GetTop() const { return m_Top; }
+            float GetBottom() const { return m_Bottom; }
+
             const Vec2& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }
             const Vec2& GetScale() const { return m_scale; }
@@ -121,14 +127,14 @@ namespace JDComponent {
                 SetDirty();
             }
 
-            // ** πÊ«‚ ∫§≈Õ **
+            // ** Î∞©Ìñ• Î≤°ÌÑ∞ **
             Vec2 GetForward() const
             {
                 float radian = JDMath::DegreeToRadian(m_rotation);
                 return { std::cosf(radian), std::sinf(radian) };
             }
 
-            // ** ∫Ø»Ø «‡∑ƒ **
+            // ** Î≥ÄÌôò ÌñâÎ†¨ **
             const Mat3x2& GetLocalMatrix()
             {
                 if (m_dirty) UpdateMatrices();
@@ -150,7 +156,7 @@ namespace JDComponent {
                 return inv;
             }
 
-            // ** »∏¿¸∞˙ Ω∫ƒ…¿œ¿ª ¿ß«— ««∫ø º≥¡§ **
+            // ** ÌöåÏ†ÑÍ≥º Ïä§ÏºÄÏùºÏùÑ ÏúÑÌïú ÌîºÎ¥á ÏÑ§Ï†ï **
             void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
 
             void SetAnchorOffset(AnchorPreset anchor, const D2D1_SIZE_F& parentSize);
@@ -185,7 +191,11 @@ namespace JDComponent {
 
             bool m_dirty;
 
-            RECT    m_rect = {};
+            // RECT     m_rect = {};
+            float    m_Left = 0;
+            float    m_Right = 0;
+            float    m_Top = 0;
+            float    m_Bottom = 0;
 
             Vec2     m_position = { 0.f, 0.f }; // translation position
             float    m_rotation = 0.f;          // in degrees

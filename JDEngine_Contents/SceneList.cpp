@@ -23,8 +23,21 @@ namespace JDScene {
 
     // TestScene
     void TestScene::OnEnter() {
+        using namespace JDGameObject;
+        using namespace JDComponent;
+
         cout << "[TestScene] OnEnter()\n";
         CreateGameObject<Player>(L"¤±¤¤¤·");
+
+        std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
+
+        auto tf = testObject->GetComponent<Transform>();
+        tf->SetPosition({ 0.f, 0.f });
+        tf->SetScale({ 1.f, 1.f });
+
+        testObject->AddComponent<SpriteRenderer>("Test");
+
+        m_gameObjects.push_back(testObject);
     }
 
     void TestScene::OnLeave() {
@@ -48,7 +61,21 @@ namespace JDScene {
 
     void TestScene::Render() {
        //cout << "[TestScene] Render()\n";
+        auto camera = D2DRenderer::Instance().GetCamera();
 
+        if (camera)
+        {
+            D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
+        }
+        else
+        {
+            D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
+        }
+
+        for (auto& obj : m_gameObjects)
+        {
+            D2DRenderer::Instance().RenderGameObject(*obj);
+        }
     }
 
 }

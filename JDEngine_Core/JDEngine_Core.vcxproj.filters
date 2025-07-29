@@ -43,6 +43,12 @@
     <Filter Include="Component\UI">
       <UniqueIdentifier>{6e3a5067-6ec2-44f7-b0d8-cd350b899b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\SpriteRenderer">
+      <UniqueIdentifier>{67e60d0e-b67c-4443-bda9-2fbd1537dd05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{c3c76e64-f141-467f-816a-63a47cfc59f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -84,6 +90,12 @@
     <ClInclude Include="GameObjectBase.h">
       <Filter>Object\GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -118,6 +130,12 @@
     </ClCompile>
     <ClCompile Include="GameObjectBase.cpp">
       <Filter>Object\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

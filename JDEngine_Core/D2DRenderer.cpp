@@ -20,6 +20,7 @@ void D2DRenderer::Initialize(HWND hwnd)
 
     m_wicFactory = wicFactory;
 
+    m_camera = std::make_unique<Camera>();
 }
 
 void D2DRenderer::Uninitialize()
@@ -69,11 +70,31 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
 {
+    D2D1_MATRIX_3X2_F currentTransform;
+    m_d2dContext->GetTransform(&currentTransform);
+
+    D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
+    //D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * dest.top - (dest.bottom - dest.top));
+
+    D2D1_MATRIX_3X2_F corrected = flipY * currentTransform;
+    m_d2dContext->SetTransform(corrected);
+
     m_d2dContext->DrawBitmap(bitmap, dest);
+
+    m_d2dContext->SetTransform(currentTransform);
 }
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity)
 {
+    D2D1_MATRIX_3X2_F currentTransform;
+    m_d2dContext->GetTransform(&currentTransform);
+
+    D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
+    D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * destRect.top - (destRect.bottom - destRect.top));
+
+    D2D1_MATRIX_3X2_F corrected = flipY * translateBack * currentTransform;
+    m_d2dContext->SetTransform(corrected);
+
     m_d2dContext->DrawBitmap(
         bitmap,
         destRect,
@@ -81,6 +102,8 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
         D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
         srcRect
     );
+
+    m_d2dContext->SetTransform(currentTransform);
 }
 
 ComPtr<ID2D1Effect> D2DRenderer::CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount)
@@ -179,6 +202,28 @@ void D2DRenderer::RenderEnd(bool bPresent)
     if (bPresent)
     {
         Present();
+    }
+}
+
+void D2DRenderer::RenderGameObject(const GameObject& obj)
+{
+    using namespace JDGameObject;
+    using namespace JDComponent;
+    using Transform = JDComponent::D2DTM::Transform;
+    using SpriteRenderer = JDComponent::SpriteRenderer;
+
+    auto tf = obj.GetComponent<Transform>();
+    auto renderer = obj.GetComponent<SpriteRenderer>();
+
+    if (tf && renderer)
+    {
+        D2D1_MATRIX_3X2_F worldMatrix = tf->GetWorldMatrix();
+        if (m_camera)
+        {
+            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
+        }
+        ID2D1DeviceContext* context = D2DRenderer::Instance().GetD2DContext();
+        renderer->Render(context, worldMatrix);
     }
 }
 

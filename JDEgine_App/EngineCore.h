@@ -16,7 +16,6 @@ class EngineCore : public JDWindow::JDWndBase {
 public:
 public:
 
-
 	EngineCore() = default;
 	virtual ~EngineCore() = default;
 
@@ -37,9 +36,10 @@ private:
 
 	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
 	//std::unique_ptr<SceneManager> m_SceneManager = nullptr;
-	std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
+	//std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
 	//std::shared_ptr<InputManager> m_InputManager = nullptr;
-	std::shared_ptr<ResourceManager> m_ResourceManager = nullptr;
+	//std::shared_ptr<ResourceManager> m_ResourceManager = nullptr;
+	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
 
 	//GameTimer       m_GameTimer;
 	//AssetManager    m_AssetManager;
@@ -49,6 +49,10 @@ private:
 	//wstring    m_selectedFile;
 
 private:
+	D2D1_POINT_2F  m_cameraPosition = { 0.0f, 0.0f };      // 기본 카메라 위치
+	float m_cameraRotationDeg = 0.0f;               // 기본 회전 각도 (도 단위)
+	float m_cameraZoom = 1.0f;                      // 기본 줌 배율 (1.0 = 100%)
+
 	std::wstring    m_selectedAssetKey;
 
 	//std::vector<SpriteAnimator> m_curSprites;

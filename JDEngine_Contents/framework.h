@@ -6,3 +6,6 @@
 #include "WindowGlobal.h"
 #include "GameObjectBase.h"
 #include "GameObjectList.h"
+#include "D2DTransform.h"
+#include "Sprite.h"
+#include "D2DRenderer.h"

@@ -6,7 +6,7 @@
 bool ResourceManager::Initialize(ID2D1RenderTarget* renderTarget)
 {
     m_renderTarget = renderTarget;
-
+    
     HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr) && hr != RPC_E_CHANGED_MODE)
     {
@@ -33,20 +33,33 @@ bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& f
     Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> frame;
     hr = decoder->GetFrame(0, &frame);
     if (FAILED(hr)) return false;
-
+    
     Microsoft::WRL::ComPtr<IWICFormatConverter> converter;
     hr = m_wicFactory->CreateFormatConverter(&converter);
     if (FAILED(hr)) return false;
-
+    
     hr = converter->Initialize(
         frame.Get(), GUID_WICPixelFormat32bppPBGRA,
         WICBitmapDitherTypeNone, nullptr, 0.0, WICBitmapPaletteTypeCustom);
     if (FAILED(hr)) return false;
+    std::cout << "장후1";
+
+    if (!converter) {
+        std::cout << "[에러] converter is null\n";
+        return false;
+    }
+    if (!m_renderTarget) {
+        std::cout << "[에러] render target is null\n";
+        return false;
+    }
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap;
     hr = m_renderTarget->CreateBitmapFromWicBitmap(converter.Get(), nullptr, &bitmap);
-    if (FAILED(hr)) return false;
-
+    if (FAILED(hr)) {
+        //std::cout << "[에러] CreateBitmapFromWicBitmap 실패. HR = 0x" << std::hex << hr << std::endl;
+        return false;
+    }
+    std::cout << "장후2";
     m_textures[name] = bitmap;
     return true;
 }

@@ -46,6 +46,13 @@ public:
 
 	MouseState GetMouseState() const { return m_CurMouse; }
 
+	bool IsKeyDown(UINT vk) const {
+		if (vk >= 0 && vk < 256) {
+			//std::cout << "[IsKeyDown] vk=" << vk << ", down=" << m_keyDown[vk] << std::endl;
+			return m_keyDown[vk];
+		}
+		return false;
+	}
 
 protected:
 

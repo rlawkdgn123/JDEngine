@@ -73,6 +73,10 @@
     void SceneManager::Render()
     {
         if (m_CurrentScene)
+        {
+            
             m_CurrentScene->Render();
+        }
+            
     }
 

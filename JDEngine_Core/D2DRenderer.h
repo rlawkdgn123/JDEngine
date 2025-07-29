@@ -1,14 +1,27 @@
 #pragma once
 #include <wrl/client.h>
 #include <d2d1helper.h>
+#include "Camera.h"
+#include "GameObjectBase.h"
+#include "Sprite.h"
+
 using namespace Microsoft::WRL;
 
+using GameObject = JDGameObject::GameObject;
 
 class D2DRenderer
 {
 public:
-    D2DRenderer() = default;
+    static D2DRenderer& Instance()
+    {
+        static D2DRenderer instance;
+        return instance;
+    }
+    // 복사/이동 금지
+    D2DRenderer(const D2DRenderer&) = delete;
+    D2DRenderer& operator=(const D2DRenderer&) = delete;
 
+    // 기존 public 함수들 그대로 유지
     ~D2DRenderer() { Uninitialize(); }
 
     void Initialize(HWND hwnd);
@@ -30,6 +43,12 @@ public:
     void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color);
 
     void SetTransform(const D2D1_MATRIX_3X2_F tm);
+
+    void SetCamera(std::shared_ptr<Camera> camera) { m_camera = std::move(camera); }
+
+    std::shared_ptr<Camera> GetCamera() const { return m_camera; }
+
+    void RenderGameObject(const GameObject& obj);
 
     void RenderBegin();
 
@@ -53,6 +72,7 @@ public:
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
 private:
+    D2DRenderer() = default;
 
     void CreateDeviceAndSwapChain(HWND hwnd);
 
@@ -64,6 +84,8 @@ private:
 
 private:
     HWND m_hwnd = nullptr;
+
+    std::shared_ptr<Camera> m_camera;
 
     ComPtr<ID3D11Device>           m_d3dDevice;
     ComPtr<IDXGISwapChain1>        m_swapChain;

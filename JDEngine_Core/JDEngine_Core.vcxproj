@@ -142,7 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CircleCollider.h" />
+    <ClInclude Include="ColliderBase.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentList.h" />
     <ClInclude Include="D2DRenderer.h" />
@@ -159,7 +162,10 @@
     <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CircleCollider.cpp" />
+    <ClCompile Include="ColliderBase.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="D2DTransform.cpp" />

@@ -44,6 +44,7 @@ namespace JDComponent {
         }
 
         void SetOwner(GameObjectBase* owner) { m_Owner = owner; }
+        GameObjectBase* GetOwner() { return m_Owner; }
 
     public:
         bool m_enabled = true;

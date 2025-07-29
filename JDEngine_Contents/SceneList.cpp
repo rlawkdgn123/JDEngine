@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+
 using namespace std;
 using namespace JDGameObject::InGame;
 
@@ -26,7 +29,7 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
 
-        cout << "[TestScene] OnEnter()\n";
+        //cout << "[TestScene] OnEnter()\n";
         CreateGameObject<Player>(L"¤±¤¤¤·");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
@@ -38,10 +41,12 @@ namespace JDScene {
         testObject->AddComponent<SpriteRenderer>("Test");
 
         m_gameObjects.push_back(testObject);
+
+
     }
 
     void TestScene::OnLeave() {
-        cout << "[TestScene] OnLeave()\n";
+        //cout << "[TestScene] OnLeave()\n";
     }
 
     void TestScene::Update(float deltaTime) {

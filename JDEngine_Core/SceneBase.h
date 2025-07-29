@@ -22,6 +22,11 @@ namespace JDScene {
         ShapeType ShapeTypeGet() const { return shape; }
     };
 
+    struct CollisionPair { // 충돌 정보 저장용 구조체. 나중에 충돌점이나 다른 정보들도 함께 넣을 수 있음.
+        JDGameObject::GameObjectBase* A = nullptr;
+        JDGameObject::GameObjectBase* B = nullptr;
+    };
+
     class SceneBase
     {
     public:
@@ -45,7 +50,7 @@ namespace JDScene {
         
         virtual void FixedUpdate(float fixedDeltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->FixedUpdate(fixedDeltaTime); } };
 
-        virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); } };
+        virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); }  CheakCollision();};
         
         virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
         
@@ -96,6 +101,8 @@ namespace JDScene {
         //sceneObjects라는 GameObjectBase* 포인터들을 담고 있는 벡터를 수정할 수 없는(const) 참조자(&) 형태로 반환
         //const std::vector<GamebjectBase*>& GetSceneObjects() const { return sceneObjects; };
 
+        void CheakCollision(); // 충돌 체크
+
     protected:
 
         const SceneType m_Type;
@@ -103,6 +110,8 @@ namespace JDScene {
         std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
         std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
         std::vector<GameObjectBase*> m_destroyQueue; // 안전하게 오브젝트를 제거하기 위한 큐. LateUpdate() 맨 마지막에 해당 큐의 오브젝트를 제거한다.
+        std::vector<CollisionPair> m_prevPairs; // 이전 충돌 정보 보관용. 이것을 통해 두 오브젝트가 충돌하고 있었는지 알 수 있음.
+        std::vector<CollisionPair> m_currPairs; // 현재 충돌 정보 보관용. 충돌한 오브젝트 쌍의 정보를 저장하고 이전 충돌 정보에 넘겨줌.
         int m_objectCount = 0; // 각 씬의 객체 카운팅
     };
 }

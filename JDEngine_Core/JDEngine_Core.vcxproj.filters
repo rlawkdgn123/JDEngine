@@ -49,6 +49,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{c3c76e64-f141-467f-816a-63a47cfc59f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\Collider">
+      <UniqueIdentifier>{54377ccd-fb05-445d-a8ac-40e582684264}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -96,6 +99,15 @@
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleCollider.h">
+      <Filter>Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderBase.h">
+      <Filter>Component\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -136,6 +148,15 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleCollider.cpp">
+      <Filter>Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderBase.cpp">
+      <Filter>Component\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,13 +9,13 @@ namespace JDComponent {
     namespace D2DTM
     {
 
-        class Transform : public  JDComponent::Component {
+        class RectTransform : public  JDComponent::Component {
         public:
             using Vec2 = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
             using PivotPreset = JDGlobal::Core::PivotPreset;
             using AnchorPreset = JDGlobal::Core::AnchorPreset;
-            Transform()
+            RectTransform()
                 : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
                 m_dirty(false), m_parent(nullptr)
             {
@@ -23,22 +23,22 @@ namespace JDComponent {
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
             }
 
-            Transform(Vec2 tr)
+            RectTransform(Vec2 tr)
                 : m_position{ tr.x, tr.y }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
                 m_dirty(false), m_parent(nullptr)
             {
                 m_matrixLocal = D2D1::Matrix3x2F::Identity();
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
             }
-            ~Transform()
+            ~RectTransform()
             {
                 for (auto* child : m_children)
                     child->m_parent = nullptr;
             }
 
-            Transform* GetParent() const { return m_parent; }
+            RectTransform* GetParent() const { return m_parent; }
 
-            void SetParent(Transform* newParent)
+            void SetParent(RectTransform* newParent)
             {
                 assert(newParent != this); // 자기 자신을 부모로 설정할 수 없음
                 assert(m_parent == nullptr); // DetachFromParent 를 먼저 호출하고 다시 SetParent를 호출해야 함
@@ -62,7 +62,7 @@ namespace JDComponent {
                 SetDirty();
             }
 
-            void AddChild(Transform* child)
+            void AddChild(RectTransform* child)
             {
                 // 자식의 로컬 좌표를 부모 좌표계로 변환
                 // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
@@ -75,7 +75,7 @@ namespace JDComponent {
                 m_children.push_back(child);
             }
 
-            void RemoveChild(Transform* child)
+            void RemoveChild(RectTransform* child)
             {
                 // 월드로 보낸다.
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
@@ -191,8 +191,8 @@ namespace JDComponent {
             float    m_rotation = 0.f;          // in degrees
             Vec2     m_scale = { 1.f, 1.f };
 
-            Transform* m_parent;
-            std::vector<Transform*> m_children;
+            RectTransform* m_parent;
+            std::vector<RectTransform*> m_children;
 
             Mat3x2 m_matrixLocal;
             Mat3x2 m_matrixWorld;

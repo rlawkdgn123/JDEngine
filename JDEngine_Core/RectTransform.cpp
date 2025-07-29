@@ -9,40 +9,33 @@ namespace JDComponent {
 		using Vector2F = JDMath::Vector2F;
         void RectTransform::UpdateMatrices()
 		{
-			// 부모가 있다면 부모의 RectSize가 기준이 됨
-			// 부모가 없다면 윈도우 사이즈가 기준이 됨
-			D2D1_SIZE_F baseSize = { 0, 0 };
-
-			if (m_parent)
-				baseSize = m_parent->GetD2D1Size();
-			else
-				baseSize = WindowSize::Instance().GetSize(); // 전체 화면
-
-			// 2. 앵커 기준 위치를 기준 좌표계에서 계산
-			Vector2F anchorOffset = SetAnchorOffset(baseSize); // 부모 사이즈 기준 앵커 위치
-
-			// 3. 스케일 (Pivot 기준)
+			// 1) 피벗 기준 스케일
 			auto M_scale = D2D1::Matrix3x2F::Scale(
 				m_scale.x, m_scale.y,
-				m_pivot
+				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
-			// 4. 회전 (Pivot 기준)
+
+			// 2) 피벗 기준 회전
 			auto M_rot = D2D1::Matrix3x2F::Rotation(
 				m_rotation,
-				m_pivot
+				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 5. 최종 위치 = 앵커 위치 + 로컬 오프셋 (Position)
-			auto finalPos = anchorOffset + m_position;
-
+			// 3) 최종 위치 이동
 			auto M_trans = D2D1::Matrix3x2F::Translation(
-				finalPos.x, finalPos.y
+				m_position.x, m_position.y
 			);
 
-			// 6. 최종 행렬 = Scale → Rotate → Translate
+			// 합쳐서 로컬 변환 매트릭스 완성
 			m_matrixLocal = M_scale * M_rot * M_trans;
 
+			if (m_parent)
+				m_matrixWorld = m_matrixLocal * m_parent->GetWorldMatrix();
+			else
+				m_matrixWorld = m_matrixLocal;
+
 			m_dirty = false;
+
 		}
 
 		void RectTransform::SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size)
@@ -68,38 +61,7 @@ namespace JDComponent {
 			}
 		}
 
-		JDMath::Vector2F RectTransform::SetAnchorOffset(const D2D1_SIZE_F& parentSize)
-		{
-			{
-				switch (m_anchor)
-				{
-				case AnchorPreset::TopLeft:
-					return { 0.f, 0.f };
-				case AnchorPreset::TopCenter:
-					return { parentSize.width * 0.5f, 0.f };
-				case AnchorPreset::TopRight:
-					return { parentSize.width, 0.f };
-				case AnchorPreset::CenterLeft:
-					return { 0.f, parentSize.height * 0.5f };
-				case AnchorPreset::Center:
-					return { parentSize.width * 0.5f, parentSize.height * 0.5f };
-				case AnchorPreset::CenterRight:
-					return { parentSize.width, parentSize.height * 0.5f };
-				case AnchorPreset::BottomLeft:
-					return { 0.f, parentSize.height };
-				case AnchorPreset::BottomCenter:
-					return { parentSize.width * 0.5f, parentSize.height };
-				case AnchorPreset::BottomRight:
-					return { parentSize.width, parentSize.height };
-				case AnchorPreset::XStretch:
-					return { parentSize.width * 0.5f, 0.f };
-				case AnchorPreset::YStretch:
-					return { 0.f, parentSize.height * 0.5f };
-				default:
-					return { 0.f, 0.f };
-				}
-			}
-		}
+		
 
     }
 }

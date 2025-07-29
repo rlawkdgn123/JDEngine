@@ -28,10 +28,11 @@ namespace JDGameObject {
         static ULONG64 idCount; // id 카운팅 방법 : static++임. 만약 ULONG64 Max만큼 오브젝트 생성 시 터질 수 있음.
 
         using Vector2f = JDGlobal::Math::Vector2F;
+        using Tag = JDGlobal::Base::GameTag;
         using MessageID = JDGlobal::Core::MessageID;
         using Component = JDComponent::Component;
         using Transform = JDComponent::D2DTM::Transform;
-
+        
     public:
         GameObjectBase(const std::wstring& name) : m_name(name) {}
         virtual ~GameObjectBase() {}
@@ -83,12 +84,12 @@ namespace JDGameObject {
     }
 
     protected:
-        Transform* m_transform = nullptr; // 트랜스폼 RawPointer ( 사용 주의 )
         std::vector<std::unique_ptr<Component>> m_components; // 컴포넌트 리스트
         Vector2f m_direction = { 0.0f, 0.0f }; // 방향 (단위 벡터) : 필요한가? 고민해보자
         std::wstring m_name;
-        std::wstring m_tag = L"";
+        Tag m_tag = Tag::None;
         int m_layer = 0;
+
         int m_id = -1;
         bool m_active = true; // 게임 오브젝트 전체의 활성/비활성
         bool m_isAwaked = false;
@@ -135,6 +136,9 @@ namespace JDGameObject {
 
         void SetName(const std::wstring& name) { m_name = name; }
         void SetDirection(const Vector2f& dir) { m_direction = dir; }
+
+    private:
+        Transform* m_transform = nullptr; // 트랜스폼 RawPointer ( 사용 주의 )
     };
 }
 #include "GameObjectBase.inl"

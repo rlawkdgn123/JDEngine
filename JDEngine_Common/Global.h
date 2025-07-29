@@ -4,7 +4,39 @@
 namespace JDMath = JDGlobal::Math;
 
 namespace JDGlobal {	
+	namespace Base {
 
+		// 인게임 식별용 태그 (현재는 태그 임의)
+		enum class GameTag
+		{
+			None,
+			Player,
+			Enemy,
+			NPC,
+			UI
+		};
+
+		// 렌더링 순서 제어용 Enum
+		enum class SortingLayer : int {
+			None,
+			BackGround,
+			Architecture,
+			Cat,
+		};
+		
+		struct RenderLayerInfo { 
+			SortingLayer sortingLayer;
+			int orderInLayer = 0;
+
+			// 렌더링 정렬 기준
+			bool Compare(const RenderLayerInfo& a, const RenderLayerInfo& b) {
+				if (a.sortingLayer != b.sortingLayer)
+					return a.sortingLayer < b.sortingLayer; // enum값이 낮을수록 아래에 그림
+				return a.orderInLayer < b.orderInLayer;     // 같은 그룹 내에서는 정렬 순서로
+			}
+		};
+
+	}
 	namespace Core {
 		// Scenes
 		enum class SceneType : int { // 범위가 있는 class 열거형 // C++11

@@ -72,7 +72,7 @@ bool EngineCore::Initialize()
     //{
     //    return false;
     //}
-    
+    //
     m_EngineTimer = make_unique<GameTimer>(); // 팩토리에서 타이머 unique 형태로 할당
 
     D2DRenderer::Instance().Initialize(m_hWnd);

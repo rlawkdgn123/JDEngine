@@ -42,7 +42,6 @@ bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& f
         frame.Get(), GUID_WICPixelFormat32bppPBGRA,
         WICBitmapDitherTypeNone, nullptr, 0.0, WICBitmapPaletteTypeCustom);
     if (FAILED(hr)) return false;
-    std::cout << "장후1";
 
     if (!converter) {
         std::cout << "[에러] converter is null\n";
@@ -56,10 +55,9 @@ bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& f
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap;
     hr = m_renderTarget->CreateBitmapFromWicBitmap(converter.Get(), nullptr, &bitmap);
     if (FAILED(hr)) {
-        //std::cout << "[에러] CreateBitmapFromWicBitmap 실패. HR = 0x" << std::hex << hr << std::endl;
+        std::cout << "[에러] CreateBitmapFromWicBitmap 실패. HR = 0x" << std::hex << hr << std::endl;
         return false;
     }
-    std::cout << "장후2";
     m_textures[name] = bitmap;
     return true;
 }

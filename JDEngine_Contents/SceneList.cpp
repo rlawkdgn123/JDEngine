@@ -29,8 +29,9 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
 
-        cout << "[TestScene] OnEnter()\n";
+        //cout << "[TestScene] OnEnter()\n";
         CreateGameObject<Player>(L"ㅁㄴㅇ");
+
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
 
@@ -42,6 +43,18 @@ namespace JDScene {
 
         m_sceneObjects.push_back(testObject);
 
+        // UI
+        std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
+
+        auto rtf = testUIObject->GetComponent<RectTransform>();
+        rtf->SetPosition({ 0.f, 0.f });
+        rtf->SetScale({ 1.f, 1.f });
+
+        testUIObject->AddComponent<UI_ImageComponent>("Test");
+        auto imageComponent = testUIObject->GetComponent<UI_ImageComponent>();
+
+        m_UIObjects.push_back(testUIObject);
+
 
         const float startX = -500.0f;
         const float startY = 300.0f;
@@ -50,18 +63,18 @@ namespace JDScene {
 
         for (int col = 0; col < 5; ++col) {
             for (int row = 0; row < 7; ++row) {
-                // ���� �̸� ���� (���ϸ� ���ϸ����� �ص� �˴ϴ�)
+                // 고유 이름 생성 (원하면 동일명으로 해도 됩니다)
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-                // GameObject ����
+                // GameObject 생성
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // ��ġ ����
+                // 위치 설정
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
 
-                // �ݶ��̴� �߰�
+                // 콜라이더 추가
                 box->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ 47.0f,47.0f });
             }
         }
@@ -74,12 +87,12 @@ namespace JDScene {
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        // 1) ���콺 ��ũ�� ��ǥ ���
+        // 1) 마우스 스크린 좌표 얻기
         auto& inputMgr = InputManager::Instance();
         auto  mouseState = inputMgr.GetMouseState().pos;    // {x, y} �ȼ�
         JDGlobal::Math::Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
 
-        // 2) ��ũ�� �� ���� ��ȯ
+        // 2) 스크린 → 월드 변환
         JDGlobal::Math::Vector2F mouseWorld;
         auto camera = D2DRenderer::Instance().GetCamera();
         if (camera) {
@@ -93,7 +106,7 @@ namespace JDScene {
 
         //HandleMouseHover(mouseWorld);
 
-        // 3) ���̶���Ʈ �ε��� ���
+        // 3) 하이라이트 인덱스 계산
         m_highlightedIndex = -1;
         for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
             auto& obj = m_gameObjects[i];
@@ -140,7 +153,7 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        // �ݶ��̴� �׸��� (���̶���Ʈ �� �б�)
+        // 콜라이더 그리기 (하이라이트 색 분기)
         for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
             auto& obj = m_gameObjects[i];
             if (!obj) continue;
@@ -158,10 +171,10 @@ namespace JDScene {
             float right = pos.x + offset.x + hsize.x;
             float bottom = pos.y + offset.y - hsize.y;
 
-            // ���̶���Ʈ�� �ε����� �� ����, �ƴϸ� �⺻ ����
+            // 하이라이트된 인덱스일 때 빨강, 아니면 기본 검정
             UINT32 color = (i == m_highlightedIndex)
-                ? 0xFFFF0000  // ����
-                : 0xFF000000; // ����
+                ? 0xFFFF0000  
+                : 0xFF000000; 
 
             D2DRenderer::Instance().DrawRectangle(
                 left, top, right, bottom,
@@ -169,7 +182,7 @@ namespace JDScene {
             );
         }
 
-        // ���� ������Ʈ ����
+        // 게임 오브젝트 렌더
         for (auto& obj : m_sceneObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj);
         }

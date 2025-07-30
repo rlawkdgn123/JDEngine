@@ -48,12 +48,12 @@ namespace JDScene {
 
         virtual void OnLeave() {};
         
-        virtual void FixedUpdate(float fixedDeltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->FixedUpdate(fixedDeltaTime); } };
+        virtual void FixedUpdate(float fixedDeltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->FixedUpdate(fixedDeltaTime); } };
 
-        virtual void Update(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->Update(deltaTime); }  CheakCollision();};
+        virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); }  CheakCollision();};
         
-        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
-
+        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
+        
         virtual void Render() {};
         
         template<typename T, typename... Args>
@@ -80,14 +80,14 @@ namespace JDScene {
                        즉, 해당 함수는 remove_if로 지울 요소를 뒤로 민 동시에,
                        밀린 삭제될 요소 시작 인덱스부터 맨 끝 인덱스까지 제거
                     */
-                    m_gameObjects.erase(
+                    m_sceneObjects.erase(
                         std::remove_if(
-                            m_gameObjects.begin(),
-                            m_gameObjects.end(),
+                            m_sceneObjects.begin(), 
+                            m_sceneObjects.end(),
                             [&](const std::unique_ptr<GameObjectBase>& target) {
                                 return target.get() == obj; 
                             }),
-                        m_gameObjects.end()
+                        m_sceneObjects.end()
                     );
                 }
             }
@@ -104,18 +104,14 @@ namespace JDScene {
         void CheakCollision(); // 충돌 체크
 
     protected:
-        D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
-        int m_highlightedIndex = -1;
 
         const SceneType m_Type;
         const std::string m_ID = "None";
-
-        std::vector<std::unique_ptr<GameObjectBase>> m_gameObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
+        std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
         std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
         std::vector<GameObjectBase*> m_destroyQueue; // 안전하게 오브젝트를 제거하기 위한 큐. LateUpdate() 맨 마지막에 해당 큐의 오브젝트를 제거한다.
         std::vector<CollisionPair> m_prevPairs; // 이전 충돌 정보 보관용. 이것을 통해 두 오브젝트가 충돌하고 있었는지 알 수 있음.
         std::vector<CollisionPair> m_currPairs; // 현재 충돌 정보 보관용. 충돌한 오브젝트 쌍의 정보를 저장하고 이전 충돌 정보에 넘겨줌.
-
         int m_objectCount = 0; // 각 씬의 객체 카운팅
     };
 }

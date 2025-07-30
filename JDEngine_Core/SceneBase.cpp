@@ -3,7 +3,6 @@
 #include "GameObjectBase.h"
 #include "ColliderBase.h"
 #include "SceneBase.h"
-#include "BoxCollider.h"
 
 using namespace std;
 namespace JDScene {
@@ -12,16 +11,16 @@ namespace JDScene {
         m_currPairs.clear(); // 처음부터 현재 충돌 정보는 초기화하고 시작하기.
 
         // 현재 충돌한 쌍 저장
-        size_t n = m_gameObjects.size();
+        size_t n = m_sceneObjects.size();
         for (size_t i = 0; i < n; ++i) {
-            auto* objA = m_gameObjects[i].get();
+            auto* objA = m_sceneObjects[i].get();
             if (!objA) continue;
 
             auto* colA = objA->GetComponent<JDComponent::ColliderBase>();
             if (!colA) continue;
 
             for (size_t j = i + 1; j < n; ++j) {
-                auto* objB = m_gameObjects[j].get();
+                auto* objB = m_sceneObjects[j].get();
                 if (!objB) continue;
 
                 auto* colB = objB->GetComponent<JDComponent::ColliderBase>();
@@ -95,6 +94,7 @@ namespace JDScene {
                 }
             }
         }
+
         // 이제 다 끝났으니 현재 충돌 정보를 과거 정보로 넘겨주기.
         m_prevPairs.swap(m_currPairs);
     }

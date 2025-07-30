@@ -12,7 +12,7 @@
 .inl 파일은 일반적으로 헤더와 함께 include되는 전제로, 컴파일 타임에 포함되기 때문에 템플릿 구현에 적합.
 
 왜 .h의 맨 아래에서 ini를 include 하나요?
-클래스 선언과 멤버 함수 선언이 모두 끝난 뒤에 템플릿 정의를 포함해야 하기 때문입니다.
+✅ 클래스 선언과 멤버 함수 선언이 모두 끝난 뒤에 템플릿 정의를 포함해야 하기 때문입니다.
 */
 
 // SceneBase.inl
@@ -26,7 +26,7 @@ namespace JDScene {
 		
 		auto obj = std::make_unique<T>(std::forward<Args>(args)...);  // T 객체 생성
 		T* ptr = obj.get();
-		m_gameObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
+		m_sceneObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
 		m_objectCount++;
 
 		std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;

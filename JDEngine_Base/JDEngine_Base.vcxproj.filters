@@ -22,6 +22,9 @@
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{cb521fd6-1487-44ac-aa8a-48b17e8b98ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Layer">
+      <UniqueIdentifier>{daf3c75d-e798-40f2-93bb-73ac5588be58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -33,6 +36,9 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Layer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -40,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Layer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

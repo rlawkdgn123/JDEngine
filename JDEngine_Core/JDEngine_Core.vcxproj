@@ -160,6 +160,11 @@
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="UIObject.h" />
+    <ClInclude Include="UI_ButtonComponent.h" />
+    <ClInclude Include="UI_ImageComponent.h" />
+    <ClInclude Include="UI_SliderComponent.h" />
+    <ClInclude Include="UI_TextComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoxCollider.cpp" />
@@ -183,6 +188,10 @@
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="UI_ButtonComponent.cpp" />
+    <ClCompile Include="UI_ImageComponent.cpp" />
+    <ClCompile Include="UI_SliderComponent.cpp" />
+    <ClCompile Include="UI_TextComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JDEngine_Base\JDEngine_Base.vcxproj">

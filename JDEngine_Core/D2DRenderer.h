@@ -1,13 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include <wrl/client.h>
 #include <d2d1helper.h>
 #include "Camera.h"
 #include "GameObjectBase.h"
+#include "UIObject.h"
 #include "Sprite.h"
+
+#include "UI_ImageComponent.h"
+#include "UI_TextComponent.h"
+#include "UI_ButtonComponent.h"
 
 using namespace Microsoft::WRL;
 
 using GameObject = JDGameObject::GameObject;
+using UIObject = JDGameObject::UIObject;
 
 class D2DRenderer
 {
@@ -17,11 +23,11 @@ public:
         static D2DRenderer instance;
         return instance;
     }
-    // º¹»ç/ÀÌµ¿ ±İÁö
+    // ë³µì‚¬/ì´ë™ ê¸ˆì§€
     D2DRenderer(const D2DRenderer&) = delete;
     D2DRenderer& operator=(const D2DRenderer&) = delete;
 
-    // ±âÁ¸ public ÇÔ¼öµé ±×´ë·Î À¯Áö
+    // ê¸°ì¡´ public í•¨ìˆ˜ë“¤ ê·¸ëŒ€ë¡œ ìœ ì§€
     ~D2DRenderer() { Uninitialize(); }
 
     void Initialize(HWND hwnd);
@@ -50,6 +56,8 @@ public:
 
     void RenderGameObject(const GameObject& obj);
 
+    void RenderUIObject(const UIObject& uiObj);
+
     void RenderBegin();
 
     void RenderEnd(bool bPresent = true);
@@ -66,9 +74,9 @@ public:
 
     ID2D1RenderTarget* GetRenderTarget() const { return m_d2dContext.Get(); }
 
-    ComPtr<ID2D1Effect> CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount);// ÀÌÆåÆ®
+    ComPtr<ID2D1Effect> CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount);// ì´í™íŠ¸
 
-    ID2D1DeviceContext* GetD2DContext() const { return m_d2dContext.Get(); }
+    ID2D1DeviceContext7* GetD2DContext() const { return m_d2dContext.Get(); }
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
 private:

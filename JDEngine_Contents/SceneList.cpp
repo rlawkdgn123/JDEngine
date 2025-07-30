@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -29,8 +29,8 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
 
-        //cout << "[TestScene] OnEnter()\n";
-        CreateGameObject<Player>(L"¤±¤¤¤·");
+        cout << "[TestScene] OnEnter()\n";
+        CreateGameObject<Player>(L"ã…ã„´ã…‡");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
 
@@ -42,6 +42,7 @@ namespace JDScene {
 
         m_sceneObjects.push_back(testObject);
 
+
         const float startX = -500.0f;
         const float startY = 300.0f;
         const float spacingX = 100.0f;
@@ -49,18 +50,18 @@ namespace JDScene {
 
         for (int col = 0; col < 5; ++col) {
             for (int row = 0; row < 7; ++row) {
-                // °íÀ¯ ÀÌ¸§ »ı¼º (¿øÇÏ¸é µ¿ÀÏ¸íÀ¸·Î ÇØµµ µË´Ï´Ù)
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øµï¿½ ï¿½Ë´Ï´ï¿½)
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-                // GameObject »ı¼º
+                // GameObject ï¿½ï¿½ï¿½ï¿½
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // À§Ä¡ ¼³Á¤
+                // ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
 
-                // Äİ¶óÀÌ´õ Ãß°¡
+                // ï¿½İ¶ï¿½ï¿½Ì´ï¿½ ï¿½ß°ï¿½
                 box->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ 47.0f,47.0f });
             }
         }
@@ -73,12 +74,12 @@ namespace JDScene {
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        // 1) ¸¶¿ì½º ½ºÅ©¸° ÁÂÇ¥ ¾ò±â
+        // 1) ï¿½ï¿½ï¿½ì½º ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½
         auto& inputMgr = InputManager::Instance();
-        auto  mouseState = inputMgr.GetMouseState().pos;    // {x, y} ÇÈ¼¿
+        auto  mouseState = inputMgr.GetMouseState().pos;    // {x, y} ï¿½È¼ï¿½
         JDGlobal::Math::Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
 
-        // 2) ½ºÅ©¸° ¡æ ¿ùµå º¯È¯
+        // 2) ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         JDGlobal::Math::Vector2F mouseWorld;
         auto camera = D2DRenderer::Instance().GetCamera();
         if (camera) {
@@ -92,7 +93,7 @@ namespace JDScene {
 
         //HandleMouseHover(mouseWorld);
 
-        // 3) ÇÏÀÌ¶óÀÌÆ® ÀÎµ¦½º °è»ê
+        // 3) ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½Æ® ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         m_highlightedIndex = -1;
         for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
             auto& obj = m_gameObjects[i];
@@ -139,7 +140,7 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        // Äİ¶óÀÌ´õ ±×¸®±â (ÇÏÀÌ¶óÀÌÆ® »ö ºĞ±â)
+        // ï¿½İ¶ï¿½ï¿½Ì´ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Ğ±ï¿½)
         for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
             auto& obj = m_gameObjects[i];
             if (!obj) continue;
@@ -157,10 +158,10 @@ namespace JDScene {
             float right = pos.x + offset.x + hsize.x;
             float bottom = pos.y + offset.y - hsize.y;
 
-            // ÇÏÀÌ¶óÀÌÆ®µÈ ÀÎµ¦½ºÀÏ ¶§ »¡°­, ¾Æ´Ï¸é ±âº» °ËÁ¤
+            // ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Æ´Ï¸ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½
             UINT32 color = (i == m_highlightedIndex)
-                ? 0xFFFF0000  // »¡°­
-                : 0xFF000000; // °ËÁ¤
+                ? 0xFFFF0000  // ï¿½ï¿½ï¿½ï¿½
+                : 0xFF000000; // ï¿½ï¿½ï¿½ï¿½
 
             D2DRenderer::Instance().DrawRectangle(
                 left, top, right, bottom,
@@ -168,9 +169,14 @@ namespace JDScene {
             );
         }
 
-        // °ÔÀÓ ¿ÀºêÁ§Æ® ·»´õ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         for (auto& obj : m_sceneObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj);
+        }
+
+        for (auto& uiObj : m_UIObjects)
+        {
+            D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
 }

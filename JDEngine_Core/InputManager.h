@@ -1,4 +1,5 @@
-#pragma once
+ï»¿#pragma once
+#include <array>
 #include "InputUtil.h"
 
 struct MouseState
@@ -38,9 +39,9 @@ private:
 
 public:
 
-	bool Initialize(HWND hwnd); // ÀÎÇ²¸Å´ÏÀú ÃÊ±âÈ­
+	bool Initialize(HWND hwnd); // ì¸í’‹ë§¤ë‹ˆì € ì´ˆê¸°í™”
 
-	bool OnHandleMessage(const MSG& msg); // Å° ÀÔ·Â Á¤º¸¸¦ ÇÚµé¿¡ ³Ñ±â±â
+	bool OnHandleMessage(const MSG& msg); // í‚¤ ì…ë ¥ ì •ë³´ë¥¼ í•¸ë“¤ì— ë„˜ê¸°ê¸°
 
 	bool GetKeyPressed(UINT vk);
 
@@ -56,13 +57,13 @@ public:
 
 protected:
 
-	void HandleMsgKeyDown(WPARAM wParam, LPARAM lParam); // ´­·¶À» ¶§
+	void HandleMsgKeyDown(WPARAM wParam, LPARAM lParam); // ëˆŒë €ì„ ë•Œ
 
-	void HandleMsgKeyUp(WPARAM wParam, LPARAM lParam); // ¶ÃÀ» ¶§
+	void HandleMsgKeyUp(WPARAM wParam, LPARAM lParam); // ë—ì„ ë•Œ
 
-	void HandleMsgMouse(const MSG& msg); // ¸¶¿ì½º ¸Ş½ÃÁö
+	void HandleMsgMouse(const MSG& msg); // ë§ˆìš°ìŠ¤ ë©”ì‹œì§€
 
-	void HandleRawInput(LPARAM lParam); // °íÁ¤¹Ğ ÀÔ·Â
+	void HandleRawInput(LPARAM lParam); // ê³ ì •ë°€ ì…ë ¥
 
 	void HandleKeyboardInput(RAWINPUT& raw);
 
@@ -70,7 +71,7 @@ protected:
 
 	MouseState m_CurMouse;
 
-	std::array<bool, 256>    m_keyDown = {};   // ÇöÀç Down »óÅÂ
-	std::array<KeyEdge, 256> m_keyEdge = {};   // ÀÌ¹ø ÇÁ·¹ÀÓ Edge °á°ú
+	std::array<bool, 256>    m_keyDown = {};   // í˜„ì¬ Down ìƒíƒœ
+	std::array<KeyEdge, 256> m_keyEdge = {};   // ì´ë²ˆ í”„ë ˆì„ Edge ê²°ê³¼
 
 };

@@ -145,6 +145,8 @@
     <ClInclude Include="GameObjectList.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SceneList.h" />
+    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UIObjectList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObjectList.cpp" />
@@ -155,6 +157,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneList.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UIObjectList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JDEngine_Common\JDEngine_Common.vcxproj">

@@ -55,7 +55,7 @@ namespace JDScene {
         virtual void LateUpdate(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
 
-        virtual void Render() {};
+        virtual void Render(float deltaTime) {};
         
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);
@@ -106,6 +106,8 @@ namespace JDScene {
 
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
+
+        bool  m_prevLeftPressed = false;
         int m_highlightedIndex = -1;
 
         const SceneType m_Type;

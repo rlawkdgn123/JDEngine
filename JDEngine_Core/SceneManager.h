@@ -36,7 +36,7 @@ public:
 
     void LateUpdate(float deltaTime);
 
-    void Render();
+    void Render(float dt);
 
     const SceneBase* GetCurrentScene() const { return m_CurrentScene; }
 

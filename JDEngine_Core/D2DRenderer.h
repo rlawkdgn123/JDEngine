@@ -5,6 +5,7 @@
 #include "GameObjectBase.h"
 #include "UIObject.h"
 #include "Sprite.h"
+#include "Animation.h"
 
 #include "UI_ImageComponent.h"
 #include "UI_TextComponent.h"
@@ -54,7 +55,7 @@ public:
 
     std::shared_ptr<Camera> GetCamera() const { return m_camera; }
 
-    void RenderGameObject(const GameObject& obj);
+    void RenderGameObject(const GameObject& obj , float dt);
 
     void RenderUIObject(const UIObject& uiObj);
 

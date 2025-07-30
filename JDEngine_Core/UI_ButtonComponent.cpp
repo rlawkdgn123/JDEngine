@@ -11,7 +11,7 @@ namespace JDComponent {
 
     void UI_ButtonComponent::Update(float deltaTime)
     {
-        std::cout << "버튼 업데이트" << std::endl;
+        //std::cout << "버튼 업데이트" << std::endl;
 
         if (!m_Interactable)
             return;
@@ -33,7 +33,7 @@ namespace JDComponent {
             if (isMouseDown && !m_WasMouseDown)
             {
                 m_State = ButtonState::Pressed;
-                std::cout << "클릭" << std::endl;
+                //std::cout << "클릭" << std::endl;
             }
 
             // 눌렀다가 뗀 상태 ( 클릭 완료 )
@@ -49,7 +49,7 @@ namespace JDComponent {
             else if (!isMouseDown)
             {
                 m_State = ButtonState::Hovered;
-                std::cout << "호버" << std::endl;
+                //std::cout << "호버" << std::endl;
             }
         }
 
@@ -57,7 +57,7 @@ namespace JDComponent {
         else
         {
             m_State = ButtonState::Idle;
-            std::cout << "기본" << std::endl;
+            //std::cout << "기본" << std::endl;
         }
 
         m_WasMouseDown = isMouseDown;

@@ -15,36 +15,9 @@ namespace JDScene {
 
         // UI
         ////////////////////////////////////////////////////////////////////////////////
-        // RectTransform
-        std::unique_ptr<UIObject> testUIObject = std::make_unique<UIObject>();
+        
+        CreateUIObject<Button>(L"타이틀 버튼");
 
-        auto rtf = testUIObject->GetComponent<RectTransform>();
-        rtf->SetPosition({ 0.f, 0.f });
-        rtf->SetScale({ 1.f, 1.f });
-        rtf->SetSize({ 100.f, 100.f });
-
-        ////////////////////////////////////////////////////////////////////////////////
-        // UI_ImageComponent
-        testUIObject->AddComponent<UI_ImageComponent>("Test");
-        auto imageComponent = testUIObject->GetComponent<UI_ImageComponent>();
-
-        ////////////////////////////////////////////////////////////////////////////////
-        // UI_TextComponent
-        testUIObject->AddComponent<UI_TextComponent>();
-        auto textComponent = testUIObject->GetComponent<UI_TextComponent>();
-
-        D2DRenderer& renderer = D2DRenderer::Instance();
-        IDWriteTextFormat* textFormat = renderer.GetTextFormat();
-        textComponent->SetTextFormat(textFormat);
-        textComponent->SetText(L"Test");
-        textComponent->SetColor(D2D1::ColorF(D2D1::ColorF::LightSkyBlue));
-
-        ////////////////////////////////////////////////////////////////////////////////
-        // UI_ButtonComponent
-        testUIObject->AddComponent<UI_ButtonComponent>();
-        auto buttonComponent = testUIObject->GetComponent<UI_ButtonComponent>();
-
-        m_gameUiObjects.push_back(std::move(testUIObject));
     }
 
     void TitleScene::OnLeave() {

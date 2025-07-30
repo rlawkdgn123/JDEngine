@@ -8,7 +8,7 @@ namespace JDComponent {
     namespace D2DTM
     {
 
-        class RectTransform : public Component {
+        class RectTransform : public JDComponent::Component {
         public:
             void Update(float dt) override {};
 

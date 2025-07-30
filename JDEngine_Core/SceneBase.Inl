@@ -38,6 +38,27 @@ namespace JDScene {
 		return ptr;
 	}
 
+	template<typename T, typename... Args>
+	T* SceneBase::CreateUIObject(Args&&... args)
+	{
+		//static_assert : 컴파일 검사
+		//is_base_of_v<A,B> : A가 B의 부모인가?? c++17, 
+		static_assert(std::is_base_of<GameObjectBase, T>::value, "T는 BaseClass를 상속해야 합니다.");
+
+		auto obj = std::make_unique<T>(std::forward<Args>(args)...);  // T 객체 생성
+		T* ptr = obj.get();
+		m_gameUiObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
+		m_objectCount++;
+
+		std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;
+
+		std::wcout << L"CreateGameObj Name :" << ptr->GetName() << L"\nCreateGameObj id :" << ptr->GetID() << std::endl;
+		ptr->Awake();
+		ptr->Start();
+
+		return ptr;
+	}
+
 	/*
 	    template<typename T, typename... Args>
     T* GameObjectBase::AddComponent(Args&&... args)

@@ -77,8 +77,8 @@ namespace JDScene {
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);
         
-        //template <typename T>
-        //void CreateUIObject(T uiObject);
+        template<typename T, typename... Args>
+        T* CreateUIObject(Args&&... args);
 
         void DestroyObject(GameObjectBase* object) {
             if (object == nullptr) { return; }

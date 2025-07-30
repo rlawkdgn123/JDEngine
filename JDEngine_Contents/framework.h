@@ -11,3 +11,6 @@
 #include "D2DRenderer.h"
 #include "UIObject.h"
 #include "UIObjectList.h"
+
+#include "RectTransform.h"
+#include "UI_TextComponent.h"

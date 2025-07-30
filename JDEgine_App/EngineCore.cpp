@@ -85,11 +85,11 @@ bool EngineCore::Initialize()
 
     WindowSize::Instance().Set(this);
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
+    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    //SceneManager::Instance().ChangeScene("TestScene01");
 
-    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
-    //SceneManager::Instance().ChangeScene("TitleScene");
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
+    SceneManager::Instance().ChangeScene("TitleScene");
 
     ID2D1RenderTarget* renderTarget = D2DRenderer::Instance().GetRenderTarget();
 

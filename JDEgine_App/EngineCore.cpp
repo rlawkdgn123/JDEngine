@@ -215,6 +215,27 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
+    // 배속 키 입력처리
+    static float speeds[] = { 2.f, 4.f, 8.f };
+    static int   idx = 0;
+    InputManager& input = InputManager::Instance();
+    if (input.GetKeyPressed('1')) {
+        SceneManager::Instance().SetSceneTimeScale(0.0f);
+        std::cout << "0" << std::endl;
+        idx = 0;
+    }
+    else if (input.GetKeyPressed('2')) {
+        SceneManager::Instance().SetSceneTimeScale(1.0f);
+        std::cout << "1" << std::endl;
+        idx = 0;
+    }
+    else if (input.GetKeyPressed('3')) {
+        SceneManager::Instance().SetSceneTimeScale(speeds[idx]);
+        std::cout << speeds[idx] << std::endl;
+        idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
+    }
+    //
+    
     cam = D2DRenderer::Instance().GetCamera();
     /*m_cameraPosition = cam->GetPosition();
     m_cameraRotationDeg = cam->GetRotationDeg();

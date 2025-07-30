@@ -55,19 +55,28 @@
     void SceneManager::Update(float deltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->Update(deltaTime);
+        {
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->Update(deltaTime * ts);
+        }
     }
 
     void SceneManager::FixedUpdate(float fixedDeltaTime)
     {
         if (m_CurrentScene)
+        {
+            float ts = m_CurrentScene->GetTimeScale();
             m_CurrentScene->FixedUpdate(fixedDeltaTime);
+        }
     }
 
     void SceneManager::LateUpdate(float deltaTime)
     {
         if (m_CurrentScene)
+        {
+            float ts = m_CurrentScene->GetTimeScale();
             m_CurrentScene->LateUpdate(deltaTime);
+        }
     }
 
     void SceneManager::Render()
@@ -79,4 +88,13 @@
         }
             
     }
+
+    void SceneManager::SetSceneTimeScale(float timeScale)
+    {
+        if (m_CurrentScene)
+        {
+            m_CurrentScene->SetTimeScale(timeScale);
+        }
+    }
+
 

@@ -72,7 +72,7 @@ namespace JDGameObject {
         int GetLayer() const { return m_layer; }
     bool IsActive() const { return m_active; }
 
-    void SetTag(const std::wstring& tag) { m_tag = tag; }
+    void SetTag(const Tag& tag) { m_tag = tag; }
     void SetLayer(int layer) { m_layer = layer; }
     void SetActive(bool active) { 
         if (m_active == active) return; // 변경이 없으면 무시

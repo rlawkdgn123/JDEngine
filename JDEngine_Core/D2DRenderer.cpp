@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "D2DRenderer.h"
 
 void D2DRenderer::Initialize(HWND hwnd)
@@ -41,10 +41,10 @@ void D2DRenderer::Uninitialize()
 
 void D2DRenderer::Resize(UINT width, UINT height)
 {
-    if (nullptr == m_swapChain) return; // ÃÊ±âÈ­ Àü¿¡ È£ÃâÀÌ µÉ ¼ö ÀÖÀ½.
+    if (nullptr == m_swapChain) return; // ì´ˆê¸°í™” ì „ì— í˜¸ì¶œì´ ë  ìˆ˜ ìˆìŒ.
     ReleaseRenderTargets();
 
-    // ½º¿ÒÃ¼ÀÎ Å©±â Á¶Á¤ ÈÄ ·»´õ Å¸°Ù Àç»ı¼º
+    // ìŠ¤ì™‘ì²´ì¸ í¬ê¸° ì¡°ì • í›„ ë Œë” íƒ€ê²Ÿ ì¬ìƒì„±
     DX::ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0));
 
     CreateRenderTargets();
@@ -144,7 +144,7 @@ ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RE
     ComPtr<ID2D1Bitmap1> cropped;
     HRESULT hr = context->CreateBitmap(size, nullptr, 0, &props, &cropped);
     if (FAILED(hr)) {
-        std::cout << "[CreateCroppedBitmap] CreateBitmap ½ÇÆĞ. HRESULT: 0x" << std::hex << hr << std::endl;
+        std::cout << "[CreateCroppedBitmap] CreateBitmap ì‹¤íŒ¨. HRESULT: 0x" << std::hex << hr << std::endl;
         return nullptr;
     }
 
@@ -192,7 +192,7 @@ void D2DRenderer::SetTransform(const D2D1_MATRIX_3X2_F tm)
 void D2DRenderer::RenderBegin()
 {
     m_d2dContext->BeginDraw();
-    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White)); // ¹è°æÀ» Èò»öÀ¸·Î ÃÊ±âÈ­
+    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White)); // ë°°ê²½ì„ í°ìƒ‰ìœ¼ë¡œ ì´ˆê¸°í™”
 }
 
 void D2DRenderer::RenderEnd(bool bPresent)
@@ -222,19 +222,46 @@ void D2DRenderer::RenderGameObject(const GameObject& obj)
         {
             worldMatrix = worldMatrix * m_camera->GetViewMatrix();
         }
-        ID2D1DeviceContext* context = D2DRenderer::Instance().GetD2DContext();
+        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
         renderer->Render(context, worldMatrix);
+    }
+}
+
+void D2DRenderer::RenderUIObject(const UIObject& uiObj)
+{
+    using namespace JDGameObject;
+    using namespace JDComponent;
+    using RectTransform = JDComponent::D2DTM::RectTransform;
+
+    auto rtf = uiObj.GetComponent<RectTransform>();
+    auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
+
+    if (rtf && imageComponent)
+    {
+        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+
+        D2D1_MATRIX_3X2_F originalTransform;
+        context->GetTransform(&originalTransform);
+
+        D2D1_MATRIX_3X2_F worldMatrix = rtf->GetWorldMatrix();
+
+        // context->SetTransform(worldMatrix * originalTransform);
+
+        // ì¹´ë©”ë¼ ì˜í–¥ì„ ë¹¼ê³ , ì›”ë“œ í–‰ë ¬ë§Œ ì‚¬ìš©
+        imageComponent->Render(context, worldMatrix);
+
+        context->SetTransform(originalTransform);
     }
 }
 
 void D2DRenderer::Present()
 {
-    // ·»´õ¸µ ÀÛ¾÷ÀÌ ³¡³ª¸é ½º¿ÒÃ¼ÀÎ¿¡ ÇÁ·¹ÀÓÀ» Ç¥½Ã
+    // ë Œë”ë§ ì‘ì—…ì´ ëë‚˜ë©´ ìŠ¤ì™‘ì²´ì¸ì— í”„ë ˆì„ì„ í‘œì‹œ
     HRESULT hr = m_swapChain->Present(1, 0);
 
     if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
     {
-        Uninitialize();     // µğ¹ÙÀÌ½º°¡ Á¦°ÅµÇ°Å³ª ¸®¼ÂµÈ °æ¿ì, ÀçÃÊ±âÈ­ ÇÊ¿ä
+        Uninitialize();     // ë””ë°”ì´ìŠ¤ê°€ ì œê±°ë˜ê±°ë‚˜ ë¦¬ì…‹ëœ ê²½ìš°, ì¬ì´ˆê¸°í™” í•„ìš”
         Initialize(m_hwnd);
     }
     else
@@ -245,7 +272,7 @@ void D2DRenderer::Present()
 
 void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 {
-    //1. D3D11 µğ¹ÙÀÌ½º »ı¼º
+    //1. D3D11 ë””ë°”ì´ìŠ¤ ìƒì„±
     D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
     ComPtr<ID3D11Device> d3dDevice;
     ComPtr<ID3D11DeviceContext> d3dContext;
@@ -264,7 +291,7 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     DX::ThrowIfFailed(hr);
 
-    // 2. DXGI ½º¿ÒÃ¼ÀÎ »ı¼º
+    // 2. DXGI ìŠ¤ì™‘ì²´ì¸ ìƒì„±
     ComPtr<IDXGIDevice> dxgiDevice;
     hr = d3dDevice.As(&dxgiDevice);
 
@@ -294,7 +321,7 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     DX::ThrowIfFailed(hr);
 
-    // 3. ID2D1Factory4 »ı¼º
+    // 3. ID2D1Factory4 ìƒì„±
     D2D1_FACTORY_OPTIONS opts = {};
     ComPtr<ID2D1Factory8> d2dFactory;
 
@@ -310,7 +337,7 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     DX::ThrowIfFailed(hr);
 
-    // 4. ID2D1Device4 »ı¼º
+    // 4. ID2D1Device4 ìƒì„±
     ComPtr<ID2D1Device> baseDevice;
     hr = d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
 
@@ -321,7 +348,7 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     DX::ThrowIfFailed(hr);
 
-    // 5. ID2D1DeviceContext7 »ı¼º
+    // 5. ID2D1DeviceContext7 ìƒì„±
     ComPtr<ID2D1DeviceContext7> d2dContext;//
     hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dContext);
 
@@ -337,7 +364,7 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
 void D2DRenderer::CreateRenderTargets()
 {
-    // 6. SwapChain ¹é¹öÆÛ -> D2D Bitmap1 À» »ı¼ºÇÏ¿© ·»´õ Å¸°ÙÀ¸·Î ¼³Á¤
+    // 6. SwapChain ë°±ë²„í¼ -> D2D Bitmap1 ì„ ìƒì„±í•˜ì—¬ ë Œë” íƒ€ê²Ÿìœ¼ë¡œ ì„¤ì •
 
     ComPtr<IDXGISurface> dxgiSurface;
     HRESULT hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiSurface));
@@ -355,7 +382,7 @@ void D2DRenderer::CreateRenderTargets()
 
     DX::ThrowIfFailed(hr);
 
-    // ·»´õ Å¸°Ù ¼³Á¤
+    // ë Œë” íƒ€ê²Ÿ ì„¤ì •
     m_d2dContext->SetTarget(targetBitmap.Get());
 
     m_targetBitmap = targetBitmap;
@@ -366,16 +393,16 @@ void D2DRenderer::CreateRenderTargets()
 
     DX::ThrowIfFailed(hr);
 
-    // ImGUI Àº D3D11 ·»´õ Å¸°Ù ºä°¡ ÇÊ¿ä!!! 
+    // ImGUI ì€ D3D11 ë Œë” íƒ€ê²Ÿ ë·°ê°€ í•„ìš”!!! 
     ComPtr<ID3D11Texture2D> backBuffer;
     hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
 
-    // RenderTargetView »ı¼º
+    // RenderTargetView ìƒì„±
     ComPtr<ID3D11RenderTargetView> mainRTV;
     hr = m_d3dDevice->CreateRenderTargetView(
-        backBuffer.Get(),      // ÅØ½ºÃ³
-        nullptr,               // ±âº» ºä ¼³¸í
-        &mainRTV               // Ãâ·Â RTV Æ÷ÀÎÅÍ
+        backBuffer.Get(),      // í…ìŠ¤ì²˜
+        nullptr,               // ê¸°ë³¸ ë·° ì„¤ëª…
+        &mainRTV               // ì¶œë ¥ RTV í¬ì¸í„°
     );
 
     DX::ThrowIfFailed(hr);
@@ -394,7 +421,7 @@ void D2DRenderer::CreateWriteResource()
     DX::ThrowIfFailed(hr);
 
     writeFactory->CreateTextFormat(
-        L"", // FontName    Á¦¾îÆÇ-¸ğµçÁ¦¾îÆÇ-Ç×¸ñ-±Û²Ã-Å¬¸¯ À¸·Î ±Û²ÃÀÌ¸§ È®ÀÎ°¡´É
+        L"", // FontName    ì œì–´íŒ-ëª¨ë“ ì œì–´íŒ-í•­ëª©-ê¸€ê¼´-í´ë¦­ ìœ¼ë¡œ ê¸€ê¼´ì´ë¦„ í™•ì¸ê°€ëŠ¥
         NULL,
         DWRITE_FONT_WEIGHT_NORMAL,
         DWRITE_FONT_STYLE_NORMAL,
@@ -405,9 +432,9 @@ void D2DRenderer::CreateWriteResource()
 
     DX::ThrowIfFailed(hr);
 
-    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // ¿ŞÂÊ Á¤·Ä
-    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // À§ÂÊ Á¤·Ä
-    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP); // ÁÙ¹Ù²Ş 
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // ì™¼ìª½ ì •ë ¬
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // ìœ„ìª½ ì •ë ¬
+    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP); // ì¤„ë°”ê¿ˆ 
 }
 
 void D2DRenderer::ReleaseRenderTargets()
@@ -457,13 +484,13 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBi
 
     DX::ThrowIfFailed(hr);
 
-    // Direct2D ºñÆ®¸Ê ¼Ó¼º (premultiplied alpha, B8G8R8A8_UNORM)
+    // Direct2D ë¹„íŠ¸ë§µ ì†ì„± (premultiplied alpha, B8G8R8A8_UNORM)
     D2D1_BITMAP_PROPERTIES1 bmpProps = D2D1::BitmapProperties1(
         D2D1_BITMAP_OPTIONS_NONE,
         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
     );
 
-    // ¨ì DeviceContext¿¡¼­ WIC ºñÆ®¸ÊÀ¸·ÎºÎÅÍ D2D1Bitmap1 »ı¼º
+    // â‘¥ DeviceContextì—ì„œ WIC ë¹„íŠ¸ë§µìœ¼ë¡œë¶€í„° D2D1Bitmap1 ìƒì„±
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
 }
 

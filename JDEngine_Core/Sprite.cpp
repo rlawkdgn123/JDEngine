@@ -1,10 +1,10 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "framework.h"
 #include "Sprite.h"
 
 using namespace JDComponent;
 
-void SpriteRenderer::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform)
+void SpriteRenderer::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
     ID2D1Bitmap* bitmap = ResourceManager::Instance().GetTexture(m_textureName);
     
@@ -15,7 +15,7 @@ void SpriteRenderer::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F world
     D2D1_SIZE_F size = bitmap->GetSize();
     //D2D1_RECT_F destRect = D2D1::RectF(0.f, 0.f, size.width, size.height);
     D2D1_RECT_F destRect = D2D1::RectF(
-        -size.width * 0.5f,  // ¡ﬂΩ… ±‚¡ÿ
+        -size.width * 0.5f,  // Ï§ëÏã¨ Í∏∞Ï§Ä
         -size.height * 0.5f,
         size.width * 0.5f,
         size.height * 0.5f
@@ -25,6 +25,6 @@ void SpriteRenderer::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F world
         &destRect,
         0.5f, // 
         D2D1_INTERPOLATION_MODE_LINEAR,
-        nullptr // ¿¸√º ¿ÃπÃ¡ˆ ªÁøÎ
+        nullptr // Ï†ÑÏ≤¥ Ïù¥ÎØ∏ÏßÄ ÏÇ¨Ïö©
     );
 }

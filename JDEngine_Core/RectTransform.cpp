@@ -1,5 +1,6 @@
-#include "pch.h"
-#include "framework.h"
+ï»¿#include "pch.h"
+#include "Framework.h"
+#include "D2DTransform.h"
 #include "RectTransform.h"
 
 namespace JDComponent {
@@ -9,24 +10,24 @@ namespace JDComponent {
 		using Vector2F = JDMath::Vector2F;
         void RectTransform::UpdateMatrices()
 		{
-			// 1) ÇÇ¹ş ±âÁØ ½ºÄÉÀÏ
+			// 1) í”¼ë²— ê¸°ì¤€ ìŠ¤ì¼€ì¼
 			auto M_scale = D2D1::Matrix3x2F::Scale(
 				m_scale.x, m_scale.y,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 2) ÇÇ¹ş ±âÁØ È¸Àü
+			// 2) í”¼ë²— ê¸°ì¤€ íšŒì „
 			auto M_rot = D2D1::Matrix3x2F::Rotation(
 				m_rotation,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 3) ÃÖÁ¾ À§Ä¡ ÀÌµ¿
+			// 3) ìµœì¢… ìœ„ì¹˜ ì´ë™
 			auto M_trans = D2D1::Matrix3x2F::Translation(
 				m_position.x, m_position.y
 			);
 
-			// ÇÕÃÄ¼­ ·ÎÄÃ º¯È¯ ¸ÅÆ®¸¯½º ¿Ï¼º
+			// í•©ì³ì„œ ë¡œì»¬ ë³€í™˜ ë§¤íŠ¸ë¦­ìŠ¤ ì™„ì„±
 			m_matrixLocal = M_scale * M_rot * M_trans;
 
 			if (m_parent)

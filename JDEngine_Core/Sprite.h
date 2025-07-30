@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "ResourceManager.h"
 
@@ -9,7 +9,7 @@ namespace JDComponent {
             : m_textureName(std::move(textureName)) {
         }
 
-        void Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform);
+        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
 
         std::string GetTextureName() const { return m_textureName; }
 

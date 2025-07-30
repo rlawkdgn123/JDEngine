@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -29,8 +29,8 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
 
-        //cout << "[TestScene] OnEnter()\n";
-        CreateGameObject<Player>(L"§±§§§∑");
+        cout << "[TestScene] OnEnter()\n";
+        CreateGameObject<Player>(L"„ÖÅ„Ñ¥„Öá");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
 
@@ -42,7 +42,17 @@ namespace JDScene {
 
         m_gameObjects.push_back(testObject);
 
+        // UI
+        std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
 
+        auto rtf = testUIObject->GetComponent<RectTransform>();
+        rtf->SetPosition({ 0.f, 0.f });
+        rtf->SetScale({ 1.f, 1.f });
+
+        testUIObject->AddComponent<UI_ImageComponent>("Test");
+        auto imageComponent = testUIObject->GetComponent<UI_ImageComponent>();
+
+        m_UIObjects.push_back(testUIObject);
     }
 
     void TestScene::OnLeave() {
@@ -80,6 +90,11 @@ namespace JDScene {
         for (auto& obj : m_gameObjects)
         {
             D2DRenderer::Instance().RenderGameObject(*obj);
+        }
+
+        for (auto& uiObj : m_UIObjects)
+        {
+            D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
 

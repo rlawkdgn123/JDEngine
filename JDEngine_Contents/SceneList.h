@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
@@ -46,6 +46,7 @@ namespace JDScene {
 
     private:
         std::vector<std::shared_ptr<GameObject>> m_gameObjects;
+        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
     };
 
 }

@@ -52,6 +52,18 @@
     <Filter Include="Component\Collider">
       <UniqueIdentifier>{54377ccd-fb05-445d-a8ac-40e582684264}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\UI\Button">
+      <UniqueIdentifier>{af0b5517-d1b8-47a1-90e3-95fedd8589d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\UI\Image">
+      <UniqueIdentifier>{bfcb7b9d-992c-40c6-bfa5-bac721aab895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\UI\Slider">
+      <UniqueIdentifier>{52ea0d23-ec54-4fd4-9cb2-8d58cdfc113f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\UI\Text">
+      <UniqueIdentifier>{9b967adb-8a27-4988-8223-4a9fc3b71ea6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -108,6 +120,21 @@
     <ClInclude Include="ColliderBase.h">
       <Filter>Component\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="UIObject.h">
+      <Filter>Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_TextComponent.h">
+      <Filter>Component\UI\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_SliderComponent.h">
+      <Filter>Component\UI\Slider</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_ImageComponent.h">
+      <Filter>Component\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_ButtonComponent.h">
+      <Filter>Component\UI\Button</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -157,6 +184,18 @@
     </ClCompile>
     <ClCompile Include="ColliderBase.cpp">
       <Filter>Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_TextComponent.cpp">
+      <Filter>Component\UI\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_SliderComponent.cpp">
+      <Filter>Component\UI\Slider</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_ImageComponent.cpp">
+      <Filter>Component\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_ButtonComponent.cpp">
+      <Filter>Component\UI\Button</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -38,7 +38,7 @@ private:
 	//std::unique_ptr<SceneManager> m_SceneManager = nullptr;
 	//std::shared_ptr<D2DRenderer> m_Renderer = nullptr;
 	//std::shared_ptr<InputManager> m_InputManager = nullptr;
-	//std::shared_ptr<ResourceManager> m_ResourceManager = nullptr;
+	//std::shared_ptr<AssetManager> m_AssetManager = nullptr;
 	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
 
 	//GameTimer       m_GameTimer;

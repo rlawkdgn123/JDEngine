@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObjectBase.h"
 #include "RectTransform.h"
-#include "ResourceManager.h"
+#include "AssetManager.h"
 
 namespace JDComponent {
 

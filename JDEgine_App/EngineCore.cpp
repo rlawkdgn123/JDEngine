@@ -93,7 +93,7 @@ bool EngineCore::Initialize()
 
     ID2D1RenderTarget* renderTarget = D2DRenderer::Instance().GetRenderTarget();
 
-    if (!ResourceManager::Instance().Initialize(renderTarget)) {
+    if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
 
@@ -101,22 +101,22 @@ bool EngineCore::Initialize()
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
-    if (!ResourceManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
 
-    /*if (!ResourceManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
+    /*if (!AssetManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
-    if (!ResourceManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
+    if (!AssetManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
     */
 
-    if (!ResourceManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
-    if (!ResourceManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
+    if (!AssetManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 

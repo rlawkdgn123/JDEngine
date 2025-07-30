@@ -13,17 +13,17 @@ struct AnimationClip {
     bool loop = true;
 };
 
-class ResourceManager
+class AssetManager
 {
 public:
-    static ResourceManager& Instance()
+    static AssetManager& Instance()
     {
-        static ResourceManager instance;
+        static AssetManager instance;
         return instance;
     }
 
-    ResourceManager(const ResourceManager&) = delete;
-    ResourceManager& operator=(const ResourceManager&) = delete;
+    AssetManager(const AssetManager&) = delete;
+    AssetManager& operator=(const AssetManager&) = delete;
 
     bool Initialize(ID2D1RenderTarget* renderTarget);
     bool LoadTexture(const std::string& name, const std::wstring& filepath);
@@ -31,8 +31,8 @@ public:
     bool LoadAnimation(const std::string& name, const std::wstring& jsonPath);
     const AnimationClip* GetAnimation(const std::string& name) const;
 private:
-    ResourceManager() = default;
-    ~ResourceManager() = default;
+    AssetManager() = default;
+    ~AssetManager() = default;
 private:
     Microsoft::WRL::ComPtr<IWICImagingFactory> m_wicFactory;
     ID2D1RenderTarget* m_renderTarget = nullptr;

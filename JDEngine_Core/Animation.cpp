@@ -6,7 +6,7 @@
 using namespace JDComponent;
 
 void Animation::Update(float dt) {
-    auto clip = ResourceManager::Instance().GetAnimation(m_clipName);
+    auto clip = AssetManager::Instance().GetAnimation(m_clipName);
     if (!clip) return;
 
     m_elapsed += dt * m_speed;
@@ -20,8 +20,8 @@ void Animation::Update(float dt) {
 
 void Animation::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
-    auto clip = ResourceManager::Instance().GetAnimation(m_clipName);
-    auto bitmap = ResourceManager::Instance().GetTexture(m_clipName);
+    auto clip = AssetManager::Instance().GetAnimation(m_clipName);
+    auto bitmap = AssetManager::Instance().GetTexture(m_clipName);
     if (!clip || !bitmap) return;
 
     const auto& frame = clip->frames[m_currentFrame];

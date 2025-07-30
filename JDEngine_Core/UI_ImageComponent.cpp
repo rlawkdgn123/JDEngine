@@ -13,7 +13,7 @@ namespace JDComponent {
     void UI_ImageComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform)
     {
         // 1. 렌더링 시점에 리소스 매니저에서 텍스처를 가져옵니다.
-        ID2D1Bitmap* bitmap = ResourceManager::Instance().GetTexture(m_textureName);
+        ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
 
         // 2. 텍스처가 없으면 아무것도 하지 않고 종료 (안전장치)
         if (!bitmap) return;

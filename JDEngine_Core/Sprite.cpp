@@ -7,9 +7,9 @@ using namespace JDComponent;
 
 void SpriteRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F worldTransform)
 {
-    // ResourceManager에서 ID2D1Bitmap1*으로 받아옵니다.
+    // AssetManager에서 ID2D1Bitmap1*으로 받아옵니다.
     auto bitmap = static_cast<ID2D1Bitmap1*>(
-        ResourceManager::Instance().GetTexture(m_textureName)
+        AssetManager::Instance().GetTexture(m_textureName)
         );
     if (!bitmap) return;
 

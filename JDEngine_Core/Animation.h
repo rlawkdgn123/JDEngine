@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "ResourceManager.h"
+#include "AssetManager.h"
 
 namespace JDComponent
 {

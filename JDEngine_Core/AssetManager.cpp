@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "framework.h"
-#include "ResourceManager.h"
+#include "AssetManager.h"
 
 
-bool ResourceManager::Initialize(ID2D1RenderTarget* renderTarget)
+bool AssetManager::Initialize(ID2D1RenderTarget* renderTarget)
 {
     m_renderTarget = renderTarget;
     
@@ -23,7 +23,7 @@ bool ResourceManager::Initialize(ID2D1RenderTarget* renderTarget)
     return SUCCEEDED(hr);
 }
 
-bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& filepath)
+bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filepath)
 {
     Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
     HRESULT hr = m_wicFactory->CreateDecoderFromFilename(
@@ -62,7 +62,7 @@ bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& f
     return true;
 }
 
-ID2D1Bitmap* ResourceManager::GetTexture(const std::string& name) const
+ID2D1Bitmap* AssetManager::GetTexture(const std::string& name) const
 {
     auto it = m_textures.find(name);
     if (it != m_textures.end())
@@ -72,7 +72,7 @@ ID2D1Bitmap* ResourceManager::GetTexture(const std::string& name) const
     return nullptr;
 }
 
-bool ResourceManager::LoadAnimation(const std::string& name, const std::wstring& jsonPath)
+bool AssetManager::LoadAnimation(const std::string& name, const std::wstring& jsonPath)
 {
     std::ifstream ifs(jsonPath);
     if (!ifs.is_open()) {
@@ -108,7 +108,7 @@ bool ResourceManager::LoadAnimation(const std::string& name, const std::wstring&
     return true;
 }
 
-const AnimationClip* ResourceManager::GetAnimation(const std::string& name) const
+const AnimationClip* AssetManager::GetAnimation(const std::string& name) const
 {
     auto it = m_animations.find(name);
     if (it != m_animations.end()) {

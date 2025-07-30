@@ -19,7 +19,7 @@ namespace JDGameObject {
 			//UI_ImageComponent* imageComponent = GetComponent<UI_ImageComponent>();
 
 			//// 이미지 설정 하기.
-			//ID2D1Bitmap* testTexture = ResourceManager::Instance().GetTexture("Test");
+			//ID2D1Bitmap* testTexture = AssetManager::Instance().GetTexture("Test");
 			//imageComponent->SetImage(testTexture);
 		}
 

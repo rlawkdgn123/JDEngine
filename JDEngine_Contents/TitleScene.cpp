@@ -19,9 +19,19 @@ namespace JDScene {
         auto rtf = testUIObject->GetComponent<RectTransform>();
         rtf->SetPosition({ 0.f, 0.f });
         rtf->SetScale({ 1.f, 1.f });
+        rtf->SetSize({ 200.f, 200.f });
 
         testUIObject->AddComponent<UI_ImageComponent>("Test");
         auto imageComponent = testUIObject->GetComponent<UI_ImageComponent>();
+
+        testUIObject->AddComponent<UI_TextComponent>();
+        auto textComponent = testUIObject->GetComponent<UI_TextComponent>();
+
+        D2DRenderer& renderer = D2DRenderer::Instance();
+        IDWriteTextFormat* textFormat = renderer.GetTextFormat();
+        textComponent->SetTextFormat(textFormat);
+        textComponent->SetText(L"Test");
+        textComponent->SetColor(D2D1::ColorF(D2D1::ColorF::LightSkyBlue));
 
         m_UIObjects.push_back(testUIObject);
     }

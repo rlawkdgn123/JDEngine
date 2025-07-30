@@ -235,8 +235,9 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
 
     auto rtf = uiObj.GetComponent<RectTransform>();
     auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
+    auto textComponent = uiObj.GetComponent<UI_TextComponent>();
 
-    if (rtf && imageComponent)
+    if (rtf)
     {
         ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
 
@@ -248,7 +249,8 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
         // context->SetTransform(worldMatrix * originalTransform);
 
         // 카메라 영향을 빼고, 월드 행렬만 사용
-        imageComponent->Render(context, worldMatrix);
+        if (imageComponent) { imageComponent->Render(context, worldMatrix); }
+        if (textComponent) { textComponent->Render(context, worldMatrix); }
 
         context->SetTransform(originalTransform);
     }

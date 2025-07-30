@@ -78,6 +78,8 @@ public:
 
     ID2D1DeviceContext7* GetD2DContext() const { return m_d2dContext.Get(); }
 
+    IDWriteTextFormat* GetTextFormat() const { return m_textFormat.Get(); }
+
     Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
 private:
     D2DRenderer() = default;

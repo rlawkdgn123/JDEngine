@@ -79,12 +79,11 @@
         }
     }
 
-    void SceneManager::Render()
+    void SceneManager::Render(float dt)
     {
         if (m_CurrentScene)
         {
-            
-            m_CurrentScene->Render();
+            m_CurrentScene->Render(dt);
         }
             
     }

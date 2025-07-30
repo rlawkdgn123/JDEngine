@@ -110,13 +110,14 @@ bool EngineCore::Initialize()
     if (!ResourceManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
+    */
 
-    if (!ResourceManager::Instance().LoadTexture("graybirdsheet", L"../Resource/graybirdsheet.png")) {
-        std::cout << "[ERROR] graybirdsheet 텍스처 로드 실패" << std::endl;
+    if (!ResourceManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
+        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
     if (!ResourceManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
-    }*/
+    }
 
     /*
     // [ImGUI] 컨텍스트 & 백엔드 초기화
@@ -327,8 +328,8 @@ void EngineCore::Render()
     cameraMatrix = cameraMatrix * unityFlip;
 
     renderer.SetTransform(cameraMatrix);
-
-    SceneManager::Instance().Render();
+    //std::cout << deltaTime << std::endl;
+    SceneManager::Instance().Render(deltaTime);
 
     renderer.RenderEnd();
 

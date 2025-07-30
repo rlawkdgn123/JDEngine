@@ -45,7 +45,7 @@ namespace JDScene {
         //cout << "[TestScene] LateUpdate() - dt: " << deltaTime << "\n";
     }
 
-    void TitleScene::Render() {
+    void TitleScene::Render(float dt) {
         //cout << "[TestScene] Render()\n";
         auto camera = D2DRenderer::Instance().GetCamera();
 
@@ -60,7 +60,7 @@ namespace JDScene {
 
         for (auto& obj : m_gameObjects)
         {
-            D2DRenderer::Instance().RenderGameObject(*obj);
+            D2DRenderer::Instance().RenderGameObject(*obj, dt);
         }
 
         for (auto& uiObj : m_UIObjects)

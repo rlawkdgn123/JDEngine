@@ -20,7 +20,7 @@ namespace JDScene {
 
     void DefaultScene::LateUpdate(float deltaTime) { SceneBase::LateUpdate(deltaTime); }
 
-    void DefaultScene::Render() {}
+    void DefaultScene::Render(float dt) {}
 
 
 
@@ -34,14 +34,28 @@ namespace JDScene {
 
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
+        std::shared_ptr<GameObject>  birdObj = std::make_shared<GameObject>();
 
-        auto tf = testObject->GetComponent<Transform>();
-        tf->SetPosition({ 0.f, 0.f });
-        tf->SetScale({ 1.f, 1.f });
+        {//Test 텍스처 이미지 게임오브젝트 생성
+            auto tf = testObject->GetComponent<Transform>();
+            tf->SetPosition({ 0.f, 0.f });
+            tf->SetScale({ 1.f, 1.f });
 
-        testObject->AddComponent<SpriteRenderer>("Test");
+            testObject->AddComponent<SpriteRenderer>("Test");
 
-        m_sceneObjects.push_back(testObject);
+            m_sceneObjects.push_back(testObject);
+        }
+
+        {//새 애니메이션 게임오브젝트 생성
+            auto birdTf = birdObj->GetComponent<Transform>();
+            birdTf->SetPosition({ 100.f, 50.f });   
+            birdTf->SetScale({ 1.0f, 1.0f });      
+
+            birdObj->AddComponent<SpriteRenderer>("GrayBird");
+            birdObj->AddComponent<Animation>("GrayBird", 0.5);// 뒤에 값은 speed
+
+            m_sceneObjects.push_back(birdObj);
+        }
 
         // UI
         std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
@@ -89,7 +103,7 @@ namespace JDScene {
 
         // 1) 마우스 스크린 좌표 얻기
         auto& inputMgr = InputManager::Instance();
-        auto  mouseState = inputMgr.GetMouseState().pos;    // {x, y} �ȼ�
+        auto  mouseState = inputMgr.GetMouseState().pos;   
         JDGlobal::Math::Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
 
         // 2) 스크린 → 월드 변환
@@ -108,6 +122,7 @@ namespace JDScene {
 
         // 3) 하이라이트 인덱스 계산
         m_highlightedIndex = -1;
+
         for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
             auto& obj = m_gameObjects[i];
             if (!obj) continue;
@@ -132,6 +147,13 @@ namespace JDScene {
                 break;
             }
         }
+
+        bool leftPressed = inputMgr.GetMouseState().leftPressed;
+        if (leftPressed && !m_prevLeftPressed && m_highlightedIndex != -1) {
+            std::cout << "[DEBUG] 클릭된 콜라이더 인덱스: "
+                << m_highlightedIndex << std::endl;
+        }
+        m_prevLeftPressed = leftPressed;
     }
 
 
@@ -145,7 +167,8 @@ namespace JDScene {
         //cout << "[TestScene] LateUpdate() - dt: " << deltaTime << "\n";
     }
 
-    void TestScene::Render() {
+    void TestScene::Render(float deltaTime) {
+        SceneBase::Render(deltaTime);
         auto camera = D2DRenderer::Instance().GetCamera();
 
         if (camera)
@@ -184,7 +207,7 @@ namespace JDScene {
 
         // 게임 오브젝트 렌더
         for (auto& obj : m_sceneObjects) {
-            D2DRenderer::Instance().RenderGameObject(*obj);
+            D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
         }
 
         for (auto& uiObj : m_UIObjects)

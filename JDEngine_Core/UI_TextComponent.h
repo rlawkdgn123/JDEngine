@@ -14,7 +14,7 @@ namespace JDComponent {
     class UI_TextComponent : public Component
     {
     public:
-        void Render(ID2D1DeviceContext7* ctx);
+        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform);
 
         void                SetText(const std::wstring text) { m_text = text; }
         const std::wstring  GetText() const { return m_text; }

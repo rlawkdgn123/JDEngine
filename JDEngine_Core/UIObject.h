@@ -27,7 +27,15 @@ namespace JDGameObject {
 
 		virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }
 		virtual void Start() override { if (m_isStarted || !m_active) { return; } m_isStarted = true; }
-		virtual void Update(float deltaTime) override { if (!m_active) { return; } }
+		virtual void Update(float deltaTime) override { 
+			if (!m_active) { return; }
+			else {
+				for (auto& comp : m_components) {
+					comp->Update(deltaTime);
+					std::cout << "업데이트" << std::endl;
+				}
+			}
+		}
 		virtual void LateUpdate(float deltaTime) override { if (!m_active) { return; } }
 		virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
 		virtual void OnDestroy() override {}

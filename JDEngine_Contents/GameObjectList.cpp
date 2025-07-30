@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GameObjectList.h"
 
 using namespace std;
@@ -37,9 +37,7 @@ namespace JDGameObject {
             }
             else { return; }
         }                   
-        void Player::Update(float deltaTime) {
-        
-        }
+        void Player::Update(float deltaTime) {}
         void Player::LateUpdate(float deltaTime) {}
         void Player::FixedUpdate(float fixedDeltaTime) {}
     

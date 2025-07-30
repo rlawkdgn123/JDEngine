@@ -40,6 +40,8 @@ public:
 
     const SceneBase* GetCurrentScene() const { return m_CurrentScene; }
 
+    void SetSceneTimeScale(float timeScale);
+
 private:
 
     struct SceneEntry

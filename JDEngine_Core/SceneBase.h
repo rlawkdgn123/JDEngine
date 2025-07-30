@@ -50,7 +50,7 @@ namespace JDScene {
         
         virtual void FixedUpdate(float fixedDeltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->FixedUpdate(fixedDeltaTime); } };
 
-        virtual void Update(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->Update(deltaTime); }  CheakCollision();};
+        virtual void Update(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->Update(deltaTime); }  CheckCollision();};
 
         virtual void LateUpdate(float deltaTime) { for (auto& obj : m_gameObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
@@ -102,7 +102,10 @@ namespace JDScene {
         //sceneObjects라는 GameObjectBase* 포인터들을 담고 있는 벡터를 수정할 수 없는(const) 참조자(&) 형태로 반환
         //const std::vector<GamebjectBase*>& GetSceneObjects() const { return sceneObjects; };
 
-        void CheakCollision(); // 충돌 체크
+        void CheckCollision(); // 충돌 체크
+
+        void SetTimeScale(float timeScale) { m_timeScale = timeScale; }
+        float GetTimeScale() const { return m_timeScale; }
 
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
@@ -117,6 +120,8 @@ namespace JDScene {
         std::vector<CollisionPair> m_prevPairs; // 이전 충돌 정보 보관용. 이것을 통해 두 오브젝트가 충돌하고 있었는지 알 수 있음.
         std::vector<CollisionPair> m_currPairs; // 현재 충돌 정보 보관용. 충돌한 오브젝트 쌍의 정보를 저장하고 이전 충돌 정보에 넘겨줌.
         int m_objectCount = 0; // 각 씬의 객체 카운팅
+
+        float m_timeScale = 1.0f; // 배속. 0이면 정지, 1이면 기본, 2면 2배속...
 
     };
 }

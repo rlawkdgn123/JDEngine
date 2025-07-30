@@ -40,19 +40,31 @@ namespace JDScene {
 
         testObject->AddComponent<SpriteRenderer>("Test");
 
-        m_gameObjects.push_back(testObject);
+        m_sceneObjects.push_back(testObject);
 
-        // UI
-        std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
 
-        auto rtf = testUIObject->GetComponent<RectTransform>();
-        rtf->SetPosition({ 0.f, 0.f });
-        rtf->SetScale({ 1.f, 1.f });
+        const float startX = -500.0f;
+        const float startY = 300.0f;
+        const float spacingX = 100.0f;
+        const float spacingY = -100.0f;
 
-        testUIObject->AddComponent<UI_ImageComponent>("Test");
-        auto imageComponent = testUIObject->GetComponent<UI_ImageComponent>();
+        for (int col = 0; col < 5; ++col) {
+            for (int row = 0; row < 7; ++row) {
+                // ���� �̸� ���� (���ϸ� ���ϸ����� �ص� �˴ϴ�)
+                std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-        m_UIObjects.push_back(testUIObject);
+                // GameObject ����
+                auto* box = CreateGameObject<Grid>(name.c_str());
+
+                // ��ġ ����
+                float x = startX + spacingX * col;
+                float y = startY + spacingY * row;
+                box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
+
+                // �ݶ��̴� �߰�
+                box->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ 47.0f,47.0f });
+            }
+        }
     }
 
     void TestScene::OnLeave() {
@@ -61,8 +73,54 @@ namespace JDScene {
 
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-        //cout << "[TestScene] Update() - dt: " << dt << "\n";
+
+        // 1) ���콺 ��ũ�� ��ǥ ���
+        auto& inputMgr = InputManager::Instance();
+        auto  mouseState = inputMgr.GetMouseState().pos;    // {x, y} �ȼ�
+        JDGlobal::Math::Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
+
+        // 2) ��ũ�� �� ���� ��ȯ
+        JDGlobal::Math::Vector2F mouseWorld;
+        auto camera = D2DRenderer::Instance().GetCamera();
+        if (camera) {
+            auto invView = camera->GetViewMatrix();
+            D2D1InvertMatrix(&invView); 
+            mouseWorld = m_camera->TransformPoint(invView, { screenPos.x,screenPos.y });
+        }
+        else {
+            mouseWorld = screenPos;
+        }
+
+        //HandleMouseHover(mouseWorld);
+
+        // 3) ���̶���Ʈ �ε��� ���
+        m_highlightedIndex = -1;
+        for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
+            auto& obj = m_gameObjects[i];
+            if (!obj) continue;
+
+            auto* col = obj->GetComponent<JDComponent::BoxCollider>();
+            if (!col) continue;
+
+            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
+            auto  pos = tm->GetPosition();
+            auto  hsize = col->GetHalfSize();
+            auto  offset = col->GetColliderOffset();
+
+            float left = pos.x + offset.x - hsize.x;
+            float top = pos.y + offset.y + hsize.y;
+            float right = pos.x + offset.x + hsize.x;
+            float bottom = pos.y + offset.y - hsize.y;
+            
+            if (mouseWorld.x >= left && mouseWorld.x <= right &&
+                mouseWorld.y <= top && mouseWorld.y >= bottom)
+            {
+                m_highlightedIndex = i;
+                break;
+            }
+        }
     }
+
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
         SceneBase::FixedUpdate(fixedDeltaTime);
@@ -75,20 +133,44 @@ namespace JDScene {
     }
 
     void TestScene::Render() {
-       //cout << "[TestScene] Render()\n";
         auto camera = D2DRenderer::Instance().GetCamera();
 
         if (camera)
-        {
             D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
-        }
         else
-        {
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // �ݶ��̴� �׸��� (���̶���Ʈ �� �б�)
+        for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
+            auto& obj = m_gameObjects[i];
+            if (!obj) continue;
+
+            auto* col = obj->GetComponent<JDComponent::BoxCollider>();
+            if (!col) continue;
+
+            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
+            auto pos = tm->GetPosition();
+            auto hsize = col->GetHalfSize();
+            auto offset = col->GetColliderOffset();
+
+            float left = pos.x + offset.x - hsize.x;
+            float top = pos.y + offset.y + hsize.y;
+            float right = pos.x + offset.x + hsize.x;
+            float bottom = pos.y + offset.y - hsize.y;
+
+            // ���̶���Ʈ�� �ε����� �� ����, �ƴϸ� �⺻ ����
+            UINT32 color = (i == m_highlightedIndex)
+                ? 0xFFFF0000  // ����
+                : 0xFF000000; // ����
+
+            D2DRenderer::Instance().DrawRectangle(
+                left, top, right, bottom,
+                color
+            );
         }
 
-        for (auto& obj : m_gameObjects)
-        {
+        // ���� ������Ʈ ����
+        for (auto& obj : m_sceneObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj);
         }
 
@@ -97,5 +179,4 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
-
 }

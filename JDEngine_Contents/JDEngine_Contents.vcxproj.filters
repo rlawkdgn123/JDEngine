@@ -10,6 +10,9 @@
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{96de53a6-598d-439f-a3ec-e839385fd3f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UIObject">
+      <UniqueIdentifier>{be89f414-1d9e-4ce7-abbe-4280058c96fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneList.h">
@@ -24,6 +27,9 @@
     <ClInclude Include="GameObjectList.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="UIObjectList.h">
+      <Filter>UIObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneList.cpp">
@@ -34,6 +40,9 @@
     </ClCompile>
     <ClCompile Include="GameObjectList.cpp">
       <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="UIObjectList.cpp">
+      <Filter>UIObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

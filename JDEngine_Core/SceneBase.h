@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "framework.h"
 #include "GameObjectBase.h"
 #include <memory>
 
-//GameObjectBase; // Àü¹æ ¼±¾ğ
+//GameObjectBase; // ì „ë°© ì„ ì–¸
 
 namespace JDScene {
     using Transform = JDComponent::D2DTM::Transform;
@@ -22,7 +22,7 @@ namespace JDScene {
         ShapeType ShapeTypeGet() const { return shape; }
     };
 
-    struct CollisionPair { // Ãæµ¹ Á¤º¸ ÀúÀå¿ë ±¸Á¶Ã¼. ³ªÁß¿¡ Ãæµ¹Á¡ÀÌ³ª ´Ù¸¥ Á¤º¸µéµµ ÇÔ²² ³ÖÀ» ¼ö ÀÖÀ½.
+    struct CollisionPair { // ì¶©ëŒ ì •ë³´ ì €ì¥ìš© êµ¬ì¡°ì²´. ë‚˜ì¤‘ì— ì¶©ëŒì ì´ë‚˜ ë‹¤ë¥¸ ì •ë³´ë“¤ë„ í•¨ê»˜ ë„£ì„ ìˆ˜ ìˆìŒ.
         JDGameObject::GameObjectBase* A = nullptr;
         JDGameObject::GameObjectBase* B = nullptr;
     };
@@ -38,9 +38,9 @@ namespace JDScene {
 
     private:
 
-        SceneBase() = delete; // ±âº» »ı¼ºÀÚ ±İÁö
-        SceneBase(const SceneBase&) = delete; // º¹»ç »ı¼ºÀÚ ±İÁö
-        SceneBase& operator=(const SceneBase&) = delete; // ´ëÀÔ ¿¬»êÀÚ ±İÁö
+        SceneBase() = delete; // ê¸°ë³¸ ìƒì„±ì ê¸ˆì§€
+        SceneBase(const SceneBase&) = delete; // ë³µì‚¬ ìƒì„±ì ê¸ˆì§€
+        SceneBase& operator=(const SceneBase&) = delete; // ëŒ€ì… ì—°ì‚°ì ê¸ˆì§€
 
     public:
 
@@ -52,33 +52,33 @@ namespace JDScene {
 
         virtual void Update(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->Update(deltaTime); }  CheakCollision();};
         
-        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate ½ÇÇà ÈÄ ¸¶Áö¸· ½ÇÇà¿¡ ÆÄ±« Å¥ ¿ÀºêÁ§Æ® Á¦°Å
+        virtual void LateUpdate(float deltaTime) { for (auto& obj : m_sceneObjects) { if (obj) obj->LateUpdate(deltaTime); } }; // LateUpdate ì‹¤í–‰ í›„ ë§ˆì§€ë§‰ ì‹¤í–‰ì— íŒŒê´´ í ì˜¤ë¸Œì íŠ¸ ì œê±°
         
         virtual void Render() {};
         
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);
         
-        template <typename T>
-        void CreateUIObject(T uiObject);
+        //template <typename T>
+        //void CreateUIObject(T uiObject);
 
         void DestroyObject(GameObjectBase* object) {
             if (object == nullptr) { return; }
-            if (std::find(m_destroyQueue.begin(), m_destroyQueue.end(), object) == m_destroyQueue.end()) { // ÀÌÅÍ·¹ÀÌÅÍ ³¡±îÁö ¼øÈ¸ÇØµµ m_destroyQueue¿¡ ÀÌ¹Ì ÀÖÁö ¾ÊÀ¸¸é
-                m_destroyQueue.push_back(object); // m_destroyQueue¿¡ Ãß°¡
+            if (std::find(m_destroyQueue.begin(), m_destroyQueue.end(), object) == m_destroyQueue.end()) { // ì´í„°ë ˆì´í„° ëê¹Œì§€ ìˆœíšŒí•´ë„ m_destroyQueueì— ì´ë¯¸ ìˆì§€ ì•Šìœ¼ë©´
+                m_destroyQueue.push_back(object); // m_destroyQueueì— ì¶”ê°€
             }
         }
 
-        void ProcessDestroyQueue() { // m_destroyQueue¿¡ ÀúÀåµÇ¾îÀÖ´Â ¿ÀºêÁ§Æ® Á¦°Å
+        void ProcessDestroyQueue() { // m_destroyQueueì— ì €ì¥ë˜ì–´ìˆëŠ” ì˜¤ë¸Œì íŠ¸ ì œê±°
             for (auto& obj : m_destroyQueue) {
-                //obj°¡ m_sceneObjects¿¡ Á¸ÀçÇÏ°í, obj°¡ m_destroyQueue¿¡ Á¸ÀçÇÑ´Ù¸é
+                //objê°€ m_sceneObjectsì— ì¡´ì¬í•˜ê³ , objê°€ m_destroyQueueì— ì¡´ì¬í•œë‹¤ë©´
                 if (obj) { 
-                    obj->OnDestroy(); // ÆÄ±« ½Ã OnDestroy()ÇÔ¼ö È£Ãâ
+                    obj->OnDestroy(); // íŒŒê´´ ì‹œ OnDestroy()í•¨ìˆ˜ í˜¸ì¶œ
                     /*
-                       std::remove_if : Á¶°Ç¿¡ ¸Â´Â ¿ä¼Ò¸¦ µÚ·Î ¸ô°í, »õ·Î¿î ³¡À» ¸®ÅÏ
-                       std::vector::erase(start, end) : ÁöÁ¤µÈ ±¸°£ÀÇ ¿ä¼Ò¸¦ º¤ÅÍ¿¡¼­ Á¦°Å
-                       Áï, ÇØ´ç ÇÔ¼ö´Â remove_if·Î Áö¿ï ¿ä¼Ò¸¦ µÚ·Î ¹Î µ¿½Ã¿¡,
-                       ¹Ğ¸° »èÁ¦µÉ ¿ä¼Ò ½ÃÀÛ ÀÎµ¦½ººÎÅÍ ¸Ç ³¡ ÀÎµ¦½º±îÁö Á¦°Å
+                       std::remove_if : ì¡°ê±´ì— ë§ëŠ” ìš”ì†Œë¥¼ ë’¤ë¡œ ëª°ê³ , ìƒˆë¡œìš´ ëì„ ë¦¬í„´
+                       std::vector::erase(start, end) : ì§€ì •ëœ êµ¬ê°„ì˜ ìš”ì†Œë¥¼ ë²¡í„°ì—ì„œ ì œê±°
+                       ì¦‰, í•´ë‹¹ í•¨ìˆ˜ëŠ” remove_ifë¡œ ì§€ìš¸ ìš”ì†Œë¥¼ ë’¤ë¡œ ë¯¼ ë™ì‹œì—,
+                       ë°€ë¦° ì‚­ì œë  ìš”ì†Œ ì‹œì‘ ì¸ë±ìŠ¤ë¶€í„° ë§¨ ë ì¸ë±ìŠ¤ê¹Œì§€ ì œê±°
                     */
                     m_sceneObjects.erase(
                         std::remove_if(
@@ -91,28 +91,28 @@ namespace JDScene {
                     );
                 }
             }
-            m_destroyQueue.clear(); // ¿ÀºêÁ§Æ® ÆÄ±« Å¥´Â ÇÑ ÇÁ·¹ÀÓ¿¡ ÇÑ ¹ø ºñ¿ö¾ß ÇÔ
+            m_destroyQueue.clear(); // ì˜¤ë¸Œì íŠ¸ íŒŒê´´ íëŠ” í•œ í”„ë ˆì„ì— í•œ ë²ˆ ë¹„ì›Œì•¼ í•¨
         }
 
         SceneType GetType() const { return m_Type; }
 
         const std::string& GetID() const { return m_ID; }
 
-        //sceneObjects¶ó´Â GameObjectBase* Æ÷ÀÎÅÍµéÀ» ´ã°í ÀÖ´Â º¤ÅÍ¸¦ ¼öÁ¤ÇÒ ¼ö ¾ø´Â(const) ÂüÁ¶ÀÚ(&) ÇüÅÂ·Î ¹İÈ¯
+        //sceneObjectsë¼ëŠ” GameObjectBase* í¬ì¸í„°ë“¤ì„ ë‹´ê³  ìˆëŠ” ë²¡í„°ë¥¼ ìˆ˜ì •í•  ìˆ˜ ì—†ëŠ”(const) ì°¸ì¡°ì(&) í˜•íƒœë¡œ ë°˜í™˜
         //const std::vector<GamebjectBase*>& GetSceneObjects() const { return sceneObjects; };
 
-        void CheakCollision(); // Ãæµ¹ Ã¼Å©
+        void CheakCollision(); // ì¶©ëŒ ì²´í¬
 
     protected:
 
         const SceneType m_Type;
         const std::string m_ID = "None";
-        std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // º¤ÅÍ ÇüÅÂÀÇ ptr. ¾Ë¾Æ¼­ ¸Ş¸ğ¸® °ø°£ÀÌ ºÎÁ·ÇÒ ¶§ È®º¸ÇØÁØ´Ù.
-        std::vector<std::unique_ptr<RenderPresent>> m_presents; // ·»´õ ¿ä¼Ò¸¸ ¸ğ¾ÆµĞ ÃÖÀûÈ­ ¹è¿­. sceneObjects¿¡¼­ ·»´õ¿¡ ÇÊ¿äÇÑ Á¤º¸¸¸ º¹»çÇØ¼­ ¹Ş¾Æ¿Â´Ù.
-        std::vector<GameObjectBase*> m_destroyQueue; // ¾ÈÀüÇÏ°Ô ¿ÀºêÁ§Æ®¸¦ Á¦°ÅÇÏ±â À§ÇÑ Å¥. LateUpdate() ¸Ç ¸¶Áö¸·¿¡ ÇØ´ç Å¥ÀÇ ¿ÀºêÁ§Æ®¸¦ Á¦°ÅÇÑ´Ù.
-        std::vector<CollisionPair> m_prevPairs; // ÀÌÀü Ãæµ¹ Á¤º¸ º¸°ü¿ë. ÀÌ°ÍÀ» ÅëÇØ µÎ ¿ÀºêÁ§Æ®°¡ Ãæµ¹ÇÏ°í ÀÖ¾ú´ÂÁö ¾Ë ¼ö ÀÖÀ½.
-        std::vector<CollisionPair> m_currPairs; // ÇöÀç Ãæµ¹ Á¤º¸ º¸°ü¿ë. Ãæµ¹ÇÑ ¿ÀºêÁ§Æ® ½ÖÀÇ Á¤º¸¸¦ ÀúÀåÇÏ°í ÀÌÀü Ãæµ¹ Á¤º¸¿¡ ³Ñ°ÜÁÜ.
-        int m_objectCount = 0; // °¢ ¾ÀÀÇ °´Ã¼ Ä«¿îÆÃ
+        std::vector<std::unique_ptr<GameObjectBase>> m_sceneObjects; // ë²¡í„° í˜•íƒœì˜ ptr. ì•Œì•„ì„œ ë©”ëª¨ë¦¬ ê³µê°„ì´ ë¶€ì¡±í•  ë•Œ í™•ë³´í•´ì¤€ë‹¤.
+        std::vector<std::unique_ptr<RenderPresent>> m_presents; // ë Œë” ìš”ì†Œë§Œ ëª¨ì•„ë‘” ìµœì í™” ë°°ì—´. sceneObjectsì—ì„œ ë Œë”ì— í•„ìš”í•œ ì •ë³´ë§Œ ë³µì‚¬í•´ì„œ ë°›ì•„ì˜¨ë‹¤.
+        std::vector<GameObjectBase*> m_destroyQueue; // ì•ˆì „í•˜ê²Œ ì˜¤ë¸Œì íŠ¸ë¥¼ ì œê±°í•˜ê¸° ìœ„í•œ í. LateUpdate() ë§¨ ë§ˆì§€ë§‰ì— í•´ë‹¹ íì˜ ì˜¤ë¸Œì íŠ¸ë¥¼ ì œê±°í•œë‹¤.
+        std::vector<CollisionPair> m_prevPairs; // ì´ì „ ì¶©ëŒ ì •ë³´ ë³´ê´€ìš©. ì´ê²ƒì„ í†µí•´ ë‘ ì˜¤ë¸Œì íŠ¸ê°€ ì¶©ëŒí•˜ê³  ìˆì—ˆëŠ”ì§€ ì•Œ ìˆ˜ ìˆìŒ.
+        std::vector<CollisionPair> m_currPairs; // í˜„ì¬ ì¶©ëŒ ì •ë³´ ë³´ê´€ìš©. ì¶©ëŒí•œ ì˜¤ë¸Œì íŠ¸ ìŒì˜ ì •ë³´ë¥¼ ì €ì¥í•˜ê³  ì´ì „ ì¶©ëŒ ì •ë³´ì— ë„˜ê²¨ì¤Œ.
+        int m_objectCount = 0; // ê° ì”¬ì˜ ê°ì²´ ì¹´ìš´íŒ…
     };
 }
 #include "SceneBase.Inl"

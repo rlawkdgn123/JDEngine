@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
- 
+#include "InputManager.h" 
+
 namespace JDScene {
 
     class DefaultScene : public SceneBase
@@ -45,7 +46,11 @@ namespace JDScene {
         void Render() override;
 
     private:
-        std::vector<std::shared_ptr<GameObject>> m_gameObjects;
+
+        std::shared_ptr<Camera> m_camera;
+        std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
+        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
+
     };
 
 }

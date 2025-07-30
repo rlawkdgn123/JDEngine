@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include <cassert>
+#include "GameObjectBase.h"
 #include "Component.h"
-
 namespace JDMath = JDGlobal::Math;
 
 
@@ -9,8 +8,16 @@ namespace JDComponent {
     namespace D2DTM
     {
 
-        class RectTransform : public  JDComponent::Component {
+        class RectTransform : public Component {
         public:
+            void Update(float dt) override {};
+
+            void OnEvent(const std::string& ev) override {};
+
+            void OnEnable() override {};
+
+            void OnDisable() override {};
+
             using Vec2 = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
             using PivotPreset = JDGlobal::Core::PivotPreset;
@@ -90,17 +97,14 @@ namespace JDComponent {
                 );
             }
 
+            // ** Width, Height **
+            void SetSize(const Vec2& size) { m_size = size; SetDirty(); }
+            const Vec2& GetSize() const { return m_size; }
+
             // ** 트랜스폼 설정 **
             void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
             void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
-            
-            // ** Rect 설정 **
-            /*const RECT& GetRect() const { return m_rect; }*/
-            float GetLeft() const { return m_Left; }
-            float GetRight() const { return m_Right; }
-            float GetTop() const { return m_Top; }
-            float GetBottom() const { return m_Bottom; }
 
             const Vec2& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }
@@ -178,28 +182,15 @@ namespace JDComponent {
 
             void UpdateMatrices();
 
-            void Update(float dt) override {}
-
-            void OnEvent(const std::string& ev) override {}
-
-            void OnEnable() override {}
-
-            void OnDisable() override {}
-
 
         private:
 
             bool m_dirty;
 
-            // RECT     m_rect = {};
-            float    m_Left = 0;
-            float    m_Right = 0;
-            float    m_Top = 0;
-            float    m_Bottom = 0;
-
-            Vec2     m_position = { 0.f, 0.f }; // translation position
-            float    m_rotation = 0.f;          // in degrees
-            Vec2     m_scale = { 1.f, 1.f };
+            Vec2     m_size =       { 100.0f, 100.0f };
+            Vec2     m_position =   { 0.f, 0.f };       // translation position
+            float    m_rotation =   { 0.f };            // in degrees
+            Vec2     m_scale =      { 1.f, 1.f };
 
             RectTransform* m_parent;
             std::vector<RectTransform*> m_children;
@@ -209,6 +200,11 @@ namespace JDComponent {
 
             D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
             D2D1_POINT_2F m_anchor{ 0.0f, 0.0f };
-        };
+
+
+            // Component을(를) 통해 상속됨
+            
+
+};
     }
 }

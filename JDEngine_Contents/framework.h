@@ -9,3 +9,5 @@
 #include "D2DTransform.h"
 #include "Sprite.h"
 #include "D2DRenderer.h"
+#include "UIObject.h"
+#include "UIObjectList.h"

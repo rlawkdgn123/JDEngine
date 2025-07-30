@@ -18,11 +18,11 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 /////////////////////////////////////////////////////////////////////////
 #include "EngineCore.h"
 /////////////////////////////////////////////////////////////////////////
-// ÃßÈÄ ¾Ö´Ï¸ŞÀÌ¼Ç ºÎºĞÀº ºĞ¸® ¿¹Á¤
+// ì¶”í›„ ì• ë‹ˆë©”ì´ì…˜ ë¶€ë¶„ì€ ë¶„ë¦¬ ì˜ˆì •
 using namespace std;
 
-// (ÀÏ¹İÀûÀ¸·Î UTF-8 ¶Ç´Â ·ÎÄÉÀÏº° ¸ÖÆ¼¹ÙÀÌÆ® ÀÎÄÚµù)°ú
-// std::wstring (ÀÏ¹İÀûÀ¸·Î Windows¿¡¼­ UTF-16) °£ÀÇ º¯È¯À» À§ÇÑ µÎ °¡Áö À¯Æ¿¸®Æ¼ ÇÔ¼ö
+// (ì¼ë°˜ì ìœ¼ë¡œ UTF-8 ë˜ëŠ” ë¡œì¼€ì¼ë³„ ë©€í‹°ë°”ì´íŠ¸ ì¸ì½”ë”©)ê³¼
+// std::wstring (ì¼ë°˜ì ìœ¼ë¡œ Windowsì—ì„œ UTF-16) ê°„ì˜ ë³€í™˜ì„ ìœ„í•œ ë‘ ê°€ì§€ ìœ í‹¸ë¦¬í‹° í•¨ìˆ˜
 using WindowSize = JDGlobal::Window::WindowSize;
 std::wstring ConvertToWString(const std::string& str)
 {
@@ -52,17 +52,17 @@ std::string WStringToString(const std::wstring& wstr)
 /////////////////////////////////////////////////////////////////////////
 
 
-// EngineCore Å¬·¡½ºÀÇ ¸â¹ö ÇÔ¼ö Á¤ÀÇ´Â Àü¿ª ³×ÀÓ½ºÆäÀÌ½º¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù.
-// ÆÄÀÏ ³¡¿¡ ÀÖ´ø ÀÍ¸í ³×ÀÓ½ºÆäÀÌ½º¸¦ Á¦°ÅÇß½À´Ï´Ù.
+// EngineCore í´ë˜ìŠ¤ì˜ ë©¤ë²„ í•¨ìˆ˜ ì •ì˜ëŠ” ì „ì—­ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ì— ìˆì–´ì•¼ í•©ë‹ˆë‹¤.
+// íŒŒì¼ ëì— ìˆë˜ ìµëª… ë„¤ì„ìŠ¤í˜ì´ìŠ¤ë¥¼ ì œê±°í–ˆìŠµë‹ˆë‹¤.
 
 bool EngineCore::Initialize()
 {
-    // À¯´ÏÄÚµå ±â¹İÀÇ À©µµ¿ì Å¬·¡½º ÀÌ¸§°ú À©µµ¿ì ÀÌ¸§ ¼³Á¤
+    // ìœ ë‹ˆì½”ë“œ ê¸°ë°˜ì˜ ìœˆë„ìš° í´ë˜ìŠ¤ ì´ë¦„ê³¼ ìœˆë„ìš° ì´ë¦„ ì„¤ì •
     const wchar_t* className = L"JDEngine";
     const wchar_t* windowName = L"JDEngine";
 
-    // ÀÌ Å¬·¡½ºÀÇ ºÎ¸ğ Å¬·¡½º(__super)¿¡¼­ Á¦°øÇÏ´Â Create ÇÔ¼ö È£Ãâ
-    // Àü´ŞµÈ Å¬·¡½º¸í / À©µµ¿ì¸í / Å©±â·Î À©µµ¿ì »ı¼º ½Ãµµ.
+    // ì´ í´ë˜ìŠ¤ì˜ ë¶€ëª¨ í´ë˜ìŠ¤(__super)ì—ì„œ ì œê³µí•˜ëŠ” Create í•¨ìˆ˜ í˜¸ì¶œ
+    // ì „ë‹¬ëœ í´ë˜ìŠ¤ëª… / ìœˆë„ìš°ëª… / í¬ê¸°ë¡œ ìœˆë„ìš° ìƒì„± ì‹œë„.
     if (false == __super::Create(className, windowName, 1200, 800)) {
         return false;
     }
@@ -72,55 +72,55 @@ bool EngineCore::Initialize()
     //{
     //    return false;
     //}
-    
-    m_EngineTimer = make_unique<GameTimer>(); // ÆÑÅä¸®¿¡¼­ Å¸ÀÌ¸Ó unique ÇüÅÂ·Î ÇÒ´ç
+
+    m_EngineTimer = make_unique<GameTimer>(); // íŒ©í† ë¦¬ì—ì„œ íƒ€ì´ë¨¸ unique í˜•íƒœë¡œ í• ë‹¹
 
     D2DRenderer::Instance().Initialize(m_hWnd);
     D2DRenderer::Instance().SetCamera(cam);
-    //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer °´Ã¼¸¦ shared_ptr·Î »ı¼º µÚ m_Renderer¿¡ ÀúÀå
+    //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer ê°ì²´ë¥¼ shared_ptrë¡œ ìƒì„± ë’¤ m_Rendererì— ì €ì¥
 
-    
 
-    //m_SceneManager = make_unique<SceneManager>(); // ÆÑÅä¸®¿¡¼­ SceneManager unique ÇüÅÂ·Î ÇÒ´ç
+
+    //m_SceneManager = make_unique<SceneManager>(); // íŒ©í† ë¦¬ì—ì„œ SceneManager unique í˜•íƒœë¡œ í• ë‹¹
 
     WindowSize::Instance().Set(this);
 
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     SceneManager::Instance().ChangeScene("TestScene01");
 
-    
+
 
     ID2D1RenderTarget* renderTarget = D2DRenderer::Instance().GetRenderTarget();
-    
+
     if (!ResourceManager::Instance().Initialize(renderTarget)) {
         return false;
     }
 
-    //ÆÄÀÏ À§Ä¡ È®ÀÎ¿ë(µğ¹ö±×¿ë)
+    //íŒŒì¼ ìœ„ì¹˜ í™•ì¸ìš©(ë””ë²„ê·¸ìš©)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
-        std::cout << "[ERROR] ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾ÊÀ½!" << std::endl;*/
+        std::cout << "[ERROR] íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ!" << std::endl;*/
 
     if (!ResourceManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
-        std::cout << "[ERROR] ÅØ½ºÃ³ ·Îµå ½ÇÆĞ" << std::endl;
+        std::cout << "[ERROR] í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
     }
 
     /*if (!ResourceManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
-        std::cout << "[ERROR] ÅØ½ºÃ³ ·Îµå ½ÇÆĞ" << std::endl;
+        std::cout << "[ERROR] í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
     }
     if (!ResourceManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
-        std::cout << "[ERROR] ÅØ½ºÃ³ ·Îµå ½ÇÆĞ" << std::endl;
+        std::cout << "[ERROR] í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
     }
 
     if (!ResourceManager::Instance().LoadTexture("graybirdsheet", L"../Resource/graybirdsheet.png")) {
-        std::cout << "[ERROR] graybirdsheet ÅØ½ºÃ³ ·Îµå ½ÇÆĞ" << std::endl;
+        std::cout << "[ERROR] graybirdsheet í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
     }
     if (!ResourceManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
-        std::cout << "[ERROR] ¾Ö´Ï¸ŞÀÌ¼Ç ·Îµå ½ÇÆĞ!" << std::endl;
+        std::cout << "[ERROR] ì• ë‹ˆë©”ì´ì…˜ ë¡œë“œ ì‹¤íŒ¨!" << std::endl;
     }*/
 
     /*
-    // [ImGUI] ÄÁÅØ½ºÆ® & ¹é¿£µå ÃÊ±âÈ­
-    // ImGui ÄÁÅØ½ºÆ® »ı¼º
+    // [ImGUI] ì»¨í…ìŠ¤íŠ¸ & ë°±ì—”ë“œ ì´ˆê¸°í™”
+    // ImGui ì»¨í…ìŠ¤íŠ¸ ìƒì„±
     IMGUI_CHECKVERSION();
 
     ImGui::CreateContext();
@@ -128,17 +128,17 @@ bool EngineCore::Initialize()
     ImGui_ImplWin32_Init(m_hWnd);
     */
 
-    //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // ·»´õ·¯¿¡¼­ »ı¼ºÇÑ µğ¹ÙÀÌ½º ¿¬°á
+    //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // ë Œë”ëŸ¬ì—ì„œ ìƒì„±í•œ ë””ë°”ì´ìŠ¤ ì—°ê²°
     //m_Renderer->Initialize(m_hWnd);
 
-    // ÀÌ¾î¼­ ·»´õ·¯¿¡°Ô ÄÁÅØ½ºÆ® ¹Ş±â
+    // ì´ì–´ì„œ ë Œë”ëŸ¬ì—ê²Œ ì»¨í…ìŠ¤íŠ¸ ë°›ê¸°
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();
 
-    // [ImGUI] DirectX 11 ¹é¿£µå ÃÊ±âÈ­
+    // [ImGUI] DirectX 11 ë°±ì—”ë“œ ì´ˆê¸°í™”
     //ImGui_ImplDX11_Init(pd3dDevice, pd3dDeviceContext);
 
-    // Å¸ÀÌ¸Ó ÃÊ±âÈ­
+    // íƒ€ì´ë¨¸ ì´ˆê¸°í™”
     m_EngineTimer->Reset();
 
     return true;
@@ -148,11 +148,11 @@ void EngineCore::Run()
 {
     MSG msg = { 0 };
 
-    while (WM_QUIT != msg.message) { // Á¾·á ¸Ş¼¼Áö ÀÌÀü±îÁö ¹«ÇÑ ¹İº¹
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // Å° ÀÔ·Â ¸Ş¼¼Áö¸¦ ¹Ş¾ÒÀ» ¶§
+    while (WM_QUIT != msg.message) { // ì¢…ë£Œ ë©”ì„¸ì§€ ì´ì „ê¹Œì§€ ë¬´í•œ ë°˜ë³µ
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // í‚¤ ì…ë ¥ ë©”ì„¸ì§€ë¥¼ ë°›ì•˜ì„ ë•Œ
         {
-            // PeekMessage°¡ °Ë»öÇÑ ¸Ş½ÃÁö(msg)¸¦ ºĞ¼®ÇÏ¿©
-            // °¡»ó Å° ÄÚµå ¸Ş½ÃÁö(¿¹: WM_KEYDOWN, WM_KEYUP)¸¦ ¹®ÀÚ ¸Ş½ÃÁö(¿¹: WM_CHAR)·Î º¯È¯
+            // PeekMessageê°€ ê²€ìƒ‰í•œ ë©”ì‹œì§€(msg)ë¥¼ ë¶„ì„í•˜ì—¬
+            // ê°€ìƒ í‚¤ ì½”ë“œ ë©”ì‹œì§€(ì˜ˆ: WM_KEYDOWN, WM_KEYUP)ë¥¼ ë¬¸ì ë©”ì‹œì§€(ì˜ˆ: WM_CHAR)ë¡œ ë³€í™˜
             if (false == InputManager::Instance().OnHandleMessage(msg))
             {
                 TranslateMessage(&msg);
@@ -160,7 +160,7 @@ void EngineCore::Run()
             }
         }
         else {
-            // Å° ¸Ş¼¼Áö ÀÔ·ÂÀÌ ¾øÀ¸¸é ±âº» ¾÷µ¥ÀÌÆ®(¹İº¹) ·ÎÁ÷ ½ÇÇà
+            // í‚¤ ë©”ì„¸ì§€ ì…ë ¥ì´ ì—†ìœ¼ë©´ ê¸°ë³¸ ì—…ë°ì´íŠ¸(ë°˜ë³µ) ë¡œì§ ì‹¤í–‰
 
             UpdateTime();
             UpdateLogic();
@@ -172,12 +172,12 @@ void EngineCore::Run()
 
 void EngineCore::Finalize()
 {
-    // [ImGUI] DirectX 11 ¹é¿£µå Á¤¸®
+    // [ImGUI] DirectX 11 ë°±ì—”ë“œ ì •ë¦¬
     //ImGui_ImplDX11_Shutdown();
     //ImGui_ImplWin32_Shutdown();
     //ImGui::DestroyContext();
-    
-    JDGlobal::Window::WindowSize::Instance().Set(nullptr); // Á¾·á ½Ã ÇØÁ¦ ±ÇÀå
+
+    JDGlobal::Window::WindowSize::Instance().Set(nullptr); // ì¢…ë£Œ ì‹œ í•´ì œ ê¶Œì¥
 
     D2DRenderer::Instance().Uninitialize();
 }
@@ -187,7 +187,7 @@ bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     /*
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
     {
-        return true; // ImGui°¡ ¸Ş½ÃÁö¸¦ Ã³¸®ÇßÀ¸¸é true ¹İÈ¯
+        return true; // ImGuiê°€ ë©”ì‹œì§€ë¥¼ ì²˜ë¦¬í–ˆìœ¼ë©´ true ë°˜í™˜
     }
     */
     return false;
@@ -199,10 +199,10 @@ void EngineCore::UpdateTime()
 
     m_EngineTimer->Tick();
     float deltaTime = m_EngineTimer->DeltaTime();
-    float fixedDeltaTime = 1.0f/60.0f;
+    float fixedDeltaTime = 1.0f / 60.0f;
 
     SceneManager::Instance().Update(deltaTime); // 0.016f : fixedUpdate
-    // FixedUpdate ´©Àû Ã³¸®
+    // FixedUpdate ëˆ„ì  ì²˜ë¦¬
     m_FixedTimeAccumulator += deltaTime;
     while (m_FixedTimeAccumulator >= fixedDeltaTime)
     {
@@ -221,18 +221,18 @@ void EngineCore::UpdateLogic()
     m_cameraZoom = cam->GetZoom();*/
     if (cam)
     {
-        
+
         D2D1_MATRIX_3X2_F view = cam->GetViewMatrix();
         D2DRenderer::Instance().SetTransform(view);
 
         const float moveSpeed = 300.0f;    // px/sec
         const float rotateSpeed = 90.0f;   // deg/sec
-        const float zoomFactor = 0.8f;     // ÁÜ ºñÀ²
+        const float zoomFactor = 0.8f;     // ì¤Œ ë¹„ìœ¨
         float dt = m_EngineTimer->DeltaTime();
 
         InputManager& input = InputManager::Instance();
         //ScreanWidth, ScreanHeight))
-        // ÀÌµ¿
+        // ì´ë™
         if (input.IsKeyDown('W')) {
             cam->Move(0.f, -moveSpeed * dt);
             //cam->SetScreenWidth(-moveSpeed * dt);
@@ -247,14 +247,14 @@ void EngineCore::UpdateLogic()
         if (input.IsKeyDown('D'))
             cam->Move(moveSpeed * dt, 0.f);
 
-        // È¸Àü
+        // íšŒì „
         if (input.IsKeyDown(VK_LEFT))
             cam->Rotate(-rotateSpeed * dt);
 
         if (input.IsKeyDown(VK_RIGHT))
             cam->Rotate(rotateSpeed * dt);
 
-        // ÁÜ
+        // ì¤Œ
         if (input.IsKeyDown(VK_UP)) {
             D2D1_POINT_2F screenCenter = {
                 cam->GetScreenWidth() * 0.5f,
@@ -286,12 +286,12 @@ void EngineCore::Render()
 
     D2DRenderer& renderer = D2DRenderer::Instance();
     renderer.RenderBegin();
-    // [1] Ä«¸Ş¶ó Àû¿ë
+    // [1] ì¹´ë©”ë¼ ì ìš©
     ID2D1DeviceContext* context = renderer.GetD2DContext();
 
-    D2D1_POINT_2F  camPos = m_cameraPosition;       // ¿¹: {100.f, 50.f}
-    float camRot = m_cameraRotationDeg;      // ¿¹: 30.f
-    float camZoom = m_cameraZoom;            // ¿¹: 1.5f
+    D2D1_POINT_2F  camPos = m_cameraPosition;       // ì˜ˆ: {100.f, 50.f}
+    float camRot = m_cameraRotationDeg;      // ì˜ˆ: 30.f
+    float camZoom = m_cameraZoom;            // ì˜ˆ: 1.5f
 
     D2D1_SIZE_F screenSize = context->GetSize();
     D2D1_POINT_2F screenCenter = D2D1::Point2F(screenSize.width * 0.5f, screenSize.height * 0.5f);
@@ -314,7 +314,7 @@ void EngineCore::Render()
 }
 
 
-void EngineCore::OnResize(int width, int height) // Ã¢ Å©±â ÀçÁ¶Á¤
+void EngineCore::OnResize(int width, int height) // ì°½ í¬ê¸° ì¬ì¡°ì •
 {
     __super::OnResize(width, height);
 

@@ -23,7 +23,7 @@ namespace JDScene {
 
         void LateUpdate(float deltaTime) override;
 
-        void Render() override;
+        void Render(float deltaTime) override;
     };
 
     class TestScene : public SceneBase
@@ -43,7 +43,7 @@ namespace JDScene {
 
         void LateUpdate(float deltaTime) override;
 
-        void Render() override;
+        void Render(float deltaTime) override;
 
     private:
 

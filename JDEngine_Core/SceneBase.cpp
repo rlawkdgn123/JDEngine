@@ -7,7 +7,7 @@
 
 using namespace std;
 namespace JDScene {
-    void SceneBase::CheakCollision()
+    void SceneBase::CheckCollision()
     {
         m_currPairs.clear(); // 처음부터 현재 충돌 정보는 초기화하고 시작하기.
 

@@ -205,27 +205,65 @@ void D2DRenderer::RenderEnd(bool bPresent)
     }
 }
 
-void D2DRenderer::RenderGameObject(const GameObject& obj)
+//void D2DRenderer::RenderGameObject(const GameObject& obj)
+//{
+//    using namespace JDGameObject;
+//    using namespace JDComponent;
+//    using Transform = JDComponent::D2DTM::Transform;
+//    using SpriteRenderer = JDComponent::SpriteRenderer;
+//
+//    auto tf = obj.GetComponent<Transform>();
+//    auto renderer = obj.GetComponent<SpriteRenderer>();
+//
+//    if (tf && renderer)
+//    {
+//        D2D1_MATRIX_3X2_F worldMatrix = tf->GetWorldMatrix();
+//        if (m_camera)
+//        {
+//            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
+//        }
+//        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+//        renderer->Render(context, worldMatrix);
+//    }
+//}
+void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
 {
-    using namespace JDGameObject;
     using namespace JDComponent;
-    using Transform = JDComponent::D2DTM::Transform;
-    using SpriteRenderer = JDComponent::SpriteRenderer;
 
-    auto tf = obj.GetComponent<Transform>();
-    auto renderer = obj.GetComponent<SpriteRenderer>();
+    // 1) Transform 가져오기
+    auto tf = obj.GetComponent<D2DTM::Transform>();
+    if (!tf) return;
 
-    if (tf && renderer)
+    // 2) 애니메이션과 스프라이트 컴포넌트 검사
+    auto anim = obj.GetComponent<Animation>();
+    auto spr = obj.GetComponent<SpriteRenderer>();
+
+    // 3) 카메라 뷰 매트릭스 적용
+    D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
+    if (m_camera)
+        world = world * m_camera->GetViewMatrix();
+
+    // 4) 애니메이션이 있으면 업데이트+렌더
+    if (anim)
     {
-        D2D1_MATRIX_3X2_F worldMatrix = tf->GetWorldMatrix();
-        if (m_camera)
-        {
-            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
-        }
-        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
-        renderer->Render(context, worldMatrix);
+        // 델타타임으로 프레임 갱신
+        anim->Update(dt);
+
+        // 실제 렌더 호출 (Animation::Render 안에서 DrawBitmap을 처리)
+        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        anim->Render(ctx, world);
+        return;
+    }
+
+    // 5) 애니메이션이 없으면 기존 스프라이트 렌더러 호출
+    if (spr)
+    {
+        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        spr->Render(ctx, world);
     }
 }
+
+
 
 void D2DRenderer::RenderUIObject(const UIObject& uiObj)
 {

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Global.h"
 #include "WindowGlobal.h"
@@ -7,4 +7,5 @@
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "SceneList.h"
+#include "TitleScene.h"
 #include "ResourceManager.h"

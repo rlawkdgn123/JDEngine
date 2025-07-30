@@ -240,24 +240,16 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
     {
         ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
 
-        // 1. 현재 컨텍스트의 변환 행렬을 저장합니다. (다른 오브젝트에 영향을 주지 않기 위해)
         D2D1_MATRIX_3X2_F originalTransform;
         context->GetTransform(&originalTransform);
 
-        // 2. 이 UI 오브젝트의 최종 변환 행렬을 계산합니다.
-        //    UI는 보통 카메라의 영향을 받지 않으므로, 카메라 행렬 곱셈을 제거합니다.
-        //    만약 월드 공간 UI라면 카메라 행렬을 곱하는 것이 맞습니다.
-        //    우선 화면 고정 UI라고 가정하고 진행합니다.
         D2D1_MATRIX_3X2_F worldMatrix = rtf->GetWorldMatrix();
 
-        // 3. 계산된 최종 행렬을 렌더 타겟에 설정합니다.
-        //    원래 행렬에 이 오브젝트의 월드 행렬을 곱해줍니다.
-        context->SetTransform(worldMatrix * originalTransform);
+        // context->SetTransform(worldMatrix * originalTransform);
 
-        // 4. ImageComponent의 Render를 호출합니다.
+        // 카메라 영향을 빼고, 월드 행렬만 사용
         imageComponent->Render(context, worldMatrix);
 
-        // 5. 매우 중요! 다음 오브젝트를 위해 원래의 변환 행렬로 복원합니다.
         context->SetTransform(originalTransform);
     }
 }

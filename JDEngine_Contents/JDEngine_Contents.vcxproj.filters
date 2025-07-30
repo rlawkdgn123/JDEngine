@@ -13,6 +13,9 @@
     <Filter Include="UIObject">
       <UniqueIdentifier>{be89f414-1d9e-4ce7-abbe-4280058c96fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\TitleScene">
+      <UniqueIdentifier>{eafa73f9-e26b-4dc7-8b42-e474dce4aae6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneList.h">
@@ -30,6 +33,9 @@
     <ClInclude Include="UIObjectList.h">
       <Filter>UIObject</Filter>
     </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>Scene\TitleScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneList.cpp">
@@ -43,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="UIObjectList.cpp">
       <Filter>UIObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Scene\TitleScene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

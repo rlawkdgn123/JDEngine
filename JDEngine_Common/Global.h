@@ -10,8 +10,9 @@ namespace JDGlobal {
 		enum class GameTag
 		{
 			None,
-			Player,
-			Enemy,
+			PlayerCat,
+			EnemyCat,
+			PlayerArchitacture,
 			NPC,
 			UI
 		};

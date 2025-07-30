@@ -135,6 +135,9 @@
     <ClInclude Include="UI_ButtonComponent.h">
       <Filter>Component\UI\Button</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="UI_ButtonComponent.cpp">
       <Filter>Component\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Component\SpriteRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

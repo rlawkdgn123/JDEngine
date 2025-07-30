@@ -66,7 +66,7 @@
         if (m_CurrentScene)
         {
             float ts = m_CurrentScene->GetTimeScale();
-            m_CurrentScene->FixedUpdate(fixedDeltaTime);
+            m_CurrentScene->FixedUpdate(fixedDeltaTime * ts);
         }
     }
 
@@ -75,7 +75,7 @@
         if (m_CurrentScene)
         {
             float ts = m_CurrentScene->GetTimeScale();
-            m_CurrentScene->LateUpdate(deltaTime);
+            m_CurrentScene->LateUpdate(deltaTime * ts);
         }
     }
 
@@ -83,7 +83,8 @@
     {
         if (m_CurrentScene)
         {
-            m_CurrentScene->Render(dt);
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->Render(dt * ts);
         }
             
     }

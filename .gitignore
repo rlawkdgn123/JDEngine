@@ -1,9 +1,46 @@
-/.vs
+# 빌드 출력 및 중간 파일
+[Bb]in/
+[Oo]bj/
+*.obj
+*.log
+*.tlog
+*.pdb
+*.pch
+*.ipch
+*.aps
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+
+# 사용자 환경 관련 파일
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.cache
+*.dbmdl
+*.VC.db
+
+# .vs 폴더
+.vs/
+
+# CMake 관련 임시 파일 (있을 경우)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# 빌드 출력 디렉터리 (x64, Debug, Release 등)
+x64/
+Debug/
+Release/
+
+# JD 엔진
 /JDEngine_App/x64
 /JDEngine_Base/x64
 /JDEngine_Core/x64
 /JDEngine_Doc/x64
-/x64
 /JDEgine_App/x64
 /JDEngine_Common/x64
 /JDEngine_Contents/x64

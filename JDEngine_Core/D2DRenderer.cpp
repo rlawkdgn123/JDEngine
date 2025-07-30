@@ -490,7 +490,7 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBi
         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
     );
 
-    // ⑥ DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
+    // DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
 }
 

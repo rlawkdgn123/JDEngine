@@ -22,10 +22,6 @@ namespace JDScene {
         void LateUpdate(float deltaTime) override;
 
         void Render() override;
-
-    private:
-        std::vector<std::shared_ptr<GameObject>> m_gameObjects;
-        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
 	};
 }
 

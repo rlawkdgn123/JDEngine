@@ -62,7 +62,7 @@ namespace JDScene {
             for (auto& obj : m_gameObjects) { if (obj) obj->Update(deltaTime); }
             for (auto& obj : m_gameUiObjects) { if (obj) obj->Update(deltaTime); }
 
-            CheakCollision();
+            CheckCollision();
         };
 
         virtual void LateUpdate(float deltaTime) { 

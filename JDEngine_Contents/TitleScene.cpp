@@ -3,6 +3,7 @@
 #include "SceneList.h"
 #include "TitleScene.h"
 
+
 using namespace std;
 using namespace JDGameObject::InGame;
 
@@ -12,12 +13,22 @@ namespace JDScene {
     void TitleScene::OnEnter() {
         using namespace JDGameObject;
         using namespace JDComponent;
+        using Vector2F = JDGlobal::Math::Vector2F;
 
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
-        CreateUIObject<Button>(L"타이틀 버튼");
+        auto image = CreateUIObject<Image>(L"건물 제작 배경");
+        image->SetPosition(Vector2F{ 100.0f, 100.0f });
 
+        auto image01 = CreateUIObject<Image>(L"건물 제작 배경");
+        image01->SetPosition(Vector2F{ 150.0f, 100.0f });
+
+        auto image02 = CreateUIObject<Image>(L"건물 제작 배경");
+        image02->SetPosition(Vector2F{ 100.0f, 150.0f });
+
+        auto image03 = CreateUIObject<Image>(L"건물 제작 배경");
+        image03->SetPosition(Vector2F{ 200.0f, 200.0f });
     }
 
     void TitleScene::OnLeave() {

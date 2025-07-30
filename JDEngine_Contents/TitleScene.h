@@ -7,6 +7,7 @@ namespace JDScene {
 	class TitleScene : public SceneBase
 	{
     public:
+
         TitleScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
         ~TitleScene() override {}

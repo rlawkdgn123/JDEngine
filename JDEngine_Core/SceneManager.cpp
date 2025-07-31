@@ -97,4 +97,12 @@
         }
     }
 
+    void SceneManager::ToggleDrawColider()
+    {
+        if (m_CurrentScene)
+        {
+            m_CurrentScene->ToggleDrawColider();
+        }
+    }
+
 

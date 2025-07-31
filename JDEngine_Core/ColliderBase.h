@@ -45,13 +45,16 @@ namespace JDComponent {
 		void SetOnCollisionStay(Callback cb) { onTriggerStay = std::move(cb); }
 		void SetOnCollisionExit(Callback cb) { onTriggerExit = std::move(cb); }
 
-		virtual void OnTriggerEnter(ColliderBase* other) { std::cout << "OnTriggerEnter" << std::endl; if (onTriggerEnter) onTriggerEnter(other);}
-		virtual void OnTriggerStay(ColliderBase* other) { std::cout << "OnTriggerStay" << std::endl; if (onTriggerStay)  onTriggerStay(other); }
-		virtual void OnTriggerExit(ColliderBase* other) { std::cout << "OnTriggerExit" << std::endl; if (onTriggerExit)  onTriggerExit(other); }
+		virtual void OnTriggerEnter(ColliderBase* other) { if (onTriggerEnter) onTriggerEnter(other); m_isColliding = true; }
+		virtual void OnTriggerStay(ColliderBase* other) { if (onTriggerStay)  onTriggerStay(other); }
+		virtual void OnTriggerExit(ColliderBase* other) { if (onTriggerExit)  onTriggerExit(other); m_isColliding = false; }
 
-		virtual void OnCollisionEnter(ColliderBase* other) { std::cout << "OnCollisionEnter" << std::endl; if (onCollisionEnter) onCollisionEnter(other); }
-		virtual void OnCollisionStay(ColliderBase* other) { std::cout << "OnCollisionStay" << std::endl; if (onCollisionStay)  onCollisionStay(other); }
-		virtual void OnCollisionExit(ColliderBase* other) { std::cout << "OnCollisionExit" << std::endl; if (onCollisionExit)  onCollisionExit(other); }
+		virtual void OnCollisionEnter(ColliderBase* other) { if (onCollisionEnter) onCollisionEnter(other); m_isColliding = true; }
+		virtual void OnCollisionStay(ColliderBase* other) { if (onCollisionStay)  onCollisionStay(other); }
+		virtual void OnCollisionExit(ColliderBase* other) { if (onCollisionExit)  onCollisionExit(other); m_isColliding = false; }
+
+		bool GetColliding() const { return m_isColliding; }
+		virtual bool IsMouseOver(Vec2 mousePos) = 0;
 
 		void Update(float dt) override {}
 		void OnEvent(const std::string& ev) override {}
@@ -63,6 +66,7 @@ namespace JDComponent {
 		ColliderType m_type;
 
 		bool m_isTrigger = true;
+		bool m_isColliding = false;
 
 		Callback onTriggerEnter;
 		Callback onTriggerStay;

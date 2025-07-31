@@ -19,6 +19,12 @@
     <Filter Include="GameManager">
       <UniqueIdentifier>{f76d60bb-a6af-42ca-894e-f44d8cc84304}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cat">
+      <UniqueIdentifier>{9d2c5cc9-8f8d-4e6c-9697-a64b83753eed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bilding">
+      <UniqueIdentifier>{b59b63df-186a-4b3f-98c8-74b223ae03ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneList.h">
@@ -42,6 +48,9 @@
     <ClInclude Include="ResourceSystem.h">
       <Filter>GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="Cat.h">
+      <Filter>Cat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneList.cpp">
@@ -61,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="ResourceSystem.cpp">
       <Filter>GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Cat.cpp">
+      <Filter>Cat</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -85,7 +85,8 @@ bool EngineCore::Initialize()
 
     WindowSize::Instance().Set(this);
 
-    
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");
@@ -103,11 +104,7 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
-    /*bool ok = AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png");
-    std::cout << "LoadTexture: " << (ok ? "SUCCESS" : "FAILURE") << std::endl;
-    auto bitmap = static_cast<ID2D1Bitmap*>(
-        AssetManager::Instance().GetTexture("Test"));
-    std::cout << "GetTexture(\"Test\") returned: " << (bitmap ? "OK" : "NULL") << std::endl;*/
+
     /*if (!AssetManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
@@ -119,7 +116,7 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadAnimationRenderer("GrayBird", L"../Resource/graybirdsheet.json")) {
+    if (!AssetManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
@@ -135,9 +132,6 @@ bool EngineCore::Initialize()
 
     //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
     //m_Renderer->Initialize(m_hWnd);
-
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
 
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -223,7 +217,6 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
-
     // 배속 키 입력처리
     static float speeds[] = { 2.f, 4.f, 8.f };
     static int   idx = 0;
@@ -246,7 +239,6 @@ void EngineCore::UpdateLogic()
     //
     
     cam = D2DRenderer::Instance().GetCamera();
-    //obj = GameObject
     /*m_cameraPosition = cam->GetPosition();
     m_cameraRotationDeg = cam->GetRotationDeg();
     m_cameraZoom = cam->GetZoom();*/
@@ -260,8 +252,6 @@ void EngineCore::UpdateLogic()
         const float rotateSpeed = 90.0f;   // deg/sec
         const float zoomFactor = 0.8f;     // 줌 비율
         float dt = m_EngineTimer->DeltaTime();
-
-        m_fader.Update(dt);
 
         InputManager& input = InputManager::Instance();
         //ScreanWidth, ScreanHeight))
@@ -281,14 +271,14 @@ void EngineCore::UpdateLogic()
             cam->Move(moveSpeed * dt, 0.f);
 
         // 회전
-        if (input.IsKeyDown('Z'))
+        if (input.IsKeyDown(VK_LEFT))
             cam->Rotate(-rotateSpeed * dt);
 
-        if (input.IsKeyDown('X'))
+        if (input.IsKeyDown(VK_RIGHT))
             cam->Rotate(rotateSpeed * dt);
 
         // 줌
-        if (input.IsKeyDown('C')) {
+        if (input.IsKeyDown(VK_UP)) {
             D2D1_POINT_2F screenCenter = {
                 cam->GetScreenWidth() * 0.5f,
                 cam->GetScreenHeight() * 0.5f
@@ -296,7 +286,7 @@ void EngineCore::UpdateLogic()
             cam->Zoom(1.f + dt, screenCenter);
         }
 
-        if (input.IsKeyDown('V')) {
+        if (input.IsKeyDown(VK_DOWN)) {
             D2D1_POINT_2F screenCenter = {
                 cam->GetScreenWidth() * 0.5f,
                 cam->GetScreenHeight() * 0.5f
@@ -304,30 +294,9 @@ void EngineCore::UpdateLogic()
             cam->Zoom(1.f - dt, screenCenter);
         }
 
-        if (input.IsKeyDown('V')) {
-            
-        }
 
-        if (input.GetKeyPressed(VK_SPACE))
-        {
-            if(flag)
-                cam->Shake(10.0f, 0.1f);
-            else
-                cam->Shake(0.0f, 0.1f);
-                
-            flag = !flag;
-        }
-            
-        if (input.GetKeyPressed(VK_F2))
-        {
-            std::cout << "한슬";
-            m_fader.FadeIn(1.0f);
-        }
-        if (input.GetKeyPressed(VK_F1))
-        {
-            std::cout << "장후";
-            m_fader.FadeOut(2.5f);
-        }
+        if (input.IsKeyDown(VK_SPACE))
+            cam->Shake(10.0f, 0.1f);
     }
 }
 
@@ -360,12 +329,8 @@ void EngineCore::Render()
     cameraMatrix = cameraMatrix * unityFlip;
 
     renderer.SetTransform(cameraMatrix);
-        
+    //std::cout << deltaTime << std::endl;
     SceneManager::Instance().Render(deltaTime);
-
-    renderer.SetTransform(D2D1::Matrix3x2F::Identity());
-
-    m_fader.Render(renderer.GetD2DContext(), screenSize);
 
     renderer.RenderEnd();
 

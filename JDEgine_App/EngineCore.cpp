@@ -365,7 +365,7 @@ void EngineCore::Render()
 
     renderer.RenderEnd(false);
 
-    RenderImGui();
+    //RenderImGui();
 
     renderer.Present();
 }

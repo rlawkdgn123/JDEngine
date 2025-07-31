@@ -141,9 +141,6 @@
     <ClInclude Include="Editor_Clickable.h">
       <Filter>Component\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="CameraFader.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Component\SpriteRenderer</Filter>
     </ClInclude>

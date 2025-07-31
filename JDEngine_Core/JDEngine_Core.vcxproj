@@ -161,7 +161,7 @@
     <ClInclude Include="RectTransform.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="UIObject.h" />
     <ClInclude Include="UI_ButtonComponent.h" />
     <ClInclude Include="UI_ImageComponent.h" />
@@ -190,7 +190,7 @@
     <ClCompile Include="RectTransform.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UI_ButtonComponent.cpp" />
     <ClCompile Include="UI_ImageComponent.cpp" />
     <ClCompile Include="UI_SliderComponent.cpp" />

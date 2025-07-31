@@ -12,6 +12,7 @@ namespace JDScene {
     using ShapeType = JDGlobal::Core::SceneType;
     using GameObject = JDGameObject::GameObject;
     using UIObject = JDGameObject::UIObject;
+    using Vec2 = JDGlobal::Math::Vector2F;
 
     struct RenderPresent {
         RenderPresent(const Transform& tr, const ShapeType& shape) : tr(tr), shape(shape) {}
@@ -77,8 +78,8 @@ namespace JDScene {
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);
         
-        //template <typename T>
-        //void CreateUIObject(T uiObject);
+        template<typename T, typename... Args>
+        T* CreateUIObject(Args&&... args);
 
         void DestroyObject(GameObjectBase* object) {
             if (object == nullptr) { return; }
@@ -133,6 +134,15 @@ namespace JDScene {
         void SetTimeScale(float timeScale) { m_timeScale = timeScale; }
         float GetTimeScale() const { return m_timeScale; }
 
+        void SetSelectedObject(GameObjectBase* obj) { m_SelectObject = obj; }
+        GameObjectBase* GetSelectedObject() const { return m_SelectObject; }
+
+        void ToggleDrawColider() { m_drawCollider = !m_drawCollider; }
+
+        void DrawColider(); // 콜라이더 그리기. 씬베이스를 상속받은 씬에서 구현하자. 여긴 렌더를 몰라서..
+
+        Vec2 GetMouseWorldPos(); // 마우스 월드 좌표 얻기.
+
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
 
@@ -144,6 +154,9 @@ namespace JDScene {
 
         std::vector<std::unique_ptr<GameObject>> m_gameObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
         std::vector<std::unique_ptr<UIObject>> m_gameUiObjects;
+        GameObjectBase* m_SelectObject = nullptr;               // 선택한 오브젝트
+
+
         std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
         std::vector<GameObjectBase*> m_destroyQueue; // 안전하게 오브젝트를 제거하기 위한 큐. LateUpdate() 맨 마지막에 해당 큐의 오브젝트를 제거한다.
         std::vector<CollisionPair> m_prevPairs; // 이전 충돌 정보 보관용. 이것을 통해 두 오브젝트가 충돌하고 있었는지 알 수 있음.
@@ -151,6 +164,8 @@ namespace JDScene {
         int m_objectCount = 0; // 각 씬의 객체 카운팅
 
         float m_timeScale = 1.0f; // 배속. 0이면 정지, 1이면 기본, 2면 2배속...
+
+        bool m_drawCollider = true; // 디버그용 콜라이더 그릴지.
 
     };
 }

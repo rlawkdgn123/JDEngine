@@ -13,3 +13,5 @@
 #include "UIObjectList.h"
 #include "Layer.h"
 #include "Animation.h"
+#include "RectTransform.h"
+#include "UI_TextComponent.h"

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <D2D1Helper.h>
 #include <vector>
 #define _USE_MATH_DEFINES
@@ -29,7 +29,7 @@ namespace JDGlobal {
 		};
 
 		//
-		// DX ¿¡ Á¤ÀÇµÈ ±¸Á¶Ã¼¸¦ »ó¼Ó¹Þ¾Æ ¿¬»êÀÚ ÀçÁ¤ÀÇ Ãß°¡
+		// DX ì— ì •ì˜ëœ êµ¬ì¡°ì²´ë¥¼ ìƒì†ë°›ì•„ ì—°ì‚°ìž ìž¬ì •ì˜ ì¶”ê°€
 		// 
 		class Vector2F : public D2D_VECTOR_2F
 		{
@@ -82,6 +82,10 @@ namespace JDGlobal {
 			Vector2F operator*(float scalar) const
 			{
 				return Vector2F(this->x * scalar, this->y * scalar);
+			}
+
+			Vector2F operator*(const Vector2F& other) const {
+				return Vector2F{ x * other.x, y * other.y };
 			}
 
 			Vector2F operator/(float scalar) const

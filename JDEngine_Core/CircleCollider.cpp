@@ -26,15 +26,27 @@ namespace JDComponent {
 			Vec2 diff = posB - posA;
 
 			return diff.Length() <= (radA + radB);
-			break;
 		}
 		case ColliderType::Box:
 		{
 			return static_cast<BoxCollider*>(other)->Intersect(this);;
-			break;
 		}
 		}
 
+		return false;
+	}
+
+	bool CircleCollider::IsMouseOver(Vec2 mousePos)
+	{
+		Transform* tm = GetTransform();
+		Vec2 pos = tm->GetPosition();
+
+		Vec2 colPos = { pos.x + m_offset.x, pos.y + m_offset.y };
+		Vec2 diff = colPos - mousePos;
+
+		if (diff.Length() <= m_radius) {
+			return true;
+		}
 		return false;
 	}
 }

@@ -64,6 +64,9 @@
     <Filter Include="Asset">
       <UniqueIdentifier>{ecdacdf6-8bfa-4a9a-a1ed-4a7772a6aef6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component\Editor">
+      <UniqueIdentifier>{fbf4f728-40a4-4fce-9ba7-af7644722a64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -137,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor_Clickable.h">
+      <Filter>Component\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

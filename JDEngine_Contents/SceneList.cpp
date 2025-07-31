@@ -12,6 +12,8 @@ using JDComponent::TextureRenderer;
 using JDGlobal::Base::SortingLayer;
 using JDGlobal::Math::Vector2F;
 using JDComponent::BoxCollider;
+using namespace JDGameObject::Content;
+
 
 namespace JDScene {
 
@@ -28,8 +30,7 @@ namespace JDScene {
 
     void DefaultScene::Render(float dt) {}
 
-
-
+/*
     // TestScene
     void TestScene::OnEnter() {
         using namespace JDGameObject;
@@ -130,19 +131,6 @@ namespace JDScene {
 
         auto& input = InputManager::Instance();
         const float moveSpeed = 300.0f;
-        /*for (auto& obj : m_sceneObjects) {
-            if (!obj) continue;
-            auto tf = obj->GetComponent<JDComponent::D2DTM::Transform>();
-            if (!tf) continue;
-
-            auto pos = tf->GetPosition();
-            if (input.IsKeyDown(VK_UP)) pos.y += moveSpeed * deltaTime;
-            if (input.IsKeyDown(VK_DOWN)) pos.y -= moveSpeed * deltaTime;
-            if (input.IsKeyDown(VK_LEFT)) pos.x -= moveSpeed * deltaTime;
-            if (input.IsKeyDown(VK_RIGHT)) pos.x += moveSpeed * deltaTime;
-            tf->SetPosition(pos);
-        }*/
-
 
         auto tf = m_sceneObjects[0]->GetComponent<Transform>();
 
@@ -315,5 +303,5 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
-
+*/
 }

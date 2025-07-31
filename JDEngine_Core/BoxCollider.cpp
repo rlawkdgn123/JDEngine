@@ -25,7 +25,6 @@ namespace JDComponent {
 
 			return std::abs(posA.x - posB.x) <= (halfA.x + halfB.x)
 				&& std::abs(posA.y - posB.y) <= (halfA.y + halfB.y);
-			break;
 		}
 		case ColliderType::Circle:
 		{
@@ -59,10 +58,27 @@ namespace JDComponent {
 
 			// 거리 제곱 ≤ 반경 제곱 이면 충돌
 			return (diff.x * diff.x + diff.y * diff.y) <= (radius * radius);
-			break;
 		}
 		}
 
 		return false;
 	}
+
+	bool BoxCollider::IsMouseOver(Vec2 mousePos)
+	{
+		Transform* tm = GetTransform();
+		Vec2 pos = tm->GetPosition();
+
+		float left = pos.x + m_offset.x - m_halfSize.x;
+		float top = pos.y + m_offset.y + m_halfSize.y;
+		float right = pos.x + m_offset.x + m_halfSize.x;
+		float bottom = pos.y + m_offset.y - m_halfSize.y;
+
+		if (mousePos.x >= left && mousePos.x <= right &&
+			mousePos.y <= top && mousePos.y >= bottom) {
+			return true;
+		}
+		return false;
+	}
+
 }

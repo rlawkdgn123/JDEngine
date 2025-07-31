@@ -6,13 +6,9 @@ using RectTransform = JDComponent::D2DTM::RectTransform;
 using PivotPreset = JDComponent::D2DTM::RectTransform::PivotPreset;
 
 namespace JDGameObject {
-	namespace InGame {
-
-		////////////////////////////////////////////////////////////////////////////////
-		// Image
-		////////////////////////////////////////////////////////////////////////////////
-
-		void Image::Awake()
+	namespace Content {
+		// Button
+		void Button::Awake()
 		{
 			if (!m_isAwaked) {
 				m_isAwaked = true;

@@ -2,7 +2,7 @@
 #include "Editor_Clickable.h"
 
 namespace JDGameObject {
-	namespace InGame {
+	namespace Content {
 
 		using Editor_Clickable = JDComponent::Editor_Clickable;
 		using UI_ImageComponent = JDComponent::UI_ImageComponent;

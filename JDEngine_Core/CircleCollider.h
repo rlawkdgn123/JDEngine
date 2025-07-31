@@ -13,6 +13,7 @@ namespace JDComponent {
 		float GetRadius() const { return m_radius; }
 
 		bool Intersect(ColliderBase* other) override;
+		bool IsMouseOver(Vec2 mousePos) override;
 
 	private:
 		float m_radius;

@@ -4,7 +4,7 @@
 using namespace std;
 
 namespace JDGameObject {
-    namespace InGame {
+    namespace Content {
         void DefaultObject::Awake()
         {
             if (!m_isAwaked) {
@@ -62,6 +62,14 @@ namespace JDGameObject {
         }
         void Grid::LateUpdate(float deltaTime) {}
         void Grid::FixedUpdate(float fixedDeltaTime) {}
+
+        void Cat::Awake()
+        {
+        }
+
+        void Cat::Start()
+        {
+        }
 
     }
 }

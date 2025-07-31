@@ -42,6 +42,8 @@ public:
 
     void SetSceneTimeScale(float timeScale);
 
+    void ToggleDrawColider();
+
 private:
 
     struct SceneEntry

@@ -4,6 +4,9 @@
 #include "ColliderBase.h"
 #include "SceneBase.h"
 #include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "D2DRenderer.h"
+#include "InputManager.h"
 
 using namespace std;
 namespace JDScene {
@@ -99,4 +102,71 @@ namespace JDScene {
         m_prevPairs.swap(m_currPairs);
     }
 
+    void SceneBase::DrawColider()
+    {
+        if (m_drawCollider) {
+            size_t n = m_gameObjects.size();
+            for (size_t i = 0; i < n; ++i) {
+                auto* obj = m_gameObjects[i].get();
+                if (!obj) continue;
+
+                auto* col = obj->GetComponent<JDComponent::ColliderBase>();
+                if (!col) continue;
+
+                auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
+                auto pos = tm->GetPosition();
+
+                UINT32 color = (col->GetColliding()) // 충돌중이면 초록색, 아니면 검정. 
+                    ? 0xFF00FF00
+                    : 0xFF000000;
+
+                // 하이라이트된 인덱스일 때 빨강으로.
+                //if (i == m_highlightedIndex) color = 0xFFFF0000;
+                if (col->IsMouseOver(GetMouseWorldPos())) color = 0xFFFF0000;
+
+
+                if (col->GetColliderType() == JDComponent::ColliderType::Box) {
+                    auto* colB = static_cast<JDComponent::BoxCollider*>(col);
+                    auto hsize = colB->GetHalfSize();
+                    auto offset = colB->GetColliderOffset();
+
+                    float left = pos.x + offset.x - hsize.x;
+                    float top = pos.y + offset.y + hsize.y;
+                    float right = pos.x + offset.x + hsize.x;
+                    float bottom = pos.y + offset.y - hsize.y;
+
+                    D2DRenderer::Instance().DrawRectangle(left, top, right, bottom, color);
+                }
+                else if (col->GetColliderType() == JDComponent::ColliderType::Circle) {
+                    auto* colC = static_cast<JDComponent::CircleCollider*>(col);
+                    auto radius = colC->GetRadius();
+                    auto offset = colC->GetColliderOffset();
+
+                    float x = pos.x + offset.x;
+                    float y = pos.y + offset.y;
+
+                    D2DRenderer::Instance().DrawCircle(x, y, radius, color);
+                }
+            }
+        }
+    }
+
+    Vec2 SceneBase::GetMouseWorldPos()
+    {
+        // 1) 마우스 스크린 좌표 얻기
+        auto& inputMgr = InputManager::Instance();
+        auto  mousePos = inputMgr.GetMouseState().pos;    // {x, y}
+        Vec2 screenPos{ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
+
+        // 2) 스크린 → 월드 변환
+        Vec2 mouseWorld = screenPos;
+        auto camera = D2DRenderer::Instance().GetCamera();
+        if (camera) {
+            auto invView = camera->GetViewMatrix();
+            D2D1InvertMatrix(&invView);
+            mouseWorld = camera->TransformPoint(invView, { screenPos.x,screenPos.y });
+        }
+
+        return mouseWorld;
+    }
 }

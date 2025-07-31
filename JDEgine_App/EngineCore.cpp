@@ -85,8 +85,7 @@ bool EngineCore::Initialize()
 
     WindowSize::Instance().Set(this);
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
+    
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");
@@ -132,6 +131,9 @@ bool EngineCore::Initialize()
 
     //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
     //m_Renderer->Initialize(m_hWnd);
+
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
 
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -236,7 +238,11 @@ void EngineCore::UpdateLogic()
         std::cout << speeds[idx] << std::endl;
         idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
     }
-    //
+    // 콜라이더 그리기 토글
+    if (input.GetKeyPressed('C')) {
+        SceneManager::Instance().ToggleDrawColider();
+        std::cout << "ToggleDrawColider" << std::endl;
+    }
     
     cam = D2DRenderer::Instance().GetCamera();
     /*m_cameraPosition = cam->GetPosition();

@@ -12,6 +12,7 @@ namespace JDScene {
     using ShapeType = JDGlobal::Core::SceneType;
     using GameObject = JDGameObject::GameObject;
     using UIObject = JDGameObject::UIObject;
+    using Vec2 = JDGlobal::Math::Vector2F;
 
     struct RenderPresent {
         RenderPresent(const Transform& tr, const ShapeType& shape) : tr(tr), shape(shape) {}
@@ -133,6 +134,12 @@ namespace JDScene {
         void SetTimeScale(float timeScale) { m_timeScale = timeScale; }
         float GetTimeScale() const { return m_timeScale; }
 
+        void ToggleDrawColider() { m_drawCollider = !m_drawCollider; }
+
+        void DrawColider(); // 콜라이더 그리기. 씬베이스를 상속받은 씬에서 구현하자. 여긴 렌더를 몰라서..
+
+        Vec2 GetMouseWorldPos(); // 마우스 월드 좌표 얻기.
+
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
 
@@ -151,6 +158,8 @@ namespace JDScene {
         int m_objectCount = 0; // 각 씬의 객체 카운팅
 
         float m_timeScale = 1.0f; // 배속. 0이면 정지, 1이면 기본, 2면 2배속...
+
+        bool m_drawCollider = true; // 디버그용 콜라이더 그릴지.
 
     };
 }

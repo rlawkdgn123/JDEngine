@@ -12,6 +12,7 @@ namespace JDComponent {
 		Vec2 GetHalfSize() const { return m_halfSize; }
 
 		bool Intersect(ColliderBase* other) override;
+		bool IsMouseOver(Vec2 mousePos) override;
 		
 	private:
 		Vec2 m_halfSize;

@@ -26,14 +26,14 @@ namespace JDGameObject {
         {
             if (!m_isAwaked) {
                 m_isAwaked = true;
-                cout << "Player Awake" << endl;
+                //cout << "Player Awake" << endl;
             }
             else { return; }
         }
         void Player::Start() {
             if (!m_isStarted) {
                 m_isStarted = true;
-                cout << "Player Start" << endl;
+                //cout << "Player Start" << endl;
             }
             else { return; }
         }                   
@@ -46,14 +46,14 @@ namespace JDGameObject {
         {
             if (!m_isAwaked) {
                 m_isAwaked = true;
-                cout << "Player Awake" << endl;
+                //cout << "Player Awake" << endl;
             }
             else { return; }
         }
         void Grid::Start() {
             if (!m_isStarted) {
                 m_isStarted = true;
-                cout << "Player Start" << endl;
+                //cout << "Player Start" << endl;
             }
             else { return; }
         }

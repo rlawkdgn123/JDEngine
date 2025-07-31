@@ -47,6 +47,9 @@ namespace JDScene {
 
     private:
 
+        /*GameObject*
+        GameObject*
+        GameObject**/
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;

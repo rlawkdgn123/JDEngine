@@ -24,15 +24,15 @@ namespace JDGlobal {
 			Cat,
 		};
 		
-		struct RenderLayerInfo { 
+		struct RenderLayerInfo {
 			SortingLayer sortingLayer;
 			int orderInLayer = 0;
 
-			// 렌더링 정렬 기준
-			bool Compare(const RenderLayerInfo& a, const RenderLayerInfo& b) {
-				if (a.sortingLayer != b.sortingLayer)
-					return a.sortingLayer < b.sortingLayer; // enum값이 낮을수록 아래에 그림
-				return a.orderInLayer < b.orderInLayer;     // 같은 그룹 내에서는 정렬 순서로
+			// operator< 오버로드
+			bool operator<(const RenderLayerInfo& other) const {
+				if (sortingLayer != other.sortingLayer)
+					return sortingLayer < other.sortingLayer;
+				return orderInLayer < other.orderInLayer;
 			}
 		};
 

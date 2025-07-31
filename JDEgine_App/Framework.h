@@ -9,3 +9,4 @@
 #include "SceneList.h"
 #include "TitleScene.h"
 #include "AssetManager.h"
+#include "CameraFader.h"

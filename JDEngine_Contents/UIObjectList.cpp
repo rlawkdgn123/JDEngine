@@ -7,8 +7,12 @@ using PivotPreset = JDComponent::D2DTM::RectTransform::PivotPreset;
 
 namespace JDGameObject {
 	namespace Content {
-		// Button
-		void Button::Awake()
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Image
+		////////////////////////////////////////////////////////////////////////////////
+
+		void Image::Awake()
 		{
 			if (!m_isAwaked) {
 				m_isAwaked = true;

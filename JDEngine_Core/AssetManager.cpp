@@ -72,7 +72,7 @@ ID2D1Bitmap* AssetManager::GetTexture(const std::string& name) const
     return nullptr;
 }
 
-bool AssetManager::LoadAnimation(const std::string& name, const std::wstring& jsonPath)
+bool AssetManager::LoadAnimationRenderer(const std::string& name, const std::wstring& jsonPath)
 {
     std::ifstream ifs(jsonPath);
     if (!ifs.is_open()) {
@@ -83,14 +83,14 @@ bool AssetManager::LoadAnimation(const std::string& name, const std::wstring& js
     json j;
     ifs >> j;
 
-    AnimationClip clip;
+    AnimationRendererClip clip;
 
     for (auto& item : j["frames"].items()) {
         //std::string key = item.key();     // ← 키 접근
         auto& val = item.value();         // ← 값 접근
 
         auto frame = val["frame"];
-        AnimationFrame anim;
+        AnimationRendererFrame anim;
         anim.srcRect = D2D1::RectF(
             static_cast<float>(frame["x"]),
             static_cast<float>(frame["y"]),
@@ -104,14 +104,14 @@ bool AssetManager::LoadAnimation(const std::string& name, const std::wstring& js
 
     }
 
-    m_animations[name] = clip;
+    m_AnimationRenderers[name] = clip;
     return true;
 }
 
-const AnimationClip* AssetManager::GetAnimation(const std::string& name) const
+const AnimationRendererClip* AssetManager::GetAnimationRenderer(const std::string& name) const
 {
-    auto it = m_animations.find(name);
-    if (it != m_animations.end()) {
+    auto it = m_AnimationRenderers.find(name);
+    if (it != m_AnimationRenderers.end()) {
         return &it->second;
     }
     return nullptr;

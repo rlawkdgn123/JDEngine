@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "GameObjectBase.h"
 #include "UIObject.h"
-#include "Sprite.h"
+#include "Texture.h"
 #include "Animation.h"
 
 #include "UI_ImageComponent.h"

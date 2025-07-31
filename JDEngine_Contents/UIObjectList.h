@@ -1,8 +1,10 @@
 ﻿#pragma once
+#include "Editor_Clickable.h"
 
 namespace JDGameObject {
 	namespace InGame {
 
+		using Editor_Clickable = JDComponent::Editor_Clickable;
 		using UI_ImageComponent = JDComponent::UI_ImageComponent;
 		using UI_TextComponent = JDComponent::UI_TextComponent;
 		using UI_ButtonComponent = JDComponent::UI_ButtonComponent;

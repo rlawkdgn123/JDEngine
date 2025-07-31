@@ -133,6 +133,9 @@ namespace JDScene {
         void SetTimeScale(float timeScale) { m_timeScale = timeScale; }
         float GetTimeScale() const { return m_timeScale; }
 
+        void SetSelectedObject(GameObjectBase* obj) { m_SelectObject = obj; }
+        GameObjectBase* GetSelectedObject() const { return m_SelectObject; }
+
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
 
@@ -144,6 +147,9 @@ namespace JDScene {
 
         std::vector<std::unique_ptr<GameObject>> m_gameObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
         std::vector<std::unique_ptr<UIObject>> m_gameUiObjects;
+        GameObjectBase* m_SelectObject = nullptr;               // 선택한 오브젝트
+
+
         std::vector<std::unique_ptr<RenderPresent>> m_presents; // 렌더 요소만 모아둔 최적화 배열. sceneObjects에서 렌더에 필요한 정보만 복사해서 받아온다.
         std::vector<GameObjectBase*> m_destroyQueue; // 안전하게 오브젝트를 제거하기 위한 큐. LateUpdate() 맨 마지막에 해당 큐의 오브젝트를 제거한다.
         std::vector<CollisionPair> m_prevPairs; // 이전 충돌 정보 보관용. 이것을 통해 두 오브젝트가 충돌하고 있었는지 알 수 있음.

@@ -152,6 +152,7 @@
     <ClInclude Include="ComponentList.h" />
     <ClInclude Include="D2DRenderer.h" />
     <ClInclude Include="D2DTransform.h" />
+    <ClInclude Include="Editor_Clickable.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="InputAction.h" />

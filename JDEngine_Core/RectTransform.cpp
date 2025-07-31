@@ -10,13 +10,15 @@ namespace JDComponent {
 		using Vector2F = JDMath::Vector2F;
         void RectTransform::UpdateMatrices()
 		{
+			// Unity 좌표계 : 좌측 하단이 원점, Y축 위쪽이 양수
+
 			// 1) 피벗 기준 스케일
 			auto M_scale = D2D1::Matrix3x2F::Scale(
 				m_scale.x, m_scale.y,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 2) 피벗 기준 회전
+			// 2) 피벗 기준 회전	( 반시계 방향이 양수 )
 			auto M_rot = D2D1::Matrix3x2F::Rotation(
 				m_rotation,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
@@ -41,23 +43,24 @@ namespace JDComponent {
 
 		void RectTransform::SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size)
 		{
+			// Unity 좌표계에 맞게 피벗 설정 (Y축 위쪽이 양수)
+
 			switch (preset)
 			{
 			case PivotPreset::TopLeft:
-				m_pivot = { 0.0f, 0.0f };
+				m_pivot = { 0.0f, size.height };  // 위쪽이 양수
 				break;
 			case PivotPreset::TopRight:
-				m_pivot = { size.width, 0.0f };
+				m_pivot = { size.width, size.height };
 				break;
 			case PivotPreset::BottomLeft:
-				m_pivot = { 0.0f, -size.height };
+				m_pivot = { 0.0f, 0.0f };  // 하단 기준점
 				break;
 			case PivotPreset::BottomRight:
-				m_pivot = { size.width, -size.height };
+				m_pivot = { size.width, 0.0f };
 				break;
 			case PivotPreset::Center:
-				m_pivot = { size.width * 0.5f, -(size.height * 0.5f) };
-
+				m_pivot = { size.width * 0.5f, size.height * 0.5f };
 				break;
 			}
 		}

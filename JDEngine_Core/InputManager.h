@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <array>
-#include "InputUtil.h"
+#include "../JDEngine_Common/InputUtil.h"
 
 struct MouseState
 {

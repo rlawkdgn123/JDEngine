@@ -19,6 +19,10 @@ namespace JDGameObject {
 				// cout << "Image Awake" << endl;
 
 				////////////////////////////////////////////////////////////////////////////////
+				// Editor_Clickable
+				AddComponent<Editor_Clickable>();
+
+				////////////////////////////////////////////////////////////////////////////////
 				// RectTransform
 				auto rectTransform = GetComponent<RectTransform>();
 				if (rectTransform)
@@ -75,6 +79,10 @@ namespace JDGameObject {
 				// cout << "Button Awake" << endl;
 
 				////////////////////////////////////////////////////////////////////////////////
+				// Editor_Clickable
+				AddComponent<Editor_Clickable>();
+
+				////////////////////////////////////////////////////////////////////////////////
 				// RectTransform
 				auto rectTransform = GetComponent<RectTransform>();
 				if (rectTransform)
@@ -128,6 +136,10 @@ namespace JDGameObject {
 			if (!m_isAwaked) {
 				m_isAwaked = true;
 				// cout << "Button Awake" << endl;
+
+				////////////////////////////////////////////////////////////////////////////////
+				// Editor_Clickable
+				AddComponent<Editor_Clickable>();
 
 				////////////////////////////////////////////////////////////////////////////////
 				// RectTransform

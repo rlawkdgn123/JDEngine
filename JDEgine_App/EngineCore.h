@@ -1,6 +1,5 @@
-#pragma once
+ï»¿#pragma once
 #include "JDWndBase.h"
-
  
 class GameTimer;
 class SceneManager;
@@ -23,13 +22,14 @@ public:
 	void Run();
 	void Finalize();
 
-	bool OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) override; // ÃßÈÄ IMGUI Ãß°¡ ½Ã »ìÆìº¸±â
 private:
 
 	void UpdateTime();
 	void UpdateLogic();
+	void ClickUpdate();
 
-	void Render(); // ·»´õ·¯¿¡ À§ÀÓÇÒ ¿¹Á¤
+	void Render(); // ë Œë”ëŸ¬ì— ìœ„ì„í•  ì˜ˆì •
+	void RenderImGui();	// ë Œë” ë§ˆì§€ë§‰ ìˆœì„œì— ImGuiê°€ ê·¸ë ¤ì§€ëŠ” ë°©ì‹.
 
 	void OnResize(int width, int height) override;
 	void OnClose() override;
@@ -49,9 +49,9 @@ private:
 	//wstring    m_selectedFile;
 
 private:
-	D2D1_POINT_2F  m_cameraPosition = { 0.0f, 0.0f };      // ±âº» Ä«¸Ş¶ó À§Ä¡
-	float m_cameraRotationDeg = 0.0f;               // ±âº» È¸Àü °¢µµ (µµ ´ÜÀ§)
-	float m_cameraZoom = 1.0f;                      // ±âº» ÁÜ ¹èÀ² (1.0 = 100%)
+	D2D1_POINT_2F  m_cameraPosition = { 0.0f, 0.0f };      // ê¸°ë³¸ ì¹´ë©”ë¼ ìœ„ì¹˜
+	float m_cameraRotationDeg = 0.0f;               // ê¸°ë³¸ íšŒì „ ê°ë„ (ë„ ë‹¨ìœ„)
+	float m_cameraZoom = 1.0f;                      // ê¸°ë³¸ ì¤Œ ë°°ìœ¨ (1.0 = 100%)
 
 	std::wstring    m_selectedAssetKey;
 
@@ -63,7 +63,7 @@ private:
 	bool m_bChangedFile = false;
 	float m_FixedTimeAccumulator = 0.0f;
 
-	//std::shared_ptr<OnlyForTestScene> m_TestScenePtr = nullptr; //¾ÀÀº Áö±İ ºĞ¸®ÇØ¾ßÇÔ
+	//std::shared_ptr<OnlyForTestScene> m_TestScenePtr = nullptr; //ì”¬ì€ ì§€ê¸ˆ ë¶„ë¦¬í•´ì•¼í•¨
 	
 };
 

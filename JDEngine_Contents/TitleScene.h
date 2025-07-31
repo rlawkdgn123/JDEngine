@@ -23,6 +23,11 @@ namespace JDScene {
         void LateUpdate(float deltaTime) override;
 
         void Render(float deltaTime) override;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void ClickUpdate();
+
 	};
 }
 

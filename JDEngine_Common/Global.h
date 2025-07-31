@@ -95,6 +95,11 @@ namespace JDGlobal {
 		};
 	}
 	namespace Contents {
+		enum class CatType {
+			Felis,
+			Navi,
+			Kone,
+		};
 		struct Resource {
 
 			Resource() = default;

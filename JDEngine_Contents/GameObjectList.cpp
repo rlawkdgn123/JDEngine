@@ -63,13 +63,5 @@ namespace JDGameObject {
         void Grid::LateUpdate(float deltaTime) {}
         void Grid::FixedUpdate(float fixedDeltaTime) {}
 
-        void Cat::Awake()
-        {
-        }
-
-        void Cat::Start()
-        {
-        }
-
     }
 }

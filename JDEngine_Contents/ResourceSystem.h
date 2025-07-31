@@ -31,13 +31,6 @@ namespace GameManager {
 				JDMath::Clamp<float>(value.m_mineral, -1.0f, 1.0f)
 			};
 		}
-		Resource ClampTotalResource(const Resource& value) {
-			return Resource{
-				JDMath::Clamp<float>(value.m_food, 0.f, std::numeric_limits<float>::max()),
-				JDMath::Clamp<float>(value.m_wood, 0.f, std::numeric_limits<float>::max()),
-				JDMath::Clamp<float>(value.m_mineral, 0.f, std::numeric_limits<float>::max())
-			};
-		}
 	public:
 
 		void UpdateTotalResourcePerSec() {
@@ -47,7 +40,9 @@ namespace GameManager {
 				+ (m_resourcePerSec * m_resourceBonus)
 				+ (m_resourcePerSec * m_synergyBonus);
 
-			total = ClampTotalResource(total);
+			if (total.m_food < 0) { total.m_food = 0; }
+			if (total.m_wood < 0) { total.m_wood = 0; }
+			if (total.m_mineral < 0) { total.m_mineral = 0; }
 		}
 
 		// Getter
@@ -56,7 +51,7 @@ namespace GameManager {
 		const Resource& GetResourceBonus() const { return m_resourceBonus; }
 		const Resource& GetSynergyBonus() const { return m_synergyBonus; }
 		const unsigned int& GetTotalPopulation() const { return m_totalPopulation; }
-		
+
 		// Setter
 		void SetResourcePerSec(const Resource& value) { m_resourcePerSec = value; }
 		void AddResourcePerSec(const  Resource& value) { m_resourcePerSec += value; }

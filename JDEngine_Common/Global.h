@@ -11,7 +11,11 @@ namespace JDGlobal {
 		{
 			None,
 			Player,
+			PlayerCat,
+			PlayerBuilding,
 			Enemy,
+			EnemyCat,
+			EnemyBuilding,
 			NPC,
 			UI
 		};
@@ -20,7 +24,7 @@ namespace JDGlobal {
 		enum class SortingLayer : int {
 			None,
 			BackGround,
-			Architecture,
+			Building,
 			Cat,
 		};
 		
@@ -94,30 +98,30 @@ namespace JDGlobal {
 		struct Resource {
 
 			Resource() = default;
-			Resource(float wood, float stone, float mineral)
-				: m_wood(wood), m_stone(stone), m_mineral(mineral) {
+			Resource(float food, float wood, float mineral)
+				: m_food(food), m_wood(wood), m_mineral(mineral) {
 			}
 			Resource(const Resource& resource) {
+				m_food = resource.m_food;
 				m_wood = resource.m_wood;
-				m_stone = resource.m_stone;
 				m_mineral = resource.m_mineral;
 			}
 
+			float m_food;
 			float m_wood;
-			float m_stone;
 			float m_mineral;
 
 			Resource& operator=(const Resource& other) {
+				m_food = other.m_food;
 				m_wood = other.m_wood;
-				m_stone = other.m_stone;
 				m_mineral = other.m_mineral;
 				return *this;
 			}
 
 			Resource operator+(const Resource& other) const {
 				return Resource{
+					m_food + other.m_food,
 					m_wood + other.m_wood,
-					m_stone + other.m_stone,
 					m_mineral + other.m_mineral
 				};
 				
@@ -125,30 +129,30 @@ namespace JDGlobal {
 
 			Resource operator-(const Resource& other) const {
 				return Resource{
+					m_food - other.m_food,
 					m_wood - other.m_wood,
-					m_stone - other.m_stone,
 					m_mineral - other.m_mineral
 				};
 			}
 
 			Resource& operator+=(const Resource& other) {
+				m_food += other.m_food;
 				m_wood += other.m_wood;
-				m_stone += other.m_stone;
 				m_mineral += other.m_mineral;
 				return *this;
 			}
 
 			Resource& operator*=(const Resource& other) {
+				m_food *= other.m_food;
 				m_wood *= other.m_wood;
-				m_stone *= other.m_stone;
 				m_mineral *= other.m_mineral;
 				return *this;
 			}
 
 			Resource operator*(const Resource& other) const {
 				return Resource{
+					m_food * other.m_food,
 					m_wood * other.m_wood,
-					m_stone * other.m_stone,
 					m_mineral * other.m_mineral
 				};
 			}

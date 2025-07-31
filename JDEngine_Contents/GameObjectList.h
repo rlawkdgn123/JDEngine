@@ -3,9 +3,10 @@
 #include "framework.h"
 
 namespace JDGameObject{
-    namespace InGame{
+    namespace Content{
+        using Resource = JDGlobal::Contents::Resource;
         class DefaultObject : public JDGameObject::GameObject {
-        
+        public:
             DefaultObject() : GameObject(L"DefaultObject") {}
             DefaultObject(const std::wstring& name) : GameObject(name) {}
             void Awake() override;                               // 최초 1회만 호출
@@ -47,6 +48,33 @@ namespace JDGameObject{
             void Update(float deltaTime) override;              // Update
             void LateUpdate(float deltaTime) override;          // Update 후 호출
             void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
+        };
+        class Cat : public JDGameObject::GameObject
+        {
+        public:
+            Cat() : GameObject(L"Cat") {}
+            Cat(const std::wstring& name) : GameObject(name) {}
+        public:
+            void Awake() override;
+            void Start() override;
+        protected:
+            int m_populationCost;
+            Resource m_CreateCost;               // 생산 비용
+            Resource m_resourceBonus;		// 자원 보너스
+            Resource m_synergyBonus;		// 시너지 보너스
+        };
+        class Building : public JDGameObject::GameObject
+        {
+        public:
+            Building() : GameObject(L"Building") {}
+            Building(const std::wstring& name) : GameObject(name) {}
+        protected:
+            Resource m_upgradeCost[3] =         // 업그레이드 비용
+            { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+            Resource m_buildCost;               // 건설 비용
+            Resource m_initResource;            // 건물 설치 시 일회성 획득 자원
+            Resource m_resourceGenPerSec;       // 초당 자원 획득량
+            Resource m_resourceUpkeepPerSec;    // 초당 자원 유지비용 (소모)
         };
     }
 }

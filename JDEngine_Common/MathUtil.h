@@ -17,7 +17,8 @@ namespace JDGlobal {
 			return static_cast<float>(rad * (180.0f / M_PI));
 		}
 
-		inline float Clamp(float value, float min, float max)
+		template <typename T>
+		inline T Clamp(const T& value, const T min, const T max)
 		{
 			if (value < min) return min;
 			if (value > max) return max;

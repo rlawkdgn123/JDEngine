@@ -16,6 +16,9 @@
     <Filter Include="Scene\TitleScene">
       <UniqueIdentifier>{eafa73f9-e26b-4dc7-8b42-e474dce4aae6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameManager">
+      <UniqueIdentifier>{f76d60bb-a6af-42ca-894e-f44d8cc84304}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneList.h">
@@ -36,6 +39,9 @@
     <ClInclude Include="TitleScene.h">
       <Filter>Scene\TitleScene</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceSystem.h">
+      <Filter>GameManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneList.cpp">
@@ -52,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="TitleScene.cpp">
       <Filter>Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceSystem.cpp">
+      <Filter>GameManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

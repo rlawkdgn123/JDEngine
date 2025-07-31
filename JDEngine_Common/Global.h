@@ -90,4 +90,70 @@ namespace JDGlobal {
 			StretchAll
 		};
 	}
+	namespace Contents {
+		struct Resource {
+
+			Resource() = default;
+			Resource(float wood, float stone, float mineral)
+				: m_wood(wood), m_stone(stone), m_mineral(mineral) {
+			}
+			Resource(const Resource& resource) {
+				m_wood = resource.m_wood;
+				m_stone = resource.m_stone;
+				m_mineral = resource.m_mineral;
+			}
+
+			float m_wood;
+			float m_stone;
+			float m_mineral;
+
+			Resource& operator=(const Resource& other) {
+				m_wood = other.m_wood;
+				m_stone = other.m_stone;
+				m_mineral = other.m_mineral;
+				return *this;
+			}
+
+			Resource operator+(const Resource& other) const {
+				return Resource{
+					m_wood + other.m_wood,
+					m_stone + other.m_stone,
+					m_mineral + other.m_mineral
+				};
+				
+			}
+
+			Resource operator-(const Resource& other) const {
+				return Resource{
+					m_wood - other.m_wood,
+					m_stone - other.m_stone,
+					m_mineral - other.m_mineral
+				};
+			}
+
+			Resource& operator+=(const Resource& other) {
+				m_wood += other.m_wood;
+				m_stone += other.m_stone;
+				m_mineral += other.m_mineral;
+				return *this;
+			}
+
+			Resource& operator*=(const Resource& other) {
+				m_wood *= other.m_wood;
+				m_stone *= other.m_stone;
+				m_mineral *= other.m_mineral;
+				return *this;
+			}
+
+			Resource operator*(const Resource& other) const {
+				return Resource{
+					m_wood * other.m_wood,
+					m_stone * other.m_stone,
+					m_mineral * other.m_mineral
+				};
+			}
+
+		};
+	}
+	
 }

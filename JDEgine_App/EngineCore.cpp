@@ -118,7 +118,7 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadAnimationRenderer("GrayBird", L"../Resource/graybirdsheet.json")) {
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 

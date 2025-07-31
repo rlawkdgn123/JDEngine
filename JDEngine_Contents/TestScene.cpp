@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace JDGameObject::Content;
+using JDComponent::AnimationRender;
 
 namespace JDScene {
 
@@ -26,7 +27,7 @@ namespace JDScene {
             tf->SetPosition({ 0.f, 0.f });
             tf->SetScale({ 1.f, 1.f });
 
-            testObject->AddComponent<SpriteRenderer>("Test");
+            testObject->AddComponent<TextureRenderer>("Test");
 
             m_sceneObjects.push_back(testObject);
         }
@@ -36,8 +37,8 @@ namespace JDScene {
             birdTf->SetPosition({ 100.f, 50.f });
             birdTf->SetScale({ 1.0f, 1.0f });
 
-            birdObj->AddComponent<SpriteRenderer>("GrayBird");
-            birdObj->AddComponent<Animation>("GrayBird", 0.5);// 뒤에 값은 speed
+            birdObj->AddComponent<TextureRenderer>("GrayBird");
+            birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// 뒤에 값은 speed
 
             m_sceneObjects.push_back(birdObj);
         }
@@ -87,7 +88,7 @@ namespace JDScene {
 
         auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
         boxObj2->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ 100.0f, 100.0f });
-        boxObj2->AddComponent<SpriteRenderer>("Test");
+        boxObj2->AddComponent<TextureRenderer>("Test");
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
         auto size = bitmap->GetSize();
         boxObj2->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ size.width / 2.0f, size.height / 2.0f });

@@ -31,7 +31,7 @@ namespace JDScene {
             tf->SetPosition({ 300.f, 200.f });
             tf->SetScale({ 1.f, 1.f });
 
-            testObject->AddComponent<SpriteRenderer>("Test");
+            testObject->AddComponent<TextureRenderer>("Test");
             testObject->AddComponent<Editor_Clickable>();
 
             m_gameObjects.push_back(std::move(testObject));
@@ -42,8 +42,8 @@ namespace JDScene {
         //    birdTf->SetPosition({ 100.f, 50.f });
         //    birdTf->SetScale({ 1.0f, 1.0f });
 
-        //    birdObj->AddComponent<SpriteRenderer>("GrayBird");
-        //    birdObj->AddComponent<Animation>("GrayBird", 0.5);// 뒤에 값은 speed
+        //    birdObj->AddComponent<TextureRenderer>("GrayBird");
+        //    birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// 뒤에 값은 speed
         //    birdObj->AddComponent<Editor_Clickable>();
 
         //    m_gameObjects.push_back(std::move(birdObj));

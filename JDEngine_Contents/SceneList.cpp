@@ -5,14 +5,13 @@
 #include "CircleCollider.h"
 
 using namespace std;
-using namespace JDGameObject::InGame;
+using namespace JDGameObject::Content;
 using JDComponent::RenderLayer;
-using JDComponent::AnimationRenderer;
+using JDComponent::AnimationRender;
 using JDComponent::TextureRenderer;
 using JDGlobal::Base::SortingLayer;
 using JDGlobal::Math::Vector2F;
 using JDComponent::BoxCollider;
-using namespace JDGameObject::Content;
 
 
 namespace JDScene {
@@ -71,9 +70,9 @@ namespace JDScene {
             birdTf->SetScale({ 1.0f, 1.0f });
 
             birdObj->AddComponent<TextureRenderer>("GrayBird");
-            birdObj->AddComponent<AnimationRenderer>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });// 뒤에 값은 speed
+            birdObj->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });// 뒤에 값은 speed
 
-            auto frames = AssetManager::Instance().GetAnimationRenderer("GrayBird");
+            auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
             if (frames && !frames->frames.empty()) {
                 auto first = frames->frames[0].srcRect;
                 float width = first.right - first.left;
@@ -251,9 +250,9 @@ namespace JDScene {
         std::sort(sorted.begin(), sorted.end(),
             [](const std::shared_ptr<GameObject>& a,
                 const std::shared_ptr<GameObject>& b) {
-                // ① AnimationRenderer 우선 탐색
-                if (auto ar = a->GetComponent<AnimationRenderer>())
-                    if (auto br = b->GetComponent<AnimationRenderer>())
+                // ① AnimationRender 우선 탐색
+                if (auto ar = a->GetComponent<AnimationRender>())
+                    if (auto br = b->GetComponent<AnimationRender>())
                         return ar->GetLayerInfo() < br->GetLayerInfo();
                     else
                         return ar->GetLayerInfo() <
@@ -275,7 +274,7 @@ namespace JDScene {
         // (3) 게임 오브젝트 렌더 + 추가 콜라이더 드로우
         for (auto obj : sorted) {
             // 애니메이션 컴포넌트가 있으면
-            if (auto ar = obj->GetComponent<AnimationRenderer>()) {
+            if (auto ar = obj->GetComponent<AnimationRender>()) {
                 // world matrix
                 auto tf = obj->GetComponent<Transform>();
                 D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();

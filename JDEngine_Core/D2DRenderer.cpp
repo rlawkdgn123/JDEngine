@@ -235,7 +235,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     if (!tf) return;
 
     // 2) 애니메이션과 스프라이트 컴포넌트 검사
-    auto anim = obj.GetComponent<AnimationRenderer>();
+    auto anim = obj.GetComponent<AnimationRender>();
     auto spr = obj.GetComponent<TextureRenderer>();
 
     // 3) 카메라 뷰 매트릭스 적용
@@ -249,7 +249,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
         // 델타타임으로 프레임 갱신
         anim->Update(dt);
 
-        // 실제 렌더 호출 (AnimationRenderer::Render 안에서 DrawBitmap을 처리)
+        // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
         anim->Render(ctx, world);
         return;

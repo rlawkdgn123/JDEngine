@@ -5,8 +5,8 @@
 
 using namespace JDComponent;
 
-void AnimationRenderer::Update(float dt) {
-    auto clip = AssetManager::Instance().GetAnimationRenderer(m_clipName);
+void AnimationRender::Update(float dt) {
+    auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
     if (!clip) return;
 
     m_elapsed += dt * m_speed;
@@ -18,9 +18,9 @@ void AnimationRenderer::Update(float dt) {
     }
 }
 
-void AnimationRenderer::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
+void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
-    auto clip = AssetManager::Instance().GetAnimationRenderer(m_clipName);
+    auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
     auto bitmap = AssetManager::Instance().GetTexture(m_clipName);
     if (!clip || !bitmap) return;
 

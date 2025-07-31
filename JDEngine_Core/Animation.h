@@ -7,11 +7,11 @@ using SortingLayer = JDGlobal::Base::SortingLayer;
 
 namespace JDComponent
 {
-    class AnimationRenderer : public Component {
+    class AnimationRender : public Component {
     public:
         // clipName: 애니메이션 리소스 키
         // speed: 재생 속도 배율 (1.0 = 원래 속도, 2.0 = 2배 빠름 등)
-        AnimationRenderer(const std::string& clipName, float speed = 1.0f, const JDGlobal::Base::RenderLayerInfo& layerInfo = { JDGlobal::Base::SortingLayer::None, 0 })
+        AnimationRender(const std::string& clipName, float speed = 1.0f, const JDGlobal::Base::RenderLayerInfo& layerInfo = { JDGlobal::Base::SortingLayer::None, 0 })
             : m_clipName(clipName)
             , m_speed(speed)
             , m_currentFrame(0)

@@ -1,3 +1,6 @@
+ï»¿
+using Vector2F = JDMath::Vector2F;
+
 class Camera
 {
 public:
@@ -32,6 +35,9 @@ public:
         );
     }
 
+    Vector2F ScreenToWorldPoint(const Vector2F& screenPoint) const;
+    Vector2F WorldToScreenPoint(const Vector2F& worldPoint) const;
+
 private:
     D2D1_POINT_2F m_position = { 0, 0 };
     float m_zoom = 1.0f;
@@ -41,6 +47,6 @@ private:
     float m_shakeDuration = 0.f;
     float m_shakeIntensity = 0.f;
 
-    float m_screenWidth = 0.f;    // ·»´õ Å¸°Ù ³Êºñ(px)
-    float m_screenHeight = 0.f;   // ·»´õ Å¸°Ù ³ôÀÌ(px)
+    float m_screenWidth = 0.f;    // ë Œë” íƒ€ê²Ÿ ë„ˆë¹„(px)
+    float m_screenHeight = 0.f;   // ë Œë” íƒ€ê²Ÿ ë†’ì´(px)
 };

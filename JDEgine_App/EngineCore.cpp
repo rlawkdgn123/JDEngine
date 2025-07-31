@@ -3,12 +3,10 @@
 ///////////////////////////////////////////////////////////////////////////
 #pragma comment(lib, "dxguid.lib")
 ////////////////////////////////////////////////////////////////////////////
-/*
+// IMGUI
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-*/
 /////////////////////////////////////////////////////////////////////////
 #include <shobjidl.h>            // IFileOpenDialog
 #include <filesystem>            // C++17 std::filesystem
@@ -24,6 +22,7 @@ using namespace std;
 // (일반적으로 UTF-8 또는 로케일별 멀티바이트 인코딩)과
 // std::wstring (일반적으로 Windows에서 UTF-16) 간의 변환을 위한 두 가지 유틸리티 함수
 using WindowSize = JDGlobal::Window::WindowSize;
+
 std::wstring ConvertToWString(const std::string& str)
 {
     size_t len = 0;
@@ -85,7 +84,8 @@ bool EngineCore::Initialize()
 
     WindowSize::Instance().Set(this);
 
-    
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");
@@ -119,16 +119,6 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
-    /*
-    // [ImGUI] 컨텍스트 & 백엔드 초기화
-    // ImGui 컨텍스트 생성
-    IMGUI_CHECKVERSION();
-
-    ImGui::CreateContext();
-
-    ImGui_ImplWin32_Init(m_hWnd);
-    */
-
     //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
     //m_Renderer->Initialize(m_hWnd);
 
@@ -144,6 +134,20 @@ bool EngineCore::Initialize()
 
     // 타이머 초기화
     m_EngineTimer->Reset();
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // 
+    // ImGui Init
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // ImGui 컨텍스트 생성
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // 플랫폼/렌더러 초기화
+    ImGui_ImplWin32_Init(m_hWnd);              // 윈도우 핸들 (GameApp 멤버에 저장된 윈도우 핸들)
+    ImGui_ImplDX11_Init(D2DRenderer::Instance().GetD3DDevice(), D2DRenderer::Instance().GetD3DContext());
 
     return true;
 }
@@ -177,24 +181,13 @@ void EngineCore::Run()
 void EngineCore::Finalize()
 {
     // [ImGUI] DirectX 11 백엔드 정리
-    //ImGui_ImplDX11_Shutdown();
-    //ImGui_ImplWin32_Shutdown();
-    //ImGui::DestroyContext();
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
 
     JDGlobal::Window::WindowSize::Instance().Set(nullptr); // 종료 시 해제 권장
 
     D2DRenderer::Instance().Uninitialize();
-}
-
-bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    /*
-    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
-    {
-        return true; // ImGui가 메시지를 처리했으면 true 반환
-    }
-    */
-    return false;
 }
 
 void EngineCore::UpdateTime()
@@ -238,6 +231,7 @@ void EngineCore::UpdateLogic()
         std::cout << speeds[idx] << std::endl;
         idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
     }
+
     // 콜라이더 그리기 토글
     if (input.GetKeyPressed('C')) {
         SceneManager::Instance().ToggleDrawColider();
@@ -250,7 +244,6 @@ void EngineCore::UpdateLogic()
     m_cameraZoom = cam->GetZoom();*/
     if (cam)
     {
-
         D2D1_MATRIX_3X2_F view = cam->GetViewMatrix();
         D2DRenderer::Instance().SetTransform(view);
 
@@ -338,8 +331,57 @@ void EngineCore::Render()
     //std::cout << deltaTime << std::endl;
     SceneManager::Instance().Render(deltaTime);
 
-    renderer.RenderEnd();
+    renderer.RenderEnd(false);
 
+    RenderImGui();
+
+    renderer.Present();
+}
+
+void EngineCore::RenderImGui()
+{
+    ID3D11DeviceContext* context = D2DRenderer::Instance().GetD3DContext();
+    ID3D11RenderTargetView* rtv = D2DRenderer::Instance().GetD3DRenderTargetView();
+
+    if (!context || !rtv) return;
+
+    context->OMSetRenderTargets(1, &rtv, nullptr);
+
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    // Hierarchy 창
+    ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_Once);
+    ImGui::Begin("Hierarchy");
+
+    // 선택된 오브젝트 정보 출력
+    JDGameObject::GameObjectBase* selectObject
+        = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
+
+    if (selectObject != nullptr)
+    {
+        ImGui::Text("Selected Object:");
+        ImGui::Separator();
+
+        // ID와 Name을 std::wstring에서 std::string으로 변환해서 출력
+        std::wstring wid = selectObject->GetID();
+        std::wstring wname = selectObject->GetName();
+
+        std::string id(wid.begin(), wid.end());
+        std::string name(wname.begin(), wname.end());
+
+        ImGui::Text("ID: %s", id.c_str());
+        ImGui::Text("Name: %s", name.c_str());
+    }
+    else
+    {
+        ImGui::Text("No object selected");
+    }
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 

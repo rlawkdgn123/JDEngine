@@ -24,9 +24,16 @@ namespace JDComponent {
         // 4. RectTransform에서 크기를 가져와 그리기 영역을 설정합니다.
         RectTransform* rectTransform = m_Owner ? m_Owner->GetComponent<RectTransform>() : nullptr;
         if (!rectTransform) return;
+
+        Vector2F pos = rectTransform->GetPosition();
         Vector2F size = rectTransform->GetSize();
 
-        D2D1_RECT_F destRect = D2D1::RectF(0.f, 0.f, size.x, size.y);
+        D2D1_RECT_F destRect = D2D1::RectF(
+            pos.x,
+            pos.y,
+            pos.x + size.x,
+            pos.y + size.y
+        );
 
         // 5. 비트맵을 그립니다.
         context->DrawBitmap(bitmap, &destRect);

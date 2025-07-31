@@ -31,8 +31,8 @@ namespace JDGameObject {
 			if (!m_active) { return; }
 			else {
 				for (auto& comp : m_components) {
+					//std::cout << " 업데이트 출력" << std::endl;
 					comp->Update(deltaTime);
-					std::cout << "업데이트" << std::endl;
 				}
 			}
 		}

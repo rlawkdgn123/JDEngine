@@ -1,9 +1,23 @@
 ﻿#include "pch.h"
 #include "JDWndBase.h" // 윈도우 관련
+#include "../JDEngine_Core/InputManager.h"
 
 namespace JDWindow { // 이 네임스페이스를 추가하여 JDWndBase::Create 및 OnResize 정의를 포함합니다.
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
+		// ImGui 메시지 처리를 맨 먼저!
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+			return true;
+
+		JDWndBase* jdWnd = (JDWndBase*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+		// InputManager에 메시지 넘기기 (키보드, 마우스 메시지 등)
+		if (jdWnd && InputManager::Instance().OnHandleMessage({ hwnd, msg, wparam, lparam }))
+		{
+			// 메시지를 처리했다면 추가 처리하지 말고 바로 리턴
+			return 0;
+		}
+
 		// friend 키워드로 JDWndBase 접근 가능
 		switch (msg)
 		{

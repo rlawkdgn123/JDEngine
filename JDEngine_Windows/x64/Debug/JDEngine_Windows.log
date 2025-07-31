@@ -1,6 +1,32 @@
-﻿  pch.cpp
-  JDWndBase.cpp
+﻿  JDWndBase.cpp
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/JDWndBase.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imconfig.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/JDWndBase.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui_impl_win32.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/JDWndBase.cpp'을(를) 컴파일하는 중)
+  
   WindowGlobal.cpp
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowGlobal.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imconfig.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowGlobal.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui_impl_win32.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowGlobal.cpp'을(를) 컴파일하는 중)
+  
   WindowUtil.cpp
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowUtil.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imconfig.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowUtil.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\JDEngine\JDEngine_Windows\imgui_impl_win32.h(1,10): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+  (소스 파일 '/WindowUtil.cpp'을(를) 컴파일하는 중)
+  
   코드를 생성하고 있습니다...
   JDEngine_Windows.vcxproj -> C:\Users\User\Desktop\JDEngine\x64\Debug\JDEngine_Windows.lib

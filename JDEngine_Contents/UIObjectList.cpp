@@ -5,7 +5,7 @@
 using namespace std;
 
 namespace JDGameObject {
-	namespace InGame {
+	namespace Content {
 		// Button
 		void Button::Awake()
 		{

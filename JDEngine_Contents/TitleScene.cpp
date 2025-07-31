@@ -4,7 +4,7 @@
 #include "TitleScene.h"
 
 using namespace std;
-using namespace JDGameObject::InGame;
+using namespace JDGameObject::Content;
 
 namespace JDScene {
 

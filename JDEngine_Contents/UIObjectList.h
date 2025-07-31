@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 namespace JDGameObject {
-	namespace InGame {
+	namespace Content {
 
 		using UI_ImageComponent = JDComponent::UI_ImageComponent;
 

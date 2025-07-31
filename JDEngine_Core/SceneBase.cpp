@@ -9,61 +9,71 @@
 #include "InputManager.h"
 
 using namespace std;
+using namespace JDComponent;
 namespace JDScene {
     void SceneBase::CheckCollision()
     {
-        m_currPairs.clear(); // Ã³À½ºÎÅÍ ÇöÀç Ãæµ¹ Á¤º¸´Â ÃÊ±âÈ­ÇÏ°í ½ÃÀÛÇÏ±â.
+        m_currPairs.clear();
 
-        // ÇöÀç Ãæµ¹ÇÑ ½Ö ÀúÀå
         size_t n = m_gameObjects.size();
         for (size_t i = 0; i < n; ++i) {
             auto* objA = m_gameObjects[i].get();
             if (!objA) continue;
 
-            auto* colA = objA->GetComponent<JDComponent::ColliderBase>();
+            auto* colA = objA->GetComponent<ColliderBase>();
             if (!colA) continue;
+            // --- ë””ë²„ê·¸ìš© ì½œë¼ì´ë”ë©´ ìŠ¤í‚µ ---
+            if (auto* boxA = dynamic_cast<BoxCollider*>(colA)) {
+                if (boxA->Purpose() == ColliderPurpose::Debug)
+                    continue;
+            }
 
             for (size_t j = i + 1; j < n; ++j) {
                 auto* objB = m_gameObjects[j].get();
                 if (!objB) continue;
 
-                auto* colB = objB->GetComponent<JDComponent::ColliderBase>();
+                auto* colB = objB->GetComponent<ColliderBase>();
                 if (!colB) continue;
+                // --- ë””ë²„ê·¸ìš© ì½œë¼ì´ë”ë©´ ìŠ¤í‚µ ---
+                if (auto* boxB = dynamic_cast<BoxCollider*>(colB)) {
+                    if (boxB->Purpose() == ColliderPurpose::Debug)
+                        continue;
+                }
 
                 if (colA->Intersect(colB)) {
-                    CollisionPair cp;
-                    cp.A = objA;
-                    cp.B = objB;
-
-                    m_currPairs.push_back(std::move(cp));
+                    m_currPairs.push_back({ objA, objB });
                 }
             }
         }
 
-        // Ãşµ¹ Ã³¸® (Enter, Stay)
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Enter/Stay ì²˜ë¦¬ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         for (auto& curr : m_currPairs) {
-            auto* colA = curr.A->GetComponent<JDComponent::ColliderBase>();
-            auto* colB = curr.B->GetComponent<JDComponent::ColliderBase>();
+            auto* colA = curr.A->GetComponent<ColliderBase>();
+            auto* colB = curr.B->GetComponent<ColliderBase>();
+            // (ìœ„ì™€ ë™ì¼í•˜ê²Œ, ë””ë²„ê·¸ìš©ì´ë©´ ê±´ë„ˆë›°ê¸°)
+            if (auto* boxA = dynamic_cast<BoxCollider*>(colA))
+                if (boxA->Purpose() == ColliderPurpose::Debug) continue;
+            if (auto* boxB = dynamic_cast<BoxCollider*>(colB))
+                if (boxB->Purpose() == ColliderPurpose::Debug) continue;
 
             bool wasColliding = false;
             for (auto& prev : m_prevPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
-                    wasColliding = true; // ÇöÀç Ãæµ¹½Ö°ú °°Àº °ú°Å Ãæµ¹½ÖÀÌ ÀÖ´Ù¸é true.(Stay)
-                    break;
+                    wasColliding = true; break;
                 }
             }
+
             if (colA->IsTrigger() || colB->IsTrigger()) {
-                if (wasColliding) { // ÀÌÀüºÎÅÍ Ãæµ¹ÇÑ »óÅÂ¶ó¸é Stay.
+                if (wasColliding) {
                     colA->OnTriggerStay(colB);
                     colB->OnTriggerStay(colA);
                 }
-                else { // »õ·Ó°Ô Ãæµ¹ÇßÀ¸¸é Enter.
+                else {
                     colA->OnTriggerEnter(colB);
                     colB->OnTriggerEnter(colA);
                 }
             }
-            else
-            {
+            else {
                 if (wasColliding) {
                     colA->OnCollisionStay(colB);
                     colB->OnCollisionStay(colA);
@@ -75,19 +85,23 @@ namespace JDScene {
             }
         }
 
-        // Ãæµ¹ ³¡ Ã³¸® (Exit)
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Exit ì²˜ë¦¬ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         for (auto& prev : m_prevPairs) {
-            auto* colA = prev.A->GetComponent<JDComponent::ColliderBase>();
-            auto* colB = prev.B->GetComponent<JDComponent::ColliderBase>();
+            auto* colA = prev.A->GetComponent<ColliderBase>();
+            auto* colB = prev.B->GetComponent<ColliderBase>();
+            // (ë””ë²„ê·¸ìš©ì´ë©´ Exit ì½œë°±ë„ ìƒëµ)
+            if (auto* boxA = dynamic_cast<BoxCollider*>(colA))
+                if (boxA->Purpose() == ColliderPurpose::Debug) continue;
+            if (auto* boxB = dynamic_cast<BoxCollider*>(colB))
+                if (boxB->Purpose() == ColliderPurpose::Debug) continue;
 
-            bool stillColliding = false; // ÇöÀç Ãæµ¹½Ö°ú °°Àº °ú°Å Ãæµ¹½ÖÀÌ ¾ø´Ù¸é false.(Exit)
+            bool still = false;
             for (auto& curr : m_currPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
-                    stillColliding = true;
-                    break;
+                    still = true; break;
                 }
             }
-            if (!stillColliding) { // Ãæµ¹ÀÌ ³¡³µ´Ù¸é Exit.
+            if (!still) {
                 if (colA->IsTrigger() || colB->IsTrigger()) {
                     colA->OnTriggerExit(colB);
                     colB->OnTriggerExit(colA);
@@ -98,7 +112,7 @@ namespace JDScene {
                 }
             }
         }
-        // ÀÌÁ¦ ´Ù ³¡³µÀ¸´Ï ÇöÀç Ãæµ¹ Á¤º¸¸¦ °ú°Å Á¤º¸·Î ³Ñ°ÜÁÖ±â.
+
         m_prevPairs.swap(m_currPairs);
     }
 
@@ -116,11 +130,11 @@ namespace JDScene {
                 auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
                 auto pos = tm->GetPosition();
 
-                UINT32 color = (col->GetColliding()) // Ãæµ¹ÁßÀÌ¸é ÃÊ·Ï»ö, ¾Æ´Ï¸é °ËÁ¤. 
+                UINT32 color = (col->GetColliding()) // ì¶©ëŒì¤‘ì´ë©´ ì´ˆë¡ìƒ‰, ì•„ë‹ˆë©´ ê²€ì •. 
                     ? 0xFF00FF00
                     : 0xFF000000;
 
-                // ÇÏÀÌ¶óÀÌÆ®µÈ ÀÎµ¦½ºÀÏ ¶§ »¡°­À¸·Î.
+                // í•˜ì´ë¼ì´íŠ¸ëœ ì¸ë±ìŠ¤ì¼ ë•Œ ë¹¨ê°•ìœ¼ë¡œ.
                 //if (i == m_highlightedIndex) color = 0xFFFF0000;
                 if (col->IsMouseOver(GetMouseWorldPos())) color = 0xFFFF0000;
 
@@ -153,12 +167,12 @@ namespace JDScene {
 
     Vec2 SceneBase::GetMouseWorldPos()
     {
-        // 1) ¸¶¿ì½º ½ºÅ©¸° ÁÂÇ¥ ¾ò±â
+        // 1) ë§ˆìš°ìŠ¤ ìŠ¤í¬ë¦° ì¢Œí‘œ ì–»ê¸°
         auto& inputMgr = InputManager::Instance();
         auto  mousePos = inputMgr.GetMouseState().pos;    // {x, y}
         Vec2 screenPos{ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
 
-        // 2) ½ºÅ©¸° ¡æ ¿ùµå º¯È¯
+        // 2) ìŠ¤í¬ë¦° â†’ ì›”ë“œ ë³€í™˜
         Vec2 mouseWorld = screenPos;
         auto camera = D2DRenderer::Instance().GetCamera();
         if (camera) {

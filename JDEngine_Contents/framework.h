@@ -7,10 +7,11 @@
 #include "GameObjectBase.h"
 #include "GameObjectList.h"
 #include "D2DTransform.h"
-#include "Sprite.h"
+#include "Texture.h"
 #include "D2DRenderer.h"
 #include "UIObject.h"
 #include "UIObjectList.h"
-
+#include "Layer.h"
+#include "Animation.h"
 #include "RectTransform.h"
 #include "UI_TextComponent.h"

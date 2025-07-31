@@ -159,6 +159,7 @@
     </ClCompile>
     <ClCompile Include="ResourceSystem.cpp" />
     <ClCompile Include="SceneList.cpp" />
+    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="UIObjectList.cpp" />
   </ItemGroup>

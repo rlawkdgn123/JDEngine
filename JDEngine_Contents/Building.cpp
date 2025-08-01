@@ -1,18 +1,16 @@
 #include "pch.h"
 #include "framework.h"
-#include "Cat.h"
-using namespace std;
-
+using ResourceSystem = JDGameSystem::ResourceSystem;
 namespace JDGameObject {
     namespace Content {
-        void Cat::Awake()
+        void Building::Awake()
         {
             m_resourceSystem = &ResourceSystem::Instance();
         }
 
-        void Cat::Start()
+        void Building::Start()
         {
-            m_resourceSystem->AddCurPopulation(-m_populationCost);
+            m_resourceSystem->AddTotalResource(m_buildCost);
         }
     }
 }

@@ -4,55 +4,55 @@
     <ClCompile Include="UIObjectList.cpp">
       <Filter>Object\UIObject</Filter>
     </ClCompile>
-    <ClCompile Include="LumberMill.cpp">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClCompile>
-    <ClCompile Include="House.cpp">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClCompile>
     <ClCompile Include="TitleScene.cpp">
       <Filter>Scene\Title</Filter>
     </ClCompile>
     <ClCompile Include="TestScene.cpp">
       <Filter>Scene\Test</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectList.cpp">
-      <Filter>Object\GameObject\List</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneList.cpp">
-      <Filter>Scene\List</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceSystem.cpp">
       <Filter>GameSystem\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Mine.cpp">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Pre-Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultScene.cpp">
+      <Filter>Scene\List</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Object\GameObject\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Building.cpp">
+      <Filter>Object\GameObject\Buildings\BuildingBase</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultGameObject.cpp">
+      <Filter>Object\GameObject\DefaultGameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Cat.cpp">
+      <Filter>Object\GameObject\Cats\CatBase</Filter>
+    </ClCompile>
+    <ClCompile Include="FishingSpot.cpp">
+      <Filter>Object\GameObject\Buildings\FishingSpot</Filter>
+    </ClCompile>
+    <ClCompile Include="House.cpp">
+      <Filter>Object\GameObject\Buildings\House</Filter>
+    </ClCompile>
+    <ClCompile Include="LumberMill.cpp">
+      <Filter>Object\GameObject\Buildings\LumberMill</Filter>
+    </ClCompile>
+    <ClCompile Include="Mine.cpp">
+      <Filter>Object\GameObject\Buildings\Mine</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Object\GameObject\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
       <Filter>Object\UIObject</Filter>
     </ClInclude>
-    <ClInclude Include="LumberMill.h">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClInclude>
-    <ClInclude Include="House.h">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClInclude>
-    <ClInclude Include="FishingSpot.h">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClInclude>
     <ClInclude Include="TitleScene.h">
       <Filter>Scene\Title</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectList.h">
-      <Filter>Object\GameObject\List</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneList.h">
-      <Filter>Scene\List</Filter>
     </ClInclude>
     <ClInclude Include="CombatSystem.h">
       <Filter>GameSystem\Combat</Filter>
@@ -60,14 +60,50 @@
     <ClInclude Include="ResourceSystem.h">
       <Filter>GameSystem\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Mine.h">
-      <Filter>Object\GameObject\Buildings</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Pre-Compile</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Pre-Compile</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scene\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneList.h">
+      <Filter>Scene\List</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultScene.h">
+      <Filter>Scene\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Object\GameObject\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Building.h">
+      <Filter>Object\GameObject\Buildings\BuildingBase</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectList.h">
+      <Filter>Object\GameObject\List</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultGameObject.h">
+      <Filter>Object\GameObject\DefaultGameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Cat.h">
+      <Filter>Object\GameObject\Cats\CatBase</Filter>
+    </ClInclude>
+    <ClInclude Include="FishingSpot.h">
+      <Filter>Object\GameObject\Buildings\FishingSpot</Filter>
+    </ClInclude>
+    <ClInclude Include="House.h">
+      <Filter>Object\GameObject\Buildings\House</Filter>
+    </ClInclude>
+    <ClInclude Include="LumberMill.h">
+      <Filter>Object\GameObject\Buildings\LumberMill</Filter>
+    </ClInclude>
+    <ClInclude Include="Mine.h">
+      <Filter>Object\GameObject\Buildings\Mine</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Object\GameObject\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -79,9 +115,6 @@
     </Filter>
     <Filter Include="Object\UIObject">
       <UniqueIdentifier>{331e49df-e67f-478f-9862-546b9eb550ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\GameObject\Buildings">
-      <UniqueIdentifier>{4124f93c-b150-48c0-b9bd-6ab791bc0ae6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{74daeadb-d4ef-40ff-8bf1-297872ca3016}</UniqueIdentifier>
@@ -109,6 +142,39 @@
     </Filter>
     <Filter Include="Pre-Compile">
       <UniqueIdentifier>{92761880-7506-4ce9-bda6-2b6825c4b7da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Grid">
+      <UniqueIdentifier>{9bb64d06-8994-45b9-8680-0939aec52179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Cats">
+      <UniqueIdentifier>{8bb42cd4-d87a-4b4d-a169-509dedc33463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\DefaultGameObject">
+      <UniqueIdentifier>{50bb898a-8975-47ea-91ae-02214da99dbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings">
+      <UniqueIdentifier>{4124f93c-b150-48c0-b9bd-6ab791bc0ae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Cats\CatBase">
+      <UniqueIdentifier>{6574a8e7-abd6-4700-a0b5-87cc2a4d3156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings\BuildingBase">
+      <UniqueIdentifier>{dc862c11-a67e-4f3c-8d93-f48736791cb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings\FishingSpot">
+      <UniqueIdentifier>{2c1b0b50-da99-43ed-8e80-b71d17b2b602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings\House">
+      <UniqueIdentifier>{d2779de4-493e-47d3-9bbf-8654c9e642a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings\LumberMill">
+      <UniqueIdentifier>{76fda41c-174c-479c-9d1b-73032a2ee4ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Buildings\Mine">
+      <UniqueIdentifier>{07b6ae95-325b-454d-bee5-9891f00eddfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Player">
+      <UniqueIdentifier>{931c9134-311c-4b90-918e-bc440e4fae5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

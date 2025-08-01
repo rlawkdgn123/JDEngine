@@ -67,6 +67,12 @@
     <Filter Include="Component\Editor">
       <UniqueIdentifier>{fbf4f728-40a4-4fce-9ba7-af7644722a64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{21511e18-90a5-42f6-8866-530748014396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\Audio">
+      <UniqueIdentifier>{ba0aa1bb-627d-4b5d-8a8d-c0fda09cbf17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -144,6 +150,21 @@
     <ClInclude Include="Texture.h">
       <Filter>Component\SpriteRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="FMODSystem.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioBase.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="BGM.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFX.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -208,6 +229,12 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Component\SpriteRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="FMODSystem.cpp">
+      <Filter>Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

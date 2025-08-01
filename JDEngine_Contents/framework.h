@@ -15,3 +15,5 @@
 #include "Animation.h"
 #include "RectTransform.h"
 #include "UI_TextComponent.h"
+#include "BGM.h"
+#include "SFX.h"

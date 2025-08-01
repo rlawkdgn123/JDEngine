@@ -16,35 +16,11 @@ namespace JDScene {
         using namespace JDComponent;
 
         //cout << "[TestScene] OnEnter()\n";
-        CreateGameObject<Player>(L"담");
 
+        CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
         std::shared_ptr<GameObject>  birdObj = std::make_shared<GameObject>();
-
-        {//Test ㅼ 대�吏 寃ㅻ� 
-            auto tf = testObject->GetComponent<Transform>();
-            tf->SetPosition({ 0.f, 0.f });
-            tf->SetScale({ 1.f, 1.f });
-
-            testObject->AddComponent<TextureRenderer>("Test");
-
-            m_sceneObjects.push_back(testObject);
-        }
-
-        {// 硫댁 寃ㅻ� 
-            auto birdTf = birdObj->GetComponent<Transform>();
-            birdTf->SetPosition({ 100.f, 50.f });
-            birdTf->SetScale({ 1.0f, 1.0f });
-
-            birdObj->AddComponent<TextureRenderer>("GrayBird");
-            birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// ㅼ 媛 speed
-
-            m_sceneObjects.push_back(birdObj);
-        }
-
-
-
         // UI
         std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
 
@@ -57,7 +33,6 @@ namespace JDScene {
 
         m_UIObjects.push_back(testUIObject);
 
-
         const float startX = -500.0f;
         const float startY = 300.0f;
         const float spacingX = 100.0f;
@@ -65,33 +40,47 @@ namespace JDScene {
 
         for (int col = 0; col < 5; ++col) {
             for (int row = 0; row < 7; ++row) {
-                // 怨 대  (硫 쇰쇰 대 ⑸)
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-                // GameObject 
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // 移 ㅼ
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
-                box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
+                box->GetComponent<Transform>()->SetPosition({ x, y });
 
-                // 肄쇱대 異媛
-                box->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ 47.0f,47.0f });
+                box->AddComponent<BoxCollider>(Vector2F{ 47.0f,47.0f });
+
             }
         }
 
-        //ㅽ몄 대 諛 肄쇱대 媛吏 ㅻ�
         auto* circObj = CreateGameObject<Player>(L"CircleObject");
-        circObj->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ 200.0f, 100.0f });
-        circObj->AddComponent<JDComponent::CircleCollider>(50.0f);
+        circObj->GetComponent<Transform>()->SetPosition({ 200.0f, 100.0f });
+        circObj->AddComponent<CircleCollider>(50.0f);
 
-        auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
-        boxObj2->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ 100.0f, 100.0f });
-        boxObj2->AddComponent<TextureRenderer>("Test");
-        auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
-        auto size = bitmap->GetSize();
-        boxObj2->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ size.width / 2.0f, size.height / 2.0f });
+        {//Text�̹���
+            auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
+            boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            boxObj2->AddComponent<BGM>("MainTheme");
+            boxObj2->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+            auto size = bitmap->GetSize();
+            boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+        }
+        {//Graybird�ִ�
+            auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
+            boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            boxObj3->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
+
+            auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+            if (frames && !frames->frames.empty()) {
+                auto first = frames->frames[0].srcRect;
+                float width = first.right - first.left;
+                float height = first.bottom - first.top;
+                Vector2F halfSize{ width * 0.5f, height * 0.5f };
+                birdObj->AddComponent<BoxCollider>(halfSize);
+            }
+        }
     }
 
     void TestScene::OnLeave() {
@@ -100,7 +89,6 @@ namespace JDScene {
 
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-
 
         //bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
         bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
@@ -118,7 +106,6 @@ namespace JDScene {
             }
         }
     }
-
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
         SceneBase::FixedUpdate(fixedDeltaTime);
@@ -140,16 +127,6 @@ namespace JDScene {
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
         //게임 오브젝트 렌더
-
-       //for (auto& obj : m_sceneObjects) {
-       //    D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
-       //}
-
-        //for (auto& uiObj : m_UIObjects)
-        //{
-        //    D2DRenderer::Instance().RenderUIObject(*uiObj);
-        //}
-
 
         for (auto& obj : m_gameObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);

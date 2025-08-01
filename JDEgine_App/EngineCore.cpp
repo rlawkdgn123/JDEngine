@@ -93,6 +93,16 @@ bool EngineCore::Initialize()
         return false;
     }
 
+    AudioManager::Instance().Initialize();
+
+    //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
+    //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
+    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
+    //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    AudioManager::Instance().SetMusicVolume(1.0f);
+    FMOD::Channel* bgmChannel = nullptr;
+    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
     //{
@@ -121,7 +131,8 @@ bool EngineCore::Initialize()
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
-    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
+
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
         std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
     }
 
@@ -153,34 +164,13 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
     }
 
-    //if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
-    //    std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
-    //}
-    /*bool ok = AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png");
-    std::cout << "LoadTexture: " << (ok ? "SUCCESS" : "FAILURE") << std::endl;
-    auto bitmap = static_cast<ID2D1Bitmap*>(
-        AssetManager::Instance().GetTexture("Test"));
-    std::cout << "GetTexture(\"Test\") returned: " << (bitmap ? "OK" : "NULL") << std::endl;*/
-    /*if (!AssetManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
-        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
-        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
-    }
-    */
 
-    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/graybirdsheet.json")) {
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
-
-    //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
-    //m_Renderer->Initialize(m_hWnd);
-
-    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    //SceneManager::Instance().ChangeScene("TestScene01");
 
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     SceneManager::Instance().ChangeScene("TitleScene");
@@ -199,8 +189,8 @@ bool EngineCore::Initialize()
     // 
     // ImGui Init
     //
-    ////////////////////////////////////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////////////////////////////////////
+    
     // ImGui 컨텍스트 생성
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -242,11 +232,11 @@ void EngineCore::Run()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
             continue; // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
-        }
 
         // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
         UpdateTime();
         UpdateLogic();
+        AudioManager::Instance().Update();
         Render();
     }
 
@@ -322,9 +312,7 @@ void EngineCore::UpdateLogic()
     
     cam = D2DRenderer::Instance().GetCamera();
     //obj = GameObject
-    /*m_cameraPosition = cam->GetPosition();
-    m_cameraRotationDeg = cam->GetRotationDeg();
-    m_cameraZoom = cam->GetZoom();*/
+
     if (cam)
     {
         D2D1_MATRIX_3X2_F view = cam->GetViewMatrix();
@@ -394,12 +382,10 @@ void EngineCore::UpdateLogic()
             
         if (input.GetKeyPressed(VK_F2))
         {
-            std::cout << "한슬";
             m_fader.FadeIn(1.0f);
         }
         if (input.GetKeyPressed(VK_F1))
         {
-            std::cout << "장후";
             m_fader.FadeOut(2.5f);
         }
     }

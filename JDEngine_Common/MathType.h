@@ -127,6 +127,11 @@ namespace JDGlobal {
 				return (this->x == vector.x && this->y == vector.y);
 			}
 
+			operator D2D1_POINT_2F() const
+			{
+				return { x, y };
+			}
+
 			float Length() const
 			{
 				return sqrtf(this->x * this->x + this->y * this->y);

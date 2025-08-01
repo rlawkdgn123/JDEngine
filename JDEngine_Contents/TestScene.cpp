@@ -1,4 +1,4 @@
-#include "pch.h"
+ç™¤#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -16,13 +16,13 @@ namespace JDScene {
         using namespace JDComponent;
 
         //cout << "[TestScene] OnEnter()\n";
-        CreateGameObject<Player>(L"¤±¤¤¤·");
+        CreateGameObject<Player>(L"Â…ÂÂ„ë‹´Â…Â‡");
 
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
         std::shared_ptr<GameObject>  birdObj = std::make_shared<GameObject>();
 
-        {//Test ÅØ½ºÃ³ ÀÌ¹ÌÁö °ÔÀÓ¿ÀºêÁ§Æ® »ı¼º
+        {//Test Â…ÂÂŠã…¼Â˜ ÂëŒ€ï¿½ï§Â€ å¯ƒÂŒÂÂ„Â˜ã…»ÂŒï¿½ÂÂŠ ÂƒÂÂ„
             auto tf = testObject->GetComponent<Transform>();
             tf->SetPosition({ 0.f, 0.f });
             tf->SetScale({ 1.f, 1.f });
@@ -32,13 +32,13 @@ namespace JDScene {
             m_sceneObjects.push_back(testObject);
         }
 
-        {//»õ ¾Ö´Ï¸ŞÀÌ¼Ç °ÔÀÓ¿ÀºêÁ§Æ® »ı¼º
+        {//ÂƒÂˆ Â•Â‹Âˆï§Â”ÂëŒÂ…Â˜ å¯ƒÂŒÂÂ„Â˜ã…»ÂŒï¿½ÂÂŠ ÂƒÂÂ„
             auto birdTf = birdObj->GetComponent<Transform>();
             birdTf->SetPosition({ 100.f, 50.f });
             birdTf->SetScale({ 1.0f, 1.0f });
 
             birdObj->AddComponent<TextureRenderer>("GrayBird");
-            birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// µÚ¿¡ °ªÀº speed
+            birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// Â’ã…¼Â—Â åª›Â’ÂÂ€ speed
 
             m_sceneObjects.push_back(birdObj);
         }
@@ -65,23 +65,23 @@ namespace JDScene {
 
         for (int col = 0; col < 5; ++col) {
             for (int row = 0; row < 7; ++row) {
-                // °íÀ¯ ÀÌ¸§ »ı¼º (¿øÇÏ¸é µ¿ÀÏ¸íÀ¸·Î ÇØµµ µË´Ï´Ù)
+                // æ€¨Âœ ÂëŒ€Â„ ÂƒÂÂ„ (Â›ÂÂ•Â˜ï§ Â™Âì‡°Â…Âœì‡°Âœ Â•ëŒ€Â„ Ââ‘¸Â‹ÂˆÂ‹)
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-                // GameObject »ı¼º
+                // GameObject ÂƒÂÂ„
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // À§Ä¡ ¼³Á¤
+                // ÂœÂ„ç§»Â˜ Â„ã…¼Â•
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
 
-                // Äİ¶óÀÌ´õ Ãß°¡
+                // è‚„ÂœÂì‡±ÂëŒ€ÂÂ” ç•°Â”åª›Â€
                 box->AddComponent<JDComponent::BoxCollider>(JDGlobal::Math::Vector2F{ 47.0f,47.0f });
             }
         }
 
-        //Å×½ºÆ®¿ë ¿øÀÌ¶û ¹Ú½º Äİ¶óÀÌ´õ °¡Áø ¿ÀºêÁ§Æ®
+        //Â…ÂŒÂŠã…½ÂŠëª„Âš Â›ÂÂëŒ€ÂÂ‘ è«›Â•ÂŠ è‚„ÂœÂì‡±ÂëŒ€ÂÂ” åª›Â€ï§Â„ Â˜ã…»ÂŒï¿½ÂÂŠ
         auto* circObj = CreateGameObject<Player>(L"CircleObject");
         circObj->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ 200.0f, 100.0f });
         circObj->AddComponent<JDComponent::CircleCollider>(50.0f);
@@ -101,6 +101,7 @@ namespace JDScene {
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
+
         //bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
         bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
         size_t n = m_gameObjects.size();
@@ -112,7 +113,7 @@ namespace JDScene {
             if (!col) continue;
 
             if (col->IsMouseOver(GetMouseWorldPos()) && leftPressed) {
-                std::cout << "[DEBUG] Å¬¸¯µÈ Äİ¶óÀÌ´õ ÀÎµ¦½º: "
+                std::cout << "[DEBUG] í´ë¦­ëœ ì½œë¼ì´ë” ì¸ë±ìŠ¤: "
                     << i << std::endl;
             }
         }
@@ -138,7 +139,8 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        //°ÔÀÓ ¿ÀºêÁ§Æ® ·»´õ
+        //ê²Œì„ ì˜¤ë¸Œì íŠ¸ ë Œë”
+
        //for (auto& obj : m_sceneObjects) {
        //    D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
        //}
@@ -148,6 +150,7 @@ namespace JDScene {
         //    D2DRenderer::Instance().RenderUIObject(*uiObj);
         //}
 
+
         for (auto& obj : m_gameObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
         }
@@ -155,6 +158,7 @@ namespace JDScene {
         DrawColider();
 
         for (auto& uiObj : m_gameUiObjects)
+
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }

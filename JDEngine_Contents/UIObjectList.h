@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Editor_Clickable.h"
+#include "UI_ImageComponent.h"
+#include "UI_TextComponent.h"
+#include "UI_ButtonComponent.h"
 
 namespace JDGameObject {
 	namespace Content {
@@ -22,6 +25,9 @@ namespace JDGameObject {
 			void LateUpdate(float deltaTime) override;          // Update 후 호출
 			void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
 		public:
+
+			////////////////////////////////////////////////////////////////////////////////
+
 			void SetPosition(const Vector2f& pos) { 
 				m_position = pos; 
 
@@ -55,6 +61,26 @@ namespace JDGameObject {
 				}
 			}
 
+			void SetAnchor(const Vector2f& anchor) {
+				m_anchor = anchor;
+
+				auto rectTransform = GetComponent<RectTransform>();
+				if (rectTransform) {
+					rectTransform->SetAnchor(m_anchor);
+				}
+			}
+
+			void SetPivot(const Vector2f& pivot) {
+				m_pivot = pivot;
+
+				auto rectTransform = GetComponent<RectTransform>();
+				if (rectTransform) {
+					rectTransform->SetPivot(m_pivot);
+				}
+			}
+
+			////////////////////////////////////////////////////////////////////////////////
+
 			void SetTextureName(const std::string& name) { 
 				m_textureName = name; 
 
@@ -71,11 +97,34 @@ namespace JDGameObject {
 					uiComponent->SetColor(m_color);
 				}
 			}
+
+			////////////////////////////////////////////////////////////////////////////////
+
+			// 원본 크기로 설정하기
+			void SetSizeToOriginal() {
+				auto imageComponent = GetComponent<UI_ImageComponent>();
+				if (imageComponent) {
+					imageComponent->SetSizeToOriginal();
+				}
+			}
+
+			// 원본 크기 가져오기
+			Vector2f GetOriginalSize() const {
+				auto imageComponent = GetComponent<UI_ImageComponent>();
+				if (imageComponent) {
+					return imageComponent->GetOriginalSize();
+				}
+				return m_size;
+			}
+
 		private:
-			Vector2f	m_position = { 0.f, 0.f };
-			Vector2f	m_size = { 100.f, 100.f };
-			float		m_rotation = { 0.f };
-			Vector2f	m_scale = { 1.f, 1.f };
+			Vector2f	m_size		= { 100.f, 100.f };
+			Vector2f	m_position	= { 0.f, 0.f };
+			float		m_rotation	= { 0.f };
+			Vector2f	m_scale		= { 1.f, 1.f };
+
+			Vector2f	m_pivot		= { 0.5f, 0.5f };
+			Vector2f	m_anchor	= { 0.5f, 0.5f };
 
 			//std::string     m_textureName = "Default";
 			std::string     m_textureName = "Test";
@@ -145,23 +194,25 @@ namespace JDGameObject {
 					textComponent->SetColor(m_color);
 				}
 			}
-			void SetTextFormat(IDWriteTextFormat* format) { 
-				m_textFormat = format; 
-
+			void SetTextFormatName(const std::string& formatName) {
+				m_textFormatName = formatName;
 				auto textComponent = GetComponent<UI_TextComponent>();
 				if (textComponent) {
-					textComponent->SetTextFormat(m_textFormat.Get());
+					textComponent->SetTextFormatName(m_textFormatName);
 				}
 			}
 		private:
-			Vector2f	m_position = { 0.f, 0.f };
 			Vector2f	m_size = { 100.f, 100.f };
+			Vector2f	m_position = { 0.f, 0.f };
 			float		m_rotation = { 0.f };
 			Vector2f	m_scale = { 1.f, 1.f };
 
+			Vector2f	m_pivot = { 0.5f, 0.5f };
+			Vector2f	m_anchor = { 0.5f, 0.5f };
+
 			std::wstring    m_text = L"Text";
 			D2D1_COLOR_F    m_color = D2D1::ColorF(D2D1::ColorF::Black);
-			JDComponent::ComPtr<IDWriteTextFormat> m_textFormat;
+			std::string     m_textFormatName = "MalgunGothic_14";
 		};
 
 
@@ -244,14 +295,54 @@ namespace JDGameObject {
 					textComponent->SetColor(m_textColor);
 				}
 			}
-			void SetTextFormat(IDWriteTextFormat* format) {
-				m_textFormat = format;
-
+			void SetTextFormatName(const std::string& formatName) {
+				m_textFormatName = formatName;
 				auto textComponent = GetComponent<UI_TextComponent>();
 				if (textComponent) {
-					textComponent->SetTextFormat(m_textFormat.Get());
+					textComponent->SetTextFormatName(m_textFormatName);
 				}
 			}
+
+			////////////////////////////////////////////////////////////////////////////////
+
+			// 원본 크기로 설정하기
+			void SetSizeToOriginal() {
+				if (!m_textureName.empty()) {
+
+					// 텍스처 매니저나 리소스 매니저에서 크기 가져오기
+					ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
+					if (!bitmap)
+						return;
+
+					auto size = bitmap->GetSize(); // D2D1_SIZE_F
+
+					Vector2f sizeVector;
+					sizeVector.x = static_cast<float>(size.width);
+					sizeVector.y = static_cast<float>(size.height);
+
+					SetSize(sizeVector);
+				}
+			}
+
+			// 원본 크기 가져오기
+			Vector2f GetOriginalSize() const {
+				if (!m_textureName.empty()) {
+
+					// 텍스처 매니저나 리소스 매니저에서 크기 가져오기
+					ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
+					if (!bitmap)
+						return m_size;
+
+					auto size = bitmap->GetSize(); // D2D1_SIZE_F
+
+					Vector2f sizeVector;
+					sizeVector.x = static_cast<float>(size.width);
+					sizeVector.y = static_cast<float>(size.height);
+
+					return sizeVector;
+				}
+			}
+
 		private:
 			Vector2f	m_position		= { 0.f, 0.f };
 			Vector2f	m_size			= { 100.f, 100.f };
@@ -264,8 +355,7 @@ namespace JDGameObject {
 
 			std::wstring    m_text = L"Text";
 			D2D1_COLOR_F    m_textColor = D2D1::ColorF(D2D1::ColorF::Black);
-			JDComponent::ComPtr<IDWriteTextFormat> m_textFormat;
+			std::string     m_textFormatName = "MalgunGothic_14";
 		};
 	}
 }
-

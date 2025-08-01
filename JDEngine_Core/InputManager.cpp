@@ -157,7 +157,6 @@ void InputManager::HandleMsgKeyDown(WPARAM wParam, LPARAM lParam)
         "KEY DOWN  VK=0x%02X  repeat=%u  (wasDown=%d)\n",
         static_cast<unsigned int>(wParam), repeat, wasDown);
 
-
     // std::cout << buf;
 }
 

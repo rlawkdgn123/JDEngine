@@ -20,60 +20,50 @@ namespace JDScene {
             auto* objA = m_gameObjects[i].get();
             if (!objA) continue;
 
-            auto* colA = objA->GetComponent<ColliderBase>();
+            auto* colA = objA->GetComponent<JDComponent::ColliderBase>();
             if (!colA) continue;
-            // --- 디버그용 콜라이더면 스킵 ---
-            if (auto* boxA = dynamic_cast<BoxCollider*>(colA)) {
-                if (boxA->Purpose() == ColliderPurpose::Debug)
-                    continue;
-            }
 
             for (size_t j = i + 1; j < n; ++j) {
                 auto* objB = m_gameObjects[j].get();
                 if (!objB) continue;
 
-                auto* colB = objB->GetComponent<ColliderBase>();
+                auto* colB = objB->GetComponent<JDComponent::ColliderBase>();
                 if (!colB) continue;
-                // --- 디버그용 콜라이더면 스킵 ---
-                if (auto* boxB = dynamic_cast<BoxCollider*>(colB)) {
-                    if (boxB->Purpose() == ColliderPurpose::Debug)
-                        continue;
-                }
 
                 if (colA->Intersect(colB)) {
-                    m_currPairs.push_back({ objA, objB });
+                    CollisionPair cp;
+                    cp.A = objA;
+                    cp.B = objB;
+
+                    m_currPairs.push_back(std::move(cp));
                 }
             }
         }
 
-        // ────────────── Enter/Stay 처리 ──────────────
+        // 층돌 처리 (Enter, Stay)
         for (auto& curr : m_currPairs) {
-            auto* colA = curr.A->GetComponent<ColliderBase>();
-            auto* colB = curr.B->GetComponent<ColliderBase>();
-            // (위와 동일하게, 디버그용이면 건너뛰기)
-            if (auto* boxA = dynamic_cast<BoxCollider*>(colA))
-                if (boxA->Purpose() == ColliderPurpose::Debug) continue;
-            if (auto* boxB = dynamic_cast<BoxCollider*>(colB))
-                if (boxB->Purpose() == ColliderPurpose::Debug) continue;
+            auto* colA = curr.A->GetComponent<JDComponent::ColliderBase>();
+            auto* colB = curr.B->GetComponent<JDComponent::ColliderBase>();
 
             bool wasColliding = false;
             for (auto& prev : m_prevPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
-                    wasColliding = true; break;
+                    wasColliding = true; // 현재 충돌쌍과 같은 과거 충돌쌍이 있다면 true.(Stay)
+                    break;
                 }
             }
-
             if (colA->IsTrigger() || colB->IsTrigger()) {
-                if (wasColliding) {
+                if (wasColliding) { // 이전부터 충돌한 상태라면 Stay.
                     colA->OnTriggerStay(colB);
                     colB->OnTriggerStay(colA);
                 }
-                else {
+                else { // 새롭게 충돌했으면 Enter.
                     colA->OnTriggerEnter(colB);
                     colB->OnTriggerEnter(colA);
                 }
             }
-            else {
+            else
+            {
                 if (wasColliding) {
                     colA->OnCollisionStay(colB);
                     colB->OnCollisionStay(colA);
@@ -85,23 +75,19 @@ namespace JDScene {
             }
         }
 
-        // ────────────── Exit 처리 ──────────────
+        // 충돌 끝 처리 (Exit)
         for (auto& prev : m_prevPairs) {
-            auto* colA = prev.A->GetComponent<ColliderBase>();
-            auto* colB = prev.B->GetComponent<ColliderBase>();
-            // (디버그용이면 Exit 콜백도 생략)
-            if (auto* boxA = dynamic_cast<BoxCollider*>(colA))
-                if (boxA->Purpose() == ColliderPurpose::Debug) continue;
-            if (auto* boxB = dynamic_cast<BoxCollider*>(colB))
-                if (boxB->Purpose() == ColliderPurpose::Debug) continue;
+            auto* colA = prev.A->GetComponent<JDComponent::ColliderBase>();
+            auto* colB = prev.B->GetComponent<JDComponent::ColliderBase>();
 
-            bool still = false;
+            bool stillColliding = false; // 현재 충돌쌍과 같은 과거 충돌쌍이 없다면 false.(Exit)
             for (auto& curr : m_currPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
-                    still = true; break;
+                    stillColliding = true;
+                    break;
                 }
             }
-            if (!still) {
+            if (!stillColliding) { // 충돌이 끝났다면 Exit.
                 if (colA->IsTrigger() || colB->IsTrigger()) {
                     colA->OnTriggerExit(colB);
                     colB->OnTriggerExit(colA);
@@ -112,57 +98,69 @@ namespace JDScene {
                 }
             }
         }
-
+        // 이제 다 끝났으니 현재 충돌 정보를 과거 정보로 넘겨주기.
         m_prevPairs.swap(m_currPairs);
     }
 
     void SceneBase::DrawColider()
     {
-        if (m_drawCollider) {
-            size_t n = m_gameObjects.size();
-            for (size_t i = 0; i < n; ++i) {
-                auto* obj = m_gameObjects[i].get();
-                if (!obj) continue;
+        if (!m_drawCollider)
+            return;
 
-                auto* col = obj->GetComponent<JDComponent::ColliderBase>();
-                if (!col) continue;
+        auto camera = D2DRenderer::Instance().GetCamera();
+        D2D1_MATRIX_3X2_F view =
+            camera
+            ? camera->GetViewMatrix()
+            : D2D1::Matrix3x2F::Identity();
 
-                auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
-                auto pos = tm->GetPosition();
+        for (auto& objPtr : m_gameObjects)
+        {
+            auto* obj = objPtr.get();
+            if (!obj) continue;
 
-                UINT32 color = (col->GetColliding()) // 충돌중이면 초록색, 아니면 검정. 
-                    ? 0xFF00FF00
-                    : 0xFF000000;
+            auto* col = obj->GetComponent<JDComponent::ColliderBase>();
+            if (!col) continue;
 
-                // 하이라이트된 인덱스일 때 빨강으로.
-                //if (i == m_highlightedIndex) color = 0xFFFF0000;
-                if (col->IsMouseOver(GetMouseWorldPos())) color = 0xFFFF0000;
+            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
+            if (!tm) continue;
+            D2D1_MATRIX_3X2_F world = tm->GetWorldMatrix();
 
+            D2D1_MATRIX_3X2_F worldView = world * view;
+            D2DRenderer::Instance().SetTransform(worldView);
 
-                if (col->GetColliderType() == JDComponent::ColliderType::Box) {
-                    auto* colB = static_cast<JDComponent::BoxCollider*>(col);
-                    auto hsize = colB->GetHalfSize();
-                    auto offset = colB->GetColliderOffset();
+            UINT32 color = col->GetColliding()
+                ? 0xFF00FF00
+                : 0xFF000000;
+            if (col->IsMouseOver(GetMouseWorldPos()))
+                color = 0xFFFF0000;
 
-                    float left = pos.x + offset.x - hsize.x;
-                    float top = pos.y + offset.y + hsize.y;
-                    float right = pos.x + offset.x + hsize.x;
-                    float bottom = pos.y + offset.y - hsize.y;
+            if (col->GetColliderType() == JDComponent::ColliderType::Box) // 박스 콜라이더
+            {
+                auto* colb = static_cast<JDComponent::BoxCollider*>(col);
+                auto  halfSize = colb->GetHalfSize();
+                auto  offset = colb->GetColliderOffset();
 
-                    D2DRenderer::Instance().DrawRectangle(left, top, right, bottom, color);
-                }
-                else if (col->GetColliderType() == JDComponent::ColliderType::Circle) {
-                    auto* colC = static_cast<JDComponent::CircleCollider*>(col);
-                    auto radius = colC->GetRadius();
-                    auto offset = colC->GetColliderOffset();
+                D2DRenderer::Instance().DrawRectangle(
+                    offset.x - halfSize.x, offset.y + halfSize.y,
+                    offset.x + halfSize.x, offset.y - halfSize.y,
+                    color
+                );
+            }
+            else if (col->GetColliderType() == JDComponent::ColliderType::Circle) // 원형 콜라이더
+            {
+                auto* colc = static_cast<JDComponent::CircleCollider*>(col);
+                float radius = colc->GetRadius();
+                auto  offset = colc->GetColliderOffset();
 
-                    float x = pos.x + offset.x;
-                    float y = pos.y + offset.y;
-
-                    D2DRenderer::Instance().DrawCircle(x, y, radius, color);
-                }
+                D2DRenderer::Instance().DrawCircle(
+                    offset.x, offset.y, radius,
+                    color
+                );
             }
         }
+
+        // 6) 그리기 끝난 뒤, 원래 매트릭스(뷰만) 복원
+        D2DRenderer::Instance().SetTransform(view);
     }
 
     Vec2 SceneBase::GetMouseWorldPos()

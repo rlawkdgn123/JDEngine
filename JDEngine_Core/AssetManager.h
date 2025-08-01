@@ -28,6 +28,7 @@ public:
     bool Initialize(ID2D1RenderTarget* renderTarget);
     bool LoadTexture(const std::string& name, const std::wstring& filepath);
     ID2D1Bitmap* GetTexture(const std::string& name) const;
+
     bool LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
 
     const AnimationRenderClip* GetAnimationRender(const std::string& name) const;

@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "D2DRenderer.h"
 
+#include "UI_ImageComponent.h"
+#include "UI_TextComponent.h"
+#include "UI_ButtonComponent.h"
+
 void D2DRenderer::Initialize(HWND hwnd)
 {
     m_hwnd = hwnd;
@@ -164,20 +168,29 @@ ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RE
 
 
 
-void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color)
+void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, IDWriteTextFormat* textFormat)
 {
     if (nullptr == m_textBrush)
     {
         m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(color), &m_textBrush);
     }
-
     m_textBrush->SetColor(color);
-    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
 
+    if (!textFormat) {
+        // 기본 포맷 사용
+        auto defaultIt = m_textFormats.find("MalgunGothic_14");
+        if (defaultIt != m_textFormats.end()) {
+            textFormat = defaultIt->second.Get();
+        }
+    }
+
+    if (!textFormat) return; // 텍스트 포맷이 없으면 그리지 않음
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
     m_d2dContext->DrawTextW(
         text,
         static_cast<UINT32>(wcslen(text)),
-        m_textFormat.Get(),
+        textFormat,
         layoutRect,
         m_textBrush.Get(),
         D2D1_DRAW_TEXT_OPTIONS_NONE,
@@ -460,21 +473,30 @@ void D2DRenderer::CreateWriteResource()
 
     DX::ThrowIfFailed(hr);
 
-    writeFactory->CreateTextFormat(
-        L"", // FontName    제어판-모든제어판-항목-글꼴-클릭 으로 글꼴이름 확인가능
-        NULL,
-        DWRITE_FONT_WEIGHT_NORMAL,
-        DWRITE_FONT_STYLE_NORMAL,
-        DWRITE_FONT_STRETCH_NORMAL,
-        15.0f,   // Font Size
-        L"", //locale
-        &m_textFormat);
+    auto CreateFormat = [&](const std::wstring& fontName, float size, const std::string& name) {
+        ComPtr<IDWriteTextFormat> format = nullptr;
 
-    DX::ThrowIfFailed(hr);
+        DX::ThrowIfFailed(writeFactory->CreateTextFormat(
+            fontName.c_str(),
+            NULL,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            size,
+            L"ko-kr",
+            &format));
 
-    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // 왼쪽 정렬
-    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // 위쪽 정렬
-    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP); // 줄바꿈 
+        format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);             // 수평 가운데 정렬
+        format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);   // 수직 가운데 정렬
+        format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);                 // 줄바꿈 허용
+
+        m_textFormats[name] = format;
+    };
+
+    // 등록 예시
+    CreateFormat(L"맑은 고딕", 14.0f, "MalgunGothic_14");
+    CreateFormat(L"Arial", 16.0f, "Arial_16");
+    CreateFormat(L"Segoe UI", 20.0f, "SegoeUI_20");
 }
 
 void D2DRenderer::ReleaseRenderTargets()

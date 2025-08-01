@@ -26,7 +26,6 @@ private:
 
 	void UpdateTime();
 	void UpdateLogic();
-	void ClickUpdate();
 
 	void Render(); // 렌더러에 위임할 예정
 	void RenderImGui();	// 렌더 마지막 순서에 ImGui가 그려지는 방식.

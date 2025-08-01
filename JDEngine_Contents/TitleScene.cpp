@@ -23,19 +23,19 @@ namespace JDScene {
 
         // GameObject
         ////////////////////////////////////////////////////////////////////////////////
-        std::unique_ptr<GameObject> testObject = std::make_unique<GameObject>();
-        std::unique_ptr<GameObject> birdObj = std::make_unique<GameObject>();
+        //std::unique_ptr<GameObject> testObject = std::make_unique<GameObject>();
+        //std::unique_ptr<GameObject> birdObj = std::make_unique<GameObject>();
 
-        {//Test 텍스처 이미지 게임오브젝트 생성
-            auto tf = testObject->GetComponent<Transform>();
-            tf->SetPosition({ 300.f, 200.f });
-            tf->SetScale({ 1.f, 1.f });
+        //{//Test 텍스처 이미지 게임오브젝트 생성
+        //    auto tf = testObject->GetComponent<Transform>();
+        //    tf->SetPosition({ 300.f, 200.f });
+        //    tf->SetScale({ 1.f, 1.f });
 
-            testObject->AddComponent<TextureRenderer>("Test");
-            testObject->AddComponent<Editor_Clickable>();
+        //    testObject->AddComponent<TextureRenderer>("Test");
+        //    testObject->AddComponent<Editor_Clickable>();
 
-            m_gameObjects.push_back(std::move(testObject));
-        }
+        //    m_gameObjects.push_back(std::move(testObject));
+        //}
 
         //{//새 애니메이션 게임오브젝트 생성
         //    auto birdTf = birdObj->GetComponent<Transform>();
@@ -52,17 +52,36 @@ namespace JDScene {
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
-        auto image = CreateUIObject<Button>(L"건물 제작 배경");
-        // image->SetPosition(Vector2F{ 100.0f, 100.0f });
+        // 타이틀 배경
+        auto image = CreateUIObject<Image>(L"Title_Image");
+        image->SetTextureName("Title");
 
-        //auto image01 = CreateUIObject<Button>(L"건물 제작 배경");
-        //image01->SetPosition(Vector2F{ 150.0f, 100.0f });
+        auto cam =  D2DRenderer::Instance().GetCamera();
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-        //auto image02 = CreateUIObject<Button>(L"건물 제작 배경");
-        //image02->SetPosition(Vector2F{ 100.0f, 150.0f });
+            // 화면 크기로 설정
+            image->SetSize(Vector2F{ screenWidth, screenHeight });
+            image->SetPosition({ 0.0f,0.0f });
+            image->SetPivot({ 0.5f, 0.5f });
+        }
 
-        //auto image03 = CreateUIObject<Button>(L"건물 제작 배경");
-        //image03->SetPosition(Vector2F{ 200.0f, 200.0f });
+        // GameStart 버튼
+        auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
+        gameStart->SetTextureName("GAME_START_A");
+        gameStart->SetSizeToOriginal();
+
+        //// Setting 버튼
+        //auto setting = CreateUIObject<Button>(L"Setting_Button");
+        //setting->SetTextureName("SETTING_A");
+        //setting->SetSizeToOriginal();
+        //
+        //// Quit Game 버튼
+        //auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
+        //quitGame->SetTextureName("QUITGAME_A");
+        //quitGame->SetSizeToOriginal();
     }
 
     void TitleScene::OnLeave() {
@@ -99,7 +118,7 @@ namespace JDScene {
             D2DRenderer::Instance().RenderGameObject(*obj, dt);
         }
 
-        for (auto& uiObj : m_gameUiObjects)
+        for (auto& uiObj : m_uiObjects)
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
@@ -137,9 +156,9 @@ namespace JDScene {
             // 1. UI 클릭 검사 ( 스크린 좌표계 사용 )
             ////////////////////////////////////////////////////////////////////////////////
 
-            for (int i = static_cast<int>(m_gameUiObjects.size()) - 1; i >= 0; --i)
+            for (int i = static_cast<int>(m_uiObjects.size()) - 1; i >= 0; --i)
             {
-                auto& uiObj = m_gameUiObjects[i];
+                auto& uiObj = m_uiObjects[i];
                 if (!uiObj) continue;
 
                 auto clickable = uiObj->GetComponent<Editor_Clickable>();

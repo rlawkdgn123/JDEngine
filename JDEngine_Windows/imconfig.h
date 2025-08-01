@@ -1,6 +1,4 @@
-﻿#include "pch.h";
-
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 // DEAR IMGUI COMPILE-TIME OPTIONS
 // Runtime options (clipboard callbacks, enabling various features, etc.) can generally be set via the ImGuiIO structure.
 // You can use ImGui::SetAllocatorFunctions() before calling ImGui::CreateContext() to rewire memory allocation functions.
@@ -15,6 +13,7 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
+#include "pch.h";
 
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.

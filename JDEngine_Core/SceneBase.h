@@ -61,14 +61,14 @@ namespace JDScene {
 
         virtual void Update(float deltaTime) { 
             for (auto& obj : m_gameObjects) { if (obj) obj->Update(deltaTime); }
-            for (auto& obj : m_gameUiObjects) { if (obj) obj->Update(deltaTime); }
+            for (auto& obj : m_uiObjects) { if (obj) obj->Update(deltaTime); }
 
             CheckCollision();
         };
 
         virtual void LateUpdate(float deltaTime) { 
             for (auto& obj : m_gameObjects) { if (obj) obj->LateUpdate(deltaTime); } 
-            for (auto& obj : m_gameUiObjects) { if (obj) obj->LateUpdate(deltaTime); }
+            for (auto& obj : m_uiObjects) { if (obj) obj->LateUpdate(deltaTime); }
 
         }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
@@ -108,14 +108,14 @@ namespace JDScene {
                 );
 
                 // UIObject 제거
-                m_gameUiObjects.erase(
+                m_uiObjects.erase(
                     std::remove_if(
-                        m_gameUiObjects.begin(),
-                        m_gameUiObjects.end(),
+                        m_uiObjects.begin(),
+                        m_uiObjects.end(),
                         [&](const std::unique_ptr<UIObject>& target) {
                             return target.get() == obj;
                         }),
-                    m_gameUiObjects.end()
+                    m_uiObjects.end()
                 );
             }
 
@@ -134,14 +134,24 @@ namespace JDScene {
         void SetTimeScale(float timeScale) { m_timeScale = timeScale; }
         float GetTimeScale() const { return m_timeScale; }
 
-        void SetSelectedObject(GameObjectBase* obj) { m_SelectObject = obj; }
-        GameObjectBase* GetSelectedObject() const { return m_SelectObject; }
-
         void ToggleDrawColider() { m_drawCollider = !m_drawCollider; }
 
         void DrawColider(); // 콜라이더 그리기. 씬베이스를 상속받은 씬에서 구현하자. 여긴 렌더를 몰라서..
 
         Vec2 GetMouseWorldPos(); // 마우스 월드 좌표 얻기.
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void SetSelectedObject(GameObjectBase* obj) { m_SelectObject = obj; }
+        GameObjectBase* GetSelectedObject() const { return m_SelectObject; }
+
+        const std::vector<std::unique_ptr<GameObject>>& GetGameObjects() const {
+            return m_gameObjects;
+        }
+
+        const std::vector<std::unique_ptr<UIObject>>& GetUIObjects() const {
+            return m_uiObjects;
+        }
 
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
@@ -153,7 +163,7 @@ namespace JDScene {
         const std::string m_ID = "None";
 
         std::vector<std::unique_ptr<GameObject>> m_gameObjects; // 벡터 형태의 ptr. 알아서 메모리 공간이 부족할 때 확보해준다.
-        std::vector<std::unique_ptr<UIObject>> m_gameUiObjects;
+        std::vector<std::unique_ptr<UIObject>> m_uiObjects;
         GameObjectBase* m_SelectObject = nullptr;               // 선택한 오브젝트
 
 

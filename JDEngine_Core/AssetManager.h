@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-#include "json.hpp"  // ¶Ç´Â <nlohmann/json.hpp> - ¼³Ä¡ ¹æ½Ä¿¡ µû¶ó ´Ù¸§
+#include "json.hpp"  // ë˜ëŠ” <nlohmann/json.hpp> - ì„¤ì¹˜ ë°©ì‹ì— ë”°ë¼ ë‹¤ë¦„
 using json = nlohmann::json;
 
 struct AnimationRenderFrame {
@@ -29,7 +29,11 @@ public:
     bool LoadTexture(const std::string& name, const std::wstring& filepath);
     ID2D1Bitmap* GetTexture(const std::string& name) const;
     bool LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
+
     const AnimationRenderClip* GetAnimationRender(const std::string& name) const;
+    const std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>>& GetTextures() const {
+        return m_textures;
+    }
 private:
     AssetManager() = default;
     ~AssetManager() = default;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "SceneBase.h"
 // SceneManager.h`
@@ -26,9 +26,9 @@ private:
 public:
     
 
-    void RegisterScene(std::unique_ptr<SceneBase> scene); // ¾À »ı¼º
+    void RegisterScene(std::unique_ptr<SceneBase> scene); // ì”¬ ìƒì„±
 
-    void ChangeScene(const std::string& id); // ¾À ÀüÈ¯
+    void ChangeScene(const std::string& id); // ì”¬ ì „í™˜
 
     void Update(float deltaTime);
 
@@ -38,7 +38,7 @@ public:
 
     void Render(float dt);
 
-    const SceneBase* GetCurrentScene() const { return m_CurrentScene; }
+    SceneBase* GetCurrentScene() const { return m_CurrentScene; }
 
     void SetSceneTimeScale(float timeScale);
 
@@ -53,13 +53,13 @@ private:
 
     public:
         SceneEntry(std::string id, std::unique_ptr<SceneBase> ptr)
-            : id(std::move(id)), ptr(std::move(ptr)) { // string°ú unique_ptr ÀÌÀü
+            : id(std::move(id)), ptr(std::move(ptr)) { // stringê³¼ unique_ptr ì´ì „
         }
     };
 
     std::vector<SceneEntry> m_SceneTable;
 
-    SceneBase* m_CurrentScene; // È°¼ºÈ­µÈ ¾À¿¡ ´ëÇÑ RawPtr
+    SceneBase* m_CurrentScene; // í™œì„±í™”ëœ ì”¬ì— ëŒ€í•œ RawPtr
 };
 
 

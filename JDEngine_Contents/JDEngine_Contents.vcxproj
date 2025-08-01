@@ -130,7 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Core</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Core;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -155,7 +155,6 @@
     <ClInclude Include="UIObjectList.h" />
   </ItemGroup>
   <ItemGroup>
-
     <ClCompile Include="GameObjectList.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="LumberMill.cpp" />

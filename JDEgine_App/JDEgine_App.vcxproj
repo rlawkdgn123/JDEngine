@@ -112,13 +112,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Contents;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Contents;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d2d1.lib;d3d11.lib;dwrite.lib;dxgi.lib;fmodL_vc.lib;fmodstudioL_vc.lib;fmod_vc.lib;fmodstudio_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)fmod\api\core\lib\x64;$(SolutionDir)fmod\api\studio\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dwrite.lib;dxgi.lib;Ole32.lib;fmodL_vc.lib;fmodstudioL_vc.lib;fmod_vc.lib;fmodstudio_vc.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)fmod\api\core\lib\x64;$(SolutionDir)fmod\api\studio\lib\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,14 +129,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Contents</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)JDEngine_Core;$(SolutionDir)JDEngine_Contents;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d2d1.lib;d3d11.lib;dwrite.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dwrite.lib;dxgi.lib;Ole32.lib;fmodL_vc.lib;fmodstudioL_vc.lib;fmod_vc.lib;fmodstudio_vc.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)fmod\api\core\lib\x64;$(SolutionDir)fmod\api\studio\lib\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

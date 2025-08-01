@@ -1,114 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{28ac11e2-204d-4141-bfe9-b66e90f905a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject">
-      <UniqueIdentifier>{03483d0d-b5be-47ad-8f51-3282d5d801cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Pre-Compile">
-      <UniqueIdentifier>{96de53a6-598d-439f-a3ec-e839385fd3f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UIObject">
-      <UniqueIdentifier>{be89f414-1d9e-4ce7-abbe-4280058c96fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\TitleScene">
-      <UniqueIdentifier>{eafa73f9-e26b-4dc7-8b42-e474dce4aae6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameManager">
-      <UniqueIdentifier>{f76d60bb-a6af-42ca-894e-f44d8cc84304}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cat">
-      <UniqueIdentifier>{9d2c5cc9-8f8d-4e6c-9697-a64b83753eed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\TestScene">
-      <UniqueIdentifier>{e6893c4a-66c4-4d7e-9fca-ac085a07410c}</UniqueIdentifier>
-    </Filter>
-
-    <Filter Include="Combat">
-      <UniqueIdentifier>{a2960503-c6f2-42ef-87a7-83840fbaf9ad}</UniqueIdentifier>
-    <Filter Include="GameObject\Cats">
-      <UniqueIdentifier>{47c32e1a-6520-461b-b346-8b15aa92e242}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Buildings">
-      <UniqueIdentifier>{8cbd4ef4-c6ff-451a-b113-ad0d479b19ec}</UniqueIdentifier>
-
-    </Filter>
+    <ClCompile Include="GameObjectList.cpp" />
+    <ClCompile Include="House.cpp" />
+    <ClCompile Include="LumberMill.cpp" />
+    <ClCompile Include="Mine.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="ResourceSystem.cpp" />
+    <ClCompile Include="SceneList.cpp" />
+    <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UIObjectList.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SceneList.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Pre-Compile</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Pre-Compile</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectList.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="UIObjectList.h">
-      <Filter>UIObject</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>Scene\TitleScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceSystem.h">
-      <Filter>GameManager</Filter>
-    </ClInclude>
-    
-    <ClInclude Include="CombatSystem.h">
-      <Filter>Combat</Filter>
-    <ClInclude Include="Mine.h">
-      <Filter>GameObject\Buildings</Filter>
-    </ClInclude>
-    <ClInclude Include="FishingSpot.h">
-      <Filter>GameObject\Buildings</Filter>
-    </ClInclude>
-    <ClInclude Include="House.h">
-      <Filter>GameObject\Buildings</Filter>
-    </ClInclude>
-    <ClInclude Include="LumberMill.h">
-      <Filter>GameObject\Buildings</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="SceneList.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Pre-Compile</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectList.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="UIObjectList.cpp">
-      <Filter>UIObject</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleScene.cpp">
-      <Filter>Scene\TitleScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceSystem.cpp">
-      <Filter>GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Scene\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="CombatSystem.cpp">
-      <Filter>Combat</Filter>
-    <ClCompile Include="FishingSpot.cpp">
-      <Filter>GameObject\Buildings</Filter>
-    </ClCompile>
-    <ClCompile Include="House.cpp">
-      <Filter>GameObject\Buildings</Filter>
-    </ClCompile>
-    <ClCompile Include="LumberMill.cpp">
-      <Filter>GameObject\Buildings</Filter>
-    </ClCompile>
-    <ClCompile Include="Mine.cpp">
-      <Filter>GameObject\Buildings</Filter>
-    </ClCompile>
+    <ClInclude Include="CombatSystem.h" />
+    <ClInclude Include="FishingSpot.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="GameObjectList.h" />
+    <ClInclude Include="House.h" />
+    <ClInclude Include="LumberMill.h" />
+    <ClInclude Include="Mine.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="ResourceSystem.h" />
+    <ClInclude Include="SceneList.h" />
+    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UIObjectList.h" />
   </ItemGroup>
 </Project>

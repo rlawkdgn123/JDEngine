@@ -1,4 +1,4 @@
-癤#include "pch.h"
+#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -134,7 +134,7 @@ namespace JDScene {
 
         DrawColider();
 
-        for (auto& uiObj : m_gameUiObjects)
+        for (auto& uiObj : m_uiObjects)
 
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);

@@ -146,7 +146,7 @@ namespace JDComponent {
                 return m_matrixLocal;
             }
 
-            const Mat3x2& GetWorldMatrix()
+            Mat3x2& GetWorldMatrix()
             {
                 if (m_dirty) UpdateMatrices();
 
@@ -169,6 +169,15 @@ namespace JDComponent {
                     width * 0.5f,
                     height * 0.5f
                 );
+            }
+
+            // Unity와 동일한 피벗 적용을 위한 렌더링 매트릭스
+            Mat3x2 GetRenderMatrix()
+            {
+                // 렌더링할 때 피벗을 적용한 최종 매트릭스
+                Vector2F pivotOffset = GetPivotOffset();
+                auto M_pivot = D2D1::Matrix3x2F::Translation(-pivotOffset.x, -pivotOffset.y);
+                return M_pivot * GetWorldMatrix();
             }
 
             // ** 회전과 스케일을 위한 피봇, 앵커 설정 **

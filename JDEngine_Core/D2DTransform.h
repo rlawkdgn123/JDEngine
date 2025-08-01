@@ -149,10 +149,28 @@ namespace JDComponent {
 
             // ** 회전과 스케일을 위한 피봇 설정 **
             void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
+            void SetPivotPreset(PivotPreset preset);
 
             D2D1_POINT_2F GetPivotPoint() const
             {
                 return m_pivot;
+            }
+
+            void SetPivot(const Vec2& pivot)
+            {
+                m_pivot = { pivot.x, pivot.y };
+                SetDirty();
+            }
+
+            void SetPivot(const D2D1_POINT_2F& pivot)
+            {
+                m_pivot = pivot;
+                SetDirty();
+            }
+
+            Vec2 GetPivot() const
+            {
+                return { m_pivot.x, m_pivot.y };
             }
 
         private:
@@ -184,14 +202,13 @@ namespace JDComponent {
             float    m_rotation = 0.f;          // in degrees
             Vec2     m_scale = { 1.f, 1.f };
 
+            D2D1_POINT_2F m_pivot{ 0.5f, 0.5f };
 
             Transform* m_parent;
             std::vector<Transform*> m_children;
 
             Mat3x2 m_matrixLocal;
             Mat3x2 m_matrixWorld;
-
-            D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
         };
     }
 }

@@ -45,6 +45,8 @@ namespace JDScene {
 
         void Render(float deltaTime) override;
 
+        void ClickUpdate();
+
     private:
 
         /*GameObject*

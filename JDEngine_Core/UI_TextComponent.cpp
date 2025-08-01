@@ -22,8 +22,8 @@ namespace JDComponent {
         Vector2F pos = rectTransform->GetPosition();
         Vector2F size = rectTransform->GetSize();
         Vector2F pivot = rectTransform->GetPivot();
-
         Vector2F anchorOffset = { 0.f, 0.f };
+
         auto parent = rectTransform->GetParent();
         if (parent) {
             Vector2F parentSize = parent->GetSize();
@@ -39,7 +39,8 @@ namespace JDComponent {
             anchorOffset.y + pos.y
         };
 
-        // 텍스트가 그려질 사각형 계산
+        // 화면 중심 변환 제거! (RectTransform에서 이미 처리됨)
+        // 단순히 finalPos 사용
         D2D1_RECT_F layoutRect = D2D1::RectF(
             finalPos.x - size.x * pivot.x,
             finalPos.y - size.y * pivot.y,

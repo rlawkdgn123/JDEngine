@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <D2D1Helper.h>
 #include <vector>
 #define _USE_MATH_DEFINES
@@ -17,7 +17,8 @@ namespace JDGlobal {
 			return static_cast<float>(rad * (180.0f / M_PI));
 		}
 
-		inline float Clamp(float value, float min, float max)
+		template <typename T>
+		inline T Clamp(const T& value, const T min, const T max)
 		{
 			if (value < min) return min;
 			if (value > max) return max;
@@ -34,22 +35,22 @@ namespace JDGlobal {
 		int wn_PnPoly(D2D1_POINT_2F P, std::vector<D2D1_POINT_2F> V, int n);
 
 
-		// D2D1_MATRIX_3X2_F : D2D ±â´ÉÀ» »ç¿ëÇØµµ µÇÁö¸¸, ¿¬½À °â ´Ù½Ã ÇÑ ¹ø ¸¸µé¾î º¸¾Ò´Ù.
-		D2D1_MATRIX_3X2_F MakeTranslationMatrix(D2D1_SIZE_F size);		// ÀÌµ¿
-		D2D1_MATRIX_3X2_F MakeRotationMatrix_Origin(FLOAT angle);		// ¿øÁ¡¿¡¼­ÀÇ È¸Àü, ½ºÄÉÀÏ
+		// D2D1_MATRIX_3X2_F : D2D ê¸°ëŠ¥ì„ ì‚¬ìš©í•´ë„ ë˜ì§€ë§Œ, ì—°ìŠµ ê²¸ ë‹¤ì‹œ í•œ ë²ˆ ë§Œë“¤ì–´ ë³´ì•˜ë‹¤.
+		D2D1_MATRIX_3X2_F MakeTranslationMatrix(D2D1_SIZE_F size);		// ì´ë™
+		D2D1_MATRIX_3X2_F MakeRotationMatrix_Origin(FLOAT angle);		// ì›ì ì—ì„œì˜ íšŒì „, ìŠ¤ì¼€ì¼
 		D2D1_MATRIX_3X2_F MakeScaleMatrix_Origin(D2D1_SIZE_F size);
 
-		// Æ¯Á¤ Á¡À» ±âÁØÀ¸·Î ÇÑ È¸Àü
+		// íŠ¹ì • ì ì„ ê¸°ì¤€ìœ¼ë¡œ í•œ íšŒì „
 		D2D1_MATRIX_3X2_F MakeRotationMatrix(FLOAT angle, D2D1_POINT_2F center = D2D1::Point2F());
 
-		// Æ¯Á¤ Á¡À» ±âÁØÀ¸·Î ÇÑ Å©±â º¯È¯
+		// íŠ¹ì • ì ì„ ê¸°ì¤€ìœ¼ë¡œ í•œ í¬ê¸° ë³€í™˜
 		D2D1_MATRIX_3X2_F MakeScaleMatrix(D2D1_SIZE_F size, D2D1_POINT_2F center = D2D1::Point2F());
 
 		D2D1::Matrix3x2F MakeRenderMatrix(bool bUnityCoords = false, bool bMirror = false, float offsetX = 0, float offsetY = 0);
 
 
-		// µğ¹ö±× Ãâ·ÂÀ» À§ÇÑ TM ¹®ÀÚ¿­
-		// ÄÚµå ÇüÅÂ·Î ÀÔ·ÂÇÏ¸ç µü Â¤¾î ¸»ÇÒ ¼ø ¾øÀ¸³ª, ¼öÇĞÀûÀ¸·Î Çà ¿ì¼± Çà·Ä°öÀ¸·Î ÀÌÇØÇÏ¸é ½±´Ù
+		// ë””ë²„ê·¸ ì¶œë ¥ì„ ìœ„í•œ TM ë¬¸ìì—´
+		// ì½”ë“œ í˜•íƒœë¡œ ì…ë ¥í•˜ë©° ë”± ì§šì–´ ë§í•  ìˆœ ì—†ìœ¼ë‚˜, ìˆ˜í•™ì ìœ¼ë¡œ í–‰ ìš°ì„  í–‰ë ¬ê³±ìœ¼ë¡œ ì´í•´í•˜ë©´ ì‰½ë‹¤
 		static void MakeMatrixToString(
 			const D2D1_MATRIX_3X2_F& matrix,
 			__out_ecount(bufSize) wchar_t* buffer,
@@ -61,8 +62,8 @@ namespace JDGlobal {
 
 		D2D1::Matrix3x2F RemovePivot(const D2D1::Matrix3x2F& M_local, const D2D1_POINT_2F& pivot);
 
-		/// »ç°¢Çü rect ¾È¿¡ point °¡ Æ÷ÇÔµÇ¾î ÀÖÀ¸¸é true ¹İÈ¯
-		/// (°æ°è Æ÷ÇÔ °Ë»ç)
+		/// ì‚¬ê°í˜• rect ì•ˆì— point ê°€ í¬í•¨ë˜ì–´ ìˆìœ¼ë©´ true ë°˜í™˜
+		/// (ê²½ê³„ í¬í•¨ ê²€ì‚¬)
 		bool IsPointInRect(const D2D1_POINT_2F& point, const D2D1_RECT_F& rect) noexcept;
 	}
 

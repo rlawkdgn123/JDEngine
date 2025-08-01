@@ -4,51 +4,58 @@
 
 namespace JDComponent {
 
-    void UI_TextComponent::Render(ID2D1DeviceContext7* ctx)
+    void UI_TextComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform)
     {
-        if (m_text.empty() || !m_textFormat) return;
+        if (m_text.empty()) return;
 
         RectTransform* rectTransform = m_Owner ? m_Owner->GetComponent<RectTransform>() : nullptr;
         if (!rectTransform) return;
 
-        ////////////////////////////////////////////////////////////////////////////////
+        if (!m_Owner || !m_Owner->IsActive())
+            return;
 
-        // 1. 현재 Transform (카메라 + 렌더TM) 저장
-        D2D1::Matrix3x2F currentTransform;
-        ctx->GetTransform(&currentTransform);
+        IDWriteTextFormat* textFormat = GetTextFormat();
+        if (!textFormat) return;
 
-        // 2. 이 오브젝트 전용 rectTransform 계산
+        context->SetTransform(viewTransform);
+
         Vector2F pos = rectTransform->GetPosition();
-        Vector2F scale = rectTransform->GetScale();
-        float rot = rectTransform->GetRotation();
+        Vector2F size = rectTransform->GetSize();
+        Vector2F pivot = rectTransform->GetPivot();
 
-        D2D1::Matrix3x2F objectTM =
-            D2D1::Matrix3x2F::Scale(scale.x, scale.y) *
-            D2D1::Matrix3x2F::Rotation(rot) *
-            D2D1::Matrix3x2F::Translation(pos.x, pos.y);
+        Vector2F anchorOffset = { 0.f, 0.f };
+        auto parent = rectTransform->GetParent();
+        if (parent) {
+            Vector2F parentSize = parent->GetSize();
+            Vector2F anchor = rectTransform->GetAnchor();
+            anchorOffset = {
+                parentSize.x * anchor.x,
+                parentSize.y * anchor.y
+            };
+        }
 
-        // 3. 전체 변환 = 현재 설정된 
-        D2D1::Matrix3x2F finalTM = objectTM * currentTransform;
-
-        // 4. 설정
-        ctx->SetTransform(finalTM);
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 텍스트 출력 영역 ( 임시 )
-        D2D1_RECT_F layoutRect = {
-            0, 0,
-            300, 100
+        Vector2F finalPos = {
+            anchorOffset.x + pos.x,
+            anchorOffset.y + pos.y
         };
 
-        // 텍스트 브러시 생성 (임시)
-        ComPtr<ID2D1SolidColorBrush> brush;
-        ctx->CreateSolidColorBrush(m_color, &brush);
+        // 텍스트가 그려질 사각형 계산
+        D2D1_RECT_F layoutRect = D2D1::RectF(
+            finalPos.x - size.x * pivot.x,
+            finalPos.y - size.y * pivot.y,
+            finalPos.x + size.x * (1 - pivot.x),
+            finalPos.y + size.y * (1 - pivot.y)
+        );
 
-        ctx->DrawTextW(
+        // 텍스트 브러시 생성
+        ComPtr<ID2D1SolidColorBrush> brush;
+        context->CreateSolidColorBrush(m_color, &brush);
+
+        // 텍스트 렌더링
+        context->DrawTextW(
             m_text.c_str(),
             static_cast<UINT32>(m_text.length()),
-            m_textFormat.Get(),
+            textFormat,
             layoutRect,
             brush.Get()
         );

@@ -2,6 +2,9 @@
 #include "GameObjectBase.h"
 #include "RectTransform.h"
 #include <dwrite.h>
+#include "D2DRenderer.h"
+
+class D2DRenderer;
 
 namespace JDComponent {
 
@@ -14,7 +17,7 @@ namespace JDComponent {
     class UI_TextComponent : public Component
     {
     public:
-        void Render(ID2D1DeviceContext7* ctx);
+        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform);
 
         void                SetText(const std::wstring text) { m_text = text; }
         const std::wstring  GetText() const { return m_text; }
@@ -22,12 +25,25 @@ namespace JDComponent {
         void                SetColor(const D2D1_COLOR_F& color) { m_color = color; }
         D2D1_COLOR_F        GetColor() { return m_color; }
 
-        void                SetTextFormat(IDWriteTextFormat* format) { m_textFormat = format; }
+        void                SetTextFormatName(const std::string& name) { m_textFormatName = name; }
+        std::string         GetTextFormatName() const { return m_textFormatName; }
+
+        IDWriteTextFormat* GetTextFormat() const {
+            auto formats = D2DRenderer::Instance().GetTextFormats();
+
+            auto it = formats.find(m_textFormatName);
+            if (it != formats.end()) {
+                return it->second.Get();
+            }
+
+            return nullptr;
+        }
 
     private:
         std::wstring m_text = L"text";
         D2D1_COLOR_F m_color = D2D1::ColorF(D2D1::ColorF::Black);
-        ComPtr<IDWriteTextFormat> m_textFormat;
+        std::string m_textFormatName = "MalgunGothic_14";
+
 
         // Component을(를) 통해 상속됨 [ 빈 함수 ]
         void Update(float deltaTime) override {};

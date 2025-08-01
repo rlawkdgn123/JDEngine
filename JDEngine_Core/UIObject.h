@@ -15,19 +15,27 @@ namespace JDGameObject {
 			m_name = L"UIObject";
 			AddComponent<RectTransform>();
 			m_rectTransform = GetComponent<RectTransform>();
-			m_id = idCount++;
+			m_id = static_cast<int>(idCount++);
 		}
 
 		UIObject(const std::wstring& name) {
 			m_name = name;
 			AddComponent<RectTransform>();
 			m_rectTransform = GetComponent<RectTransform>();
-			m_id = idCount++;
+			m_id = static_cast<int>(idCount++);
 		}
 
 		virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }
 		virtual void Start() override { if (m_isStarted || !m_active) { return; } m_isStarted = true; }
-		virtual void Update(float deltaTime) override { if (!m_active) { return; } }
+		virtual void Update(float deltaTime) override { 
+			if (!m_active) { return; }
+			else {
+				for (auto& comp : m_components) {
+					//std::cout << " 업데이트 출력" << std::endl;
+					comp->Update(deltaTime);
+				}
+			}
+		}
 		virtual void LateUpdate(float deltaTime) override { if (!m_active) { return; } }
 		virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
 		virtual void OnDestroy() override {}

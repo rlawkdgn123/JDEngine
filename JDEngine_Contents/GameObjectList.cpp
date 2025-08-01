@@ -1,10 +1,10 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GameObjectList.h"
 
 using namespace std;
 
 namespace JDGameObject {
-    namespace InGame {
+    namespace Content {
         void DefaultObject::Awake()
         {
             if (!m_isAwaked) {
@@ -12,6 +12,7 @@ namespace JDGameObject {
             }
             else { return; }
         }
+
         void DefaultObject::Start()
         {
             if (!m_isStarted) {
@@ -20,26 +21,23 @@ namespace JDGameObject {
             else { return; }
         }
 
-
         //Player
         void Player::Awake()
         {
             if (!m_isAwaked) {
                 m_isAwaked = true;
-                cout << "Player Awake" << endl;
+                //cout << "Player Awake" << endl;
             }
             else { return; }
         }
         void Player::Start() {
             if (!m_isStarted) {
                 m_isStarted = true;
-                cout << "Player Start" << endl;
+                //cout << "Player Start" << endl;
             }
             else { return; }
         }                   
-        void Player::Update(float deltaTime) {
-        
-        }
+        void Player::Update(float deltaTime) {}
         void Player::LateUpdate(float deltaTime) {}
         void Player::FixedUpdate(float fixedDeltaTime) {}
     
@@ -48,14 +46,14 @@ namespace JDGameObject {
         {
             if (!m_isAwaked) {
                 m_isAwaked = true;
-                cout << "Player Awake" << endl;
+                //cout << "Player Awake" << endl;
             }
             else { return; }
         }
         void Grid::Start() {
             if (!m_isStarted) {
                 m_isStarted = true;
-                cout << "Player Start" << endl;
+                //cout << "Player Start" << endl;
             }
             else { return; }
         }
@@ -64,6 +62,26 @@ namespace JDGameObject {
         }
         void Grid::LateUpdate(float deltaTime) {}
         void Grid::FixedUpdate(float fixedDeltaTime) {}
+
+        void Cat::Awake()
+        {
+            m_resourceSystem = &ResourceSystem::Instance();
+        }
+
+        void Cat::Start()
+        {
+            m_resourceSystem->AddCurPopulation(-m_populationCost);
+        }
+
+        void Building::Awake()
+        {
+            m_resourceSystem = &ResourceSystem::Instance();
+        }
+
+        void Building::Start()
+        {
+            m_resourceSystem->AddTotalResource(m_buildCost);
+        }
 
     }
 }

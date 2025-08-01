@@ -31,11 +31,6 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# 빌드 출력 디렉터리 (x64, Debug, Release 등)
-x64/
-Debug/
-Release/
-
 # JD 엔진
 /JDEngine_App/x64
 /JDEngine_Base/x64

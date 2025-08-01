@@ -2,19 +2,24 @@
 #include "pch.h"
 #include "framework.h"
 
-using Tag = JDGlobal::Base::GameTag;
+#include "ResourceSystem.h"
+using ResourceSystem = JDGameSystem::ResourceSystem;
+
 namespace JDGameObject{
-    namespace InGame{
+    namespace Content{
+        using Resource = JDGlobal::Contents::Resource;
+        using CatType = JDGlobal::Contents::CatType;
+
         class DefaultObject : public JDGameObject::GameObject {
-        
+        public:
             DefaultObject() : GameObject(L"DefaultObject") {}
             DefaultObject(const std::wstring& name) : GameObject(name) {}
-            void Awake() override;                               // ÃÖÃÊ 1È¸¸¸ È£Ãâ
-            void Start() override;                               // ÃÖÃÊ 1È¸¸¸ È£Ãâ
+            void Awake() override;                               // ìµœì´ˆ 1íšŒë§Œ í˜¸ì¶œ
+            void Start() override;                               // ìµœì´ˆ 1íšŒë§Œ í˜¸ì¶œ
             void Update(float deltaTime) override;               // Update
-            void LateUpdate(float deltaTime) override;           // Update ÈÄ È£Ãâ
-            void FixedUpdate(float fixedDeltaTime) override;     // ¹°¸® °è»ê¿ë
-            void OnDestroy() override;              // »èÁ¦ Á÷Àü
+            void LateUpdate(float deltaTime) override;           // Update í›„ í˜¸ì¶œ
+            void FixedUpdate(float fixedDeltaTime) override;     // ë¬¼ë¦¬ ê³„ì‚°ìš©
+            void OnDestroy() override;              // ì‚­ì œ ì§ì „
 
             void OnCollisionEnter(GameObjectBase* other) override;
             void OnCollisionStay(GameObjectBase* other) override;
@@ -32,10 +37,10 @@ namespace JDGameObject{
             Player() : GameObject(L"Player") {}
             Player(const std::wstring& name) : GameObject(name) {}
             void Awake() override;
-            void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
+            void Start() override;                              // ìµœì´ˆ 1íšŒë§Œ í˜¸ì¶œ
             void Update(float deltaTime) override;              // Update
-            void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-            void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
+            void LateUpdate(float deltaTime) override;          // Update í›„ í˜¸ì¶œ
+            void FixedUpdate(float fixedDeltaTime) override;    // ë¬¼ë¦¬ ê³„ì‚°ìš©
         };
 
         class Grid : public JDGameObject::GameObject
@@ -44,34 +49,78 @@ namespace JDGameObject{
             Grid() : GameObject(L"Player") {}
             Grid(const std::wstring& name) : GameObject(name) {}
             void Awake() override;
-            void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
+            void Start() override;                              // ìµœì´ˆ 1íšŒë§Œ í˜¸ì¶œ
             void Update(float deltaTime) override;              // Update
-            void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-            void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
+            void LateUpdate(float deltaTime) override;          // Update í›„ í˜¸ì¶œ
+            void FixedUpdate(float fixedDeltaTime) override;    // ë¬¼ë¦¬ ê³„ì‚°ìš©
         };
 
         class Cat : public JDGameObject::GameObject
         {
         public:
-            Cat() : GameObject(L"Cat") {}
-            Cat(const std::wstring& name) : GameObject(name) {}
+            Cat() : GameObject(L"Cat"), m_catType(CatType::Felis),
+                m_populationCost(1), 
+                m_resourceBonus(1.f,1.f,1.f),
+                m_synergyBonus(1.f,1.f,1.f),
+                m_resourceSubPerSec(1.f,1.f,1.f)
+            {}
+            Cat(const CatType type) : GameObject(L"Cat"), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {}
+            Cat(const std::wstring& name, const CatType type) : GameObject(name), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {}
+        public:
             virtual void Awake() override;
-            virtual void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
-            virtual void Update(float deltaTime) override;              // Update
-            virtual void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-            virtual void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
+            virtual void Start() override;
+        protected:
+            CatType m_catType;              // ê³ ì–‘ì´ ì¢…ë¥˜
+            int m_populationCost;           // ì¸êµ¬ ë¹„ìš©
+            Resource m_resourceBonus;		// ìì› ë³´ë„ˆìŠ¤
+            Resource m_synergyBonus;		// ì‹œë„ˆì§€ ë³´ë„ˆìŠ¤
+            Resource m_resourceSubPerSec;    // ì´ˆë‹¹ ìì› ìœ ì§€ë¹„ìš© (ì†Œëª¨)
+            ResourceSystem* m_resourceSystem;
         };
 
-        class Architecture : public JDGameObject::GameObject
+        class Building : public JDGameObject::GameObject
         {
         public:
-            Architecture() : GameObject(L"Cat") {}
-            Architecture(const std::wstring& name) : GameObject(name) {}
+            //using ResourceSystem = JDGameSystem::ResourceSystem;
+        public:
+            Building() : GameObject(L"Building"), 
+                m_buildCost{ 0,0,0 },
+                m_initResource{ 0,0,0 },
+                m_resourceGenPerSec{ 0,0,0 },
+                m_resourceSubPerSec{ 0,0,0 } 
+            {
+                m_tag = Tag::PlayerBuilding;
+            }
+            
+            Building(const std::wstring& name) : GameObject(name),
+                m_buildCost{ 0,0,0 },
+                m_initResource{ 0,0,0 },
+                m_resourceGenPerSec{ 0,0,0 },
+                m_resourceSubPerSec{ 0,0,0 }
+            {
+                m_tag = Tag::PlayerBuilding;
+            }
+        public:
             virtual void Awake() override;
-            virtual void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
-            virtual void Update(float deltaTime) override;              // Update
-            virtual void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-            virtual void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
+            virtual void Start() override;
+        protected:
+            Resource m_upgradeCost[3] =         // ì—…ê·¸ë ˆì´ë“œ ë¹„ìš©
+            { { 0,0,0 }, { 0,0,0 }, { 0,0,0 } };
+            Resource m_buildCost;               // ê±´ì„¤ ë¹„ìš©
+            Resource m_initResource;            // ê±´ë¬¼ ì„¤ì¹˜ ì‹œ ì¼íšŒì„± íšë“ ìì›
+            Resource m_resourceGenPerSec;       // ì´ˆë‹¹ ìì› íšë“ëŸ‰
+            Resource m_resourceSubPerSec;       // ì´ˆë‹¹ ìì› ìœ ì§€ë¹„ìš© (ì†Œëª¨)
+            ResourceSystem* m_resourceSystem;
         };
 
     }

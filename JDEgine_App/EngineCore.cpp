@@ -1,14 +1,12 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Framework.h"
 ///////////////////////////////////////////////////////////////////////////
 #pragma comment(lib, "dxguid.lib")
 ////////////////////////////////////////////////////////////////////////////
-/*
+// IMGUI
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-*/
 /////////////////////////////////////////////////////////////////////////
 #include <shobjidl.h>            // IFileOpenDialog
 #include <filesystem>            // C++17 std::filesystem
@@ -24,6 +22,7 @@ using namespace std;
 // (일반적으로 UTF-8 또는 로케일별 멀티바이트 인코딩)과
 // std::wstring (일반적으로 Windows에서 UTF-16) 간의 변환을 위한 두 가지 유틸리티 함수
 using WindowSize = JDGlobal::Window::WindowSize;
+
 std::wstring ConvertToWString(const std::string& str)
 {
     size_t len = 0;
@@ -39,14 +38,41 @@ std::wstring ConvertToWString(const std::string& str)
 
 std::string WStringToString(const std::wstring& wstr)
 {
-    size_t len = 0;
-    wcstombs_s(&len, nullptr, 0, wstr.c_str(), _TRUNCATE);
-    if (len == 0)
-        return "";
-    std::string str(len, '\0');
-    wcstombs_s(&len, &str[0], len, wstr.c_str(), _TRUNCATE);
-    str.resize(len - 1); // Remove the null terminator added by wcstombs_s
-    return str;
+    try {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+        return conv.to_bytes(wstr);
+    }
+    catch (...) {
+        return "[[ConversionError]]";
+    }
+}
+
+std::string WStringToUTF8(const std::wstring& wstr)
+{
+    try {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+        return conv.to_bytes(wstr);
+    }
+    catch (...) {
+        return "[[ConversionError]]";
+    }
+}
+
+std::wstring UTF8ToWString(const std::string& utf8Str)
+{
+    if (utf8Str.empty()) return std::wstring();
+
+    int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, nullptr, 0);
+    if (sizeNeeded <= 0) return std::wstring();
+
+    std::wstring wstr(sizeNeeded, 0);
+    MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, &wstr[0], sizeNeeded);
+
+    // null-terminator 제거
+    if (!wstr.empty() && wstr.back() == L'\0')
+        wstr.pop_back();
+
+    return wstr;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -63,9 +89,19 @@ bool EngineCore::Initialize()
 
     // 이 클래스의 부모 클래스(__super)에서 제공하는 Create 함수 호출
     // 전달된 클래스명 / 윈도우명 / 크기로 윈도우 생성 시도.
-    if (false == __super::Create(className, windowName, 1200, 800)) {
+    if (false == __super::Create(className, windowName, 1920, 1080)) {
         return false;
     }
+
+    AudioManager::Instance().Initialize();
+
+    //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
+    //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
+    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
+    //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    AudioManager::Instance().SetMusicVolume(1.0f);
+    FMOD::Channel* bgmChannel = nullptr;
+    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -85,14 +121,9 @@ bool EngineCore::Initialize()
 
     WindowSize::Instance().Set(this);
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
-
-
-
     ID2D1RenderTarget* renderTarget = D2DRenderer::Instance().GetRenderTarget();
 
-    if (!ResourceManager::Instance().Initialize(renderTarget)) {
+    if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
 
@@ -100,37 +131,52 @@ bool EngineCore::Initialize()
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
-    if (!ResourceManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
-        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
+
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
+        std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
     }
 
-    /*if (!ResourceManager::Instance().LoadTexture("cat", L"../Resource/cat.png")) {
-        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
-    }
-    if (!ResourceManager::Instance().LoadTexture("Grid", L"../Resource/Grid.png")) {
-        std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
+    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
+        std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl;
     }
 
-    if (!ResourceManager::Instance().LoadTexture("graybirdsheet", L"../Resource/graybirdsheet.png")) {
-        std::cout << "[ERROR] graybirdsheet 텍스처 로드 실패" << std::endl;
+    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) {
+        std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl;
     }
-    if (!ResourceManager::Instance().LoadAnimation("GrayBird", L"../Resource/graybirdsheet.json")) {
+
+    if (!AssetManager::Instance().LoadTexture("GAMESTART_B", L"../Resource/TITLE/GAMESTART_B.png")) {
+        std::cout << "[ERROR] GAMESTART_B 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) {
+        std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) {
+        std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUITGAME_A.png")) {
+        std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUITGAME_B.png")) {
+        std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
+    }
+
+
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
+        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
-    }*/
+    }
 
-    /*
-    // [ImGUI] 컨텍스트 & 백엔드 초기화
-    // ImGui 컨텍스트 생성
-    IMGUI_CHECKVERSION();
+    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
+    //SceneManager::Instance().ChangeScene("TitleScene");
 
-    ImGui::CreateContext();
-
-    ImGui_ImplWin32_Init(m_hWnd);
-    */
-
-    //D3D11Device* pd3dDevice = m_Renderer->GetD3DDevice(); // 렌더러에서 생성한 디바이스 연결
-    //m_Renderer->Initialize(m_hWnd);
-
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();
@@ -141,60 +187,85 @@ bool EngineCore::Initialize()
     // 타이머 초기화
     m_EngineTimer->Reset();
 
+    ////////////////////////////////////////////////////////////////////////////////
+    // 
+    // ImGui Init
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+    
+    // ImGui 컨텍스트 생성
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // 플랫폼/렌더러 초기화
+    ImGui_ImplWin32_Init(m_hWnd);              // 윈도우 핸들 (GameApp 멤버에 저장된 윈도우 핸들)
+    ImGui_ImplDX11_Init(D2DRenderer::Instance().GetD3DDevice(), D2DRenderer::Instance().GetD3DContext());
+
     return true;
 }
 
 void EngineCore::Run()
 {
     MSG msg = { 0 };
-
-    while (WM_QUIT != msg.message) { // 종료 메세지 이전까지 무한 반복
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // 키 입력 메세지를 받았을 때
+    
+    while (WM_QUIT != msg.message)
+    {
+        // 모든 Windows 메시지를 처리합니다.
+        // 메시지가 있다면 TranslateMessage/DispatchMessage를 호출하고 루프의 처음으로 돌아가
+        // 큐에 있는 다음 메시지를 처리합니다.
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            // PeekMessage가 검색한 메시지(msg)를 분석하여
-            // 가상 키 코드 메시지(예: WM_KEYDOWN, WM_KEYUP)를 문자 메시지(예: WM_CHAR)로 변환
-            if (false == InputManager::Instance().OnHandleMessage(msg))
+            // ImGui가 입력을 처리했는지 확인합니다.
+            // ImGui는 내부적으로 Translate/Dispatch가 필요 없으므로,
+            // WndProc 핸들러에서 직접 처리합니다.
+            if (ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam))
             {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                continue; // ImGui가 처리했으면 여기서 끝냅니다.
             }
-        }
-        else {
-            // 키 메세지 입력이 없으면 기본 업데이트(반복) 로직 실행
 
-            UpdateTime();
-            UpdateLogic();
-            Render();
+            // InputManager가 메시지를 처리하는지 확인합니다.
+            if (InputManager::Instance().OnHandleMessage(msg))
+            {
+                continue; // InputManager가 처리했으면 여기서 끝냅니다.
+            }
+
+            // 위에서 아무도 처리하지 않은 메시지는 Windows의 기본 방식으로 처리합니다.
+            // WM_CHAR와 같은 메시지 생성을 위해 필수적입니다.
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+            // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
+            continue;
         }
+
+        // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
+        UpdateTime();
+        UpdateLogic();
+        AudioManager::Instance().Update();
+        Render();
     }
-
 }
 
 void EngineCore::Finalize()
 {
     // [ImGUI] DirectX 11 백엔드 정리
-    //ImGui_ImplDX11_Shutdown();
-    //ImGui_ImplWin32_Shutdown();
-    //ImGui::DestroyContext();
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
 
     JDGlobal::Window::WindowSize::Instance().Set(nullptr); // 종료 시 해제 권장
 
     D2DRenderer::Instance().Uninitialize();
 }
 
-bool EngineCore::OnWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    /*
-    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
-    {
-        return true; // ImGui가 메시지를 처리했으면 true 반환
-    }
-    */
-    return false;
-}
-
 void EngineCore::UpdateTime()
 {
+    // ImGui
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    ////////////////////////////////////////////////////////////////////////////////
+
     assert(m_EngineTimer != nullptr);
 
     m_EngineTimer->Tick();
@@ -215,13 +286,38 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
+
+    // 배속 키 입력처리
+    static float speeds[] = { 2.f, 4.f, 8.f };
+    static int   idx = 0;
+    InputManager& input = InputManager::Instance();
+    if (input.GetKeyPressed('1')) {
+        SceneManager::Instance().SetSceneTimeScale(0.0f);
+        std::cout << "0" << std::endl;
+        idx = 0;
+    }
+    else if (input.GetKeyPressed('2')) {
+        SceneManager::Instance().SetSceneTimeScale(1.0f);
+        std::cout << "1" << std::endl;
+        idx = 0;
+    }
+    else if (input.GetKeyPressed('3')) {
+        SceneManager::Instance().SetSceneTimeScale(speeds[idx]);
+        std::cout << speeds[idx] << std::endl;
+        idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
+    }
+
+    // 콜라이더 그리기 토글
+    if (input.GetKeyPressed('C')) {
+        SceneManager::Instance().ToggleDrawColider();
+        std::cout << "ToggleDrawColider" << std::endl;
+    }
+    
     cam = D2DRenderer::Instance().GetCamera();
-    /*m_cameraPosition = cam->GetPosition();
-    m_cameraRotationDeg = cam->GetRotationDeg();
-    m_cameraZoom = cam->GetZoom();*/
+    //obj = GameObject
+
     if (cam)
     {
-
         D2D1_MATRIX_3X2_F view = cam->GetViewMatrix();
         D2DRenderer::Instance().SetTransform(view);
 
@@ -229,6 +325,8 @@ void EngineCore::UpdateLogic()
         const float rotateSpeed = 90.0f;   // deg/sec
         const float zoomFactor = 0.8f;     // 줌 비율
         float dt = m_EngineTimer->DeltaTime();
+
+        m_fader.Update(dt);
 
         InputManager& input = InputManager::Instance();
         //ScreanWidth, ScreanHeight))
@@ -248,14 +346,14 @@ void EngineCore::UpdateLogic()
             cam->Move(moveSpeed * dt, 0.f);
 
         // 회전
-        if (input.IsKeyDown(VK_LEFT))
+        if (input.IsKeyDown('Z'))
             cam->Rotate(-rotateSpeed * dt);
 
-        if (input.IsKeyDown(VK_RIGHT))
+        if (input.IsKeyDown('X'))
             cam->Rotate(rotateSpeed * dt);
 
         // 줌
-        if (input.IsKeyDown(VK_UP)) {
+        if (input.IsKeyDown('C')) {
             D2D1_POINT_2F screenCenter = {
                 cam->GetScreenWidth() * 0.5f,
                 cam->GetScreenHeight() * 0.5f
@@ -263,7 +361,7 @@ void EngineCore::UpdateLogic()
             cam->Zoom(1.f + dt, screenCenter);
         }
 
-        if (input.IsKeyDown(VK_DOWN)) {
+        if (input.IsKeyDown('V')) {
             D2D1_POINT_2F screenCenter = {
                 cam->GetScreenWidth() * 0.5f,
                 cam->GetScreenHeight() * 0.5f
@@ -271,9 +369,28 @@ void EngineCore::UpdateLogic()
             cam->Zoom(1.f - dt, screenCenter);
         }
 
+        if (input.IsKeyDown('V')) {
+            
+        }
 
-        if (input.IsKeyDown(VK_SPACE))
-            cam->Shake(10.0f, 0.1f);
+        if (input.GetKeyPressed(VK_SPACE))
+        {
+            if(flag)
+                cam->Shake(10.0f, 0.1f);
+            else
+                cam->Shake(0.0f, 0.1f);
+                
+            flag = !flag;
+        }
+            
+        if (input.GetKeyPressed(VK_F2))
+        {
+            m_fader.FadeIn(1.0f);
+        }
+        if (input.GetKeyPressed(VK_F1))
+        {
+            m_fader.FadeOut(2.5f);
+        }
     }
 }
 
@@ -306,11 +423,523 @@ void EngineCore::Render()
     cameraMatrix = cameraMatrix * unityFlip;
 
     renderer.SetTransform(cameraMatrix);
+        
+    SceneManager::Instance().Render(deltaTime);
 
-    SceneManager::Instance().Render();
+    renderer.SetTransform(D2D1::Matrix3x2F::Identity());
 
-    renderer.RenderEnd();
+    m_fader.Render(renderer.GetD2DContext(), screenSize);
 
+    renderer.RenderEnd(false);
+
+    RenderImGui();
+
+    renderer.Present();
+}
+
+void EngineCore::RenderImGui()
+{
+    ID3D11DeviceContext* context = D2DRenderer::Instance().GetD3DContext();
+    ID3D11RenderTargetView* rtv = D2DRenderer::Instance().GetD3DRenderTargetView();
+
+    if (!context || !rtv) return;
+
+    // --- 레이아웃 설정 ---
+    const float labelWidth = 80.0f;
+    const float comboWidth = 80.0f; // 콤보박스의 너비
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // 하이어라키 그리기
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ImGui::Begin("Hierarchy");
+
+    // Game Objects
+    if (ImGui::CollapsingHeader("Game Objects", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetGameObjects())
+        {
+            std::string nameStr = WStringToString(obj->GetName());
+
+            // 현재 선택된 오브젝트와 비교해서 선택 상태 지정 (선택된 오브젝트 포인터 필요)
+            auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
+            bool isSelected = (selectedObj == obj.get());
+
+            if (ImGui::Selectable(nameStr.c_str(), isSelected))
+            {
+                // 클릭 시 선택된 오브젝트 변경
+                SceneManager::Instance().GetCurrentScene()->SetSelectedObject(obj.get());
+            }
+        }
+    }
+
+    // UI Objects
+    if (ImGui::CollapsingHeader("UI Objects", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetUIObjects())
+        {
+            std::string nameStr = WStringToString(obj->GetName());
+
+            auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
+            bool isSelected = (selectedObj == obj.get());
+
+            if (ImGui::Selectable(nameStr.c_str(), isSelected))
+            {
+                SceneManager::Instance().GetCurrentScene()->SetSelectedObject(obj.get());
+            }
+        }
+    }
+
+    ImGui::End();
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // 인스펙터 창
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ImGui::Begin("Inspector");
+
+    // 선택된 오브젝트 정보 출력
+    JDGameObject::GameObjectBase* selectObject
+        = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
+
+    if (selectObject != nullptr)
+    {
+        ////////////////////////////////////////////////////////////////////////////////
+        // GameObjectBase
+        ////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // ID
+        // ID는 읽기 전용으로 출력
+        std::wstring wid = selectObject->GetID();
+        std::string id(wid.begin(), wid.end());
+        ImGui::Text("ID:");
+        ImGui::SameLine(30.f);
+        ImGui::Text("%s", id.c_str());
+
+        // Name은 편집 가능하게 변환
+        std::wstring wname = selectObject->GetName();
+        std::string nameStr(wname.begin(), wname.end());
+
+        // ImGui InputText를 위한 버퍼 생성 (std::string → char[])
+        // 버퍼 크기는 적당히 넉넉히 설정 (예: 256)
+        char buffer[256];
+        strncpy_s(buffer, sizeof(buffer), nameStr.c_str(), _TRUNCATE);
+        buffer[sizeof(buffer) - 1] = '\0'; // 안전하게 널 종료
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 이름
+        ImGui::Text("Name");
+        ImGui::SameLine(50.f);
+
+        if (ImGui::InputText("##Name", buffer, sizeof(buffer)))
+        {
+            // 입력이 변경됐을 때 다시 std::wstring으로 변환해서 설정
+            std::wstring newName(buffer, buffer + strlen(buffer));
+            selectObject->SetName(newName);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 활성화 여부 - IsActive
+        ImGui::Text("Active"); ImGui::SameLine();
+        bool isActive = selectObject->IsActive();
+        ImGui::Checkbox("##Active", &isActive);
+        selectObject->SetActive(isActive);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 레이어
+        int layer = selectObject->GetLayer();
+        ImGui::SameLine(90.0f);
+        ImGui::Text("Layer"); ImGui::SameLine();
+        ImGui::PushItemWidth(50);
+
+        if (ImGui::DragInt("##Layer", &layer, 1.0f, 0, 100)) {
+            selectObject->SetLayer(layer);
+        }
+        ImGui::PopItemWidth();
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 태그
+        static const char* tagNames[] = {
+            "None", "Player", "PlayerCat", "PlayerBuilding",
+            "Enemy", "EnemyCat", "EnemyBuilding", "NPC", "UI"
+        };
+        int currentTag = static_cast<int>(selectObject->GetTag());
+        ImGui::SameLine(200.0f);
+        ImGui::Text("Tag"); ImGui::SameLine();
+        ImGui::PushItemWidth(100);
+        if (ImGui::Combo("##Tag", &currentTag, tagNames, IM_ARRAYSIZE(tagNames))) {
+            selectObject->SetTag(static_cast<JDGlobal::Base::GameTag>(currentTag));
+        }
+        ImGui::PopItemWidth();
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // RectTransform
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::D2DTM::RectTransform* rectTransform =
+            selectObject->GetComponent<JDComponent::D2DTM::RectTransform>();
+
+        if (rectTransform)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+            ImGui::Text("RectTransform");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 크기 (Size)
+            ImGui::Text("Size");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            JDComponent::D2DTM::RectTransform::Vector2F size = rectTransform->GetSize();
+            if (ImGui::DragFloat2("##Size", &size.x, 0.1f))
+            {
+                rectTransform->SetSize(size);
+            }
+            
+            ////////////////////////////////////////////////////////////////////////////////
+            // 위치 (Position)
+            ImGui::Text("Position");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            JDComponent::D2DTM::RectTransform::Vector2F position = rectTransform->GetPosition();
+            if (ImGui::DragFloat2("##Position", &position.x, 0.1f))  // 0.1f는 드래그 감도
+            {
+                rectTransform->SetPosition(position);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 회전 (Rotation)
+            ImGui::Text("Rotation");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            float rotation = rectTransform->GetRotation();
+            if (ImGui::DragFloat("##Rotation", &rotation, 0.1f))
+            {
+                rectTransform->SetRotation(rotation);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 스케일 (Scale)
+            ImGui::Text("Scale");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            JDComponent::D2DTM::RectTransform::Vector2F scale = rectTransform->GetScale();
+            if (ImGui::DragFloat2("##Scale", &scale.x, 0.01f))  // 스케일은 좀 더 세밀하게
+            {
+                rectTransform->SetScale(scale);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 피벗 (Pivot)
+            ImGui::Text("Pivot");
+            ImGui::SameLine(labelWidth);
+
+            // DragFloat2가 차지할 너비 = (전체 너비 - 콤보박스 너비)
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - comboWidth);
+
+            JDComponent::D2DTM::RectTransform::Vector2F pivot = rectTransform->GetPivot();
+            if (ImGui::DragFloat2("##Pivot", &pivot.x, 0.01f, 0.0f, 1.0f))
+            {
+                // 수정된 상대 좌표를 SetPivot으로 다시 설정
+                rectTransform->SetPivot(pivot);
+            }
+
+            // 피벗 프리셋을 위한 콤보박스
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            ImGui::PushItemWidth(comboWidth);
+            const char* pivotPresets[] = {
+                "Top-Left", "Top-Center", "Top-Right",
+                "Center-Left", "Center", "Center-Right",
+                "Bottom-Left", "Bottom-Center", "Bottom-Right"
+            };
+
+            // 현재 피벗 값(상대 좌표)을 보고 어떤 프리셋에 해당하는지 인덱스를 찾습니다.
+            int currentPivotPreset = -1; // 일치하는 프리셋이 없으면 -1 (Custom 상태)
+            if (pivot.x == 0.0f && pivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
+            else if (pivot.x == 0.5f && pivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
+            else if (pivot.x == 1.0f && pivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
+            else if (pivot.x == 0.0f && pivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
+            else if (pivot.x == 0.5f && pivot.y == 0.5f)    currentPivotPreset = 4; // Center
+            else if (pivot.x == 1.0f && pivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
+            else if (pivot.x == 0.0f && pivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
+            else if (pivot.x == 0.5f && pivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
+            else if (pivot.x == 1.0f && pivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
+
+            // 선택된 프리셋이 있으면 해당 이름을, 없으면 "Custom"을 표시합니다.
+            if (ImGui::BeginCombo("##PivotPreset", currentPivotPreset != -1 ? pivotPresets[currentPivotPreset] : "Custom"))
+            {
+                // 배열에 있는 모든 프리셋을 항목으로 표시합니다.
+                for (int n = 0; n < IM_ARRAYSIZE(pivotPresets); n++)
+                {
+                    const bool is_selected = (currentPivotPreset == n);
+                    if (ImGui::Selectable(pivotPresets[n], is_selected))
+                    {
+                        // 항목을 선택하면, 해당 인덱스(n)를 PivotPreset enum으로 변환하여
+                        // SetPivot(PivotPreset) 함수를 직접 호출합니다.
+                        // 이 코드는 enum의 정수 값이 0부터 8까지 순서대로라는 것을 전제로 합니다.
+                        rectTransform->SetPivot((JDComponent::D2DTM::RectTransform::PivotPreset)n);
+                    }
+
+                    // 현재 선택된 항목으로 스크롤을 자동으로 맞춰줍니다.
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 앵커 (Anchor)
+            ImGui::Text("Anchor");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - comboWidth);
+
+            JDComponent::D2DTM::RectTransform::Vector2F anchor = rectTransform->GetAnchor();
+            if (ImGui::DragFloat2("##Anchor", &anchor.x, 0.01f, 0.0f, 1.0f))
+            {
+                // 변경된 상대 좌표 값으로 앵커를 설정합니다.
+                rectTransform->SetAnchor(anchor);
+            }
+
+            // 앵커 프리셋을 위한 콤보박스
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            ImGui::PushItemWidth(comboWidth);
+            const char* anchorPresets[] = {
+                "Top-Left", "Top-Center", "Top-Right",
+                "Center-Left", "Center", "Center-Right",
+                "Bottom-Left", "Bottom-Center", "Bottom-Right"
+                // Stretch 프리셋은 현재 구현에서 제외
+            };
+
+            // 현재 앵커 값과 일치하는 프리셋의 인덱스를 찾습니다.
+            int currentAnchorPreset = -1;
+            if (anchor.x == 0.0f && anchor.y == 1.0f)       currentAnchorPreset = 0; // TopLeft
+            else if (anchor.x == 0.5f && anchor.y == 1.0f)  currentAnchorPreset = 1; // TopCenter
+            else if (anchor.x == 1.0f && anchor.y == 1.0f)  currentAnchorPreset = 2; // TopRight
+            else if (anchor.x == 0.0f && anchor.y == 0.5f)  currentAnchorPreset = 3; // CenterLeft
+            else if (anchor.x == 0.5f && anchor.y == 0.5f)  currentAnchorPreset = 4; // Center
+            else if (anchor.x == 1.0f && anchor.y == 0.5f)  currentAnchorPreset = 5; // CenterRight
+            else if (anchor.x == 0.0f && anchor.y == 0.0f)  currentAnchorPreset = 6; // BottomLeft
+            else if (anchor.x == 0.5f && anchor.y == 0.0f)  currentAnchorPreset = 7; // BottomCenter
+            else if (anchor.x == 1.0f && anchor.y == 0.0f)  currentAnchorPreset = 8; // BottomRight
+
+            if (ImGui::BeginCombo("##AnchorPreset", currentAnchorPreset != -1 ? anchorPresets[currentAnchorPreset] : "Custom"))
+            {
+                for (int n = 0; n < IM_ARRAYSIZE(anchorPresets); n++)
+                {
+                    const bool is_selected = (currentAnchorPreset == n);
+                    if (ImGui::Selectable(anchorPresets[n], is_selected))
+                    {
+                        switch (n)
+                        {
+                        case 0: rectTransform->SetAnchor({ 0.0f, 1.0f }); break; // TopLeft
+                        case 1: rectTransform->SetAnchor({ 0.5f, 1.0f }); break; // TopCenter
+                        case 2: rectTransform->SetAnchor({ 1.0f, 1.0f }); break; // TopRight
+                        case 3: rectTransform->SetAnchor({ 0.0f, 0.5f }); break; // CenterLeft
+                        case 4: rectTransform->SetAnchor({ 0.5f, 0.5f }); break; // Center
+                        case 5: rectTransform->SetAnchor({ 1.0f, 0.5f }); break; // CenterRight
+                        case 6: rectTransform->SetAnchor({ 0.0f, 0.0f }); break; // BottomLeft
+                        case 7: rectTransform->SetAnchor({ 0.5f, 0.0f }); break; // BottomCenter
+                        case 8: rectTransform->SetAnchor({ 1.0f, 0.0f }); break; // BottomRight
+                        }
+                    }
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // UI_ImageComponent
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::UI_ImageComponent* imageComponent =
+            selectObject->GetComponent<JDComponent::UI_ImageComponent>();
+
+        if (imageComponent)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(135, 206, 250, 255)); // 연한 파랑색
+            ImGui::Text("ImageComponent");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 텍스쳐
+            
+            // AssetManager에서 텍스처 이름 목록 가져오기
+            std::vector<std::string> textureNames;
+            for (const auto& pair : AssetManager::Instance().GetTextures()) {
+                textureNames.push_back(pair.first);
+            }
+
+            // 현재 선택된 텍스처 이름 인덱스 찾기
+            std::string currentName = imageComponent->GetTextureName();
+            int currentIndex = 0;
+            for (int i = 0; i < textureNames.size(); ++i) {
+                if (textureNames[i] == currentName) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            // 텍스처 선택 콤보박스
+            ImGui::Text("Texture");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(200.0f);
+
+            if (ImGui::BeginCombo("##Texture", textureNames[currentIndex].c_str())) {
+                for (int i = 0; i < textureNames.size(); ++i) {
+                    const bool isSelected = (i == currentIndex);
+                    if (ImGui::Selectable(textureNames[i].c_str(), isSelected)) {
+                        imageComponent->SetTextureName(textureNames[i]);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 원본 크기로 사이즈 설정 버튼
+            ImGui::SameLine();
+            if (ImGui::Button("SetNativeSize", ImVec2(120, 0)))
+            {
+                imageComponent->SetSizeToOriginal();
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 색상 (Image_Color)
+            ImGui::Text("I_Color");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            D2D1_COLOR_F imageColor = imageComponent->GetColor();
+            float imageColorArr[4] = { imageColor.r, imageColor.g, imageColor.b, imageColor.a };
+            if (ImGui::ColorEdit4("##I_Color", imageColorArr))
+            {
+                imageComponent->SetColor(D2D1::ColorF(imageColorArr[0], imageColorArr[1], imageColorArr[2], imageColorArr[3]));
+            }
+            ImGui::PopItemWidth();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Text_ImageComponent
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::UI_TextComponent* textComponent =
+            selectObject->GetComponent<JDComponent::UI_TextComponent>();
+
+        if (textComponent)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(135, 206, 250, 255)); // 연한 파랑색
+            ImGui::Text("TextComponent");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // Text
+
+            ImGui::Text("Text");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            static char textBuffer[256];
+            std::string currentText = WStringToUTF8(textComponent->GetText());
+            strncpy_s(textBuffer, currentText.c_str(), sizeof(textBuffer));
+
+            // 입력 후 변경되면 저장
+            if (ImGui::InputText("##Text", textBuffer, sizeof(textBuffer)))
+            {
+                textComponent->SetText(UTF8ToWString(textBuffer));
+            }
+
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 색상 (Text_Color)
+            ImGui::Text("T_Color");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            D2D1_COLOR_F textColor = textComponent->GetColor();
+            float textColorArr[4] = { textColor.r, textColor.g, textColor.b, textColor.a };
+            if (ImGui::ColorEdit4("##T_Color", textColorArr))
+            {
+                textComponent->SetColor(D2D1::ColorF(textColorArr[0], textColorArr[1], textColorArr[2], textColorArr[3]));
+            }
+
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 텍스트 포맷 선택 ( 렌더러 단계에서 추가해야 함. )
+
+            std::vector<std::string> formatNames;
+            for (auto& pair : D2DRenderer::Instance().GetTextFormats()) {
+                formatNames.push_back(pair.first);
+            }
+
+            std::string currentFormatName = textComponent->GetTextFormatName();
+            int currentFormatIndex = 0;
+            for (int i = 0; i < formatNames.size(); ++i) {
+                if (formatNames[i] == currentFormatName) {
+                    currentFormatIndex = i;
+                    break;
+                }
+            }
+
+            ImGui::Text("Text Format");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(200.0f);
+
+            const char* previewLabel =
+                (currentFormatIndex >= 0 && currentFormatIndex < formatNames.size()) ?
+                formatNames[currentFormatIndex].c_str() : "None";
+
+            if (ImGui::BeginCombo("##TextFormat", previewLabel)) {
+                for (int i = 0; i < formatNames.size(); ++i) {
+                    const bool isSelected = (i == currentFormatIndex);
+                    if (ImGui::Selectable(formatNames[i].c_str(), isSelected)) {
+                        textComponent->SetTextFormatName(formatNames[i]);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            ImGui::PopItemWidth();
+        }
+    }
+    else
+    {
+        ImGui::Text("No object selected");
+    }
+    ImGui::End();
+
+    context->OMSetRenderTargets(1, &rtv, nullptr);
+
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 

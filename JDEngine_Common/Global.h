@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "framework.h"
 namespace JDMath = JDGlobal::Math;
@@ -6,52 +6,56 @@ namespace JDMath = JDGlobal::Math;
 namespace JDGlobal {	
 	namespace Base {
 
-		// ÀÎ°ÔÀÓ ½Äº°¿ë ÅÂ±× (ÇöÀç´Â ÅÂ±× ÀÓÀÇ)
+		// ì¸ê²Œì„ ì‹ë³„ìš© íƒœê·¸ (í˜„ì¬ëŠ” íƒœê·¸ ì„ì˜)
 		enum class GameTag
 		{
 			None,
+			Player,
 			PlayerCat,
+			PlayerBuilding,
+			Enemy,
 			EnemyCat,
-			PlayerArchitacture,
+			EnemyBuilding,
+
 			NPC,
 			UI
 		};
 
-		// ·»´õ¸µ ¼ø¼­ Á¦¾î¿ë Enum
+		// ë Œë”ë§ ìˆœì„œ ì œì–´ìš© Enum
 		enum class SortingLayer : int {
 			None,
 			BackGround,
-			Architecture,
+			Building,
 			Cat,
 		};
 		
-		struct RenderLayerInfo { 
+		struct RenderLayerInfo {
 			SortingLayer sortingLayer;
 			int orderInLayer = 0;
 
-			// ·»´õ¸µ Á¤·Ä ±âÁØ
-			bool Compare(const RenderLayerInfo& a, const RenderLayerInfo& b) {
-				if (a.sortingLayer != b.sortingLayer)
-					return a.sortingLayer < b.sortingLayer; // enum°ªÀÌ ³·À»¼ö·Ï ¾Æ·¡¿¡ ±×¸²
-				return a.orderInLayer < b.orderInLayer;     // °°Àº ±×·ì ³»¿¡¼­´Â Á¤·Ä ¼ø¼­·Î
+			// operator< ì˜¤ë²„ë¡œë“œ
+			bool operator<(const RenderLayerInfo& other) const {
+				if (sortingLayer != other.sortingLayer)
+					return sortingLayer < other.sortingLayer;
+				return orderInLayer < other.orderInLayer;
 			}
 		};
 
 	}
 	namespace Core {
 		// Scenes
-		enum class SceneType : int { // ¹üÀ§°¡ ÀÖ´Â class ¿­°ÅÇü // C++11
-			None = -1, // À¯È¿ÇÏÁö ¾ÊÀº ÃÊ±â »óÅÂ
+		enum class SceneType : int { // ë²”ìœ„ê°€ ìˆëŠ” class ì—´ê±°í˜• // C++11
+			None = -1, // ìœ íš¨í•˜ì§€ ì•Šì€ ì´ˆê¸° ìƒíƒœ
 			SCENE_TEST,
 			SCENE_TITLE,
 			SCENE_PLAY,
 			SCENE_ENDING,
-			// ... ¾À Ãß°¡
-			SCENE_MAX // ¾À °³¼ö Ä«¿îÆ® : ¾À °³¼ö + 1ÀÇ °³¼öÀÌ¹Ç·Î, °¡Á®´Ù ¾²¸é °ğ Ä«¿îÆ®°¡ µÈ´Ù.
+			// ... ì”¬ ì¶”ê°€
+			SCENE_MAX // ì”¬ ê°œìˆ˜ ì¹´ìš´íŠ¸ : ì”¬ ê°œìˆ˜ + 1ì˜ ê°œìˆ˜ì´ë¯€ë¡œ, ê°€ì ¸ë‹¤ ì“°ë©´ ê³§ ì¹´ìš´íŠ¸ê°€ ëœë‹¤.
 		};
 
 		constexpr unsigned int START_MAX_OBJECTS = 300;
-		constexpr unsigned int MAX_SCENES = static_cast<int>(SceneType::SCENE_MAX); // ÃßÈÄ ¹Ù²Ü¼öµµ..??
+		constexpr unsigned int MAX_SCENES = static_cast<int>(SceneType::SCENE_MAX); // ì¶”í›„ ë°”ê¿€ìˆ˜ë„..??
 
 		// Games
 		//enum ShapeType {
@@ -64,18 +68,22 @@ namespace JDGlobal {
 		// GameObjects
 		using MessageID = uint32_t;
 
-		constexpr int OBJECT_NAME_LEN_MAX = 15; // °´Ã¼ ÀÌ¸§ ÃÖ´ëÄ¡
+		constexpr int OBJECT_NAME_LEN_MAX = 15; // ê°ì²´ ì´ë¦„ ìµœëŒ€ì¹˜
 
 		enum class PivotPreset
 		{
 			TopLeft,
+			TopCenter,
 			TopRight,
+			CenterLeft,
+			Center,
+			CenterRight,
 			BottomLeft,
+			BottomCenter,
 			BottomRight,
-			Center
 		};
 
-		// ½ºÅ©¸° ±âÁØÀÇ ¾ŞÄ¿. RectTransformÀÇ m_positionÀº ÇØ´ç ¾ŞÄ¿ ±âÁØÀ¸·Î +º¸Á¤ÀÌ µÈ´Ù.
+		// ìŠ¤í¬ë¦° ê¸°ì¤€ì˜ ì•µì»¤. RectTransformì˜ m_positionì€ í•´ë‹¹ ì•µì»¤ ê¸°ì¤€ìœ¼ë¡œ +ë³´ì •ì´ ëœë‹¤.
 		enum class AnchorPreset {
 			TopLeft,
 			TopCenter,
@@ -91,4 +99,78 @@ namespace JDGlobal {
 			StretchAll
 		};
 	}
+	namespace Contents {
+		constexpr float MAX_GAME_RESOURCE = 9999;
+		constexpr int	MAX_GAME_POPULATION = 999;
+
+		enum class CatType {
+			Felis,
+			Navi,
+			Kone,
+		};
+		struct Resource {
+
+			Resource() = default;
+			Resource(float food, float wood, float mineral)
+				: m_food(food), m_wood(wood), m_mineral(mineral) {
+			}
+			Resource(const Resource& resource) {
+				m_food = resource.m_food;
+				m_wood = resource.m_wood;
+				m_mineral = resource.m_mineral;
+			}
+
+			float m_food;
+			float m_wood;
+			float m_mineral;
+
+			Resource& operator=(const Resource& other) {
+				m_food = other.m_food;
+				m_wood = other.m_wood;
+				m_mineral = other.m_mineral;
+				return *this;
+			}
+
+			Resource operator+(const Resource& other) const {
+				return Resource{
+					m_food + other.m_food,
+					m_wood + other.m_wood,
+					m_mineral + other.m_mineral
+				};
+				
+			}
+
+			Resource operator-(const Resource& other) const {
+				return Resource{
+					m_food - other.m_food,
+					m_wood - other.m_wood,
+					m_mineral - other.m_mineral
+				};
+			}
+
+			Resource& operator+=(const Resource& other) {
+				m_food += other.m_food;
+				m_wood += other.m_wood;
+				m_mineral += other.m_mineral;
+				return *this;
+			}
+
+			Resource& operator*=(const Resource& other) {
+				m_food *= other.m_food;
+				m_wood *= other.m_wood;
+				m_mineral *= other.m_mineral;
+				return *this;
+			}
+
+			Resource operator*(const Resource& other) const {
+				return Resource{
+					m_food * other.m_food,
+					m_wood * other.m_wood,
+					m_mineral * other.m_mineral
+				};
+			}
+
+		};
+	}
+	
 }

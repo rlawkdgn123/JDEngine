@@ -4,14 +4,17 @@
 #include "ColliderBase.h"
 #include "SceneBase.h"
 #include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "D2DRenderer.h"
+#include "InputManager.h"
 
 using namespace std;
+using namespace JDComponent;
 namespace JDScene {
-    void SceneBase::CheakCollision()
+    void SceneBase::CheckCollision()
     {
-        m_currPairs.clear(); // Ã³À½ºÎÅÍ ÇöÀç Ãæµ¹ Á¤º¸´Â ÃÊ±âÈ­ÇÏ°í ½ÃÀÛÇÏ±â.
+        m_currPairs.clear();
 
-        // ÇöÀç Ãæµ¹ÇÑ ½Ö ÀúÀå
         size_t n = m_gameObjects.size();
         for (size_t i = 0; i < n; ++i) {
             auto* objA = m_gameObjects[i].get();
@@ -37,7 +40,7 @@ namespace JDScene {
             }
         }
 
-        // Ãşµ¹ Ã³¸® (Enter, Stay)
+        // ì¸µëŒ ì²˜ë¦¬ (Enter, Stay)
         for (auto& curr : m_currPairs) {
             auto* colA = curr.A->GetComponent<JDComponent::ColliderBase>();
             auto* colB = curr.B->GetComponent<JDComponent::ColliderBase>();
@@ -45,16 +48,16 @@ namespace JDScene {
             bool wasColliding = false;
             for (auto& prev : m_prevPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
-                    wasColliding = true; // ÇöÀç Ãæµ¹½Ö°ú °°Àº °ú°Å Ãæµ¹½ÖÀÌ ÀÖ´Ù¸é true.(Stay)
+                    wasColliding = true; // í˜„ì¬ ì¶©ëŒìŒê³¼ ê°™ì€ ê³¼ê±° ì¶©ëŒìŒì´ ìˆë‹¤ë©´ true.(Stay)
                     break;
                 }
             }
             if (colA->IsTrigger() || colB->IsTrigger()) {
-                if (wasColliding) { // ÀÌÀüºÎÅÍ Ãæµ¹ÇÑ »óÅÂ¶ó¸é Stay.
+                if (wasColliding) { // ì´ì „ë¶€í„° ì¶©ëŒí•œ ìƒíƒœë¼ë©´ Stay.
                     colA->OnTriggerStay(colB);
                     colB->OnTriggerStay(colA);
                 }
-                else { // »õ·Ó°Ô Ãæµ¹ÇßÀ¸¸é Enter.
+                else { // ìƒˆë¡­ê²Œ ì¶©ëŒí–ˆìœ¼ë©´ Enter.
                     colA->OnTriggerEnter(colB);
                     colB->OnTriggerEnter(colA);
                 }
@@ -72,19 +75,19 @@ namespace JDScene {
             }
         }
 
-        // Ãæµ¹ ³¡ Ã³¸® (Exit)
+        // ì¶©ëŒ ë ì²˜ë¦¬ (Exit)
         for (auto& prev : m_prevPairs) {
             auto* colA = prev.A->GetComponent<JDComponent::ColliderBase>();
             auto* colB = prev.B->GetComponent<JDComponent::ColliderBase>();
 
-            bool stillColliding = false; // ÇöÀç Ãæµ¹½Ö°ú °°Àº °ú°Å Ãæµ¹½ÖÀÌ ¾ø´Ù¸é false.(Exit)
+            bool stillColliding = false; // í˜„ì¬ ì¶©ëŒìŒê³¼ ê°™ì€ ê³¼ê±° ì¶©ëŒìŒì´ ì—†ë‹¤ë©´ false.(Exit)
             for (auto& curr : m_currPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
                     stillColliding = true;
                     break;
                 }
             }
-            if (!stillColliding) { // Ãæµ¹ÀÌ ³¡³µ´Ù¸é Exit.
+            if (!stillColliding) { // ì¶©ëŒì´ ëë‚¬ë‹¤ë©´ Exit.
                 if (colA->IsTrigger() || colB->IsTrigger()) {
                     colA->OnTriggerExit(colB);
                     colB->OnTriggerExit(colA);
@@ -95,8 +98,87 @@ namespace JDScene {
                 }
             }
         }
-        // ÀÌÁ¦ ´Ù ³¡³µÀ¸´Ï ÇöÀç Ãæµ¹ Á¤º¸¸¦ °ú°Å Á¤º¸·Î ³Ñ°ÜÁÖ±â.
+        // ì´ì œ ë‹¤ ëë‚¬ìœ¼ë‹ˆ í˜„ì¬ ì¶©ëŒ ì •ë³´ë¥¼ ê³¼ê±° ì •ë³´ë¡œ ë„˜ê²¨ì£¼ê¸°.
         m_prevPairs.swap(m_currPairs);
     }
 
+    void SceneBase::DrawColider()
+    {
+        if (!m_drawCollider)
+            return;
+
+        auto camera = D2DRenderer::Instance().GetCamera();
+        D2D1_MATRIX_3X2_F view =
+            camera
+            ? camera->GetViewMatrix()
+            : D2D1::Matrix3x2F::Identity();
+
+        for (auto& objPtr : m_gameObjects)
+        {
+            auto* obj = objPtr.get();
+            if (!obj) continue;
+
+            auto* col = obj->GetComponent<JDComponent::ColliderBase>();
+            if (!col) continue;
+
+            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
+            if (!tm) continue;
+            D2D1_MATRIX_3X2_F world = tm->GetWorldMatrix();
+
+            D2D1_MATRIX_3X2_F worldView = world * view;
+            D2DRenderer::Instance().SetTransform(worldView);
+
+            UINT32 color = col->GetColliding()
+                ? 0xFF00FF00
+                : 0xFF000000;
+            if (col->IsMouseOver(GetMouseWorldPos()))
+                color = 0xFFFF0000;
+
+            if (col->GetColliderType() == JDComponent::ColliderType::Box) // ë°•ìŠ¤ ì½œë¼ì´ë”
+            {
+                auto* colb = static_cast<JDComponent::BoxCollider*>(col);
+                auto  halfSize = colb->GetHalfSize();
+                auto  offset = colb->GetColliderOffset();
+
+                D2DRenderer::Instance().DrawRectangle(
+                    offset.x - halfSize.x, offset.y + halfSize.y,
+                    offset.x + halfSize.x, offset.y - halfSize.y,
+                    color
+                );
+            }
+            else if (col->GetColliderType() == JDComponent::ColliderType::Circle) // ì›í˜• ì½œë¼ì´ë”
+            {
+                auto* colc = static_cast<JDComponent::CircleCollider*>(col);
+                float radius = colc->GetRadius();
+                auto  offset = colc->GetColliderOffset();
+
+                D2DRenderer::Instance().DrawCircle(
+                    offset.x, offset.y, radius,
+                    color
+                );
+            }
+        }
+
+        // 6) ê·¸ë¦¬ê¸° ëë‚œ ë’¤, ì›ë˜ ë§¤íŠ¸ë¦­ìŠ¤(ë·°ë§Œ) ë³µì›
+        D2DRenderer::Instance().SetTransform(view);
+    }
+
+    Vec2 SceneBase::GetMouseWorldPos()
+    {
+        // 1) ë§ˆìš°ìŠ¤ ìŠ¤í¬ë¦° ì¢Œí‘œ ì–»ê¸°
+        auto& inputMgr = InputManager::Instance();
+        auto  mousePos = inputMgr.GetMouseState().pos;    // {x, y}
+        Vec2 screenPos{ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
+
+        // 2) ìŠ¤í¬ë¦° â†’ ì›”ë“œ ë³€í™˜
+        Vec2 mouseWorld = screenPos;
+        auto camera = D2DRenderer::Instance().GetCamera();
+        if (camera) {
+            auto invView = camera->GetViewMatrix();
+            D2D1InvertMatrix(&invView);
+            mouseWorld = camera->TransformPoint(invView, { screenPos.x,screenPos.y });
+        }
+
+        return mouseWorld;
+    }
 }

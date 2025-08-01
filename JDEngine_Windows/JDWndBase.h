@@ -1,13 +1,18 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
-// ÀÎÅÍÆäÀÌ½º Ãà¾à¾î
+// ì¸í„°í˜ì´ìŠ¤ ì¶•ì•½ì–´
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+
+// ImGui ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜ ì„ ì–¸
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace JDWindow {
 
-	// ÇÔ¼ö ¼±¾ğ
+	// í•¨ìˆ˜ ì„ ì–¸
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-    
-    class WindowSizeProvider { //ÄÄÆ÷³ÍÆ® µî¿¡ ÀÇÁ¸¼º ¿ªÀü ¿øÄ¢À» °í¼öÇÏ¸é¼­ ÀÎÀÚ¸¦ ÁÖÀÔÇÏ±â À§ÇÑ ¿ëµµ (¾ÆÁ÷ ¹Ì»ç¿ë)
+
+    class WindowSizeProvider { //ì»´í¬ë„ŒíŠ¸ ë“±ì— ì˜ì¡´ì„± ì—­ì „ ì›ì¹™ì„ ê³ ìˆ˜í•˜ë©´ì„œ ì¸ìë¥¼ ì£¼ì…í•˜ê¸° ìœ„í•œ ìš©ë„ (ì•„ì§ ë¯¸ì‚¬ìš©)
     public:
         virtual ~WindowSizeProvider() = default;
         virtual int GetWidth() const = 0;
@@ -18,13 +23,13 @@ namespace JDWindow {
         JDWndBase() = default;
         virtual ~JDWndBase() = default;
 
-        // À©µµ¿ì »ı¼º
+        // ìœˆë„ìš° ìƒì„±
         bool Create(const wchar_t* className, const wchar_t* windowName, int width, int height);
 
-        // À©µµ¿ì Á¦°Å
+        // ìœˆë„ìš° ì œê±°
         void Destroy();
 
-        // À©µµ¿ì ÇÚµé ¹İÈ¯
+        // ìœˆë„ìš° í•¸ë“¤ ë°˜í™˜
         void* GetHandle() const { return m_hWnd; }
 
         int GetWidth() const { return m_width; }
@@ -32,23 +37,20 @@ namespace JDWindow {
 
     protected:
 
-        // ¿ÜºÎ ÇÔ¼ö¿¡¼­ ÀÌ Å¬·¡½ºÀÇ private/protected ¸â¹ö Á¢±Ù Çã¿ë
+        // ì™¸ë¶€ í•¨ìˆ˜ì—ì„œ ì´ í´ë˜ìŠ¤ì˜ private/protected ë©¤ë²„ ì ‘ê·¼ í—ˆìš©
         friend LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-        // À©µµ¿ì ÇÁ·Î½ÃÀú (±âº» ±¸Çö: false ¹İÈ¯)
-        virtual bool OnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) { return false; }
-
-        // À©µµ¿ì »çÀÌÁî ÀçÁ¶Á¤
+        // ìœˆë„ìš° ì‚¬ì´ì¦ˆ ì¬ì¡°ì •
         virtual void OnResize(int width, int height);
 
-        // À©µµ¿ì Á¾·á Ã³¸® - ¼ø¼ö °¡»ó ÇÔ¼ö (Ãß»óÈ­)
+        // ìœˆë„ìš° ì¢…ë£Œ ì²˜ë¦¬ - ìˆœìˆ˜ ê°€ìƒ í•¨ìˆ˜ (ì¶”ìƒí™”)
         virtual void OnClose() = 0;
 
-        HWND m_hWnd = nullptr;  // À©µµ¿ì ÇÚµé
-        int m_width = 0;        // À©µµ¿ì °¡·Î³ĞÀÌ
-        int m_height = 0;       // À©µµ¿ì ¼¼·Î³ĞÀÌ
+        HWND m_hWnd = nullptr;  // ìœˆë„ìš° í•¸ë“¤
+        int m_width = 0;        // ìœˆë„ìš° ê°€ë¡œë„“ì´
+        int m_height = 0;       // ìœˆë„ìš° ì„¸ë¡œë„“ì´
 
-        // º¹»ç ¹× ÀÌµ¿ ¿¬»êÀÚ »èÁ¦
+        // ë³µì‚¬ ë° ì´ë™ ì—°ì‚°ì ì‚­ì œ
         JDWndBase(const JDWndBase&) = delete;
         JDWndBase& operator=(const JDWndBase&) = delete;
         JDWndBase(JDWndBase&&) = delete;

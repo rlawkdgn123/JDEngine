@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "D2DRenderer.h"
 
+#include "UI_ImageComponent.h"
+#include "UI_TextComponent.h"
+#include "UI_ButtonComponent.h"
+
 void D2DRenderer::Initialize(HWND hwnd)
 {
     m_hwnd = hwnd;
@@ -164,20 +168,29 @@ ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RE
 
 
 
-void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color)
+void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, IDWriteTextFormat* textFormat)
 {
     if (nullptr == m_textBrush)
     {
         m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(color), &m_textBrush);
     }
-
     m_textBrush->SetColor(color);
-    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
 
+    if (!textFormat) {
+        // 기본 포맷 사용
+        auto defaultIt = m_textFormats.find("MalgunGothic_14");
+        if (defaultIt != m_textFormats.end()) {
+            textFormat = defaultIt->second.Get();
+        }
+    }
+
+    if (!textFormat) return; // 텍스트 포맷이 없으면 그리지 않음
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
     m_d2dContext->DrawTextW(
         text,
         static_cast<UINT32>(wcslen(text)),
-        m_textFormat.Get(),
+        textFormat,
         layoutRect,
         m_textBrush.Get(),
         D2D1_DRAW_TEXT_OPTIONS_NONE,
@@ -205,27 +218,65 @@ void D2DRenderer::RenderEnd(bool bPresent)
     }
 }
 
-void D2DRenderer::RenderGameObject(const GameObject& obj)
+//void D2DRenderer::RenderGameObject(const GameObject& obj)
+//{
+//    using namespace JDGameObject;
+//    using namespace JDComponent;
+//    using Transform = JDComponent::D2DTM::Transform;
+//    using TextureRenderer = JDComponent::TextureRenderer;
+//
+//    auto tf = obj.GetComponent<Transform>();
+//    auto renderer = obj.GetComponent<TextureRenderer>();
+//
+//    if (tf && renderer)
+//    {
+//        D2D1_MATRIX_3X2_F worldMatrix = tf->GetWorldMatrix();
+//        if (m_camera)
+//        {
+//            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
+//        }
+//        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+//        renderer->Render(context, worldMatrix);
+//    }
+//}
+void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
 {
-    using namespace JDGameObject;
     using namespace JDComponent;
-    using Transform = JDComponent::D2DTM::Transform;
-    using SpriteRenderer = JDComponent::SpriteRenderer;
 
-    auto tf = obj.GetComponent<Transform>();
-    auto renderer = obj.GetComponent<SpriteRenderer>();
+    // 1) Transform 가져오기
+    auto tf = obj.GetComponent<D2DTM::Transform>();
+    if (!tf) return;
 
-    if (tf && renderer)
+    // 2) 애니메이션과 스프라이트 컴포넌트 검사
+    auto anim = obj.GetComponent<AnimationRender>();
+    auto spr = obj.GetComponent<TextureRenderer>();
+
+    // 3) 카메라 뷰 매트릭스 적용
+    D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
+    if (m_camera)
+        world = world * m_camera->GetViewMatrix();
+
+    // 4) 애니메이션이 있으면 업데이트+렌더
+    if (anim)
     {
-        D2D1_MATRIX_3X2_F worldMatrix = tf->GetWorldMatrix();
-        if (m_camera)
-        {
-            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
-        }
-        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
-        renderer->Render(context, worldMatrix);
+        // 델타타임으로 프레임 갱신
+        anim->Update(dt);
+
+        // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
+        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        anim->Render(ctx, world);
+        return;
+    }
+
+    // 5) 애니메이션이 없으면 기존 스프라이트 렌더러 호출
+    if (spr)
+    {
+        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        spr->Render(ctx, world);
     }
 }
+
+
 
 void D2DRenderer::RenderUIObject(const UIObject& uiObj)
 {
@@ -235,8 +286,9 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
 
     auto rtf = uiObj.GetComponent<RectTransform>();
     auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
+    auto textComponent = uiObj.GetComponent<UI_TextComponent>();
 
-    if (rtf && imageComponent)
+    if (rtf)
     {
         ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
 
@@ -248,7 +300,8 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
         // context->SetTransform(worldMatrix * originalTransform);
 
         // 카메라 영향을 빼고, 월드 행렬만 사용
-        imageComponent->Render(context, worldMatrix);
+        if (imageComponent) { imageComponent->Render(context, worldMatrix); }
+        if (textComponent) { textComponent->Render(context, worldMatrix); }
 
         context->SetTransform(originalTransform);
     }
@@ -420,21 +473,30 @@ void D2DRenderer::CreateWriteResource()
 
     DX::ThrowIfFailed(hr);
 
-    writeFactory->CreateTextFormat(
-        L"", // FontName    제어판-모든제어판-항목-글꼴-클릭 으로 글꼴이름 확인가능
-        NULL,
-        DWRITE_FONT_WEIGHT_NORMAL,
-        DWRITE_FONT_STYLE_NORMAL,
-        DWRITE_FONT_STRETCH_NORMAL,
-        15.0f,   // Font Size
-        L"", //locale
-        &m_textFormat);
+    auto CreateFormat = [&](const std::wstring& fontName, float size, const std::string& name) {
+        ComPtr<IDWriteTextFormat> format = nullptr;
 
-    DX::ThrowIfFailed(hr);
+        DX::ThrowIfFailed(writeFactory->CreateTextFormat(
+            fontName.c_str(),
+            NULL,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            size,
+            L"ko-kr",
+            &format));
 
-    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // 왼쪽 정렬
-    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // 위쪽 정렬
-    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP); // 줄바꿈 
+        format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);             // 수평 가운데 정렬
+        format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);   // 수직 가운데 정렬
+        format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);                 // 줄바꿈 허용
+
+        m_textFormats[name] = format;
+    };
+
+    // 등록 예시
+    CreateFormat(L"맑은 고딕", 14.0f, "MalgunGothic_14");
+    CreateFormat(L"Arial", 16.0f, "Arial_16");
+    CreateFormat(L"Segoe UI", 20.0f, "SegoeUI_20");
 }
 
 void D2DRenderer::ReleaseRenderTargets()

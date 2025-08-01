@@ -55,28 +55,54 @@
     void SceneManager::Update(float deltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->Update(deltaTime);
+        {
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->Update(deltaTime * ts);
+        }
     }
 
     void SceneManager::FixedUpdate(float fixedDeltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->FixedUpdate(fixedDeltaTime);
+        {
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->FixedUpdate(fixedDeltaTime * ts);
+        }
     }
 
     void SceneManager::LateUpdate(float deltaTime)
     {
         if (m_CurrentScene)
-            m_CurrentScene->LateUpdate(deltaTime);
+        {
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->LateUpdate(deltaTime * ts);
+        }
     }
 
-    void SceneManager::Render()
+    void SceneManager::Render(float dt)
     {
         if (m_CurrentScene)
         {
-            
-            m_CurrentScene->Render();
+            float ts = m_CurrentScene->GetTimeScale();
+            m_CurrentScene->Render(dt * ts);
         }
             
     }
+
+    void SceneManager::SetSceneTimeScale(float timeScale)
+    {
+        if (m_CurrentScene)
+        {
+            m_CurrentScene->SetTimeScale(timeScale);
+        }
+    }
+
+    void SceneManager::ToggleDrawColider()
+    {
+        if (m_CurrentScene)
+        {
+            m_CurrentScene->ToggleDrawColider();
+        }
+    }
+
 

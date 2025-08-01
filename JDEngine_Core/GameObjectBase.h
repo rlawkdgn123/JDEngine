@@ -1,22 +1,22 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "Component.h"
 #include "D2DTransform.h"
 #include "ComponentList.h"
 #include "Global.h"
 #include "framework.h"
-// Å¬·¡½º ±¸Çö ¼³°èµµ
+// í´ë˜ìŠ¤ êµ¬í˜„ ì„¤ê³„ë„
 /*
-Å¬·¡½º ±¸Çö ¼³°èµµ (¼öÁ¤ ¾ÆÁ÷ ¾ÈÇÔ ÀÌ°Å ¾Æ´Ô)
+í´ë˜ìŠ¤ êµ¬í˜„ ì„¤ê³„ë„ (ìˆ˜ì • ì•„ì§ ì•ˆí•¨ ì´ê±° ì•„ë‹˜)
 =============================================================
-                GameObjectBase  (Ãß»ó ±âº» Å¬·¡½º)
-                       ¡è
-                GeometryObject      (±âº» °´Ã¼ ±â´É ±¸Çö)
-                       ¡è
+                GameObjectBase  (ì¶”ìƒ ê¸°ë³¸ í´ë˜ìŠ¤)
+                       â†‘
+                GeometryObject      (ê¸°ë³¸ ê°ì²´ ê¸°ëŠ¥ êµ¬í˜„)
+                       â†‘
         +---------------+---------------+
         |                               |
     RectangleObject					CircleObject
-    (»ç°¢Çü °´Ã¼)					 (¿ø °´Ã¼)
+    (ì‚¬ê°í˜• ê°ì²´)					 (ì› ê°ì²´)
 =============================================================
 */
 
@@ -25,7 +25,7 @@
 namespace JDGameObject {
     class GameObjectBase {
     public:
-        static ULONG64 idCount; // id Ä«¿îÆÃ ¹æ¹ı : static++ÀÓ. ¸¸¾à ULONG64 Max¸¸Å­ ¿ÀºêÁ§Æ® »ı¼º ½Ã ÅÍÁú ¼ö ÀÖÀ½.
+        static ULONG64 idCount; // id ì¹´ìš´íŒ… ë°©ë²• : static++ì„. ë§Œì•½ ULONG64 Maxë§Œí¼ ì˜¤ë¸Œì íŠ¸ ìƒì„± ì‹œ í„°ì§ˆ ìˆ˜ ìˆìŒ.
 
         using Vector2f = JDGlobal::Math::Vector2F;
         using Tag = JDGlobal::Base::GameTag;
@@ -46,14 +46,14 @@ namespace JDGameObject {
         T* AddComponent(Args&&... args);
 
         template<typename T>
-        T* GetComponent() const; // °°Àº ÄÄÆ÷³ÍÆ®°¡ ¿©·¯ °³¸é ¾î¶»°Ô µŞ¼ø¹ø ÄÄÆ÷³ÍÆ®¸¦ ¹İÈ¯½ÃÅ³±î??
+        T* GetComponent() const; // ê°™ì€ ì»´í¬ë„ŒíŠ¸ê°€ ì—¬ëŸ¬ ê°œë©´ ì–´ë–»ê²Œ ë’·ìˆœë²ˆ ì»´í¬ë„ŒíŠ¸ë¥¼ ë°˜í™˜ì‹œí‚¬ê¹Œ??
 
-        virtual void Awake() = 0;                    // ¿ÀºêÁ§Æ®°¡ Ã³À½ ¾À¿¡ µîÀå ½Ã, Active »ó°ü¾øÀÌ ¹«Á¶°Ç ½ÇÇà
-        virtual void Start() = 0;                    // È°¼ºÈ­°¡ µÈ Ã¹ ÇÁ·¹ÀÓ¿¡¼­
-        virtual void Update(float deltaTime) = 0;    // ¸Å ÇÁ·¹ÀÓ Update
-        virtual void LateUpdate(float deltaTime) = 0; // Update ÈÄ È£Ãâ
-        virtual void FixedUpdate(float fixedDeltaTime) = 0; // ¹°¸® °è»ê¿ë
-        virtual void OnDestroy() = 0;               // »èÁ¦ Á÷Àü
+        virtual void Awake() = 0;                    // ì˜¤ë¸Œì íŠ¸ê°€ ì²˜ìŒ ì”¬ì— ë“±ì¥ ì‹œ, Active ìƒê´€ì—†ì´ ë¬´ì¡°ê±´ ì‹¤í–‰
+        virtual void Start() = 0;                    // í™œì„±í™”ê°€ ëœ ì²« í”„ë ˆì„ì—ì„œ
+        virtual void Update(float deltaTime) = 0;    // ë§¤ í”„ë ˆì„ Update
+        virtual void LateUpdate(float deltaTime) = 0; // Update í›„ í˜¸ì¶œ
+        virtual void FixedUpdate(float fixedDeltaTime) = 0; // ë¬¼ë¦¬ ê³„ì‚°ìš©
+        virtual void OnDestroy() = 0;               // ì‚­ì œ ì§ì „
 
         virtual void OnCollisionEnter(GameObjectBase* other) = 0;
         virtual void OnCollisionStay(GameObjectBase* other) = 0;
@@ -66,32 +66,38 @@ namespace JDGameObject {
         virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) = 0;
         virtual void SendComPonentEvent(const std::string& ev) = 0;
 
+        ////////////////////////////////////////////////////////////////////////////////
+
         std::wstring GetID() const { return std::to_wstring(m_id); }
+
         std::wstring GetName() const { return m_name; }
+        void SetName(const std::wstring& name) { m_name = name; }
 
         int GetLayer() const { return m_layer; }
-    bool IsActive() const { return m_active; }
+        void SetLayer(int layer) { m_layer = layer; }
 
-    void SetTag(const Tag& tag) { m_tag = tag; }
-    void SetLayer(int layer) { m_layer = layer; }
-    void SetActive(bool active) { 
-        if (m_active == active) return; // º¯°æÀÌ ¾øÀ¸¸é ¹«½Ã
-        m_active = active;
-        for (auto& comp : m_components) {
-            if (active && comp->GetEnabled()) { comp->OnEnable(); }
-            else if (!active && comp->GetEnabled()) { comp->OnDisable(); }
+        Tag GetTag() const { return m_tag; }
+        void SetTag(const Tag& tag) { m_tag = tag; }
+
+        bool IsActive() const { return m_active; }
+        void SetActive(bool active) { 
+            if (m_active == active) return; // ë³€ê²½ì´ ì—†ìœ¼ë©´ ë¬´ì‹œ
+            m_active = active;
+            for (auto& comp : m_components) {
+                if (active && comp->GetEnabled()) { comp->OnEnable(); }
+                else if (!active && comp->GetEnabled()) { comp->OnDisable(); }
+            }
         }
-    }
 
     protected:
-        std::vector<std::unique_ptr<Component>> m_components; // ÄÄÆ÷³ÍÆ® ¸®½ºÆ®
-        Vector2f m_direction = { 0.0f, 0.0f }; // ¹æÇâ (´ÜÀ§ º¤ÅÍ) : ÇÊ¿äÇÑ°¡? °í¹ÎÇØº¸ÀÚ
+        std::vector<std::unique_ptr<Component>> m_components; // ì»´í¬ë„ŒíŠ¸ ë¦¬ìŠ¤íŠ¸
+        Vector2f m_direction = { 0.0f, 0.0f }; // ë°©í–¥ (ë‹¨ìœ„ ë²¡í„°) : í•„ìš”í•œê°€? ê³ ë¯¼í•´ë³´ì
         std::wstring m_name;
         Tag m_tag = Tag::None;
         int m_layer = 0;
 
         int m_id = -1;
-        bool m_active = true; // °ÔÀÓ ¿ÀºêÁ§Æ® ÀüÃ¼ÀÇ È°¼º/ºñÈ°¼º
+        bool m_active = true; // ê²Œì„ ì˜¤ë¸Œì íŠ¸ ì „ì²´ì˜ í™œì„±/ë¹„í™œì„±
         bool m_isAwaked = false;
         bool m_isStarted = false;
     };
@@ -104,19 +110,27 @@ namespace JDGameObject {
             m_name = L"GameObject";
             AddComponent<Transform>();
             m_transform = GetComponent<Transform>();
-            m_id = idCount++;
+            m_id = static_cast<int>(idCount++);
         }
 
         GameObject(const std::wstring& name) {
             m_name = name;
             AddComponent<Transform>();
             m_transform = GetComponent<Transform>();
-            m_id = idCount++;
+            m_id = static_cast<int>(idCount++);
         }
 
         virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }
         virtual void Start() override { if (m_isStarted || !m_active) { return; } m_isStarted = true;}
-        virtual void Update(float deltaTime) override { if (!m_active) { return; } }
+        virtual void Update(float deltaTime) override {
+            if (!m_active) { return; }
+            else {
+                for (auto& comp : m_components) {
+                    comp->Update(deltaTime);
+                }
+            }
+        }
+
         virtual void LateUpdate(float deltaTime) override { if (!m_active) { return; } }
         virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
         virtual void OnDestroy() override {}
@@ -138,7 +152,7 @@ namespace JDGameObject {
         void SetDirection(const Vector2f& dir) { m_direction = dir; }
 
     private:
-        Transform* m_transform = nullptr; // Æ®·£½ºÆû RawPointer ( »ç¿ë ÁÖÀÇ )
+        Transform* m_transform = nullptr; // íŠ¸ëœìŠ¤í¼ RawPointer ( ì‚¬ìš© ì£¼ì˜ )
     };
 }
 #include "GameObjectBase.inl"

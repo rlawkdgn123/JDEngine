@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObjectBase.h"
 #include "RectTransform.h"
-#include "ResourceManager.h"
+#include "AssetManager.h"
 
 namespace JDComponent {
 
@@ -28,6 +28,11 @@ namespace JDComponent {
         void            SetColor(const D2D1_COLOR_F& color);
         D2D1_COLOR_F    GetColor() const { return m_color; }
 
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void            SetSizeToOriginal();        // 원본 크기로 RectTransform Size 설정
+        Vector2F        GetOriginalSize() const;    // 텍스처 원본 크기 반환
+
     private:
         std::string             m_textureName;
         D2D1_COLOR_F            m_color = D2D1::ColorF(D2D1::ColorF::White);
@@ -37,5 +42,10 @@ namespace JDComponent {
         void OnEvent(const std::string& event) override {};
         void OnEnable() override {};
         void OnDisable() override {};
+
+        // RectTransform 접근용 헬퍼
+        RectTransform* GetRectTransform() const {
+            return m_Owner->GetComponent<RectTransform>();
+        }
     };
 }

@@ -8,4 +8,7 @@
 #include "SceneManager.h"
 #include "SceneList.h"
 #include "TitleScene.h"
-#include "ResourceManager.h"
+#include "AssetManager.h"
+#include "CameraFader.h"
+#include "FMODSystem.h"
+#include "AudioManager.h"

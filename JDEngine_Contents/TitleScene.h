@@ -7,6 +7,7 @@ namespace JDScene {
 	class TitleScene : public SceneBase
 	{
     public:
+
         TitleScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
         ~TitleScene() override {}
@@ -21,11 +22,12 @@ namespace JDScene {
 
         void LateUpdate(float deltaTime) override;
 
-        void Render() override;
+        void Render(float deltaTime) override;
 
-    private:
-        std::vector<std::shared_ptr<GameObject>> m_gameObjects;
-        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void ClickUpdate();
+
 	};
 }
 

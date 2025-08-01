@@ -44,6 +44,8 @@
 #include <string>
 #include <tuple>
 #include <functional>
+#include <fmod.hpp>
+#include <fmod_studio.hpp>
 
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed
 namespace DX

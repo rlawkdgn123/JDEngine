@@ -25,9 +25,6 @@
     <Filter Include="Component\Transform">
       <UniqueIdentifier>{24402111-92c9-4c3d-962d-9aea2efba1b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource">
-      <UniqueIdentifier>{ecdacdf6-8bfa-4a9a-a1ed-4a7772a6aef6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Component\Input">
       <UniqueIdentifier>{1926a039-1673-41ef-9205-073e814bbabc}</UniqueIdentifier>
     </Filter>
@@ -64,6 +61,18 @@
     <Filter Include="Component\UI\Text">
       <UniqueIdentifier>{9b967adb-8a27-4988-8223-4a9fc3b71ea6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Asset">
+      <UniqueIdentifier>{ecdacdf6-8bfa-4a9a-a1ed-4a7772a6aef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\Editor">
+      <UniqueIdentifier>{fbf4f728-40a4-4fce-9ba7-af7644722a64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{21511e18-90a5-42f6-8866-530748014396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\Audio">
+      <UniqueIdentifier>{ba0aa1bb-627d-4b5d-8a8d-c0fda09cbf17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -93,9 +102,6 @@
     <ClInclude Include="D2DTransform.h">
       <Filter>Component\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
     <ClInclude Include="RectTransform.h">
       <Filter>Component\Transform</Filter>
     </ClInclude>
@@ -104,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="GameObjectBase.h">
       <Filter>Object\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Component\SpriteRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
@@ -135,6 +138,33 @@
     <ClInclude Include="UI_ButtonComponent.h">
       <Filter>Component\UI\Button</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor_Clickable.h">
+      <Filter>Component\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="FMODSystem.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioBase.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="BGM.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SFX.h">
+      <Filter>Component\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -158,9 +188,6 @@
     <ClCompile Include="Component.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
     <ClCompile Include="RectTransform.cpp">
       <Filter>Component\Transform</Filter>
     </ClCompile>
@@ -169,9 +196,6 @@
     </ClCompile>
     <ClCompile Include="GameObjectBase.cpp">
       <Filter>Object\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>Component\SpriteRenderer</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
@@ -196,6 +220,21 @@
     </ClCompile>
     <ClCompile Include="UI_ButtonComponent.cpp">
       <Filter>Component\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="FMODSystem.cpp">
+      <Filter>Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

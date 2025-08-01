@@ -4,7 +4,7 @@
 namespace JDComponent {
 	class BoxCollider : public ColliderBase {
 	public:
-		BoxCollider(Vec2 halfSize, Vec2 offset = Vec2{ 0,0 }) 
+		BoxCollider(Vec2 halfSize, Vec2 offset = Vec2{ 0,0 })
 			: ColliderBase(ColliderType::Box), m_halfSize(halfSize) {}
 		~BoxCollider() override = default;
 
@@ -12,6 +12,7 @@ namespace JDComponent {
 		Vec2 GetHalfSize() const { return m_halfSize; }
 
 		bool Intersect(ColliderBase* other) override;
+		bool IsMouseOver(Vec2 mousePos) override;
 		
 	private:
 		Vec2 m_halfSize;

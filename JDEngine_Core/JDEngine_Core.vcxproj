@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,6 +142,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AudioBase.h" />
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="BGM.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CircleCollider.h" />
@@ -150,16 +155,18 @@
     <ClInclude Include="ComponentList.h" />
     <ClInclude Include="D2DRenderer.h" />
     <ClInclude Include="D2DTransform.h" />
+    <ClInclude Include="Editor_Clickable.h" />
+    <ClInclude Include="FMODSystem.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="InputAction.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RectTransform.h" />
-    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SFX.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="UIObject.h" />
     <ClInclude Include="UI_ButtonComponent.h" />
     <ClInclude Include="UI_ImageComponent.h" />
@@ -167,6 +174,9 @@
     <ClInclude Include="UI_TextComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CircleCollider.cpp" />
@@ -174,6 +184,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="D2DTransform.cpp" />
+    <ClCompile Include="FMODSystem.cpp" />
     <ClCompile Include="GameObjectBase.cpp" />
     <ClCompile Include="InputAction.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -184,10 +195,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RectTransform.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UI_ButtonComponent.cpp" />
     <ClCompile Include="UI_ImageComponent.cpp" />
     <ClCompile Include="UI_SliderComponent.cpp" />

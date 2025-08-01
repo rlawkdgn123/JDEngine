@@ -73,11 +73,11 @@ namespace JDGameSystem {
 		void SetCurPopulation(const int& value);
 		void AddCurPopulation(const int& value);
 
-		bool SetTotalResource(const Resource& value) {
+		void SetTotalResource(const Resource& value) {
 			m_totalResource = value;
 			ClampResourceToLimits(m_totalResource);
 		}
-		bool AddTotalResource(const Resource& value) {
+		void AddTotalResource(const Resource& value) {
 			m_totalResource += value;
 			ClampResourceToLimits(m_totalResource);
 		}

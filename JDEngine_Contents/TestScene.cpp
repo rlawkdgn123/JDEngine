@@ -101,8 +101,8 @@ namespace JDScene {
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
-        //bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
+        //bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
+        bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
         size_t n = m_gameObjects.size();
         for (size_t i = 0; i < n; ++i) {
             auto* obj = m_gameObjects[i].get();

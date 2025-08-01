@@ -1,8 +1,9 @@
 #pragma once
 #include "GameObjectList.h"
+
 namespace JDGameObject {
     namespace Content {
-        class LumberMill : JDGameObject::Content::Building
+        class LumberMill : public JDGameObject::Content::Building
         {
         public:
             LumberMill() : Building(L"DefaultObject") {}

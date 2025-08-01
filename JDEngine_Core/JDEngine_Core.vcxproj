@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)fmod\api\core\inc;$(SolutionDir)fmod\api\studio\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)API\fmod;$(SolutionDir)API\fmod\api\core\inc;$(SolutionDir)API\fmod\api\studio\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,7 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)JDEngine_Common;$(SolutionDir)JDEngine_Windows;$(SolutionDir)JDEngine_Base;$(SolutionDir)API\fmod;$(SolutionDir)API\fmod\api\core\inc;$(SolutionDir)API\fmod\api\studio\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

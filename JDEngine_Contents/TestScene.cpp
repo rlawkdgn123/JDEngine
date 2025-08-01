@@ -91,7 +91,8 @@ namespace JDScene {
         SceneBase::Update(deltaTime);
 
         //bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
-        bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
+        bool leftPressed = InputManager::Instance().GetMouseState().leftClicked;
+        //bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
         size_t n = m_gameObjects.size();
         for (size_t i = 0; i < n; ++i) {
             auto* obj = m_gameObjects[i].get();
@@ -113,6 +114,8 @@ namespace JDScene {
     }
 
     void TestScene::LateUpdate(float deltaTime) {
+        InputManager::Instance().SetMouseState()->leftClicked = false; // Clicked 다음 프레임에 체크
+        InputManager::Instance().SetMouseState()->rightClicked = false;
         SceneBase::LateUpdate(deltaTime);
         //cout << "[TestScene] LateUpdate() - dt: " << deltaTime << "\n";
     }

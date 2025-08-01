@@ -28,6 +28,9 @@
     <Filter Include="Scene\TestScene">
       <UniqueIdentifier>{e6893c4a-66c4-4d7e-9fca-ac085a07410c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Combat">
+      <UniqueIdentifier>{a2960503-c6f2-42ef-87a7-83840fbaf9ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneList.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="ResourceSystem.h">
       <Filter>GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="CombatSystem.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneList.cpp">
@@ -73,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp">
       <Filter>Scene\TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CombatSystem.cpp">
+      <Filter>Combat</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

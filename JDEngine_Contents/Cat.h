@@ -1,4 +1,5 @@
 #pragma once
+
 #include"GameObjectList.h"
 
 namespace JDGameObject{
@@ -6,12 +7,13 @@ namespace JDGameObject{
 		class DefaultCat : public Cat
 		{
 			void Awake() override;
-			void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
+			void Start() override;                              // ï¿½ï¿½ï¿½ï¿½ 1È¸ï¿½ï¿½ È£ï¿½ï¿½
 			void Update(float deltaTime) override;              // Update
-			void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-			void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
+			void LateUpdate(float deltaTime) override;          // Update ï¿½ï¿½ È£ï¿½ï¿½
+			void FixedUpdate(float fixedDeltaTime) override;    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		};
 	}
 }
+
 
 

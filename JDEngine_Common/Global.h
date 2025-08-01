@@ -95,6 +95,14 @@ namespace JDGlobal {
 		};
 	}
 	namespace Contents {
+		constexpr float MAX_GAME_RESOURCE = 9999;
+		constexpr int	MAX_GAME_POPULATION = 999;
+
+		enum class CatType {
+			Felis,
+			Navi,
+			Kone,
+		};
 		struct Resource {
 
 			Resource() = default;

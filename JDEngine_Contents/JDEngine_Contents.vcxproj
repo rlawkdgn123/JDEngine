@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CombatSystem.h" />
     <ClInclude Include="FishingSpot.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObjectList.h" />
@@ -154,7 +155,7 @@
     <ClInclude Include="UIObjectList.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FishingSpot.cpp" />
+
     <ClCompile Include="GameObjectList.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="LumberMill.cpp" />

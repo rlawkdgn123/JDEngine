@@ -100,60 +100,22 @@ namespace JDScene {
 
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-        //m_gameObjects.back()->GetComponent<JDComponent::D2DTM::Transform>()->Translate(1, 0);
-        // 1) 마우스 스크린 좌표 얻기
-        //auto& inputMgr = InputManager::Instance();
-        //auto  mouseState = inputMgr.GetMouseState().pos;   
-        //JDGlobal::Math::Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
 
-        //// 2) 스크린 → 월드 변환
-        //JDGlobal::Math::Vector2F mouseWorld;
-        //auto camera = D2DRenderer::Instance().GetCamera();
-        //if (camera) {
-        //    auto invView = camera->GetViewMatrix();
-        //    D2D1InvertMatrix(&invView); 
-        //    mouseWorld = m_camera->TransformPoint(invView, { screenPos.x,screenPos.y });
-        //}
-        //else {
-        //    mouseWorld = screenPos;
-        //}
+        bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
+        //bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
+        size_t n = m_gameObjects.size();
+        for (size_t i = 0; i < n; ++i) {
+            auto* obj = m_gameObjects[i].get();
+            if (!obj) continue;
 
-        ////HandleMouseHover(mouseWorld);
+            auto* col = obj->GetComponent<JDComponent::ColliderBase>();
+            if (!col) continue;
 
-        //// 3) 하이라이트 인덱스 계산
-        //m_highlightedIndex = -1;
-
-        //for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
-        //    auto& obj = m_gameObjects[i];
-        //    if (!obj) continue;
-
-        //    auto* col = obj->GetComponent<JDComponent::BoxCollider>();
-        //    if (!col) continue;
-
-        //    auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
-        //    auto  pos = tm->GetPosition();
-        //    auto  hsize = col->GetHalfSize();
-        //    auto  offset = col->GetColliderOffset();
-
-        //    float left = pos.x + offset.x - hsize.x;
-        //    float top = pos.y + offset.y + hsize.y;
-        //    float right = pos.x + offset.x + hsize.x;
-        //    float bottom = pos.y + offset.y - hsize.y;
-        //    
-        //    if (mouseWorld.x >= left && mouseWorld.x <= right &&
-        //        mouseWorld.y <= top && mouseWorld.y >= bottom)
-        //    {
-        //        m_highlightedIndex = i;
-        //        break;
-        //    }
-        //}
-
-        //bool leftPressed = inputMgr.GetMouseState().leftPressed;
-        //if (leftPressed && !m_prevLeftPressed && m_highlightedIndex != -1) {
-        //    std::cout << "[DEBUG] 클릭된 콜라이더 인덱스: "
-        //        << m_highlightedIndex << std::endl;
-        //}
-        //m_prevLeftPressed = leftPressed;
+            if (col->IsMouseOver(GetMouseWorldPos()) && leftPressed) {
+                std::cout << "[DEBUG] 클릭된 콜라이더 인덱스: "
+                    << i << std::endl;
+            }
+        }
     }
 
 
@@ -176,20 +138,21 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        DrawColider();
-
         //게임 오브젝트 렌더
        //for (auto& obj : m_sceneObjects) {
        //    D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
        //}
-        for (auto& obj : m_gameObjects) {
-            D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
-        }
 
         //for (auto& uiObj : m_UIObjects)
         //{
         //    D2DRenderer::Instance().RenderUIObject(*uiObj);
         //}
+
+        for (auto& obj : m_gameObjects) {
+            D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
+        }
+
+        DrawColider();
 
         for (auto& uiObj : m_gameUiObjects)
         {

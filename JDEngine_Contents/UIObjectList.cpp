@@ -14,6 +14,8 @@ namespace JDGameObject {
 
 		void Image::Awake()
 		{
+			if (!m_active) { return; }
+
 			if (!m_isAwaked) {
 				m_isAwaked = true;
 				// cout << "Image Awake" << endl;
@@ -29,7 +31,7 @@ namespace JDGameObject {
 				{
 					D2D1_SIZE_F size = { m_size.x, m_size.y };
 					rectTransform->SetSize(m_size);
-					rectTransform->SetPivotPreset(PivotPreset::Center, size);
+					rectTransform->SetPivot(m_size);
 
 					rectTransform->SetPosition(m_position);
 					rectTransform->SetRotation(m_rotation);
@@ -48,6 +50,8 @@ namespace JDGameObject {
 		}
 		void Image::Start()
 		{
+			if (!m_active) { return; }
+
 			if (!m_isStarted) {
 				m_isStarted = true;
 				// cout << "Image Start" << endl;
@@ -55,14 +59,17 @@ namespace JDGameObject {
 		}
 		void Image::Update(float deltaTime)
 		{
+			if (!m_active) { return; }
 			// __super::Update(deltaTime);
 		}
 		void Image::LateUpdate(float deltaTime)
 		{
+			if (!m_active) { return; }
 			// __super::LateUpdate(deltaTime);
 		}
 		void Image::FixedUpdate(float fixedDeltaTime)
 		{
+			if (!m_active) { return; }
 			// __super::FixedUpdate(fixedDeltaTime);
 		}
 
@@ -99,11 +106,18 @@ namespace JDGameObject {
 				auto textComponent = GetComponent<JDComponent::UI_TextComponent>();
 
 				D2DRenderer& renderer = D2DRenderer::Instance();
-				IDWriteTextFormat* textFormat = renderer.GetTextFormat();
 				if (textComponent) {
 					textComponent->SetText(m_text);
 					textComponent->SetColor(m_color);
-					textComponent->SetTextFormat(m_textFormat.Get());
+					textComponent->SetTextFormatName(m_textFormatName);
+
+					D2DRenderer& renderer = D2DRenderer::Instance();
+					const auto& textFormats = renderer.GetTextFormats();
+					auto it = textFormats.find(m_textFormatName);
+					if (it == textFormats.end()) {
+						// 원하는 포맷이 없으면 기본 포맷 사용
+						textComponent->SetTextFormatName("MalgunGothic_14");
+					}
 				}
 			}
 		}
@@ -167,11 +181,18 @@ namespace JDGameObject {
 				auto textComponent = GetComponent<JDComponent::UI_TextComponent>();
 
 				D2DRenderer& renderer = D2DRenderer::Instance();
-				IDWriteTextFormat* textFormat = renderer.GetTextFormat();
 				if (textComponent) {
 					textComponent->SetText(m_text);
 					textComponent->SetColor(m_textColor);
-					textComponent->SetTextFormat(m_textFormat.Get());
+					textComponent->SetTextFormatName(m_textFormatName);
+
+					D2DRenderer& renderer = D2DRenderer::Instance();
+					const auto& textFormats = renderer.GetTextFormats();
+					auto it = textFormats.find(m_textFormatName);
+					if (it == textFormats.end()) {
+						// 원하는 포맷이 없으면 기본 포맷 사용
+						textComponent->SetTextFormatName("MalgunGothic_14");
+					}
 				}
 
 				////////////////////////////////////////////////////////////////////////////////

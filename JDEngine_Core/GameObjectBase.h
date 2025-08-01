@@ -66,14 +66,20 @@ namespace JDGameObject {
         virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) = 0;
         virtual void SendComPonentEvent(const std::string& ev) = 0;
 
+        ////////////////////////////////////////////////////////////////////////////////
+
         std::wstring GetID() const { return std::to_wstring(m_id); }
+
         std::wstring GetName() const { return m_name; }
+        void SetName(const std::wstring& name) { m_name = name; }
 
         int GetLayer() const { return m_layer; }
-        bool IsActive() const { return m_active; }
-
-        void SetTag(const Tag& tag) { m_tag = tag; }
         void SetLayer(int layer) { m_layer = layer; }
+
+        Tag GetTag() const { return m_tag; }
+        void SetTag(const Tag& tag) { m_tag = tag; }
+
+        bool IsActive() const { return m_active; }
         void SetActive(bool active) { 
             if (m_active == active) return; // 변경이 없으면 무시
             m_active = active;
@@ -104,14 +110,14 @@ namespace JDGameObject {
             m_name = L"GameObject";
             AddComponent<Transform>();
             m_transform = GetComponent<Transform>();
-            m_id = idCount++;
+            m_id = static_cast<int>(idCount++);
         }
 
         GameObject(const std::wstring& name) {
             m_name = name;
             AddComponent<Transform>();
             m_transform = GetComponent<Transform>();
-            m_id = idCount++;
+            m_id = static_cast<int>(idCount++);
         }
 
         virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }

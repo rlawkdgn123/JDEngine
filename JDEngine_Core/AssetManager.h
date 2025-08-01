@@ -1,6 +1,8 @@
+
 #pragma once
-//#include "json.hpp"                   //ÀÌ°Íµµ °¡´ÉÇÏ³ª ´Ù¸¥ Æú´õ¿¡ ÀÖ±â ¶§¹®¿¡ »ó´ë°æ·Î·Î ÇÏ´Â °ÍÀÌ ¾ÈÀüÇÒ °Í °°À½
-#include "../JDEngine_Common/json.hpp"  // ¶Ç´Â <nlohmann/json.hpp> - ¼³Ä¡ ¹æ½Ä¿¡ µû¶ó ´Ù¸§
+//#include "json.hpp"                   //ï¿½Ì°Íµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Î·ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#include "../JDEngine_Common/json.hpp"  // ï¿½Ç´ï¿½ <nlohmann/json.hpp> - ï¿½ï¿½Ä¡ ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½
+
 using json = nlohmann::json;
 
 struct AnimationRenderFrame {
@@ -28,8 +30,13 @@ public:
     bool Initialize(ID2D1RenderTarget* renderTarget);
     bool LoadTexture(const std::string& name, const std::wstring& filepath);
     ID2D1Bitmap* GetTexture(const std::string& name) const;
+
     bool LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
+
     const AnimationRenderClip* GetAnimationRender(const std::string& name) const;
+    const std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>>& GetTextures() const {
+        return m_textures;
+    }
 private:
     AssetManager() = default;
     ~AssetManager() = default;

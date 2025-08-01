@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "MathType.h"
 #include "MathUtil.h"
@@ -51,7 +51,7 @@ namespace JDGlobal {
 
         bool is_circum(Triangle cur, int i, std::vector<Vector2F>& point)
         {
-            // ¿ÜÁ¢¿ø¾È¿¡ Á¡ÀÌ µé¾î¿À´ÂÁö È®ÀÎ
+            // ì™¸ì ‘ì›ì•ˆì— ì ì´ ë“¤ì–´ì˜¤ëŠ”ì§€ í™•ì¸
             float ccw = (point[cur.b] - point[cur.a]).Cross(point[cur.c] - point[cur.a]);
 
             float adx = point[cur.a].x - point[i].x;
@@ -78,7 +78,7 @@ namespace JDGlobal {
 
         //D2D1_MATRIX_3X2_F
 
-        // ÀÌµ¿ Çà·Ä
+        // ì´ë™ í–‰ë ¬
         D2D1_MATRIX_3X2_F MakeTranslationMatrix(D2D1_SIZE_F size) {
             D2D1_MATRIX_3X2_F _translation;
 
@@ -89,25 +89,25 @@ namespace JDGlobal {
             return _translation;
         }
 
-        // È¸Àü Çà·Ä
+        // íšŒì „ í–‰ë ¬
         D2D1_MATRIX_3X2_F MakeRotationMatrix_Origin(FLOAT angle)
         {
             float _rad = DegreeToRadian(angle);
             D2D1_MATRIX_3X2_F _rotation;
 
-            //sin¼¼Å¸ ¸¸Å­ ¹İ½Ã°è ¹æÇâ È¸Àü
+            //sinì„¸íƒ€ ë§Œí¼ ë°˜ì‹œê³„ ë°©í–¥ íšŒì „
             _rotation._11 = cos(_rad); _rotation._21 = -sin(_rad); _rotation._31 = 0;
             _rotation._12 = sin(_rad); _rotation._22 = cos(_rad); _rotation._32 = 0;
 
             return _rotation;
         }
 
-        // Å©±â Çà·Ä
+        // í¬ê¸° í–‰ë ¬
         D2D1_MATRIX_3X2_F MakeScaleMatrix_Origin(D2D1_SIZE_F size)
         {
             D2D1_MATRIX_3X2_F _scale;
 
-            //1.0f¸¦ °öÇØÁÖ´Â ÀÌÀ¯ : ¸í½ÃÀû Ä³½ºÆÃ ¹× ÀÇµµ Ç¥Çö
+            //1.0fë¥¼ ê³±í•´ì£¼ëŠ” ì´ìœ  : ëª…ì‹œì  ìºìŠ¤íŒ… ë° ì˜ë„ í‘œí˜„
             _scale._11 = size.width * 1.0f; _scale._12 = 0.0f;
             _scale._21 = 0.0f; _scale._22 = size.height * 1.0f;
             _scale._31 = 0.0f; _scale._32 = 0.0f;
@@ -115,12 +115,12 @@ namespace JDGlobal {
             return _scale;
         }
 
-        // È¸Àü Çà·Ä º¯È¯
+        // íšŒì „ í–‰ë ¬ ë³€í™˜
         D2D1_MATRIX_3X2_F MakeRotationMatrix(FLOAT angle, D2D1_POINT_2F center /*= D2D1::Point2F()*/)
         {
-            // 1.Áß½ÉÁ¡ center ¸¸Å­ ÁÂÇ¥°è¸¦ ¿øÁ¡À¸·Î ÀÌµ¿ 
-            // 2.¿øÁ¡ ±âÁØÀ¸·Î È¸Àü (±âº» È¸Àü Çà·Ä)
-            // 3.¿ø·¡ À§Ä¡(Áß½ÉÁ¡)·Î ÁÂÇ¥°è¸¦ ´Ù½Ã ÀÌµ¿
+            // 1.ì¤‘ì‹¬ì  center ë§Œí¼ ì¢Œí‘œê³„ë¥¼ ì›ì ìœ¼ë¡œ ì´ë™ 
+            // 2.ì›ì  ê¸°ì¤€ìœ¼ë¡œ íšŒì „ (ê¸°ë³¸ íšŒì „ í–‰ë ¬)
+            // 3.ì›ë˜ ìœ„ì¹˜(ì¤‘ì‹¬ì )ë¡œ ì¢Œí‘œê³„ë¥¼ ë‹¤ì‹œ ì´ë™
             D2D1_MATRIX_3X2_F _translateToOrigin = MakeTranslationMatrix(D2D1::Size(-center.x, -center.y));
             D2D1_MATRIX_3X2_F _rotateOnOrigin = MakeRotationMatrix_Origin(angle);
             D2D1_MATRIX_3X2_F _translateToCenter = MakeTranslationMatrix(D2D1::Size(center.x, center.y));
@@ -130,12 +130,12 @@ namespace JDGlobal {
             return _resultTM;
         }
 
-        // Å©±â Çà·Ä º¯È¯
+        // í¬ê¸° í–‰ë ¬ ë³€í™˜
         D2D1_MATRIX_3X2_F MakeScaleMatrix(D2D1_SIZE_F size, D2D1_POINT_2F center /*= D2D1::Point2F()*/)
         {
-            // 1.Áß½ÉÁ¡ center ¸¸Å­ ÁÂÇ¥°è¸¦ ¿øÁ¡À¸·Î ÀÌµ¿ 
-            // 2.¿øÁ¡ ±âÁØÀ¸·Î Å©±â º¯È¯ (±âº» Å©±â Çà·Ä)
-            // 3.¿ø·¡ À§Ä¡(Áß½ÉÁ¡)·Î ÁÂÇ¥°è¸¦ ´Ù½Ã ÀÌµ¿
+            // 1.ì¤‘ì‹¬ì  center ë§Œí¼ ì¢Œí‘œê³„ë¥¼ ì›ì ìœ¼ë¡œ ì´ë™ 
+            // 2.ì›ì  ê¸°ì¤€ìœ¼ë¡œ í¬ê¸° ë³€í™˜ (ê¸°ë³¸ í¬ê¸° í–‰ë ¬)
+            // 3.ì›ë˜ ìœ„ì¹˜(ì¤‘ì‹¬ì )ë¡œ ì¢Œí‘œê³„ë¥¼ ë‹¤ì‹œ ì´ë™
             D2D1_MATRIX_3X2_F _translateToOrigin = MakeTranslationMatrix(D2D1::Size(-center.x, -center.y));
             D2D1_MATRIX_3X2_F _scaleOnOrigin = MakeScaleMatrix_Origin(size);
             D2D1_MATRIX_3X2_F _translateToCenter = MakeTranslationMatrix(D2D1::Size(center.x, center.y));
@@ -146,25 +146,25 @@ namespace JDGlobal {
         }
 
         /// <summary>
-        /// °¡»ó ¿ùµå ÁÂÇ¥°èÀÇ Á¤Á¡À» ½ºÅ©¸° ÁÂÇ¥°è·Î º¯È¯ÇÏ´Â º¯È¯ Çà·Ä »ı¼º
+        /// ê°€ìƒ ì›”ë“œ ì¢Œí‘œê³„ì˜ ì •ì ì„ ìŠ¤í¬ë¦° ì¢Œí‘œê³„ë¡œ ë³€í™˜í•˜ëŠ” ë³€í™˜ í–‰ë ¬ ìƒì„±
         /// </summary>
-        /// <param name="bUnityCoords">À¯´ÏÆ¼ ÁÂÇ¥°è »ç¿ë ¿©ºÎ (YÃà »óÇÏ ¹İÀü Àû¿ë)</param>
-        /// <param name="bMirror">ÁÂ¿ì ¹İÀü ¿©ºÎ (XÃà ¹İÀü Àû¿ë)</param>
-        /// <param name="offsetX">XÃà ¹æÇâ ÁÂÇ¥ º¸Á¤°ª</param>
-        /// <param name="offsetY">YÃà ¹æÇâ ÁÂÇ¥ º¸Á¤°ª</param>
-        /// <returns>º¯È¯ Çà·Ä (½ºÄÉÀÏ°ú ÆòÇà ÀÌµ¿ÀÌ ÇÕÃÄÁø ÇüÅÂ)</returns>
+        /// <param name="bUnityCoords">ìœ ë‹ˆí‹° ì¢Œí‘œê³„ ì‚¬ìš© ì—¬ë¶€ (Yì¶• ìƒí•˜ ë°˜ì „ ì ìš©)</param>
+        /// <param name="bMirror">ì¢Œìš° ë°˜ì „ ì—¬ë¶€ (Xì¶• ë°˜ì „ ì ìš©)</param>
+        /// <param name="offsetX">Xì¶• ë°©í–¥ ì¢Œí‘œ ë³´ì •ê°’</param>
+        /// <param name="offsetY">Yì¶• ë°©í–¥ ì¢Œí‘œ ë³´ì •ê°’</param>
+        /// <returns>ë³€í™˜ í–‰ë ¬ (ìŠ¤ì¼€ì¼ê³¼ í‰í–‰ ì´ë™ì´ í•©ì³ì§„ í˜•íƒœ)</returns>
         D2D1::Matrix3x2F MakeRenderMatrix(bool bUnityCoords, bool bMirror, float offsetX, float offsetY)
         {
-            float scaleY = bUnityCoords ? -1.0f : 1.0f;     // À¯´ÏÆ¼ ÁÂÇ¥°è¸é yÃà »óÇÏ ¹İÀü
-            float scaleX = bMirror ? -1.0f : 1.0f;          // ÀÌ¹ÌÁö ÁÂ¿ì¹İÀü ÀÌ¸é xÃà ¹İÀü 
+            float scaleY = bUnityCoords ? -1.0f : 1.0f;     // ìœ ë‹ˆí‹° ì¢Œí‘œê³„ë©´ yì¶• ìƒí•˜ ë°˜ì „
+            float scaleX = bMirror ? -1.0f : 1.0f;          // ì´ë¯¸ì§€ ì¢Œìš°ë°˜ì „ ì´ë©´ xì¶• ë°˜ì „ 
 
-            offsetX = bMirror ? offsetX : -offsetX;         // ÁÂ¿ì¹İÀüÀÏ¶§ ÀÌ¹ÌÁö ÀÌµ¿ °ª Ã³¸®
-            offsetY = bUnityCoords ? offsetY : -offsetY;    // À¯´ÏÆ¼ ÁÂÇ¥°èÀÏ¶§ ÀÌ¹ÌÁö ÀÌµ¿ °ª Ã³¸®
+            offsetX = bMirror ? offsetX : -offsetX;         // ì¢Œìš°ë°˜ì „ì¼ë•Œ ì´ë¯¸ì§€ ì´ë™ ê°’ ì²˜ë¦¬
+            offsetY = bUnityCoords ? offsetY : -offsetY;    // ìœ ë‹ˆí‹° ì¢Œí‘œê³„ì¼ë•Œ ì´ë¯¸ì§€ ì´ë™ ê°’ ì²˜ë¦¬
 
             return D2D1::Matrix3x2F::Scale(scaleX, scaleY) * D2D1::Matrix3x2F::Translation(offsetX, offsetY);
         }
 
-        // µğ¹ö±× Ãâ·ÂÀ» À§ÇÑ TM ¹®ÀÚ¿­
+        // ë””ë²„ê·¸ ì¶œë ¥ì„ ìœ„í•œ TM ë¬¸ìì—´
         void MakeMatrixToString(
             const D2D1_MATRIX_3X2_F& matrix,
             __out_ecount(bufSize) wchar_t* buffer,
@@ -181,22 +181,22 @@ namespace JDGlobal {
             );
         }
 
-        // º¯È¯ Çà·Ä¿¡ Æ÷ÇÔµÈ ÇÇ¹ş(Áß½ÉÁ¡) º¸Á¤À» ¾ø¾Ö°í, ÇÇ¹ş ±âÁØÁ¡ ¾øÀÌ º¯È¯ Çà·ÄÀ» ÀçÁ¶Á¤
+        // ë³€í™˜ í–‰ë ¬ì— í¬í•¨ëœ í”¼ë²—(ì¤‘ì‹¬ì ) ë³´ì •ì„ ì—†ì• ê³ , í”¼ë²— ê¸°ì¤€ì  ì—†ì´ ë³€í™˜ í–‰ë ¬ì„ ì¬ì¡°ì •
         D2D1::Matrix3x2F RemovePivot(const D2D1::Matrix3x2F& M_local, const D2D1_POINT_2F& pivot)
         {
-            // 1) pivot º¸Á¤ Àü(¿øÁ¡À¸·Î) : T(-pivot)
+            // 1) pivot ë³´ì • ì „(ì›ì ìœ¼ë¡œ) : T(-pivot)
             auto P0 = D2D1::Matrix3x2F::Translation(-pivot.x, -pivot.y);
-            // 2) pivot º¹¿ø ÈÄ         : T(+pivot)
+            // 2) pivot ë³µì› í›„         : T(+pivot)
             auto P1 = D2D1::Matrix3x2F::Translation(pivot.x, pivot.y);
-            // 3) ¾çÂÊ¿¡ °öÇØ¼­ ÇÇ¹ş¸¸ Á¦°Å
-            //    P1 * (P0 * M_local * P1) * P0 == M_local ÀÌÁö¸¸
-            //    pivot º¸Á¤¸¸ »©·Á¸é: M_noPivot = P1 * M_local * P0
+            // 3) ì–‘ìª½ì— ê³±í•´ì„œ í”¼ë²—ë§Œ ì œê±°
+            //    P1 * (P0 * M_local * P1) * P0 == M_local ì´ì§€ë§Œ
+            //    pivot ë³´ì •ë§Œ ë¹¼ë ¤ë©´: M_noPivot = P1 * M_local * P0
             return P1 * M_local * P0;
         }
 
         bool IsPointInRect(const D2D1_POINT_2F& point, const D2D1_RECT_F& rect) noexcept
         {
-            // ÁÂÇ¥ Á¤±ÔÈ­: left <= right, top <= bottom
+            // ì¢Œí‘œ ì •ê·œí™”: left <= right, top <= bottom
             float left = std::min(rect.left, rect.right);
             float right = std::max(rect.left, rect.right);
             float top = std::min(rect.top, rect.bottom);

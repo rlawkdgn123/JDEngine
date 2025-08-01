@@ -7,14 +7,9 @@
 #include "Texture.h"
 #include "Animation.h"
 
-#include "UI_ImageComponent.h"
-#include "UI_TextComponent.h"
-#include "UI_ButtonComponent.h"
-
-using namespace Microsoft::WRL;
-
 using GameObject = JDGameObject::GameObject;
 using UIObject = JDGameObject::UIObject;
+using Microsoft::WRL::ComPtr;
 
 class D2DRenderer
 {
@@ -47,7 +42,7 @@ public:
 
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity = 1.0f);
 
-    void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color);
+    void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, IDWriteTextFormat* textFormat);
 
     void SetTransform(const D2D1_MATRIX_3X2_F tm);
 
@@ -75,11 +70,13 @@ public:
 
     ID2D1RenderTarget* GetRenderTarget() const { return m_d2dContext.Get(); }
 
-    ComPtr<ID2D1Effect> CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount);// 이펙트
+    Microsoft::WRL::ComPtr<ID2D1Effect> CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount);// 이펙트
 
     ID2D1DeviceContext7* GetD2DContext() const { return m_d2dContext.Get(); }
 
-    IDWriteTextFormat* GetTextFormat() const { return m_textFormat.Get(); }
+    const std::unordered_map<std::string, ComPtr<IDWriteTextFormat>>& GetTextFormats() const {
+        return m_textFormats;
+    }
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
 private:
@@ -98,20 +95,21 @@ private:
 
     std::shared_ptr<Camera> m_camera;
 
-    ComPtr<ID3D11Device>           m_d3dDevice;
-    ComPtr<IDXGISwapChain1>        m_swapChain;
+    Microsoft::WRL::ComPtr<ID3D11Device>           m_d3dDevice;
+    Microsoft::WRL::ComPtr<IDXGISwapChain1>        m_swapChain;
 
-    ComPtr<ID3D11DeviceContext>    m_d3dContext;
-    ComPtr<ID3D11RenderTargetView> m_d3dRenderTV; // D3D render target view
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext>    m_d3dContext;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_d3dRenderTV; // D3D render target view
 
-    ComPtr<ID2D1Bitmap1>           m_targetBitmap; // D2D render target bitmap
-    ComPtr<ID2D1SolidColorBrush>   m_brush;
-    ComPtr<ID2D1SolidColorBrush>   m_textBrush;
-    ComPtr <IDWriteTextFormat>     m_textFormat;
+    Microsoft::WRL::ComPtr<ID2D1Bitmap1>           m_targetBitmap; // D2D render target bitmap
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>   m_brush;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>   m_textBrush;
+    // ComPtr<IDWriteTextFormat>      m_textFormat;
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_textFormats;
 
-    ComPtr<ID2D1Device7>           m_d2dDevice;
-    ComPtr<ID2D1DeviceContext7>    m_d2dContext;
+    Microsoft::WRL::ComPtr<ID2D1Device7>           m_d2dDevice;
+    Microsoft::WRL::ComPtr<ID2D1DeviceContext7>    m_d2dContext;
 
-    ComPtr<IWICImagingFactory>     m_wicFactory;
+    Microsoft::WRL::ComPtr<IWICImagingFactory>     m_wicFactory;
 };
 

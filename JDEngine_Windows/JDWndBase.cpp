@@ -5,9 +5,12 @@
 namespace JDWindow { // 이 네임스페이스를 추가하여 JDWndBase::Create 및 OnResize 정의를 포함합니다.
 	LRESULT CALLBACK JDWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
-		// ImGui 메시지 처리를 맨 먼저!
-		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
-			return true;
+		//if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		//{
+		//	// ImGui가 입력을 사용했다면(예: InputText 클릭), true를 반환합니다.
+		//	// 이 경우 다른 로직은 이 입력을 무시해야 하므로 즉시 종료합니다.
+		//	return true;
+		//}
 
 		JDWndBase* jdWnd = (JDWndBase*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 

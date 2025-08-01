@@ -1,6 +1,4 @@
-﻿#include "pch.h";
-
-// dear imgui, v1.92.1 WIP
+﻿// dear imgui, v1.92.1 WIP
 // (headers)
 
 // Help:
@@ -60,6 +58,7 @@ Index of this file:
 */
 
 #pragma once
+#include "pch.h";
 
 // Configuration file with compile-time options
 // (edit imconfig.h or '#define IMGUI_USER_CONFIG "myfilename.h" from your build system)

@@ -1,6 +1,4 @@
-﻿#include "pch.h";
-
-// dear imgui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
+﻿// dear imgui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 
 // Implemented features:
@@ -19,6 +17,7 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 #pragma once
+#include "pch.h";
 #include "imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 

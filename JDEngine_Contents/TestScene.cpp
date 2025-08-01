@@ -1,4 +1,4 @@
-#include "pch.h"
+ç™¤#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -16,11 +16,11 @@ namespace JDScene {
         using namespace JDComponent;
 
         //cout << "[TestScene] OnEnter()\n";
+
         CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
         std::shared_ptr<GameObject>  birdObj = std::make_shared<GameObject>();
-
         // UI
         std::shared_ptr<UIObject> testUIObject = std::make_shared<UIObject>();
 
@@ -40,28 +40,24 @@ namespace JDScene {
 
         for (int col = 0; col < 5; ++col) {
             for (int row = 0; row < 7; ++row) {
-                // °íÀ¯ ÀÌ¸§ »ý¼º (¿øÇÏ¸é µ¿ÀÏ¸íÀ¸·Î ÇØµµ µË´Ï´Ù)
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
-                // GameObject »ý¼º
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // À§Ä¡ ¼³Á¤
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<Transform>()->SetPosition({ x, y });
 
-                // ÄÝ¶óÀÌ´õ Ãß°¡
                 box->AddComponent<BoxCollider>(Vector2F{ 47.0f,47.0f });
+
             }
         }
 
-        //Å×½ºÆ®¿ë ¿øÀÌ¶û ¹Ú½º ÄÝ¶óÀÌ´õ °¡Áø ¿ÀºêÁ§Æ®
         auto* circObj = CreateGameObject<Player>(L"CircleObject");
         circObj->GetComponent<Transform>()->SetPosition({ 200.0f, 100.0f });
         circObj->AddComponent<CircleCollider>(50.0f);
 
-        {//TextÀÌ¹ÌÁö
+        {//Textï¿½Ì¹ï¿½ï¿½ï¿½
             auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
             boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj2->AddComponent<BGM>("MainTheme");
@@ -70,7 +66,7 @@ namespace JDScene {
             auto size = bitmap->GetSize();
             boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
         }
-        {//Graybird¾Ö´Ï
+        {//Graybirdï¿½Ö´ï¿½
             auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
@@ -93,7 +89,22 @@ namespace JDScene {
 
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-        
+
+        //bool leftPressed = InputManager::Instance().GetKeyPressed(VK_LBUTTON);
+        bool leftPressed = InputManager::Instance().GetMouseState().leftPressed;
+        size_t n = m_gameObjects.size();
+        for (size_t i = 0; i < n; ++i) {
+            auto* obj = m_gameObjects[i].get();
+            if (!obj) continue;
+
+            auto* col = obj->GetComponent<JDComponent::ColliderBase>();
+            if (!col) continue;
+
+            if (col->IsMouseOver(GetMouseWorldPos()) && leftPressed) {
+                std::cout << "[DEBUG] í´ë¦­ëœ ì½œë¼ì´ë” ì¸ë±ìŠ¤: "
+                    << i << std::endl;
+            }
+        }
     }
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
@@ -115,13 +126,16 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        DrawColider();
+        //ê²Œìž„ ì˜¤ë¸Œì íŠ¸ ë Œë”
 
         for (auto& obj : m_gameObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
         }
 
+        DrawColider();
+
         for (auto& uiObj : m_gameUiObjects)
+
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }

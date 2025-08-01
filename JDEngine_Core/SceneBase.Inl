@@ -47,7 +47,7 @@ namespace JDScene {
 
 		auto obj = std::make_unique<T>(std::forward<Args>(args)...);  // T 객체 생성
 		T* ptr = obj.get();
-		m_gameUiObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
+		m_uiObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
 		m_objectCount++;
 
 		std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;

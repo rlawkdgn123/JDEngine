@@ -18,7 +18,7 @@ namespace JDComponent {
 
             void OnDisable() override {};
 
-            using Vec2 = JDGlobal::Math::Vector2F;
+            using Vector2F = JDGlobal::Math::Vector2F;
             using Mat3x2 = D2D1::Matrix3x2F;
             using PivotPreset = JDGlobal::Core::PivotPreset;
             using AnchorPreset = JDGlobal::Core::AnchorPreset;
@@ -30,7 +30,7 @@ namespace JDComponent {
                 m_matrixWorld = D2D1::Matrix3x2F::Identity();
             }
 
-            RectTransform(Vec2 tr)
+            RectTransform(Vector2F tr)
                 : m_position{ tr.x, tr.y }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
                 m_dirty(false), m_parent(nullptr)
             {
@@ -76,7 +76,7 @@ namespace JDComponent {
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
                 chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
 
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
                 JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
 
                 m_children.push_back(child);
@@ -88,7 +88,7 @@ namespace JDComponent {
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
                 chiledLocalTM = chiledLocalTM * GetWorldMatrix();
 
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
                 JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
 
                 m_children.erase(
@@ -98,20 +98,20 @@ namespace JDComponent {
             }
 
             // ** Width, Height **
-            void SetSize(const Vec2& size) { m_size = size; SetDirty(); }
-            const Vec2& GetSize() const { return m_size; }
+            void SetSize(const Vector2F& size) { m_size = size; SetDirty(); }
+            const Vector2F& GetSize() const { return m_size; }
 
             // ** 트랜스폼 설정 **
-            void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
+            void SetPosition(const Vector2F& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
-            void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
+            void SetScale(const Vector2F& scale) { m_scale = scale; SetDirty(); }
 
-            const Vec2& GetPosition() const { return m_position; }
+            const Vector2F& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }
-            const Vec2& GetScale() const { return m_scale; }
+            const Vector2F& GetScale() const { return m_scale; }
 
 
-            void Translate(const Vec2& delta)
+            void Translate(const Vector2F& delta)
             {
                 m_position.x += delta.x;
                 m_position.y += delta.y;
@@ -132,7 +132,7 @@ namespace JDComponent {
             }
 
             // ** 방향 벡터 **
-            Vec2 GetForward() const
+            Vector2F GetForward() const
             {
                 float radian = JDMath::DegreeToRadian(m_rotation);
                 return { std::cosf(radian), std::sinf(radian) };
@@ -160,14 +160,37 @@ namespace JDComponent {
                 return inv;
             }
 
-            // ** 회전과 스케일을 위한 피봇 설정 **
-            void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
-
-            void SetAnchorOffset(AnchorPreset anchor, const D2D1_SIZE_F& parentSize);
-
-            D2D1_POINT_2F GetPivotPoint() const
+            Mat3x2 GetScreenCenterTranslation()
             {
-                return m_pivot;
+                float width = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetWidth());
+                float height = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetHeight());
+
+                return D2D1::Matrix3x2F::Translation(
+                    width * 0.5f,
+                    height * 0.5f
+                );
+            }
+
+            // ** 회전과 스케일을 위한 피봇, 앵커 설정 **
+            void SetPivot(const Vector2F& relativePivot);
+            void SetPivot(PivotPreset preset);
+
+            // 상대 좌표를 반환하는 getter
+            Vector2F GetPivot() const { return m_pivot; }
+
+            // 실제 픽셀 오프셋을 계산해서 반환하는 헬퍼 함수
+            Vector2F GetPivotOffset() const {
+                Vector2F size = GetSize(); // 현재 사이즈를 가져옴
+                return { m_pivot.x * size.x, m_pivot.y * size.y };
+            }
+
+            void SetAnchor(const Vector2F& anchor) {
+                m_anchor = anchor;
+                SetDirty();
+            }
+
+            Vector2F GetAnchor() const {
+                return Vector2F{ m_anchor.x, m_anchor.y };
             }
 
         private:
@@ -187,24 +210,19 @@ namespace JDComponent {
 
             bool m_dirty;
 
-            Vec2     m_size =       { 100.0f, 100.0f };
-            Vec2     m_position =   { 0.f, 0.f };       // translation position
-            float    m_rotation =   { 0.f };            // in degrees
-            Vec2     m_scale =      { 1.f, 1.f };
+            Vector2F     m_size         = { 100.0f, 100.0f };
+            Vector2F     m_position     = { 0.f, 0.f };
+            float        m_rotation     = { 0.f };
+            Vector2F     m_scale        = { 1.f, 1.f };
+
+            Vector2F     m_pivot        = { 0.5f, 0.5f };
+            Vector2F     m_anchor       = { 0.5f, 0.5f };
 
             RectTransform* m_parent;
             std::vector<RectTransform*> m_children;
 
             Mat3x2 m_matrixLocal;
             Mat3x2 m_matrixWorld;
-
-            D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
-            D2D1_POINT_2F m_anchor{ 0.0f, 0.0f };
-
-
-            // Component을(를) 통해 상속됨
-            
-
-};
+        };
     }
 }

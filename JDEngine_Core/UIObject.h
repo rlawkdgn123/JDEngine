@@ -15,14 +15,14 @@ namespace JDGameObject {
 			m_name = L"UIObject";
 			AddComponent<RectTransform>();
 			m_rectTransform = GetComponent<RectTransform>();
-			m_id = idCount++;
+			m_id = static_cast<int>(idCount++);
 		}
 
 		UIObject(const std::wstring& name) {
 			m_name = name;
 			AddComponent<RectTransform>();
 			m_rectTransform = GetComponent<RectTransform>();
-			m_id = idCount++;
+			m_id = static_cast<int>(idCount++);
 		}
 
 		virtual void Awake() override { if (m_isAwaked) { return; } m_isAwaked = true; }

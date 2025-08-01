@@ -1,10 +1,13 @@
 #pragma once
 #include "pch.h"
 #include "framework.h"
-
+#include "ResourceSystem.h"
+using ResourceSystem = JDGameSystem::ResourceSystem;
 namespace JDGameObject{
     namespace Content{
         using Resource = JDGlobal::Contents::Resource;
+        using CatType = JDGlobal::Contents::CatType;
+
         class DefaultObject : public JDGameObject::GameObject {
         public:
             DefaultObject() : GameObject(L"DefaultObject") {}
@@ -52,29 +55,69 @@ namespace JDGameObject{
         class Cat : public JDGameObject::GameObject
         {
         public:
-            Cat() : GameObject(L"Cat") {}
-            Cat(const std::wstring& name) : GameObject(name) {}
+            Cat() : GameObject(L"Cat"), m_catType(CatType::Felis),
+                m_populationCost(1), 
+                m_resourceBonus(1.f,1.f,1.f),
+                m_synergyBonus(1.f,1.f,1.f),
+                m_resourceSubPerSec(1.f,1.f,1.f)
+            {}
+            Cat(const CatType type) : GameObject(L"Cat"), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {}
+            Cat(const std::wstring& name, const CatType type) : GameObject(name), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {}
         public:
-            void Awake() override;
-            void Start() override;
+            virtual void Awake() override;
+            virtual void Start() override;
         protected:
-            int m_populationCost;
-            Resource m_CreateCost;               // 생산 비용
+            CatType m_catType;              // 고양이 종류
+            int m_populationCost;           // 인구 비용
             Resource m_resourceBonus;		// 자원 보너스
             Resource m_synergyBonus;		// 시너지 보너스
+            Resource m_resourceSubPerSec;    // 초당 자원 유지비용 (소모)
+            ResourceSystem* m_resourceSystem;
         };
+
         class Building : public JDGameObject::GameObject
         {
         public:
-            Building() : GameObject(L"Building") {}
-            Building(const std::wstring& name) : GameObject(name) {}
+            //using ResourceSystem = JDGameSystem::ResourceSystem;
+        public:
+            Building() : GameObject(L"Building"), 
+                m_buildCost{ 0,0,0 },
+                m_initResource{ 0,0,0 },
+                m_resourceGenPerSec{ 0,0,0 },
+                m_resourceSubPerSec{ 0,0,0 } 
+            {
+                m_tag = Tag::PlayerBuilding;
+            }
+            
+            Building(const std::wstring& name) : GameObject(name),
+                m_buildCost{ 0,0,0 },
+                m_initResource{ 0,0,0 },
+                m_resourceGenPerSec{ 0,0,0 },
+                m_resourceSubPerSec{ 0,0,0 }
+            {
+                m_tag = Tag::PlayerBuilding;
+            }
+        public:
+            virtual void Awake() override;
+            virtual void Start() override;
         protected:
             Resource m_upgradeCost[3] =         // 업그레이드 비용
-            { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+            { { 0,0,0 }, { 0,0,0 }, { 0,0,0 } };
             Resource m_buildCost;               // 건설 비용
             Resource m_initResource;            // 건물 설치 시 일회성 획득 자원
             Resource m_resourceGenPerSec;       // 초당 자원 획득량
-            Resource m_resourceUpkeepPerSec;    // 초당 자원 유지비용 (소모)
+            Resource m_resourceSubPerSec;       // 초당 자원 유지비용 (소모)
+            ResourceSystem* m_resourceSystem;
         };
     }
 }

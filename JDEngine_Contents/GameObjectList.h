@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "ResourceSystem.h"
-
+using ResourceSystem = JDGameSystem::ResourceSystem;
 namespace JDGameObject{
     namespace Content{
         using Resource = JDGlobal::Contents::Resource;
@@ -82,12 +82,13 @@ namespace JDGameObject{
             Resource m_resourceBonus;		// 자원 보너스
             Resource m_synergyBonus;		// 시너지 보너스
             Resource m_resourceSubPerSec;    // 초당 자원 유지비용 (소모)
+            ResourceSystem* m_resourceSystem;
         };
 
         class Building : public JDGameObject::GameObject
         {
         public:
-            //using ResourceSystem = JDGameManager::ResourceSystem;
+            //using ResourceSystem = JDGameSystem::ResourceSystem;
         public:
             Building() : GameObject(L"Building"), 
                 m_buildCost{ 0,0,0 },
@@ -106,14 +107,17 @@ namespace JDGameObject{
             {
                 m_tag = Tag::PlayerBuilding;
             }
-
+        public:
+            virtual void Awake() override;
+            virtual void Start() override;
         protected:
             Resource m_upgradeCost[3] =         // 업그레이드 비용
             { { 0,0,0 }, { 0,0,0 }, { 0,0,0 } };
             Resource m_buildCost;               // 건설 비용
             Resource m_initResource;            // 건물 설치 시 일회성 획득 자원
             Resource m_resourceGenPerSec;       // 초당 자원 획득량
-            Resource m_resourceSubPerSec;    // 초당 자원 유지비용 (소모)
+            Resource m_resourceSubPerSec;       // 초당 자원 유지비용 (소모)
+            ResourceSystem* m_resourceSystem;
         };
     }
 }

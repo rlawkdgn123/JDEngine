@@ -12,6 +12,7 @@ namespace JDGameObject {
             }
             else { return; }
         }
+
         void DefaultObject::Start()
         {
             if (!m_isStarted) {
@@ -19,7 +20,6 @@ namespace JDGameObject {
             }
             else { return; }
         }
-
 
         //Player
         void Player::Awake()
@@ -62,6 +62,26 @@ namespace JDGameObject {
         }
         void Grid::LateUpdate(float deltaTime) {}
         void Grid::FixedUpdate(float fixedDeltaTime) {}
+
+        void Cat::Awake()
+        {
+            m_resourceSystem = &ResourceSystem::Instance();
+        }
+
+        void Cat::Start()
+        {
+            m_resourceSystem->AddCurPopulation(-m_populationCost);
+        }
+
+        void Building::Awake()
+        {
+            m_resourceSystem = &ResourceSystem::Instance();
+        }
+
+        void Building::Start()
+        {
+            m_resourceSystem->AddTotalResource(m_buildCost);
+        }
 
     }
 }

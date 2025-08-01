@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObjectBase.h"
 
-namespace JDGameManager {
+namespace JDGameSystem {
     class ResourceSystem;
 }
 
@@ -11,7 +11,7 @@ namespace JDGameObject {
         class House : public JDGameObject::GameObject
         {
         public:
-            using ResourceSystem = JDGameManager::ResourceSystem;
+            using ResourceSystem = JDGameSystem::ResourceSystem;
             using Resource = JDGlobal::Contents::Resource;
         public:
             House() : GameObject(L"Building") { m_tag = Tag::PlayerBuilding; }
@@ -33,7 +33,7 @@ namespace JDGameObject {
             void OnTriggerExit(GameObjectBase* other) override;
 
         protected:
-            ResourceSystem* m_resourceSystem = nullptr;
+            ResourceSystem* m_resourceSystem;
             Resource m_buildCost{ 0,0,0 };
             int m_initResource = 10;
         };

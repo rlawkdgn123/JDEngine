@@ -22,9 +22,6 @@
     <Filter Include="Cat">
       <UniqueIdentifier>{9d2c5cc9-8f8d-4e6c-9697-a64b83753eed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Bilding">
-      <UniqueIdentifier>{b59b63df-186a-4b3f-98c8-74b223ae03ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene\TestScene">
       <UniqueIdentifier>{e6893c4a-66c4-4d7e-9fca-ac085a07410c}</UniqueIdentifier>
     </Filter>
@@ -57,17 +54,17 @@
     <ClInclude Include="ResourceSystem.h">
       <Filter>GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="Mine.h">
+      <Filter>GameObject\Buildings</Filter>
+    </ClInclude>
     <ClInclude Include="FishingSpot.h">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClInclude>
     <ClInclude Include="House.h">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClInclude>
     <ClInclude Include="LumberMill.h">
-      <Filter>Bilding</Filter>
-    </ClInclude>
-    <ClInclude Include="Mine.h">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -93,16 +90,16 @@
       <Filter>Scene\TestScene</Filter>
     </ClCompile>
     <ClCompile Include="FishingSpot.cpp">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClCompile>
     <ClCompile Include="House.cpp">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClCompile>
     <ClCompile Include="LumberMill.cpp">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClCompile>
     <ClCompile Include="Mine.cpp">
-      <Filter>Bilding</Filter>
+      <Filter>GameObject\Buildings</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

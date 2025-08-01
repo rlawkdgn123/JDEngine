@@ -175,7 +175,7 @@ bool EngineCore::Initialize()
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TestScene01"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     SceneManager::Instance().ChangeScene("TestScene01");
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
@@ -207,7 +207,7 @@ bool EngineCore::Initialize()
 void EngineCore::Run()
 {
     MSG msg = { 0 };
-
+    
     while (WM_QUIT != msg.message)
     {
         // 모든 Windows 메시지를 처리합니다.
@@ -233,15 +233,15 @@ void EngineCore::Run()
             // WM_CHAR와 같은 메시지 생성을 위해 필수적입니다.
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            continue; // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
-
-            // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
-            UpdateTime();
-            UpdateLogic();
-            AudioManager::Instance().Update();
-            Render();
+            // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
+            continue;
         }
 
+        // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
+        UpdateTime();
+        UpdateLogic();
+        AudioManager::Instance().Update();
+        Render();
     }
 }
 

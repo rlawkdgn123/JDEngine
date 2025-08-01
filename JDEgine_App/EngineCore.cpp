@@ -66,6 +66,16 @@ bool EngineCore::Initialize()
         return false;
     }
 
+    AudioManager::Instance().Initialize();
+
+    //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
+    //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
+    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
+    //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    AudioManager::Instance().SetMusicVolume(1.0f);
+    FMOD::Channel* bgmChannel = nullptr;
+    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
     //{
@@ -99,7 +109,7 @@ bool EngineCore::Initialize()
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
-    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png")) {
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
         std::cout << "[ERROR] 텍스처 로드 실패" << std::endl;
     }
     /*bool ok = AssetManager::Instance().LoadTexture("Test", L"../Resource/Test.png");
@@ -115,10 +125,10 @@ bool EngineCore::Initialize()
     }
     */
 
-    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/graybirdsheet.png")) {
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/graybirdsheet.json")) {
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
@@ -142,8 +152,8 @@ bool EngineCore::Initialize()
     // 
     // ImGui Init
     //
-    ////////////////////////////////////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////////////////////////////////////
+    
     // ImGui 컨텍스트 생성
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -175,6 +185,7 @@ void EngineCore::Run()
 
             UpdateTime();
             UpdateLogic();
+            AudioManager::Instance().Update();
             Render();
         }
     }
@@ -316,12 +327,10 @@ void EngineCore::UpdateLogic()
             
         if (input.GetKeyPressed(VK_F2))
         {
-            std::cout << "한슬";
             m_fader.FadeIn(1.0f);
         }
         if (input.GetKeyPressed(VK_F1))
         {
-            std::cout << "장후";
             m_fader.FadeOut(2.5f);
         }
     }

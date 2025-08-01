@@ -1,6 +1,6 @@
 #pragma once
-
-#include "json.hpp"  // 또는 <nlohmann/json.hpp> - 설치 방식에 따라 다름
+//#include "json.hpp"                   //이것도 가능하나 다른 폴더에 있기 때문에 상대경로로 하는 것이 안전할 것 같음
+#include "../JDEngine_Common/json.hpp"  // 또는 <nlohmann/json.hpp> - 설치 방식에 따라 다름
 using json = nlohmann::json;
 
 struct AnimationRenderFrame {

@@ -44,6 +44,8 @@
 #include <d2d1effecthelpers.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <fmod.hpp>
+#include <fmod_studio.hpp>
 
 #include <stdexcept>
 

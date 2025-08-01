@@ -10,3 +10,5 @@
 #include "TitleScene.h"
 #include "AssetManager.h"
 #include "CameraFader.h"
+#include "FMODSystem.h"
+#include "AudioManager.h"

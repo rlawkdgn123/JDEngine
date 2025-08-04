@@ -58,6 +58,7 @@ namespace JDGameSystem {
 			UpdateTotalResourcePerSec();
 			return m_totalResourcePerSec;
 		}
+		const Resource& GetTotalResource() const { return m_totalResource; }
 		const Resource& GetResourcePerSec() const { return m_resourcePerSec; }
 		const Resource& GetResourceBonus() const { return m_resourceBonus; }
 		const Resource& GetSynergyBonus() const { return m_synergyBonus; }

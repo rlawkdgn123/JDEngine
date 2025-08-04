@@ -137,6 +137,10 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
     }
 
+    if (!AssetManager::Instance().LoadTexture("Title_Exam", L"../Resource/TITLE/TITLE_exam.jpg")) {
+        std::cout << "[ERROR] Title exam 텍스처 로드 실패" << std::endl;
+    }
+
     if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
         std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl;
     }
@@ -165,7 +169,20 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
     }
 
+    // TEST Resource
+    if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png")) {
+        std::cout << "[ERROR] house 텍스처 로드 실패" << std::endl;
+    }
 
+    if (!AssetManager::Instance().LoadTexture("house2", L"../Resource/house2.png")) {
+        std::cout << "[ERROR] house2 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png")) {
+        std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
@@ -173,11 +190,14 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
-    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
-    //SceneManager::Instance().ChangeScene("TitleScene");
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TutorialScene>(JDGlobal::Core::SceneType::SCENE_TUTORIAL, "TutorialScene"));
+    
+    // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
+    SceneManager::Instance().ChangeScene("TitleScene");
+    //SceneManager::Instance().ChangeScene("TestScene01");
+
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();

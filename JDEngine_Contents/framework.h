@@ -18,6 +18,7 @@
 #include "UIObject.h"
 #include "UIObjectList.h"
 #include "UI_TextComponent.h"
+#include "EmptyMenu.h"
 
 #include "BGM.h"
 #include "SFX.h"

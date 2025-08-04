@@ -27,6 +27,8 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         void ClickUpdate();
+    private:
+        FMOD::Channel* m_hoverSfxChannel = nullptr;
 
 	};
 }

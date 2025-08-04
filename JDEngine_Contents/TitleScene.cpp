@@ -77,8 +77,9 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
         
         //타이틀 배경
-        auto image = CreateUIObject<Image>(L"Title_Image");
-        image->SetTextureName("Title");
+        //auto image = CreateUIObject<Image>(L"Title_Image");
+        auto image = CreateUIObject<Image>(L"Title_Exam");
+        image->SetTextureName("Title_Exam");
 
         auto cam =  D2DRenderer::Instance().GetCamera();
         if (cam)
@@ -100,31 +101,41 @@ namespace JDScene {
         gameStart->SetSizeToOriginal();
 
         // 1. OnClick: 클릭하면 InGameScene으로 전환
-        //gameStart->AddOnClick("Load GameScene", []() {
-        //    // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-        //    SceneManager::Instance().ChangeScene("TitleScene");
-        //    });
+        gameStart->AddOnClick("Load GameScene", []() {
+            // SceneManager를 이용해 다음 씬으로 넘어갑니다.
+            SceneManager::Instance().ChangeScene("TutorialScene");
+            });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경 (예: 밝은 버전)
-        gameStart->AddOnEnter("Highlight On", [gameStart]() {
+        gameStart->AddOnEnter("Highlight On", [this, gameStart]() {
             gameStart->SetTextureName("GAME_START_A");
+            if (m_hoverSfxChannel == nullptr)
+            {
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        gameStart->AddOnExit("Highlight Off", [gameStart]() {
+        gameStart->AddOnExit("Highlight Off", [this, gameStart]() {
             gameStart->SetTextureName("GAME_START_B");
+            //if (m_hoverSfxChannel)
+            //{
+            //    m_hoverSfxChannel->stop();        // 사운드 정지
+            //    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            //}
             });
 
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        // Setting 버튼
+        auto setting = CreateUIObject<Button>(L"Setting_Button");
+        setting->SetTextureName("SETTING_A");
+        setting->SetSizeToOriginal();
+        
+        ////////////////////////////////////////////////////////////////////////////////
 
-
-        //// Setting 버튼
-        //auto setting = CreateUIObject<Button>(L"Setting_Button");
-        //setting->SetTextureName("SETTING_A");
-        //setting->SetSizeToOriginal();
-        //
         //// Quit Game 버튼
         //auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
         //quitGame->SetTextureName("QUITGAME_A");

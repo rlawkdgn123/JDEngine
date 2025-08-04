@@ -1,8 +1,8 @@
 #pragma once
 #include "Component.h"
 
-namespace JDComponent { 
-	namespace D2DTM { class Transform; } 
+namespace JDComponent {
+	namespace D2DTM { class Transform; }
 }
 
 
@@ -53,6 +53,12 @@ namespace JDComponent {
 		virtual void OnCollisionStay(ColliderBase* other) { if (onCollisionStay)  onCollisionStay(other); }
 		virtual void OnCollisionExit(ColliderBase* other) { if (onCollisionExit)  onCollisionExit(other); m_isColliding = false; }
 
+		void    SetIndex(int idx) { m_index = idx; }
+		int     GetIndex() const { return m_index; }
+
+		void    SetOpen(bool o) { m_isOpen = o; }
+		bool    IsOpen() const { return m_isOpen; }
+
 		bool GetColliding() const { return m_isColliding; }
 		virtual bool IsMouseOver(Vec2 mousePos) = 0;
 
@@ -64,6 +70,9 @@ namespace JDComponent {
 	protected:
 		Vec2  m_offset;
 		ColliderType m_type;
+
+		bool m_isOpen = false;
+		int m_index = -1;
 
 		bool m_isTrigger = true;
 		bool m_isColliding = false;

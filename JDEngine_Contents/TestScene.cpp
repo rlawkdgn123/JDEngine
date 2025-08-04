@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "framework.h"
+#include "SceneList.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
-#include "TestScene.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -17,7 +17,7 @@ namespace JDScene {
 
         //cout << "[TestScene] OnEnter()\n";
 
-        CreateGameObject<Player>(L"Player");
+        CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
         std::shared_ptr<GameObject> birdObj = std::make_shared<GameObject>();
@@ -39,18 +39,24 @@ namespace JDScene {
         const float spacingX = 100.0f;
         const float spacingY = -100.0f;
 
-        for (int col = 0; col < 5; ++col) {
-            for (int row = 0; row < 7; ++row) {
+
+        for (int col = 0; col < m_totalCols; ++col) {
+            for (int row = 0; row < m_totalRows; ++row) {
+                // 1) 이름 생성
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
+                // 2) 생성
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
+                // 3) 위치 세팅
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<Transform>()->SetPosition({ x, y });
 
-                box->AddComponent<BoxCollider>(Vector2F{ 47.0f,47.0f });
-
+                // 4) 콜라이더 추가 및 인덱스 부여
+                auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
+                int idx = col * m_totalRows + row;         // 0부터 (5*7-1) = 34 까지
+                collider->SetIndex(idx);
             }
         }
 
@@ -59,18 +65,25 @@ namespace JDScene {
         circObj->AddComponent<CircleCollider>(50.0f);
         circObj->AddComponent<Editor_Clickable>();
 
-        {//Text�̹���
+        {//Text
             auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
+
+            boxObj2->SetTag(JDGlobal::Base::GameTag::Mover);
+
             boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
-            boxObj2->AddComponent<BGM>("MainTheme");
+            
             boxObj2->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
             boxObj2->AddComponent<Editor_Clickable>();
             auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
             auto size = bitmap->GetSize();
             boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+
+            boxObj2->AddComponent<SFX>("Step");
         }
 
-        {//Graybird�ִ�
+
+        {//Graybird
+
             auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
@@ -87,6 +100,7 @@ namespace JDScene {
                 
             }
         }
+
     }
 
     void TestScene::OnLeave() {
@@ -319,13 +333,14 @@ namespace JDScene {
                 // GameObject 생성
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // 위치 설정
-                float x = startX + spacingX * col;
-                float y = startY + spacingY * row;
-                box->GetComponent<JDComponent::D2DTM::Transform>()->SetPosition({ x, y });
 
-                // 콜라이더 추가
-                box->AddComponent<JDComponent::BoxCollider>(Vector2F{ 47.0f,47.0f });
+        int startCol = 1, startRow = 2;
+        int regionW = 3, regionH = 3;
+
+        for (int c = startCol; c < startCol + regionW; ++c) {
+            for (int r = startRow; r < startRow + regionH; ++r) {
+                int idx = c * m_totalRows + r;
+                m_gameObjects[idx]->GetComponent<ColliderBase>()->SetOpen(true);
             }
         }
     }
@@ -337,72 +352,71 @@ namespace JDScene {
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        auto& input = InputManager::Instance();
-        const float moveSpeed = 300.0f;
+        float speed = 100.f;  // 픽셀/초
+        Vector2F delta{ speed * deltaTime, 0.f };
 
-        auto tf = m_sceneObjects[0]->GetComponent<Transform>();
+        for (auto& objPtr : m_gameObjects) {
 
-        auto pos = tf->GetPosition();
-        if (input.IsKeyDown(VK_UP)) pos.y += moveSpeed * deltaTime;
-        if (input.IsKeyDown(VK_DOWN)) pos.y -= moveSpeed * deltaTime;
-        if (input.IsKeyDown(VK_LEFT)) pos.x -= moveSpeed * deltaTime;
-        if (input.IsKeyDown(VK_RIGHT)) pos.x += moveSpeed * deltaTime;
-        tf->SetPosition(pos);
-        // 1) 마우스 스크린 좌표 얻기
-        auto& inputMgr = InputManager::Instance();
-        auto  mouseState = inputMgr.GetMouseState().pos;
-        Vector2F screenPos{ static_cast<float>(mouseState.x), static_cast<float>(mouseState.y) };
+            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
+            if (!sfx)
+                continue;
 
-        // 2) 스크린 → 월드 변환
-        Vector2F mouseWorld;
-        auto camera = D2DRenderer::Instance().GetCamera();
-        if (camera) {
-            auto invView = camera->GetViewMatrix();
-            D2D1InvertMatrix(&invView);
-            mouseWorld = m_camera->TransformPoint(invView, { screenPos.x,screenPos.y });
-        }
-        else {
-            mouseWorld = screenPos;
-        }
+            auto* tm = objPtr->GetComponent<Transform>();
+            if (!tm)
+                continue; 
 
-        //HandleMouseHover(mouseWorld);
+            if (objPtr->GetTag() != JDGlobal::Base::GameTag::Mover)
+                continue;
 
-        // 3) 하이라이트 인덱스 계산
-        m_highlightedIndex = -1;
+            Vector2F oldPos = tm->GetPosition();
+            Vector2F newPos{ oldPos.x + delta.x, oldPos.y + delta.y };
+            tm->SetPosition(newPos);
 
-        for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
-            auto& obj = m_gameObjects[i];
-            if (!obj) continue;
-
-            auto* col = obj->GetComponent<JDComponent::BoxCollider>();
-            if (!col) continue;
-
-            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
-            auto  pos = tm->GetPosition();
-            auto  hsize = col->GetHalfSize();
-            auto  offset = col->GetColliderOffset();
-
-            float left = pos.x + offset.x - hsize.x;
-            float top = pos.y + offset.y + hsize.y;
-            float right = pos.x + offset.x + hsize.x;
-            float bottom = pos.y + offset.y - hsize.y;
-
-            if (mouseWorld.x >= left && mouseWorld.x <= right &&
-                mouseWorld.y <= top && mouseWorld.y >= bottom)
+            // 5) 디버그: SFX 가진 녀석인지, 이동 로그 출력
+            if (newPos.x != oldPos.x || newPos.y != oldPos.y)
             {
-                m_highlightedIndex = i;
-                break;
+                sfx->Play();
+
+                // 디버그: 소리 재생 로그
+                /*std::wcout
+                    << L"[DEBUG] SFX Play at mover: key="
+                    << L", from (" << oldPos.x << L"," << oldPos.y
+                    << L") to (" << newPos.x << L"," << newPos.y
+                    << L")\n";*/
             }
         }
 
-        bool leftPressed = inputMgr.GetMouseState().leftPressed;
-        if (leftPressed && !m_prevLeftPressed && m_highlightedIndex != -1) {
-            std::cout << "[DEBUG] 클릭된 콜라이더 인덱스: "
-                << m_highlightedIndex << std::endl;
-        }
-        m_prevLeftPressed = leftPressed;
-    }
+        bool left = InputManager::Instance().GetMouseState().leftPressed;
+        bool right = InputManager::Instance().GetMouseState().rightPressed;
+        auto mousePos = GetMouseWorldPos();
 
+        for (auto& objPtr : m_gameObjects) {
+            auto* gridPtr = dynamic_cast<Grid*>(objPtr.get());
+            if (!gridPtr)
+                continue;  // Grid 가 아니면 건너뛴다
+
+            // 2) Grid 안에 있는 콜라이더만 꺼내서 처리
+            auto* collider = gridPtr->GetComponent<JDComponent::ColliderBase>();
+            if (!collider)
+                continue;
+
+            int id = collider->GetIndex();
+            if (!collider->IsMouseOver(mousePos))
+                continue;
+
+            if (left) {
+                collider->SetOpen(true);
+                std::cout << "[DEBUG] left ID: " << id << std::endl;
+            }
+            else if (right && collider->IsOpen()) {
+                std::cout << "[DEBUG] right ID: " << id << std::endl;
+                
+                // 새로운 UI오브젝트 생성하기
+                // 
+                // 우클릭: 열린 콜라이더만 동작
+            }
+        }
+    }
 
     void TestScene::FixedUpdate(float fixedDeltaTime) {
         SceneBase::FixedUpdate(fixedDeltaTime);
@@ -423,92 +437,18 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        // ───────────────────────────────────────────────────────
-        // (1) 기존 콜라이더 하이라이트용 DrawRectangle — 그대로!
-        for (int i = 0; i < (int)m_gameObjects.size(); ++i) {
-            auto& obj = m_gameObjects[i];
-            if (!obj) continue;
+        //게임 오브젝트 렌더
 
-            auto* col = obj->GetComponent<JDComponent::BoxCollider>();
-            if (!col) continue;
-
-            auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
-            auto pos = tm->GetPosition();
-            auto hsize = col->GetHalfSize();
-            auto offset = col->GetColliderOffset();
-
-            float left = pos.x + offset.x - hsize.x;
-            float top = pos.y + offset.y + hsize.y;
-            float right = pos.x + offset.x + hsize.x;
-            float bottom = pos.y + offset.y - hsize.y;
-
-            UINT32 color = (i == m_highlightedIndex)
-                ? 0xFFFF0000
-                : 0xFF000000;
-
-            D2DRenderer::Instance().DrawRectangle(
-                left, top, right, bottom,
-                color
-            );
-        }
-        // ───────────────────────────────────────────────────────
-
-        // (2) 렌더 순서 정렬
-        std::vector<std::shared_ptr<GameObject>> sorted = m_sceneObjects;
-
-        std::sort(sorted.begin(), sorted.end(),
-            [](const std::shared_ptr<GameObject>& a,
-                const std::shared_ptr<GameObject>& b) {
-                // ① AnimationRender 우선 탐색
-                if (auto ar = a->GetComponent<AnimationRender>())
-                    if (auto br = b->GetComponent<AnimationRender>())
-                        return ar->GetLayerInfo() < br->GetLayerInfo();
-                    else
-                        return ar->GetLayerInfo() <
-                        RenderLayerInfo{ SortingLayer::None, 0 };
-
-                // ② TextureRenderer 비교
-                if (auto tr = a->GetComponent<TextureRenderer>())
-                    if (auto tb = b->GetComponent<TextureRenderer>())
-                        return tr->GetLayerInfo() < tb->GetLayerInfo();
-                    else
-                        return tr->GetLayerInfo() <
-                        RenderLayerInfo{ SortingLayer::None, 0 };
-
-                // 그 외, 기본값
-                return false;
-            }
-        );
-
-        // (3) 게임 오브젝트 렌더 + 추가 콜라이더 드로우
-        for (auto obj : sorted) {
-            // 애니메이션 컴포넌트가 있으면
-            if (auto ar = obj->GetComponent<AnimationRender>()) {
-                // world matrix
-                auto tf = obj->GetComponent<Transform>();
-                D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
-                if (camera) world = world * camera->GetViewMatrix();
-                ar->Render(
-                    D2DRenderer::Instance().GetD2DContext(),
-                    world
-                );
-                continue;
-            }
-            // 아니면 텍스처 렌더
-            if (auto tr = obj->GetComponent<TextureRenderer>()) {
-                auto tf = obj->GetComponent<Transform>();
-                D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
-                if (camera) world = world * camera->GetViewMatrix();
-                tr->Render(
-                    D2DRenderer::Instance().GetD2DContext(),
-                    world
-                );
-            }
+        for (auto& obj : m_gameObjects) {
+            D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
         }
 
-        // (4) UI 렌더
-        for (auto& uiObj : m_UIObjects) {
+        DrawColider();
+
+        for (auto& uiObj : m_uiObjects)
+
+        {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
-*/
+}

@@ -55,9 +55,6 @@
     <ClCompile Include="TutorialScene.cpp">
       <Filter>Scene\Tutorial</Filter>
     </ClCompile>
-    <ClCompile Include="EmptyMenu.cpp">
-      <Filter>Object\UIObject\EmptyMenu</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
@@ -122,9 +119,6 @@
     </ClInclude>
     <ClInclude Include="TutorialScene.h">
       <Filter>Scene\Tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="EmptyMenu.h">
-      <Filter>Object\UIObject\EmptyMenu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

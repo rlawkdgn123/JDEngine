@@ -3,12 +3,16 @@
 #include "TutorialScene.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
-#include "EmptyMenu.h"
+#include "RectTransform.h"
+#include "D2DTransform.h"
+#include "Camera.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
-
+using JDComponent::D2DTM::RectTransform;
+using JDComponent::TextureRenderer;
 namespace JDScene {
 
     // TestScene
@@ -97,12 +101,46 @@ namespace JDScene {
             }
         }
 
-        // UI
-        // Empty Menu
-        m_emptyMenu = CreateUIObject<EmptyMenu>();
+        // 1) 배경
+        m_emptyMenu = CreateUIObject<Image>(L"MenuBackground");
         m_emptyMenu->SetTextureName("Menu");
         m_emptyMenu->SetSizeToOriginal();
         m_emptyMenu->SetActive(false);
+
+        auto* bgRect = m_emptyMenu->GetComponent<RectTransform>();
+        bgRect->SetPivot({ 0.f,0.f });
+        bgRect->SetAnchor({ 0.f,0.f });
+
+
+        std::vector<std::pair<std::wstring, std::string>> buttons = {
+        { L"house1", "house" },
+        { L"house2", "house2" },
+        // 필요하다면 더 추가…
+        };
+
+        // 2) 버튼
+        float yOffset = 75.f;
+        float xOffset = 30.f;
+        for (auto& info : buttons) {
+            auto* btn = CreateUIObject<Button>(info.first);
+            btn->SetTextureName(info.second);
+            btn->SetText(L"");
+
+            auto* btnRect = btn->GetComponent<RectTransform>();
+            btnRect->SetPivot({ 0.f,0.f });
+            btnRect->SetAnchor({ 0.f,0.f });
+            btnRect->SetSize({ 50.f,50.f });
+
+            btnRect->DetachFromParent();
+            btnRect->SetParent(bgRect);
+            btnRect->SetPosition({ xOffset, yOffset });
+
+            m_emptyMenu->AddChild(btn);
+            btn->SetActive(false);
+            m_menuButtons.push_back(btn);
+
+            xOffset += 50.f + 10.f; // width + gap
+        }
     }
 
     void TutorialScene::OnLeave() {
@@ -135,7 +173,7 @@ namespace JDScene {
             // 5) 디버그: SFX 가진 녀석인지, 이동 로그 출력
             if (newPos.x != oldPos.x || newPos.y != oldPos.y)
             {
-                sfx->Play();
+                //sfx->Play();
 
                 // 디버그: 소리 재생 로그
                 /*std::wcout
@@ -165,7 +203,24 @@ namespace JDScene {
             else if (right && collider->IsOpen()) {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
                 // 우클릭: 열린 콜라이더만 동작
+
+                if (!m_emptyMenu) {
+                    std::cerr << "[ERROR] m_emptyMenu is nullptr!\n";
+                    return;
+                }
+                m_selectedCollider = collider;
+
                 m_emptyMenu->SetActive(true);
+
+                // 버튼들도 함께 보이기
+                for (auto* btn : m_menuButtons) {
+                    if (btn) {
+                        btn->SetActive(true);
+                    }
+                    else {
+                        std::cerr << "[WARNING] Found nullptr in m_menuButtons\n";
+                    }
+                }
             }
         }
 
@@ -251,6 +306,47 @@ namespace JDScene {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
                     std::cout << " UI 오브젝트 클릭 함!!!!! ";
+
+                    if (uiObj.get()->GetParent() == m_emptyMenu) {
+                        m_selectedTool = static_cast<Button*>(uiObj.get());
+                        std::wcout << L"선택된 툴: " << m_selectedTool->GetName() << std::endl;
+
+                        if (m_selectedCollider) {
+                            // 1) 콜라이더 월드 위치
+                            Vector2F worldPos = m_selectedCollider->GetOwner()
+                                ->GetComponent<Transform>()->GetPosition();
+
+                            // 2) Building 생성
+                            auto* building = CreateGameObject<Building>(
+                                L"Building_" + m_selectedTool->GetName()
+                            );
+                          
+                            // 3) 버튼(UIObject)의 이미지 컴포넌트에서 텍스처 키 가져오기
+                            auto* uiImage = m_selectedTool->GetComponent<JDComponent::UI_ImageComponent>();
+                            std::string texKey = uiImage
+                                ? uiImage->GetTextureName()
+                                : std::string("DefaultTexture");
+
+                            // 4) Building에 TextureRenderer 컴포넌트 붙이고 텍스처 설정
+                            auto* tr = building->AddComponent<TextureRenderer>(
+                                texKey,
+                                RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                            );
+                            tr->SetTextureName(texKey);
+
+                            // 5) Building 월드 위치 배치
+                            building->GetComponent<Transform>()->SetPosition(worldPos);
+
+                            // 6) 메뉴 닫기 & 버튼 숨기기
+                            m_emptyMenu->SetActive(false);
+                            for (auto* btn : m_menuButtons)
+                                if (btn) btn->SetActive(false);
+
+                            // 7) 선택 초기화
+                            m_selectedTool = nullptr;
+                            m_selectedCollider = nullptr;
+                        }
+                    }
                     break;
                 }
             }

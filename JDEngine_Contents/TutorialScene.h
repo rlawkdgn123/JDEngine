@@ -3,6 +3,12 @@
 #include "framework.h"
 #include "SceneBase.h"
 #include "InputManager.h" 
+#include "UIObject.h"
+#include "UI_ImageComponent.h"
+#include "UI_ButtonComponent.h"
+#include "ColliderBase.h"
+
+using namespace JDGameObject::Content;
 
 namespace JDScene {
     class TutorialScene : public SceneBase
@@ -30,10 +36,13 @@ namespace JDScene {
         int m_totalRows = 6;
         std::vector<bool> m_isOpen;
 
+        Image* m_emptyMenu = nullptr;
+        std::vector<Button*> m_menuButtons;
+        Button* m_selectedTool = nullptr;
+        JDComponent::ColliderBase* m_selectedCollider = nullptr;
+
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;
-
-        JDGameObject::Content::EmptyMenu* m_emptyMenu;
     };
 }

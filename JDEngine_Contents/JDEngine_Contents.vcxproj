@@ -148,7 +148,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CombatSystem.h" />
-    <ClInclude Include="EmptyMenu.h" />
     <ClInclude Include="FishingSpot.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -188,7 +187,6 @@
     </ClCompile>
     <ClCompile Include="CombatSystem.cpp" />
     <ClCompile Include="DefaultGameObject.cpp" />
-    <ClCompile Include="EmptyMenu.cpp" />
     <ClCompile Include="FishingSpot.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

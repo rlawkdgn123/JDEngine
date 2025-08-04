@@ -69,7 +69,7 @@ namespace JDComponent {
                 SetDirty();
             }
 
-            void AddChild(RectTransform* child)
+            inline void AddChild(RectTransform* child)
             {
                 // 자식의 로컬 좌표를 부모 좌표계로 변환
                 // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
@@ -82,7 +82,7 @@ namespace JDComponent {
                 m_children.push_back(child);
             }
 
-            void RemoveChild(RectTransform* child)
+            inline void RemoveChild(RectTransform* child)
             {
                 // 월드로 보낸다.
                 D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();

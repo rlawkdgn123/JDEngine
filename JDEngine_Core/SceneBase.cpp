@@ -128,11 +128,23 @@ namespace JDScene {
             D2D1_MATRIX_3X2_F worldView = world * view;
             D2DRenderer::Instance().SetTransform(worldView);
 
-            UINT32 color = col->GetColliding()
-                ? 0xFF00FF00
-                : 0xFF000000;
-            if (col->IsMouseOver(GetMouseWorldPos()))
-                color = 0xFFFF0000;
+            // 이제 강조 색 결정 (열린 셀만 이 로직을 타게 됩니다)
+
+            UINT32 color;
+            if (col->IsOpen())
+            {
+                if (col->IsMouseOver(GetMouseWorldPos()))
+                    color = 0xFFFF0000;      // 마우스 오버 빨강
+                else if (col->GetColliding())
+                    color = 0xFF00FF00;      // 충돌 초록
+                else
+                    color = 0xFF000000;      // 기본 검정
+            }
+            else
+            {
+                // 닫힌 콜라이더는 어두운 회색
+                color = 0xFF555555;
+            }
 
             if (col->GetColliderType() == JDComponent::ColliderType::Box) // 박스 콜라이더
             {

@@ -46,6 +46,12 @@
     <ClCompile Include="Player.cpp">
       <Filter>Object\GameObject\Player</Filter>
     </ClCompile>
+    <ClCompile Include="CombatSystem.cpp">
+      <Filter>GameSystem\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="ArmySystem.cpp">
+      <Filter>GameSystem\Combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
@@ -104,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Object\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ArmySystem.h">
+      <Filter>GameSystem\Combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

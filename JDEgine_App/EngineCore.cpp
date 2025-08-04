@@ -99,9 +99,10 @@ bool EngineCore::Initialize()
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
     AudioManager::Instance().SetMusicVolume(1.0f);
     FMOD::Channel* bgmChannel = nullptr;
-    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    //AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -144,7 +145,7 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl;
     }
 
-    if (!AssetManager::Instance().LoadTexture("GAMESTART_B", L"../Resource/TITLE/GAMESTART_B.png")) {
+    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) {
         std::cout << "[ERROR] GAMESTART_B 텍스처 로드 실패" << std::endl;
     }
 
@@ -156,11 +157,11 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl;
     }
 
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUITGAME_A.png")) {
+    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) {
         std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl;
     }
 
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUITGAME_B.png")) {
+    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) {
         std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
     }
 
@@ -215,9 +216,7 @@ void EngineCore::Run()
         // 큐에 있는 다음 메시지를 처리합니다.
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            // ImGui가 입력을 처리했는지 확인합니다.
-            // ImGui는 내부적으로 Translate/Dispatch가 필요 없으므로,
-            // WndProc 핸들러에서 직접 처리합니다.
+            // ★★ 키 입력이 안먹어서 직접 InputManager::OnHandleMessage에서 ImGui 입력을 우선시 하고 있음.
             if (ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam))
             {
                 continue; // ImGui가 처리했으면 여기서 끝냅니다.
@@ -286,6 +285,9 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
+    InputManager::Instance().SetMouseState()->leftClicked = false;
+    InputManager::Instance().SetMouseState()->rightClicked = false;
+
 
     // 배속 키 입력처리
     static float speeds[] = { 2.f, 4.f, 8.f };
@@ -308,7 +310,7 @@ void EngineCore::UpdateLogic()
     }
 
     // 콜라이더 그리기 토글
-    if (input.GetKeyPressed('C')) {
+    if (input.GetKeyPressed('T')) {
         SceneManager::Instance().ToggleDrawColider();
         std::cout << "ToggleDrawColider" << std::endl;
     }
@@ -573,6 +575,390 @@ void EngineCore::RenderImGui()
         }
         ImGui::PopItemWidth();
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // Transform
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::D2DTM::Transform* transform =
+            selectObject->GetComponent<JDComponent::D2DTM::Transform>();
+
+        if (transform)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+            ImGui::Text("Transform");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 위치 (Position)
+            ImGui::Text("Position_");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            JDComponent::D2DTM::Transform::Vec2 position = transform->GetPosition();
+            if (ImGui::DragFloat2("##Position_", &position.x, 0.1f))  // 0.1f는 드래그 감도
+            {
+                transform->SetPosition(position);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 회전 (Rotation)
+            ImGui::Text("Rotation_");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            float rotation = transform->GetRotation();
+            if (ImGui::DragFloat("##Rotation_", &rotation, 0.1f))
+            {
+                transform->SetRotation(rotation);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 스케일 (Scale)
+            ImGui::Text("Scale_");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+
+            JDComponent::D2DTM::Transform::Vec2 scale = transform->GetScale();
+            if (ImGui::DragFloat2("##Scale_", &scale.x, 0.01f))  // 스케일은 좀 더 세밀하게
+            {
+                transform->SetScale(scale);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 피벗 (Pivot)
+            ImGui::Text("Pivot_");
+            ImGui::SameLine(labelWidth);
+
+            // DragFloat2가 차지할 너비 = (전체 너비 - 콤보박스 너비)
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - comboWidth);
+
+            JDComponent::D2DTM::Transform::Vec2 pivot = transform->GetPivot();
+            if (ImGui::DragFloat2("##Pivot_", &pivot.x, 0.01f, 0.0f, 1.0f))
+            {
+                // 수정된 상대 좌표를 SetPivot으로 다시 설정
+                transform->SetPivot(pivot);
+            }
+
+            // 피벗 프리셋을 위한 콤보박스
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            ImGui::PushItemWidth(comboWidth);
+            const char* pivotPresets[] = {
+                "Top-Left", "Top-Center", "Top-Right",
+                "Center-Left", "Center", "Center-Right",
+                "Bottom-Left", "Bottom-Center", "Bottom-Right"
+            };
+
+            // 현재 피벗 값(상대 좌표)을 보고 어떤 프리셋에 해당하는지 인덱스를 찾습니다.
+            int currentPivotPreset = -1; // 일치하는 프리셋이 없으면 -1 (Custom 상태)
+            if (pivot.x == 0.0f && pivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
+            else if (pivot.x == 0.5f && pivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
+            else if (pivot.x == 1.0f && pivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
+            else if (pivot.x == 0.0f && pivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
+            else if (pivot.x == 0.5f && pivot.y == 0.5f)    currentPivotPreset = 4; // Center
+            else if (pivot.x == 1.0f && pivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
+            else if (pivot.x == 0.0f && pivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
+            else if (pivot.x == 0.5f && pivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
+            else if (pivot.x == 1.0f && pivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
+
+            // 선택된 프리셋이 있으면 해당 이름을, 없으면 "Custom"을 표시합니다.
+            if (ImGui::BeginCombo("##PivotPreset_", currentPivotPreset != -1 ? pivotPresets[currentPivotPreset] : "Custom"))
+            {
+                // 배열에 있는 모든 프리셋을 항목으로 표시합니다.
+                for (int n = 0; n < IM_ARRAYSIZE(pivotPresets); n++)
+                {
+                    const bool is_selected = (currentPivotPreset == n);
+                    if (ImGui::Selectable(pivotPresets[n], is_selected))
+                    {
+                        // 항목을 선택하면, 해당 인덱스(n)를 PivotPreset enum으로 변환하여
+                        // SetPivot(PivotPreset) 함수를 직접 호출합니다.
+                        // 이 코드는 enum의 정수 값이 0부터 8까지 순서대로라는 것을 전제로 합니다.
+                        transform->SetPivotPreset((JDComponent::D2DTM::Transform::PivotPreset)n);
+                    }
+
+                    // 현재 선택된 항목으로 스크롤을 자동으로 맞춰줍니다.
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // TextureRenderer
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::TextureRenderer* textureRenderer =
+            selectObject->GetComponent<JDComponent::TextureRenderer>();
+
+        if (textureRenderer)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+            ImGui::Text("TextureRenderer");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 텍스처 변경
+            // AssetManager에서 텍스처 이름 목록 가져오기
+            std::vector<std::string> tNames;
+            for (const auto& pair : AssetManager::Instance().GetTextures()) {
+                tNames.push_back(pair.first);
+            }
+
+            // 현재 선택된 텍스처 이름 인덱스 찾기
+            std::string currentName = textureRenderer->GetTextureName();
+            int currentIndex = 0;
+            for (int i = 0; i < tNames.size(); ++i) {
+                if (tNames[i] == currentName) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            // 텍스처 선택 콤보박스
+            ImGui::Text("Texture_");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(200.0f);
+
+            if (ImGui::BeginCombo("##Texture_", tNames[currentIndex].c_str())) {
+                for (int i = 0; i < tNames.size(); ++i) {
+                    const bool isSelected = (i == currentIndex);
+                    if (ImGui::Selectable(tNames[i].c_str(), isSelected)) {
+                        textureRenderer->SetTextureName(tNames[i]);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 텍스처 레이어 변경
+
+            JDGlobal::Base::RenderLayerInfo layerInfo = textureRenderer->GetLayerInfo();
+
+            // Sorting Layer
+            ImGui::Text("Sorting Layer");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(150);
+            ImGui::PushItemWidth(200.0f);
+
+            // SortingLayer enum을 문자열로 보여주기 위한 예시
+            const char* sortingLayerNames[] = { "None", "Background", "Default", "Foreground" };
+            int currentLayer = static_cast<int>(layerInfo.sortingLayer);
+            if (ImGui::Combo("##SortingLayerCombo", &currentLayer, sortingLayerNames, IM_ARRAYSIZE(sortingLayerNames))) {
+                layerInfo.sortingLayer = static_cast<JDGlobal::Base::SortingLayer>(currentLayer);
+                textureRenderer->SetLayerInfo(layerInfo);
+            }
+            ImGui::PopItemWidth();
+
+
+            // Order in Layer
+            ImGui::Text("Order in Layer");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(150);
+            ImGui::PushItemWidth(200.0f);
+
+            int orderInLayer = layerInfo.orderInLayer;
+            if (ImGui::InputInt("##OrderInLayerInput", &orderInLayer)) {
+                layerInfo.orderInLayer = orderInLayer;
+                textureRenderer->SetLayerInfo(layerInfo);
+            }
+            ImGui::PopItemWidth();
+
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // ColliderBase
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::ColliderBase* collider =
+            selectObject->GetComponent<JDComponent::ColliderBase>();
+
+        if (collider)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+            ImGui::Text("Collider");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 오프셋 편집
+            ImGui::Text("C_Offset");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-1.0f);
+            
+            JDGlobal::Math::Vector2F offset = collider->GetColliderOffset();
+            if (ImGui::DragFloat2("##C_Offset", &offset.x, 0.01f))
+            {
+                collider->SetColliderOffset(offset);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 트리거 여부
+            ImGui::Text("IsTrigger");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(labelWidth);
+            ImGui::PushItemWidth(200);
+
+            bool isTrigger = collider->IsTrigger();
+            if (ImGui::Checkbox("##IsTrigger", &isTrigger))
+            {
+                collider->SetTrigger(isTrigger);
+            }
+            ImGui::PopItemWidth();
+
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 타입별 속성 표시
+            if (collider->GetColliderType() == JDComponent::ColliderType::Circle)
+            {
+                auto* circle = dynamic_cast<JDComponent::CircleCollider*>(collider);
+                if (circle)
+                {
+                    ImGui::Text("C_Radius");
+                    ImGui::SameLine();
+                    ImGui::SetCursorPosX(labelWidth);
+                    ImGui::PushItemWidth(200);
+
+                    float radius = circle->GetRadius();
+                    if (ImGui::DragFloat("##C_Radius", &radius, 0.01f, 0.0f))
+                    {
+                        circle->SetRadius(radius);
+                    }
+                    ImGui::PopItemWidth();
+                }
+
+
+            }
+            else if (collider->GetColliderType() == JDComponent::ColliderType::Box)
+            {
+                auto* box = dynamic_cast<JDComponent::BoxCollider*>(collider);
+                if (box)
+                {
+                    ImGui::Text("C_BoxSize");
+                    ImGui::SameLine();
+                    ImGui::SetCursorPosX(labelWidth);
+                    ImGui::PushItemWidth(200);
+
+                    JDGlobal::Math::Vector2F halfSize = box->GetHalfSize();
+                    if (ImGui::DragFloat2("##C_BoxSize", &halfSize.x, 0.01f, 0.0f))
+                    {
+                        box->SetHalfSize(halfSize);
+                    }
+                    ImGui::PopItemWidth();
+                }
+
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // AnimationRender
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::AnimationRender* animRenderer =
+            selectObject->GetComponent<JDComponent::AnimationRender>();
+
+        if (animRenderer)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+            ImGui::Text("Animation");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 애니메이션 클립 선택
+            std::vector<std::string> clipNames;
+            for (const auto& pair : AssetManager::Instance().GetAnimations()) {
+                clipNames.push_back(pair.first);
+            }
+
+            // 현재 선택된 클립 이름 인덱스 찾기
+            std::string currentClip = animRenderer->GetClipName(); // 또는 animRenderer.m_clipName
+            int currentIndex = 0;
+            for (int i = 0; i < clipNames.size(); ++i) {
+                if (clipNames[i] == currentClip) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            ImGui::Text("Clip Name");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(labelWidth);
+
+            if (ImGui::BeginCombo("##ClipCombo", currentClip.c_str())) {
+                for (int i = 0; i < clipNames.size(); ++i) {
+                    bool isSelected = (i == currentIndex);
+                    if (ImGui::Selectable(clipNames[i].c_str(), isSelected)) {
+                        animRenderer->SetClipName(clipNames[i]);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 재생 속도
+            ImGui::Text("AnimSpeed");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(labelWidth);
+
+            float speed = animRenderer->GetSpeed();
+            if (ImGui::DragFloat("##AnimSpeed", &speed, 0.1f, 0.1f, 10.0f, "%.2fx")) {
+                animRenderer->SetSpeed(speed);
+            }
+            ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 렌더 레이어 정보
+            
+            // Sorting Layer
+            auto layerInfo = animRenderer->GetLayerInfo();
+            int currentLayer = static_cast<int>(layerInfo.sortingLayer);
+
+            const char* layerNames[] = { "None", "Background", "Default", "UI" }; // 예시
+            int layerCount = IM_ARRAYSIZE(layerNames);
+
+            ImGui::Text("Sorting Layer");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(labelWidth);
+            if (ImGui::Combo("##SortingLayer", &currentLayer, layerNames, layerCount)) {
+                layerInfo.sortingLayer = static_cast<SortingLayer>(currentLayer);
+                animRenderer->SetLayerInfo(layerInfo);
+            }
+
+            // Order In Layer
+            int orderInLayer = layerInfo.orderInLayer;
+            ImGui::Text("Order In Layer");
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(labelWidth);
+            if (ImGui::DragInt("##OrderInLayer", &orderInLayer, 1.0f, -100, 100)) {
+                layerInfo.orderInLayer = orderInLayer;
+                animRenderer->SetLayerInfo(layerInfo);
+            }
+            ImGui::PopItemWidth();
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
         // RectTransform
         ////////////////////////////////////////////////////////////////////////////////
@@ -928,6 +1314,83 @@ void EngineCore::RenderImGui()
             }
 
             ImGui::PopItemWidth();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Button_ImageComponent
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::UI_ButtonComponent* buttonComponent =
+            selectObject->GetComponent<JDComponent::UI_ButtonComponent>();
+
+        if (buttonComponent)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(135, 206, 250, 255)); // 연한 파랑색
+            ImGui::Text("ButtonComponent");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 상호작용 가능 (Interactable)
+
+            ImGui::Text("Interactable");
+            ImGui::SameLine(labelWidth); // labelWidth 변수가 정의되어 있다고 가정
+
+            // 현재 Interactable 상태 가져오기
+            bool isInteractable = buttonComponent->GetInteractable();
+            if (ImGui::Checkbox("##Interactable", &isInteractable))
+            {
+                buttonComponent->SetInteractable(isInteractable);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 현재 상태 (State) - 읽기 전용
+
+            ImGui::Text("State");
+            ImGui::SameLine(labelWidth);
+
+            // 현재 버튼 상태를 문자열로 변환하여 표시 (디버깅용)
+            const char* stateStr = "Unknown";
+            switch (buttonComponent->GetState())
+            {
+            case JDComponent::ButtonState::Idle:
+                stateStr = "Idle";
+                break;
+            case JDComponent::ButtonState::Hovered:
+                stateStr = "Hovered";
+                break;
+            case JDComponent::ButtonState::Pressed:
+                stateStr = "Pressed";
+                break;
+            }
+            ImGui::Text(stateStr);
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 콜백 목록 표시
+            auto displayCallbackList = [&](const char* title, const std::vector<JDComponent::CallbackInfo>& callbacks) {
+                ImGui::Text(title);
+                ImGui::BeginChild(title, ImVec2(0, 80), true);
+                if (callbacks.empty()) {
+                    ImGui::TextDisabled("(None)");
+                }
+                else {
+                    for (size_t i = 0; i < callbacks.size(); ++i) {
+                        ImGui::Text("[%zu]: %s", i, callbacks[i].name.c_str());
+                    }
+                }
+                ImGui::EndChild();
+                };
+
+            ImGui::Spacing();
+            displayCallbackList("On Enter", buttonComponent->GetOnEnterCallbacks());
+            ImGui::Spacing();
+            displayCallbackList("On Exit", buttonComponent->GetOnExitCallbacks());
+            ImGui::Spacing();
+            displayCallbackList("On Down", buttonComponent->GetOnDownCallbacks());
+            ImGui::Spacing();
+            displayCallbackList("On Click", buttonComponent->GetOnClickCallbacks());
         }
     }
     else

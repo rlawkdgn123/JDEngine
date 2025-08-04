@@ -1,21 +1,13 @@
 #pragma once
-#include "pch.h"
+#include "ArmySystem.h"
 
-enum class UnitType // 병종
-{
-    Temp1,
-    Temp2
-};
+namespace JDGameSystem {
 
-struct UnitTypeData {
-    std::string name;
-    int recruitCost;
-    int basePower;
-};
+    class CombatSystem {
+    public:
+        CombatSystem() = default;
+        ~CombatSystem() = default;
 
-class CombatSystem
-{
-	
-
-};
-
+        UnitCounts ResolveBattle() const; // 전투 진행 및 잃은 병사 수 계산. 
+    };
+}

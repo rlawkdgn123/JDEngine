@@ -20,32 +20,8 @@ namespace JDGameObject {
 				m_isAwaked = true;
 				// cout << "Image Awake" << endl;
 
-				////////////////////////////////////////////////////////////////////////////////
-				// Editor_Clickable
 				AddComponent<Editor_Clickable>();
-
-				////////////////////////////////////////////////////////////////////////////////
-				// RectTransform
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform)
-				{
-					D2D1_SIZE_F size = { m_size.x, m_size.y };
-					rectTransform->SetSize(m_size);
-					rectTransform->SetPivot(m_size);
-
-					rectTransform->SetPosition(m_position);
-					rectTransform->SetRotation(m_rotation);
-					rectTransform->SetScale(m_scale);
-				}
-
-				////////////////////////////////////////////////////////////////////////////////
-				// UI_ImageComponent
 				AddComponent<UI_ImageComponent>("Test");
-				auto imageComponent = GetComponent<JDComponent::UI_ImageComponent>();
-				if (imageComponent) {
-					imageComponent->SetTextureName(m_textureName);
-					imageComponent->SetColor(m_color);
-				}
 			}
 		}
 		void Image::Start()
@@ -85,40 +61,7 @@ namespace JDGameObject {
 				m_isAwaked = true;
 				// cout << "Button Awake" << endl;
 
-				////////////////////////////////////////////////////////////////////////////////
-				// Editor_Clickable
 				AddComponent<Editor_Clickable>();
-
-				////////////////////////////////////////////////////////////////////////////////
-				// RectTransform
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform)
-				{
-					rectTransform->SetPosition(m_position);
-					rectTransform->SetSize(m_size);
-					rectTransform->SetRotation(m_rotation);
-					rectTransform->SetScale(m_scale);
-				}
-
-				////////////////////////////////////////////////////////////////////////////////
-				// UI_TextComponent
-				AddComponent<JDComponent::UI_TextComponent>();
-				auto textComponent = GetComponent<JDComponent::UI_TextComponent>();
-
-				D2DRenderer& renderer = D2DRenderer::Instance();
-				if (textComponent) {
-					textComponent->SetText(m_text);
-					textComponent->SetColor(m_color);
-					textComponent->SetTextFormatName(m_textFormatName);
-
-					D2DRenderer& renderer = D2DRenderer::Instance();
-					const auto& textFormats = renderer.GetTextFormats();
-					auto it = textFormats.find(m_textFormatName);
-					if (it == textFormats.end()) {
-						// 원하는 포맷이 없으면 기본 포맷 사용
-						textComponent->SetTextFormatName("MalgunGothic_14");
-					}
-				}
 			}
 		}
 		void Text::Start()
@@ -151,62 +94,10 @@ namespace JDGameObject {
 				m_isAwaked = true;
 				// cout << "Button Awake" << endl;
 
-				////////////////////////////////////////////////////////////////////////////////
-				// Editor_Clickable
 				AddComponent<Editor_Clickable>();
-
-				////////////////////////////////////////////////////////////////////////////////
-				// RectTransform
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform)
-				{
-					rectTransform->SetPosition(m_position);
-					rectTransform->SetSize(m_size);
-					rectTransform->SetRotation(m_rotation);
-					rectTransform->SetScale(m_scale);
-				}
-
-				////////////////////////////////////////////////////////////////////////////////
-				// UI_ImageComponent
 				AddComponent<UI_ImageComponent>("Test");
-				auto imageComponent = GetComponent<JDComponent::UI_ImageComponent>();
-				if (imageComponent) {
-					imageComponent->SetTextureName(m_textureName);
-					imageComponent->SetColor(m_textureColor);
-				}
-
-				////////////////////////////////////////////////////////////////////////////////
-				// UI_TextComponent
 				AddComponent<JDComponent::UI_TextComponent>();
-				auto textComponent = GetComponent<JDComponent::UI_TextComponent>();
-
-				D2DRenderer& renderer = D2DRenderer::Instance();
-				if (textComponent) {
-					textComponent->SetText(m_text);
-					textComponent->SetColor(m_textColor);
-					textComponent->SetTextFormatName(m_textFormatName);
-
-					D2DRenderer& renderer = D2DRenderer::Instance();
-					const auto& textFormats = renderer.GetTextFormats();
-					auto it = textFormats.find(m_textFormatName);
-					if (it == textFormats.end()) {
-						// 원하는 포맷이 없으면 기본 포맷 사용
-						textComponent->SetTextFormatName("MalgunGothic_14");
-					}
-				}
-
-				////////////////////////////////////////////////////////////////////////////////
-				// UI_ButtonComponent
 				AddComponent<JDComponent::UI_ButtonComponent>();
-				auto buttonComponent = GetComponent<JDComponent::UI_ButtonComponent>();
-
-				buttonComponent->SetOnClick(
-					[]()
-					{
-						std::cout << "버튼이 눌렸습니다." << std::endl;
-					}
-
-				);
 			}
 		}
 		void Button::Start()
@@ -228,5 +119,5 @@ namespace JDGameObject {
 		{
 			// __super::FixedUpdate(fixedDeltaTime);
 		}
-}
+	}
 }

@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ArmySystem.h" />
     <ClInclude Include="Building.h" />
     <ClInclude Include="Cat.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -177,11 +178,13 @@
     <ClInclude Include="SceneList.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArmySystem.cpp" />
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="Cat.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="CombatSystem.cpp" />
     <ClCompile Include="DefaultGameObject.cpp" />
     <ClCompile Include="FishingSpot.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

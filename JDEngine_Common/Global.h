@@ -18,7 +18,9 @@ namespace JDGlobal {
 			EnemyBuilding,
 
 			NPC,
-			UI
+			UI,
+
+			Mover
 		};
 
 		// 렌더링 순서 제어용 Enum

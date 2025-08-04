@@ -3,6 +3,7 @@
 #include "InputManager.h"
 
 #include "imgui.h"
+
 // imgui.cpp에서 정의된 전역 컨텍스트 포인터를 사용하기 위해 extern 선언
 extern IMGUI_API ImGuiContext* GImGui;
 
@@ -50,34 +51,30 @@ bool InputManager::GetKeyPressed(UINT vk)
 }
 
 
-bool InputManager::OnHandleMessage(const MSG& msg)
+bool InputManager::OnHandleMessage(const MSG& msg, bool imguiHandled)
 {
     if (GImGui == nullptr)
     {
-        // 아직 ImGui가 준비되지 않았으므로, 모든 입력을 InputManager가 처리하도록 합니다.
-        // (또는 return false; 하여 기본 처리되게 할 수도 있지만, 기존 로직 유지를 위해 이대로 둡니다)
+        // ImGui가 준비되지 않았을 때는 모든 입력을 InputManager가 처리
         switch (msg.message)
         {
-        case WM_INPUT: 
+        case WM_INPUT:
             HandleRawInput(msg.lParam);
             break;
-
-        case WM_KEYDOWN: 
-            HandleMsgKeyDown(msg.wParam, msg.lParam); 
+        case WM_KEYDOWN:
+            HandleMsgKeyDown(msg.wParam, msg.lParam);
             break;
-
         case WM_KEYUP:
-            HandleMsgKeyUp(msg.wParam, msg.lParam); 
+            HandleMsgKeyUp(msg.wParam, msg.lParam);
             break;
 
-        case WM_MOUSEMOVE: 
+        case WM_MOUSEMOVE:
         case WM_LBUTTONDOWN:
-        case WM_LBUTTONUP: 
-        case WM_RBUTTONDOWN: 
-        case WM_RBUTTONUP: 
-            HandleMsgMouse(msg); 
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+            HandleMsgMouse(msg);
             break;
-
         default: return false;
         }
         return true;
@@ -85,62 +82,46 @@ bool InputManager::OnHandleMessage(const MSG& msg)
 
     ImGuiIO& io = ImGui::GetIO();
 
+    // 메시지 타입 분류
+    bool isKeyboardMessage = (msg.message == WM_KEYDOWN || msg.message == WM_KEYUP || msg.message == WM_INPUT);
+    bool isMouseMessage = (msg.message >= WM_MOUSEFIRST && msg.message <= WM_MOUSELAST);
+
+    // ImGui가 이미 처리했거나, ImGui가 입력을 원하는 경우
+    if (imguiHandled)
+    {
+        // ImGui가 이미 처리했으면 게임 로직은 처리하지 않음
+        return true;
+    }
+
+    if ((isKeyboardMessage && io.WantCaptureKeyboard) ||
+        (isMouseMessage && io.WantCaptureMouse))
+    {
+        // ImGui가 입력을 원하지만 아직 처리되지 않았다면 
+        // 게임 로직도 처리하지 않음
+        return false;
+    }
+
+    // 일반 입력 처리
     switch (msg.message)
     {
     case WM_INPUT:
-    {
-        // ImGui가 키보드를 사용 중이면, Raw Input을 무시합니다.
-        if (io.WantCaptureKeyboard)
-        {
-            return false; // 처리하지 않았다고 알림
-        }
-
         HandleRawInput(msg.lParam);
-    }
-    break;
-
+        break;
     case WM_KEYDOWN:
-    {
-        // ImGui가 키보드를 사용 중이면, KeyDown 메시지를 무시합니다.
-        if (io.WantCaptureKeyboard)
-        {
-            return false;
-        }
-
         HandleMsgKeyDown(msg.wParam, msg.lParam);
-    }
-    break;
-
+        break;
     case WM_KEYUP:
-    {
-        // ImGui가 키보드를 사용 중이면, KeyUp 메시지를 무시합니다.
-        if (io.WantCaptureKeyboard)
-        {
-            return false;
-        }
-
         HandleMsgKeyUp(msg.wParam, msg.lParam);
-    }
-    break;
-
+        break;
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
     case WM_LBUTTONUP:
     case WM_RBUTTONDOWN:
     case WM_RBUTTONUP:
-    {
-        // ImGui가 마우스를 사용 중이면, 마우스 메시지를 무시합니다.
-        if (io.WantCaptureMouse)
-        {
-            return false;
-        }
-
         HandleMsgMouse(msg);
-    }
-    break;
-
+        break;
     default:
-        return false; // Unhandled message
+        return false;
     }
 
     return true;
@@ -179,22 +160,32 @@ void InputManager::HandleMsgMouse(const MSG& msg)
 
     if (msg.message == WM_LBUTTONDOWN)
     {
-        m_CurMouse.leftPressed = true;
+        if (!m_CurMouse.leftPressed)
+        {
+            m_CurMouse.leftPressed = true;
+            m_CurMouse.leftClicked = true; // 한 프레임만 true
+        }
         SetCapture(msg.hwnd);
     }
     else if (msg.message == WM_RBUTTONDOWN)
     {
-        m_CurMouse.rightPressed = true;
+        if (!m_CurMouse.rightPressed)
+        {
+            m_CurMouse.rightPressed = true;
+            m_CurMouse.rightClicked = true; // 한 프레임만 true
+        }
         SetCapture(msg.hwnd);
     }
     else if (msg.message == WM_LBUTTONUP)
     {
         m_CurMouse.leftPressed = false;
+        m_CurMouse.leftClicked = false;
         ReleaseCapture();
     }
     else if (msg.message == WM_RBUTTONUP)
     {
         m_CurMouse.rightPressed = false;
+        m_CurMouse.rightClicked = false;
         ReleaseCapture();
     }
 
@@ -214,7 +205,7 @@ void InputManager::HandleMsgMouse(const MSG& msg)
         "MOUSE (%d,%d)  left=%d right=%d\n",
         x, y, m_CurMouse.leftPressed, m_CurMouse.rightPressed);
 
-    std::cout << buf;
+    //std::cout << buf;
 }
 
 void InputManager::HandleRawInput(LPARAM lParam)
@@ -282,5 +273,5 @@ void InputManager::HandleKeyboardInput(RAWINPUT& raw)
 
 void InputManager::HandleMouseInput(RAWINPUT& raw)
 {
-    
+
 }

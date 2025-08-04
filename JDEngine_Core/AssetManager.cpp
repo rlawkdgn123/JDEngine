@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "AssetManager.h"
 
+using json = nlohmann::json;
 
 bool AssetManager::Initialize(ID2D1RenderTarget* renderTarget)
 {
@@ -23,11 +24,11 @@ bool AssetManager::Initialize(ID2D1RenderTarget* renderTarget)
     return SUCCEEDED(hr);
 }
 
-bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filepath)
+bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filePath)
 {
     Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
     HRESULT hr = m_wicFactory->CreateDecoderFromFilename(
-        filepath.c_str(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
+        filePath.c_str(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
     if (FAILED(hr)) return false;
 
     Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> frame;
@@ -116,5 +117,19 @@ const AnimationRenderClip* AssetManager::GetAnimationRender(const std::string& n
     }
     return nullptr;
 }
+
+//bool AssetManager::LoadCSV(const std::string& name, const std::wstring& filePath)
+//{
+//    return false;
+//}
+//
+//ID2D1Bitmap* AssetManager::GetCsv(const std::string& name) const
+//{
+//    return nullptr;
+//}
+//
+//void AssetManager::ConvertAllCsvToWstring()
+//{
+//}
 
 

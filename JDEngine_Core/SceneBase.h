@@ -156,8 +156,8 @@ namespace JDScene {
     protected:
         D2D1_COLOR_F m_highlightColor = D2D1::ColorF(D2D1::ColorF::Red);
 
-        bool  m_prevLeftPressed = false;
-        int m_highlightedIndex = -1;
+        bool    m_prevLeftPressed = false;
+        int     m_highlightedIndex = -1;
 
         const SceneType m_Type;
         const std::string m_ID = "None";

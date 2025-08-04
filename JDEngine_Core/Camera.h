@@ -8,6 +8,7 @@ public:
     void Move(float dx, float dy) {m_position.x += dx; m_position.y += dy; }
 
     void SetZoom(float zoom) { m_zoom = zoom; }
+    float GetZoom() const { return m_zoom; }
     void Zoom(float factor, D2D1_POINT_2F screenCenter);
 
     void SetRotation(float angleInDegrees) { m_rotation = angleInDegrees; }

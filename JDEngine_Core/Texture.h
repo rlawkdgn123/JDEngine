@@ -17,10 +17,11 @@ namespace JDComponent {
 
         void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
 
+        void        SetTextureName(std::string& name) { m_textureName = name; }
         std::string GetTextureName() const { return m_textureName; }
 
-        const RenderLayerInfo& GetLayerInfo() const { return m_layerInfo; }
-        void SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
+        const RenderLayerInfo&  GetLayerInfo() const { return m_layerInfo; }
+        void                    SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
 
         void Update(float dt) override {}
         void OnEvent(const std::string& ev) override {}

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include "AssetManager.h"
 
@@ -9,8 +9,8 @@ namespace JDComponent
 {
     class AnimationRender : public Component {
     public:
-        // clipName: ¾Ö´Ï¸ŞÀÌ¼Ç ¸®¼Ò½º Å°
-        // speed: Àç»ı ¼Óµµ ¹èÀ² (1.0 = ¿ø·¡ ¼Óµµ, 2.0 = 2¹è ºü¸§ µî)
+        // clipName: ì• ë‹ˆë©”ì´ì…˜ ë¦¬ì†ŒìŠ¤ í‚¤
+        // speed: ì¬ìƒ ì†ë„ ë°°ìœ¨ (1.0 = ì›ë˜ ì†ë„, 2.0 = 2ë°° ë¹ ë¦„ ë“±)
         AnimationRender(const std::string& clipName, float speed = 1.0f, const JDGlobal::Base::RenderLayerInfo& layerInfo = { JDGlobal::Base::SortingLayer::None, 0 })
             : m_clipName(clipName)
             , m_speed(speed)
@@ -26,18 +26,22 @@ namespace JDComponent
         void OnEnable() override {}
         void OnDisable() override {}
 
-        // ¼Óµµ Á¦¾î
-        void SetSpeed(float speed) { m_speed = speed; }
-        float GetSpeed() const { return m_speed; }
+        // í´ë¦½ ì´ë¦„ ì„¤ì •
+        void            SetClipName(const std::string& name) { m_clipName = name; }
+        std::string     GetClipName() const { return m_clipName; }
 
-        const RenderLayerInfo& GetLayerInfo() const { return m_layerInfo; }
-        void SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
+        // ì†ë„ ì œì–´
+        void            SetSpeed(float speed) { m_speed = speed; }
+        float           GetSpeed() const { return m_speed; }
+
+        const RenderLayerInfo&  GetLayerInfo() const { return m_layerInfo; }
+        void                    SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
 
     private:
         std::string m_clipName;
-        float       m_speed;         // Àç»ı ¼Óµµ ¹èÀ²
+        float       m_speed;         // ì¬ìƒ ì†ë„ ë°°ìœ¨
         size_t      m_currentFrame;
-        float       m_elapsed;       // ´©Àû ½Ã°£ (ÃÊ)
+        float       m_elapsed;       // ëˆ„ì  ì‹œê°„ (ì´ˆ)
         RenderLayerInfo m_layerInfo;
     };
 }

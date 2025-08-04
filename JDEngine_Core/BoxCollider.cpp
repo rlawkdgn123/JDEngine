@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "D2DTransform.h"
@@ -28,35 +28,35 @@ namespace JDComponent {
 		}
 		case ColliderType::Circle:
 		{
-			// Á¤È®ÇÑ Box vs Circle
+			// ì •í™•í•œ Box vs Circle
 			CircleCollider* c = static_cast<CircleCollider*>(other);
 			auto* tA = GetTransform();
 			auto* tC = c->GetTransform();
 			if (!tA || !tC) return false;
 
-			// ¿øÀÇ Áß½É ÁÂÇ¥
+			// ì›ì˜ ì¤‘ì‹¬ ì¢Œí‘œ
 			Vec2 centerC = tC->GetPosition() + c->GetColliderOffset();
 			float radius = c->GetRadius();
 
-			// »ç°¢Çü Áß½É
+			// ì‚¬ê°í˜• ì¤‘ì‹¬
 			Vec2 centerA = tA->GetPosition() + m_offset;
 
-			// ¿ø Áß½É¿¡¼­ »ç°¢Çü Áß½ÉÀ¸·ÎÀÇ º¤ÅÍ
+			// ì› ì¤‘ì‹¬ì—ì„œ ì‚¬ê°í˜• ì¤‘ì‹¬ìœ¼ë¡œì˜ ë²¡í„°
 			Vec2 d = centerC - centerA;
 
-			// »ç°¢ÇüÀÇ ¹İÅ©±â(half-size)
+			// ì‚¬ê°í˜•ì˜ ë°˜í¬ê¸°(half-size)
 			Vec2 h = m_halfSize;
 
-			// »ç°¢Çü ³»ºÎ¿¡¼­ ¿ø Áß½É¿¡ °¡Àå °¡±î¿î Á¡À» Ã£À½
+			// ì‚¬ê°í˜• ë‚´ë¶€ì—ì„œ ì› ì¤‘ì‹¬ì— ê°€ì¥ ê°€ê¹Œìš´ ì ì„ ì°¾ìŒ
 			Vec2 closest{
 				std::max(-h.x, std::min(d.x, h.x)),
 				std::max(-h.y, std::min(d.y, h.y))
 			};
 
-			// ±× Á¡¿¡¼­ ¿ø Áß½É±îÁöÀÇ º¤ÅÍ
+			// ê·¸ ì ì—ì„œ ì› ì¤‘ì‹¬ê¹Œì§€ì˜ ë²¡í„°
 			Vec2 diff = d - closest;
 
-			// °Å¸® Á¦°ö ¡Â ¹İ°æ Á¦°ö ÀÌ¸é Ãæµ¹
+			// ê±°ë¦¬ ì œê³± â‰¤ ë°˜ê²½ ì œê³± ì´ë©´ ì¶©ëŒ
 			return (diff.x * diff.x + diff.y * diff.y) <= (radius * radius);
 		}
 		}

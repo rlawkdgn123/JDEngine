@@ -4,11 +4,14 @@
 
 struct MouseState
 {
-	POINT  pos{ 0, 0 };
-	POINT  delta{ 0, 0 };
+	POINT pos{ 0, 0 };
+	POINT delta{ 0, 0 };
 
-	bool   leftPressed{ false };
-	bool   rightPressed{ false };
+	bool leftPressed{ false };
+	bool rightPressed{ false };
+
+	bool leftClicked{ false };
+	bool rightClicked{ false };
 };
 
 struct KeyEdge
@@ -41,11 +44,13 @@ public:
 
 	bool Initialize(HWND hwnd); // 인풋매니저 초기화
 
-	bool OnHandleMessage(const MSG& msg); // 키 입력 정보를 핸들에 넘기기
+	bool OnHandleMessage(const MSG& msg, bool imguiHandled = false);
 
 	bool GetKeyPressed(UINT vk);
 
 	MouseState GetMouseState() const { return m_CurMouse; }
+
+	MouseState* SetMouseState() { return &m_CurMouse; }
 
 	bool IsKeyDown(UINT vk) const {
 		if (vk >= 0 && vk < 256) {

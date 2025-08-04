@@ -27,108 +27,49 @@ namespace JDGameObject {
 		public:
 
 			////////////////////////////////////////////////////////////////////////////////
+			// RectTransform 제어
+			////////////////////////////////////////////////////////////////////////////////
 
-			void SetPosition(const Vector2f& pos) { 
-				m_position = pos; 
+			void SetPosition(const Vector2f& pos) { if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos); }
+			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
+			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
+			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
+			void SetAnchor(const Vector2f& anchor) { if (auto comp = GetComponent<RectTransform>()) comp->SetAnchor(anchor); }
+			void SetPivot(const Vector2f& pivot) { if (auto comp = GetComponent<RectTransform>()) comp->SetPivot(pivot); }
 
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetPosition(m_position);
-				}
-			}
-			void SetSize(const Vector2f& size) { 
-				m_size = size; 
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetSize(m_size);
-				}
-			}
-			void SetRotation(float angle) { 
-				m_rotation = angle; 
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetRotation(m_rotation);
-				}
-			}
-			void SetScale(const Vector2f& scale) { 
-				m_scale = scale; 
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetScale(m_scale);
-				}
-			}
-
-			void SetAnchor(const Vector2f& anchor) {
-				m_anchor = anchor;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetAnchor(m_anchor);
-				}
-			}
-
-			void SetPivot(const Vector2f& pivot) {
-				m_pivot = pivot;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetPivot(m_pivot);
-				}
+			Vector2f GetSize() const {
+				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
+				return {};
 			}
 
 			////////////////////////////////////////////////////////////////////////////////
-
-			void SetTextureName(const std::string& name) { 
-				m_textureName = name; 
-
-				auto uiComponent = GetComponent<UI_ImageComponent>();
-				if (uiComponent) {
-					uiComponent->SetTextureName(m_textureName);
-				}
-			}
-			void SetColor(const D2D1_COLOR_F& color) { 
-				m_color = color; 
-
-				auto uiComponent = GetComponent<UI_ImageComponent>();
-				if (uiComponent) {
-					uiComponent->SetColor(m_color);
-				}
-			}
-
+			// ImageComponent 제어
 			////////////////////////////////////////////////////////////////////////////////
 
+			void SetTextureName(const std::string& name) { if (auto comp = GetComponent<UI_ImageComponent>()) comp->SetTextureName(name); }
+			void SetColor(const D2D1_COLOR_F& color) { if (auto comp = GetComponent<UI_ImageComponent>()) comp->SetColor(color); }
+
+			// 유틸리티 함수
 			// 원본 크기로 설정하기
 			void SetSizeToOriginal() {
-				auto imageComponent = GetComponent<UI_ImageComponent>();
-				if (imageComponent) {
+				if (auto imageComponent = GetComponent<UI_ImageComponent>()) {
 					imageComponent->SetSizeToOriginal();
 				}
 			}
 
-			// 원본 크기 가져오기
+			// Getter
 			Vector2f GetOriginalSize() const {
-				auto imageComponent = GetComponent<UI_ImageComponent>();
-				if (imageComponent) {
+				if (auto imageComponent = GetComponent<UI_ImageComponent>()) {
 					return imageComponent->GetOriginalSize();
 				}
-				return m_size;
+				return GetSize(); // 컴포넌트가 없으면 현재 크기 반환
+			}
+			std::string GetTextureName() const {
+				if (auto comp = GetComponent<UI_ImageComponent>()) return comp->GetTextureName();
+				return "";
 			}
 
-		private:
-			Vector2f	m_size		= { 100.f, 100.f };
-			Vector2f	m_position	= { 0.f, 0.f };
-			float		m_rotation	= { 0.f };
-			Vector2f	m_scale		= { 1.f, 1.f };
-
-			Vector2f	m_pivot		= { 0.5f, 0.5f };
-			Vector2f	m_anchor	= { 0.5f, 0.5f };
-
-			//std::string     m_textureName = "Default";
-			std::string     m_textureName = "Test";
-			D2D1_COLOR_F    m_color = D2D1::ColorF(D2D1::ColorF::White);
+			////////////////////////////////////////////////////////////////////////////////
 		};
 
 
@@ -145,74 +86,37 @@ namespace JDGameObject {
 			void LateUpdate(float deltaTime) override;          // Update 후 호출
 			void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
 		public:
-			void SetPosition(const Vector2f& pos) {
-				m_position = pos;
 
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetPosition(m_position);
-				}
-			}
-			void SetSize(const Vector2f& size) {
-				m_size = size;
+			////////////////////////////////////////////////////////////////////////////////
+			// RectTransform 제어
+			////////////////////////////////////////////////////////////////////////////////
 
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetSize(m_size);
-				}
-			}
-			void SetRotation(float angle) {
-				m_rotation = angle;
+			void SetPosition(const Vector2f& pos) { if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos); }
+			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
+			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
+			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
 
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetRotation(m_rotation);
-				}
-			}
-			void SetScale(const Vector2f& scale) {
-				m_scale = scale;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetScale(m_scale);
-				}
+			// Getter
+			Vector2f GetSize() const {
+				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
+				return {};
 			}
 
-			void SetText(const std::wstring& text) { 
-				m_text = text;
+			////////////////////////////////////////////////////////////////////////////////
+			// TextComponent 제어
+			////////////////////////////////////////////////////////////////////////////////
 
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetText(m_text);
-				}
+			void SetText(const std::wstring& text) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetText(text); }
+			void SetColor(const D2D1_COLOR_F& color) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetColor(color); }
+			void SetTextFormatName(const std::string& formatName) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetTextFormatName(formatName); }
+
+			// Getter
+			std::wstring GetText() const {
+				if (auto comp = GetComponent<UI_TextComponent>()) return comp->GetText();
+				return L"";
 			}
-			void SetColor(const D2D1_COLOR_F& color) { 
-				m_color = color; 
 
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetColor(m_color);
-				}
-			}
-			void SetTextFormatName(const std::string& formatName) {
-				m_textFormatName = formatName;
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetTextFormatName(m_textFormatName);
-				}
-			}
-		private:
-			Vector2f	m_size = { 100.f, 100.f };
-			Vector2f	m_position = { 0.f, 0.f };
-			float		m_rotation = { 0.f };
-			Vector2f	m_scale = { 1.f, 1.f };
-
-			Vector2f	m_pivot = { 0.5f, 0.5f };
-			Vector2f	m_anchor = { 0.5f, 0.5f };
-
-			std::wstring    m_text = L"Text";
-			D2D1_COLOR_F    m_color = D2D1::ColorF(D2D1::ColorF::Black);
-			std::string     m_textFormatName = "MalgunGothic_14";
+			////////////////////////////////////////////////////////////////////////////////
 		};
 
 
@@ -229,133 +133,129 @@ namespace JDGameObject {
 			void LateUpdate(float deltaTime) override;          // Update 후 호출
 			void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
 		public:
-			void SetPosition(const Vector2f& pos) {
-				m_position = pos;
 
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetPosition(m_position);
-				}
+			////////////////////////////////////////////////////////////////////////////////
+			// RectTransform 제어
+			////////////////////////////////////////////////////////////////////////////////
+
+			void SetPosition(const Vector2f& pos) {
+				if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos);
 			}
 			void SetSize(const Vector2f& size) {
-				m_size = size;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetSize(m_size);
-				}
+				if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size);
 			}
 			void SetRotation(float angle) {
-				m_rotation = angle;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetRotation(m_rotation);
-				}
+				if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle);
 			}
 			void SetScale(const Vector2f& scale) {
-				m_scale = scale;
-
-				auto rectTransform = GetComponent<RectTransform>();
-				if (rectTransform) {
-					rectTransform->SetScale(m_scale);
-				}
+				if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale);
 			}
 
-			void SetTextureName(const std::string& name) {
-				m_textureName = name;
-
-				auto uiComponent = GetComponent<UI_ImageComponent>();
-				if (uiComponent) {
-					uiComponent->SetTextureName(m_textureName);
-				}
+			// Getter
+			Vector2f GetPosition() const {
+				if (auto comp = GetComponent<RectTransform>()) return comp->GetPosition();
+				return {};
 			}
-			void SetTextureColor(const D2D1_COLOR_F& color) {
-				m_textureColor = color;
-
-				auto uiComponent = GetComponent<UI_ImageComponent>();
-				if (uiComponent) {
-					uiComponent->SetColor(m_textureColor);
-				}
-			}
-
-			void SetText(const std::wstring& text) {
-				m_text = text;
-
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetText(m_text);
-				}
-			}
-			void SetTextColor(const D2D1_COLOR_F& color) {
-				m_textColor = color;
-
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetColor(m_textColor);
-				}
-			}
-			void SetTextFormatName(const std::string& formatName) {
-				m_textFormatName = formatName;
-				auto textComponent = GetComponent<UI_TextComponent>();
-				if (textComponent) {
-					textComponent->SetTextFormatName(m_textFormatName);
-				}
+			Vector2f GetSize() const {
+				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
+				return {};
 			}
 
 			////////////////////////////////////////////////////////////////////////////////
+			// ImageComponent 제어
+			////////////////////////////////////////////////////////////////////////////////
 
-			// 원본 크기로 설정하기
+			void SetTextureName(const std::string& name) {
+				if (auto comp = GetComponent<UI_ImageComponent>()) comp->SetTextureName(name);
+			}
+			void SetTextureColor(const D2D1_COLOR_F& color) {
+				if (auto comp = GetComponent<UI_ImageComponent>()) comp->SetColor(color);
+			}
+
+			// Getter
+			std::string GetTextureName() const {
+				if (auto comp = GetComponent<UI_ImageComponent>()) return comp->GetTextureName();
+				return "";
+			}
+
+			////////////////////////////////////////////////////////////////////////////////
+			// TextComponent 제어
+			////////////////////////////////////////////////////////////////////////////////
+
+			void SetText(const std::wstring& text) {
+				if (auto comp = GetComponent<UI_TextComponent>()) comp->SetText(text);
+			}
+			void SetTextColor(const D2D1_COLOR_F& color) {
+				if (auto comp = GetComponent<UI_TextComponent>()) comp->SetColor(color);
+			}
+			void SetTextFormatName(const std::string& formatName) {
+				if (auto comp = GetComponent<UI_TextComponent>()) comp->SetTextFormatName(formatName);
+			}
+
+
+			////////////////////////////////////////////////////////////////////////////////
+			// ButtonComponent 제어
+			////////////////////////////////////////////////////////////////////////////////
+
+			// 이벤트 콜백 추가
+			void AddOnEnter(const std::string& name, std::function<void()> callback) 
+			{ if (auto comp = GetComponent<UI_ButtonComponent>()) comp->AddOnEnter(name, callback); }
+
+			void AddOnExit(const std::string& name, std::function<void()> callback)
+			{ if (auto comp = GetComponent<UI_ButtonComponent>()) comp->AddOnExit(name, callback); }
+
+			void AddOnDown(const std::string& name, std::function<void()> callback)
+			{ if (auto comp = GetComponent<UI_ButtonComponent>()) comp->AddOnDown(name, callback); }
+
+			void AddOnClick(const std::string& name, std::function<void()> callback) 
+			{ if (auto comp = GetComponent<UI_ButtonComponent>()) comp->AddOnClick(name, callback); }
+
+			// 모든 콜백 제거
+			void ClearAllCallbacks() { if (auto comp = GetComponent<UI_ButtonComponent>()) comp->ClearAllCallbacks(); }
+
+			// 상호작용 설정
+			void SetInteractable(bool isInteractable) { if (auto comp = GetComponent<UI_ButtonComponent>()) comp->SetInteractable(isInteractable); }
+
+			// 상태 및 속성 Getter
+			bool IsInteractable() const {
+				if (auto comp = GetComponent<UI_ButtonComponent>()) return comp->GetInteractable();
+				return false;
+			}
+			JDComponent::ButtonState GetButtonState() const {
+				if (auto comp = GetComponent<UI_ButtonComponent>()) return comp->GetState();
+				return JDComponent::ButtonState::Idle;
+			}
+
+
+			////////////////////////////////////////////////////////////////////////////////
+
 			void SetSizeToOriginal() {
-				if (!m_textureName.empty()) {
+				auto imageComp = GetComponent<UI_ImageComponent>();
+				if (!imageComp) return;
 
-					// 텍스처 매니저나 리소스 매니저에서 크기 가져오기
-					ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
-					if (!bitmap)
-						return;
+				std::string textureName = imageComp->GetTextureName();
+				if (textureName.empty()) return;
 
-					auto size = bitmap->GetSize(); // D2D1_SIZE_F
+				ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(textureName);
+				if (!bitmap) return;
 
-					Vector2f sizeVector;
-					sizeVector.x = static_cast<float>(size.width);
-					sizeVector.y = static_cast<float>(size.height);
-
-					SetSize(sizeVector);
-				}
+				auto size = bitmap->GetSize();
+				SetSize({ size.width, size.height });
 			}
 
-			// 원본 크기 가져오기
 			Vector2f GetOriginalSize() const {
-				if (!m_textureName.empty()) {
+				auto imageComp = GetComponent<UI_ImageComponent>();
+				if (!imageComp) return GetSize();
 
-					// 텍스처 매니저나 리소스 매니저에서 크기 가져오기
-					ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
-					if (!bitmap)
-						return m_size;
+				std::string textureName = imageComp->GetTextureName();
+				if (textureName.empty()) return GetSize();
 
-					auto size = bitmap->GetSize(); // D2D1_SIZE_F
+				ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(textureName);
+				if (!bitmap) return GetSize();
 
-					Vector2f sizeVector;
-					sizeVector.x = static_cast<float>(size.width);
-					sizeVector.y = static_cast<float>(size.height);
-
-					return sizeVector;
-				}
+				auto size = bitmap->GetSize();
+				return { size.width, size.height };
 			}
-
-		private:
-			Vector2f	m_position		= { 0.f, 0.f };
-			Vector2f	m_size			= { 100.f, 100.f };
-			float		m_rotation		= { 0.f };
-			Vector2f	m_scale			= { 1.f, 1.f };
-
-			//std::string     m_textureName = "Default";
-			std::string     m_textureName = "Test";
-			D2D1_COLOR_F    m_textureColor = D2D1::ColorF(D2D1::ColorF::White);
-
-			std::wstring    m_text = L"Text";
-			D2D1_COLOR_F    m_textColor = D2D1::ColorF(D2D1::ColorF::Black);
-			std::string     m_textFormatName = "MalgunGothic_14";
 		};
 	}
 }

@@ -100,7 +100,7 @@ namespace JDScene {
         // UI
         // Empty Menu
         m_emptyMenu = CreateUIObject<EmptyMenu>();
-        m_emptyMenu->SetTextureName("GAME_START_B");
+        m_emptyMenu->SetTextureName("Menu");
         m_emptyMenu->SetSizeToOriginal();
         m_emptyMenu->SetActive(false);
     }

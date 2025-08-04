@@ -21,8 +21,8 @@ void EmptyMenu::Awake()
 		m_isAwaked = true;
 		// cout << "Image Awake" << endl;
 
-		
-		
+		AddComponent<Editor_Clickable>();
+		AddComponent<UI_ImageComponent>("Menu");
 	}
 }
 void EmptyMenu::Start()

@@ -4,11 +4,14 @@
 
 struct MouseState
 {
-	POINT  pos{ 0, 0 };
-	POINT  delta{ 0, 0 };
+	POINT pos{ 0, 0 };
+	POINT delta{ 0, 0 };
 
-	bool   leftPressed{ false };
-	bool   rightPressed{ false };
+	bool leftPressed{ false };
+	bool rightPressed{ false };
+
+	bool leftClicked{ false };
+	bool rightClicked{ false };
 };
 
 struct KeyEdge
@@ -46,6 +49,8 @@ public:
 	bool GetKeyPressed(UINT vk);
 
 	MouseState GetMouseState() const { return m_CurMouse; }
+
+	MouseState* SetMouseState() { return &m_CurMouse; }
 
 	bool IsKeyDown(UINT vk) const {
 		if (vk >= 0 && vk < 256) {

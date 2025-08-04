@@ -67,7 +67,8 @@ bool InputManager::OnHandleMessage(const MSG& msg, bool imguiHandled)
         case WM_KEYUP:
             HandleMsgKeyUp(msg.wParam, msg.lParam);
             break;
-        case WM_MOUSEMOVE:
+
+        case WM_MOUSEMOVE: 
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
         case WM_RBUTTONDOWN:
@@ -159,12 +160,20 @@ void InputManager::HandleMsgMouse(const MSG& msg)
 
     if (msg.message == WM_LBUTTONDOWN)
     {
-        m_CurMouse.leftPressed = true;
+        if (!m_CurMouse.leftPressed)
+        {
+            m_CurMouse.leftPressed = true;
+            m_CurMouse.leftClicked = true; // 한 프레임만 true
+        }
         SetCapture(msg.hwnd);
     }
     else if (msg.message == WM_RBUTTONDOWN)
     {
-        m_CurMouse.rightPressed = true;
+        if (!m_CurMouse.leftPressed)
+        {
+            m_CurMouse.leftPressed = true;
+            m_CurMouse.leftClicked = true; // 한 프레임만 true
+        }
         SetCapture(msg.hwnd);
     }
     else if (msg.message == WM_LBUTTONUP)
@@ -194,7 +203,7 @@ void InputManager::HandleMsgMouse(const MSG& msg)
         "MOUSE (%d,%d)  left=%d right=%d\n",
         x, y, m_CurMouse.leftPressed, m_CurMouse.rightPressed);
 
-    std::cout << buf;
+    //std::cout << buf;
 }
 
 void InputManager::HandleRawInput(LPARAM lParam)

@@ -16,6 +16,7 @@ namespace JDGlobal {
 			Enemy,
 			EnemyCat,
 			EnemyBuilding,
+
 			NPC,
 			UI
 		};

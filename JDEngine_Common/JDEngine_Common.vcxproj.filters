@@ -16,6 +16,15 @@
     <Filter Include="Global">
       <UniqueIdentifier>{1396d460-6ea1-4871-addd-35ba34628ea3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{3b40ff8c-9d83-4afe-8b44-3e34696ff740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\Parser">
+      <UniqueIdentifier>{75f04713-8fba-47a8-8497-d8e31e341052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\Parser\XML">
+      <UniqueIdentifier>{97df62ad-e010-4ae4-b5c9-438acefd4209}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">

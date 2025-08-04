@@ -3,7 +3,7 @@
 
 namespace JDGameObject {
     namespace Content {
-        class FishingSpot : JDGameObject::Content::Building
+        class FishingSpot : public JDGameObject::Content::Building
         {
         public:
             FishingSpot() : Building(L"DefaultObject") {}
@@ -25,3 +25,4 @@ namespace JDGameObject {
         };
     }
 }
+

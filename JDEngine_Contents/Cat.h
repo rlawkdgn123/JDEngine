@@ -1,17 +1,54 @@
-#pragma once
+ï»¿#pragma once
+
 #include"GameObjectList.h"
+namespace JDGameObject {
+    namespace Content {
 
-namespace JDGameObject{
-	namespace Content {
-		class DefaultCat : public Cat
-		{
-			void Awake() override;
-			void Start() override;                              // ÃÖÃÊ 1È¸¸¸ È£Ãâ
-			void Update(float deltaTime) override;              // Update
-			void LateUpdate(float deltaTime) override;          // Update ÈÄ È£Ãâ
-			void FixedUpdate(float fixedDeltaTime) override;    // ¹°¸® °è»ê¿ë
-		};
-	}
+        class Cat : public JDGameObject::GameObject
+        {
+        public:
+            Cat() : GameObject(L"Cat"), m_catType(CatType::Felis),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {
+            }
+            Cat(const CatType type) : GameObject(L"Cat"), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {
+            }
+            Cat(const std::wstring& name, const CatType type) : GameObject(name), m_catType(type),
+                m_populationCost(1),
+                m_resourceBonus(1.f, 1.f, 1.f),
+                m_synergyBonus(1.f, 1.f, 1.f),
+                m_resourceSubPerSec(1.f, 1.f, 1.f)
+            {
+            }
+        public:
+            virtual void Awake() override;
+            virtual void Start() override;
+        protected:
+            CatType m_catType;              // ê³ ì–‘ì´ ì¢…ë¥˜
+            int m_populationCost;           // ì¸êµ¬ ë¹„ìš©
+            Resource m_resourceBonus;		// ìì› ë³´ë„ˆìŠ¤
+            Resource m_synergyBonus;		// ì‹œë„ˆì§€ ë³´ë„ˆìŠ¤
+            Resource m_resourceSubPerSec;    // ì´ˆë‹¹ ìì› ìœ ì§€ë¹„ìš© (ì†Œëª¨)
+            ResourceSystem* m_resourceSystem;
+        };
+
+
+        class DefaultCat : public Cat
+        {
+            void Awake() override;
+            void Start() override;                              // ï¿½ï¿½ï¿½ï¿½ 1È¸ï¿½ï¿½ È£ï¿½ï¿½
+            void Update(float deltaTime) override;              // Update
+            void LateUpdate(float deltaTime) override;          // Update ï¿½ï¿½ È£ï¿½ï¿½
+            void FixedUpdate(float fixedDeltaTime) override;    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        };
+    }
 }
-
 

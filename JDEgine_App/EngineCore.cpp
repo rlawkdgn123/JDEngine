@@ -308,7 +308,7 @@ void EngineCore::UpdateLogic()
     }
 
     // 콜라이더 그리기 토글
-    if (input.GetKeyPressed('C')) {
+    if (input.GetKeyPressed('T')) {
         SceneManager::Instance().ToggleDrawColider();
         std::cout << "ToggleDrawColider" << std::endl;
     }

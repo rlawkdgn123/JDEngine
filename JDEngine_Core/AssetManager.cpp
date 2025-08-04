@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "AssetManager.h"
 
+using json = nlohmann::json;
 
 bool AssetManager::Initialize(ID2D1RenderTarget* renderTarget)
 {
@@ -117,18 +118,18 @@ const AnimationRenderClip* AssetManager::GetAnimationRender(const std::string& n
     return nullptr;
 }
 
-bool AssetManager::LoadCSV(const std::string& name, const std::wstring& filePath)
-{
-    return false;
-}
-
-ID2D1Bitmap* AssetManager::GetCsv(const std::string& name) const
-{
-    return nullptr;
-}
-
-void AssetManager::ConvertAllCsvToWstring()
-{
-}
+//bool AssetManager::LoadCSV(const std::string& name, const std::wstring& filePath)
+//{
+//    return false;
+//}
+//
+//ID2D1Bitmap* AssetManager::GetCsv(const std::string& name) const
+//{
+//    return nullptr;
+//}
+//
+//void AssetManager::ConvertAllCsvToWstring()
+//{
+//}
 
 

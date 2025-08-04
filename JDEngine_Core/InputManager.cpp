@@ -68,7 +68,7 @@ bool InputManager::OnHandleMessage(const MSG& msg, bool imguiHandled)
             HandleMsgKeyUp(msg.wParam, msg.lParam);
             break;
 
-        case WM_MOUSEMOVE: 
+        case WM_MOUSEMOVE:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
         case WM_RBUTTONDOWN:
@@ -169,21 +169,23 @@ void InputManager::HandleMsgMouse(const MSG& msg)
     }
     else if (msg.message == WM_RBUTTONDOWN)
     {
-        if (!m_CurMouse.leftPressed)
+        if (!m_CurMouse.rightPressed)
         {
-            m_CurMouse.leftPressed = true;
-            m_CurMouse.leftClicked = true; // 한 프레임만 true
+            m_CurMouse.rightPressed = true;
+            m_CurMouse.rightClicked = true; // 한 프레임만 true
         }
         SetCapture(msg.hwnd);
     }
     else if (msg.message == WM_LBUTTONUP)
     {
         m_CurMouse.leftPressed = false;
+        m_CurMouse.leftClicked = false;
         ReleaseCapture();
     }
     else if (msg.message == WM_RBUTTONUP)
     {
         m_CurMouse.rightPressed = false;
+        m_CurMouse.rightClicked = false;
         ReleaseCapture();
     }
 
@@ -271,5 +273,5 @@ void InputManager::HandleKeyboardInput(RAWINPUT& raw)
 
 void InputManager::HandleMouseInput(RAWINPUT& raw)
 {
-    
+
 }

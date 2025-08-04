@@ -46,7 +46,7 @@ void FMODSystem::PlayLooped(
         *outChannel = channel;
     }
 
-    std::cout << "[FMOD] PlayLooped(\"" << filepath << "\") 성공\n";
+    //std::cout << "[FMOD] PlayLooped(\"" << filepath << "\") 성공\n";
 }
 
 

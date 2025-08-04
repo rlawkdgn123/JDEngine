@@ -24,10 +24,10 @@ namespace JDScene {
         void Render(float deltaTime) override;
 
     private:
+        int m_totalCols = 4;
+        int m_totalRows = 6;
+        std::vector<bool> m_isOpen;
 
-        /*GameObject*
-        GameObject*
-        GameObject**/
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;

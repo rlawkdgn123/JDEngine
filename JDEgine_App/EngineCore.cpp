@@ -99,9 +99,10 @@ bool EngineCore::Initialize()
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
     AudioManager::Instance().SetMusicVolume(1.0f);
     FMOD::Channel* bgmChannel = nullptr;
-    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    //AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))

@@ -173,11 +173,11 @@ bool EngineCore::Initialize()
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
-    SceneManager::Instance().ChangeScene("TitleScene");
+    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
+    //SceneManager::Instance().ChangeScene("TitleScene");
 
-    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    //SceneManager::Instance().ChangeScene("TestScene01");
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().ChangeScene("TestScene01");
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();
@@ -285,6 +285,9 @@ void EngineCore::UpdateTime()
 
 void EngineCore::UpdateLogic()
 {
+    InputManager::Instance().SetMouseState()->leftClicked = false;
+    InputManager::Instance().SetMouseState()->rightClicked = false;
+
 
     // 배속 키 입력처리
     static float speeds[] = { 2.f, 4.f, 8.f };

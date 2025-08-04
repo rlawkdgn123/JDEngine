@@ -6,14 +6,19 @@
 #include "WindowGlobal.h"
 #include "GameObjectBase.h"
 #include "GameObjectList.h"
-#include "D2DTransform.h"
-#include "Texture.h"
+
+#include "Component.h"
+
 #include "D2DRenderer.h"
+#include "Layer.h"
+
+#include "D2DTransform.h"
+#include "RectTransform.h"
+
 #include "UIObject.h"
 #include "UIObjectList.h"
-#include "Layer.h"
-#include "Animation.h"
-#include "RectTransform.h"
 #include "UI_TextComponent.h"
+
 #include "BGM.h"
 #include "SFX.h"
+

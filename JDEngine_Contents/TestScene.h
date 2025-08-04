@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "SceneBase.h"
 #include "InputManager.h" 
+
 namespace JDScene {
     class TestScene : public SceneBase
     {
@@ -23,6 +24,7 @@ namespace JDScene {
 
         void Render(float deltaTime) override;
 
+        void ClickUpdate();
     private:
         int m_totalCols = 4;
         int m_totalRows = 6;

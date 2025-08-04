@@ -1,8 +1,7 @@
-
+﻿
 #pragma once
-//#include "json.hpp"                   //�̰͵� �����ϳ� �ٸ� ������ �ֱ� ������ ����η� �ϴ� ���� ������ �� ����
-#include "../JDEngine_Common/json.hpp"  // �Ǵ� <nlohmann/json.hpp> - ��ġ ��Ŀ� ���� �ٸ�
-using json = nlohmann::json;
+//#include "json.hpp"
+#include "../JDEngine_Common/json.hpp"
 
 constexpr const char* documentPath = "../Resource/Document/"; // 문서(CSV)관련 기본 위치
 
@@ -34,7 +33,17 @@ public:
     bool LoadTexture(const std::string& name, const std::wstring& filePath);
     ID2D1Bitmap* GetTexture(const std::string& name) const;
 
-    bool LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
+    // 텍스쳐 에셋
+    bool            LoadTexture(const std::string& name, const std::wstring& filepath);
+    ID2D1Bitmap*    GetTexture(const std::string& name) const;
+    const std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>>&
+                    GetTextures() const { return m_textures; 
+
+    // 애니메이션 에셋
+    bool                        LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
+    const AnimationRenderClip*  GetAnimationRender(const std::string& name) const;
+    const std::unordered_map<std::string, AnimationRenderClip>&
+                                GetAnimations() const { return m_AnimationRenders; }
 
     const AnimationRenderClip* GetAnimationRender(const std::string& name) const;
     const std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>>& GetTextures() const {
@@ -50,6 +59,7 @@ public:
 private:
     AssetManager() = default;
     ~AssetManager() = default;
+                                         
 private:
     // 애니메이션
     Microsoft::WRL::ComPtr<IWICImagingFactory> m_wicFactory;

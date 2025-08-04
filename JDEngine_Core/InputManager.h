@@ -44,7 +44,7 @@ public:
 
 	bool Initialize(HWND hwnd); // 인풋매니저 초기화
 
-	bool OnHandleMessage(const MSG& msg); // 키 입력 정보를 핸들에 넘기기
+	bool OnHandleMessage(const MSG& msg, bool imguiHandled = false);
 
 	bool GetKeyPressed(UINT vk);
 

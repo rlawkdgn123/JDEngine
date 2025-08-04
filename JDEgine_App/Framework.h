@@ -12,3 +12,6 @@
 #include "CameraFader.h"
 #include "FMODSystem.h"
 #include "AudioManager.h"
+#include "ColliderBase.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"

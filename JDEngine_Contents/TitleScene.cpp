@@ -2,6 +2,9 @@
 #include "framework.h"
 #include "SceneList.h"
 #include "TitleScene.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "SceneManager.h"
 
 // IMGUI
 #include "imgui.h"
@@ -23,18 +26,39 @@ namespace JDScene {
 
         // GameObject
         ////////////////////////////////////////////////////////////////////////////////
-        //std::unique_ptr<GameObject> testObject = std::make_unique<GameObject>();
-        //std::unique_ptr<GameObject> birdObj = std::make_unique<GameObject>();
+        // CreateGameObject<Player>(L"Plyaer");
 
-        //{//Test 텍스처 이미지 게임오브젝트 생성
-        //    auto tf = testObject->GetComponent<Transform>();
-        //    tf->SetPosition({ 300.f, 200.f });
-        //    tf->SetScale({ 1.f, 1.f });
+        //std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
 
-        //    testObject->AddComponent<TextureRenderer>("Test");
-        //    testObject->AddComponent<Editor_Clickable>();
+        //const float startX = -500.0f;
+        //const float startY = 300.0f;
+        //const float spacingX = 100.0f;
+        //const float spacingY = -100.0f;
 
-        //    m_gameObjects.push_back(std::move(testObject));
+        //for (int col = 0; col < 5; ++col) {
+        //    for (int row = 0; row < 7; ++row) {
+        //        std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
+
+        //        auto* box = CreateGameObject<Grid>(name.c_str());
+
+        //        float x = startX + spacingX * col;
+        //        float y = startY + spacingY * row;
+        //        box->GetComponent<Transform>()->SetPosition({ x, y });
+
+        //        box->AddComponent<BoxCollider>(Vector2F{ 47.0f,47.0f });
+
+        //    }
+        //}
+
+        //{ 
+        //    auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
+        //    boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+        //    boxObj2->AddComponent<Editor_Clickable>();
+        //    boxObj2->AddComponent<BGM>("MainTheme");
+        //    boxObj2->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        //    auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+        //    auto size = bitmap->GetSize();
+        //    boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
         //}
 
         //{//새 애니메이션 게임오브젝트 생성
@@ -52,7 +76,7 @@ namespace JDScene {
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
-        // 타이틀 배경
+        //타이틀 배경
         auto image = CreateUIObject<Image>(L"Title_Image");
         image->SetTextureName("Title");
 
@@ -68,10 +92,33 @@ namespace JDScene {
             image->SetPivot({ 0.5f, 0.5f });
         }
 
+        ////////////////////////////////////////////////////////////////////////////////
+
         // GameStart 버튼
         auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
-        gameStart->SetTextureName("GAME_START_A");
+        gameStart->SetTextureName("GAME_START_B");
         gameStart->SetSizeToOriginal();
+
+        // 1. OnClick: 클릭하면 InGameScene으로 전환
+        //gameStart->AddOnClick("Load GameScene", []() {
+        //    // SceneManager를 이용해 다음 씬으로 넘어갑니다.
+        //    SceneManager::Instance().ChangeScene("TitleScene");
+        //    });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경 (예: 밝은 버전)
+        gameStart->AddOnEnter("Highlight On", [gameStart]() {
+            gameStart->SetTextureName("GAME_START_A");
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        gameStart->AddOnExit("Highlight Off", [gameStart]() {
+            gameStart->SetTextureName("GAME_START_B");
+            });
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+
 
         //// Setting 버튼
         //auto setting = CreateUIObject<Button>(L"Setting_Button");
@@ -136,7 +183,7 @@ namespace JDScene {
 
         if (state.leftPressed)
         {
-            // 1. 마우스 스크린 좌표 (Unity 스타일: 좌측 하단이 원점, Y축 위쪽이 양수)
+            // 1. 마우스 스크린 좌표
             float screenHeight = static_cast<float>(camera.get()->GetScreenHeight());
 
             Vector2F mousePos(
@@ -144,10 +191,10 @@ namespace JDScene {
                 static_cast<float>(state.pos.y)
             );
 
-            /*  디버그용 출력문
+            //디버그용 출력문
             std::cout << "마우스: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
             std::cout << "화면 높이: " << screenHeight << std::endl;
-            */
+            
 
             // 클릭 여부
             bool clicked = false;
@@ -182,10 +229,10 @@ namespace JDScene {
                 // 스크린 좌표를 월드 좌표로 변환
                 Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
 
-                /*  디버그용 출력문
+                //디버그용 출력문
                 std::cout << "Unity 마우스: (" << unityMousePos.x << ", " << unityMousePos.y << ")" << std::endl;
                 std::cout << "월드 마우스: (" << worldMousePos.x << ", " << worldMousePos.y << ")" << std::endl;
-                */
+                
 
                 for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
                 {

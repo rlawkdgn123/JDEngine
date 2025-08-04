@@ -2,6 +2,9 @@
 #include "GameObjectBase.h"
 #include "RectTransform.h"
 #include "AssetManager.h"
+#include "D2DRenderer.h"
+
+class D2DRenderer;
 
 namespace JDComponent {
 
@@ -22,7 +25,7 @@ namespace JDComponent {
 
         void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform);
 
-        void            SetTextureName(std::string& name) { m_textureName = name; }
+        void            SetTextureName(const std::string& name) { m_textureName = name; }
         std::string     GetTextureName() const { return m_textureName; }
 
         void            SetColor(const D2D1_COLOR_F& color);

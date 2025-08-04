@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Framework.h"
 #include "D2DTransform.h"
 #include "RectTransform.h"
@@ -29,6 +29,42 @@ namespace JDComponent {
 			}
 		}
 
+		void Transform::SetPivotPreset(PivotPreset preset)
+		{
+			switch (preset)
+			{
+			case PivotPreset::TopLeft:
+				m_pivot = { 0.0f, 1.0f };
+				break;
+			case PivotPreset::TopCenter:
+				m_pivot = { 0.5f, 1.0f };
+				break;
+			case PivotPreset::TopRight:
+				m_pivot = { 1.0f, 1.0f };
+				break;
+			case PivotPreset::CenterLeft:
+				m_pivot = { 0.0f, 0.5f };
+				break;
+			case PivotPreset::Center:
+				m_pivot = { 0.5f, 0.5f };
+				break;
+			case PivotPreset::CenterRight:
+				m_pivot = { 1.0f, 0.5f };
+				break;
+			case PivotPreset::BottomLeft:
+				m_pivot = { 0.0f, 0.0f };
+				break;
+			case PivotPreset::BottomCenter:
+				m_pivot = { 0.5f, 0.0f };
+				break;
+			case PivotPreset::BottomRight:
+				m_pivot = { 1.0f, 0.0f };
+				break;
+			}
+
+			SetDirty();
+		}
+
 		
 		/*void Transform::UpdateMatrices()
 		{
@@ -52,27 +88,27 @@ namespace JDComponent {
 			m_dirty = false;
 		}*/
 
-		// ÄÚµå °£¼ÒÈ­ - ÇÇ¹ş ÀÌµ¿À» ¸ÅÆ®¸¯½º¿¡ Æ÷ÇÔ½ÃÅ´
+		// ì½”ë“œ ê°„ì†Œí™” - í”¼ë²— ì´ë™ì„ ë§¤íŠ¸ë¦­ìŠ¤ì— í¬í•¨ì‹œí‚´
 		void Transform::UpdateMatrices()
 		{
-			// 1) ÇÇ¹ş ±âÁØ ½ºÄÉÀÏ
+			// 1) í”¼ë²— ê¸°ì¤€ ìŠ¤ì¼€ì¼
 			auto M_scale = D2D1::Matrix3x2F::Scale(
 				m_scale.x, m_scale.y,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 2) ÇÇ¹ş ±âÁØ È¸Àü
+			// 2) í”¼ë²— ê¸°ì¤€ íšŒì „
 			auto M_rot = D2D1::Matrix3x2F::Rotation(
 				m_rotation,
 				D2D1::Point2F(m_pivot.x, m_pivot.y)
 			);
 
-			// 3) ÃÖÁ¾ À§Ä¡ ÀÌµ¿
+			// 3) ìµœì¢… ìœ„ì¹˜ ì´ë™
 			auto M_trans = D2D1::Matrix3x2F::Translation(
 				m_position.x, m_position.y
 			);
 
-			// ÇÕÃÄ¼­ ·ÎÄÃ º¯È¯ ¸ÅÆ®¸¯½º ¿Ï¼º
+			// í•©ì³ì„œ ë¡œì»¬ ë³€í™˜ ë§¤íŠ¸ë¦­ìŠ¤ ì™„ì„±
 			m_matrixLocal = M_scale * M_rot * M_trans;
 
 			if (m_parent)

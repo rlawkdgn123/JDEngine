@@ -56,7 +56,7 @@ namespace JDScene {
         // 1. OnClick: 클릭하면 실행될 이벤트
         gameStart->AddOnClick("Load GameScene", [this]() {
             // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-            SceneManager::Instance().ChangeScene("SelectNationScene");
+            SceneManager::Instance().ChangeScene("TutorialScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경

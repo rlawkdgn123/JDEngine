@@ -139,6 +139,8 @@ bool EngineCore::Initialize()
 
     if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) 
     { std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ATest", L"../Resource/Texture/ATest.png"))
+    {std::cout << "[ERROR] ATest 텍스처 로드 실패" << std::endl;}
     if (!AssetManager::Instance().LoadTexture("Title_Exam", L"../Resource/TITLE/TITLE_exam.jpg")) 
     { std::cout << "[ERROR] Title exam 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) 
@@ -442,11 +444,15 @@ void EngineCore::UpdateLogic()
             
         if (input.GetKeyPressed(VK_F2))
         {
-            m_fader.FadeIn(1.0f);
+            m_fader.FadeIn(1.0f, 1.f);
         }
         if (input.GetKeyPressed(VK_F1))
         {
-            m_fader.FadeOut(2.5f);
+            m_fader.FadeOut(2.5f, 0.f);
+        }
+        if (input.GetKeyPressed(VK_F3))
+        {
+            m_fader.FadeIn(0.1f, 0.5f);
         }
     }
 }

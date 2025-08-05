@@ -104,7 +104,13 @@ namespace JDComponent {
             }
 		}
 
-		
+        void RectTransform::SetLocalPosition(const Vector2F& pos)
+        {
+            m_matrixLocal._31 = pos.x;
+            m_matrixLocal._32 = pos.y;
+
+            m_dirty = true;
+        }
 
     }
 }

@@ -105,6 +105,7 @@ namespace JDComponent {
             void SetPosition(const Vector2F& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
             void SetScale(const Vector2F& scale) { m_scale = scale; SetDirty(); }
+            void SetLocalPosition(const Vector2F& pos);
 
             const Vector2F& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }

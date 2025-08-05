@@ -249,10 +249,18 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     auto anim = obj.GetComponent<AnimationRender>();
     auto spr = obj.GetComponent<TextureRenderer>();
 
-    // 3) 카메라 뷰 매트릭스 적용
-    D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
+    // 3) 최종 렌더링을 위한 행렬 계산
+    //    순서: 오브젝트의 월드 행렬 -> 카메라 적용 -> 화면 중앙으로 이동
+    D2D1_MATRIX_3X2_F finalTransform = tf->GetWorldMatrix();
+
     if (m_camera)
-        world = world * m_camera->GetViewMatrix();
+    {
+        finalTransform = finalTransform * m_camera->GetViewMatrix();
+    }
+
+    // 이제 순수한 월드 좌표가 되었으므로, 렌더러가 화면 중앙으로 옮겨줍니다.
+    // RectTransform의 GetScreenCenterTranslation()을 재사용합니다.
+    finalTransform = finalTransform * tf->GetScreenCenterTranslation();
 
     // 4) 애니메이션이 있으면 업데이트+렌더
     if (anim)
@@ -262,7 +270,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
 
         // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
-        anim->Render(ctx, world);
+        anim->Render(ctx, finalTransform);
         return;
     }
 
@@ -270,7 +278,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     if (spr)
     {
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
-        spr->Render(ctx, world);
+        spr->Render(ctx, finalTransform);
     }
 }
 

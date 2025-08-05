@@ -28,7 +28,7 @@ namespace JDScene {
 
         // UI
         ////////////////////////////////////////////////////////////////////////////////
-        
+
         // 뒤로가기 버튼
         auto back_Button = CreateUIObject<Button>(L"Back_Button");
         back_Button->SetTextureName("Back_Button");
@@ -79,10 +79,10 @@ namespace JDScene {
         felis_Image->SetSizeToOriginal();
         felis_Image->SetPosition({ 0, -60 });
         felis_Image->SetScale({ 1.5f, 1.5f });
-        
+
         // 1. OnClick: 클릭하면 실행될 이벤트
         felis_Image->AddOnClick("Load GameScene", []() {
-            
+
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -244,74 +244,66 @@ namespace JDScene {
     }
 
     void SelectNationScene::ClickUpdate() {
-        auto camera = D2DRenderer::Instance().GetCamera();
-        if (!camera) return;
+
+        // ImGui가 마우스 입력을 사용 중이면 게임 내 클릭을 무시합니다.
+        if (ImGui::GetIO().WantCaptureMouse)
+            return;
 
         InputManager& input = InputManager::Instance();
         MouseState state = input.GetMouseState();
 
-        if (ImGui::GetIO().WantCaptureMouse)
-            return;
-
+        // state.leftClicked 또는 state.leftPressed 등 필요한 입력 상태를 사용합니다.
         if (state.leftPressed)
         {
-            // 1. 마우스 스크린 좌표
-            float screenHeight = static_cast<float>(camera.get()->GetScreenHeight());
-
-            Vector2F mousePos(
+            // (1) 마우스 좌표를 맨 위에서 한 번만 계산해서 재사용합니다.
+            // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)
+            Vector2F screenMousePos(
                 static_cast<float>(state.pos.x),
                 static_cast<float>(state.pos.y)
             );
+            // 게임 오브젝트 클릭 판정에 사용할 월드 좌표 (Unity 기준: Y 위가 양수)
+            Vector2F worldMousePos = GetMouseWorldPos(); // 우리가 만든 통일된 함수 사용!
 
-            //디버그용 출력문
-            std::cout << "마우스: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
-            std::cout << "화면 높이: " << screenHeight << std::endl;
-
-
-            // 클릭 여부
             bool clicked = false;
 
             ////////////////////////////////////////////////////////////////////////////////
-            // 1. UI 클릭 검사 ( 스크린 좌표계 사용 )
+            // 1. UI 클릭 검사 (스크린 좌표계 사용)
             ////////////////////////////////////////////////////////////////////////////////
-
+            // 이 로직은 스크린 좌표를 사용하므로 기존과 동일하게 올바르게 동작합니다.
             for (int i = static_cast<int>(m_uiObjects.size()) - 1; i >= 0; --i)
             {
                 auto& uiObj = m_uiObjects[i];
-                if (!uiObj) continue;
+                if (!uiObj || !uiObj->IsActive()) continue;
 
                 auto clickable = uiObj->GetComponent<Editor_Clickable>();
-                if (clickable && clickable->IsHit(mousePos))
+                // UI의 IsHit 함수에는 '스크린 좌표'를 그대로 넘겨줍니다.
+                if (clickable && clickable->IsHit(screenMousePos))
                 {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
                     std::cout << " UI 오브젝트 클릭 함!!!!! ";
-                    break;
+                    break; // UI를 클릭했으면 더 이상 진행 안 함
                 }
             }
 
             ////////////////////////////////////////////////////////////////////////////////
-            // 2. 게임오브젝트 클릭 검사 ( 월드 좌표계 사용 )
+            // 2. 게임오브젝트 클릭 검사 (월드 좌표계 사용)
             ////////////////////////////////////////////////////////////////////////////////
-
             if (!clicked)
             {
-                // 게임오브젝트용으로만 Unity 좌표 변환
-                Vector2F unityMousePos(mousePos.x, screenHeight - mousePos.y);
-                // 스크린 좌표를 월드 좌표로 변환
-                Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
-
-                //디버그용 출력문
-                std::cout << "Unity 마우스: (" << unityMousePos.x << ", " << unityMousePos.y << ")" << std::endl;
-                std::cout << "월드 마우스: (" << worldMousePos.x << ", " << worldMousePos.y << ")" << std::endl;
-
+                // (2) 불필요하고 잘못된 좌표 변환 로직을 모두 제거합니다.
+                /* Vector2F unityMousePos(mousePos.x, screenHeight - mousePos.y);
+                    Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
+                    -> 이 부분은 GetMouseWorldPos()로 대체되었으므로 삭제!
+                */
 
                 for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
                 {
                     auto& obj = m_gameObjects[i];
-                    if (!obj) continue;
+                    if (!obj || !obj->IsActive()) continue;
 
                     auto clickable = obj->GetComponent<Editor_Clickable>();
+                    // (3) 게임 오브젝트의 IsHit 함수에는 위에서 계산한 '월드 좌표'를 넘겨줍니다.
                     if (clickable && clickable->IsHit(worldMousePos))
                     {
                         SetSelectedObject(obj.get());
@@ -322,6 +314,7 @@ namespace JDScene {
                 }
             }
 
+            // 아무것도 클릭되지 않았다면 선택 해제
             if (!clicked)
             {
                 SetSelectedObject(nullptr);

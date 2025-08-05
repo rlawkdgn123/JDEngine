@@ -63,30 +63,43 @@ namespace JDComponent {
 
             void AddChild(Transform* child)
             {
-                // 자식의 로컬 좌표를 부모 좌표계로 변환
-                // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
-                D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
-
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
-                JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
-
                 m_children.push_back(child);
+
+                // LEGACY : 과거 코드
+                /*
+                //// 자식의 로컬 좌표를 부모 좌표계로 변환
+                //// 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
+                //D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                //chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
+
+                //auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                //JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                //m_children.push_back(child);
+                */
+                
             }
 
             void RemoveChild(Transform* child)
             {
-                // 월드로 보낸다.
-                D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetWorldMatrix();
-
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
-                JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
-
                 m_children.erase(
                     std::remove(m_children.begin(), m_children.end(), child),
                     m_children.end()
                 );
+
+                /*
+                //// 월드로 보낸다.
+                //D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                //chiledLocalTM = chiledLocalTM * GetWorldMatrix();
+
+                //auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivotPoint());
+                //JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                //m_children.erase(
+                //    std::remove(m_children.begin(), m_children.end(), child),
+                //    m_children.end()
+                //);
+                */
             }
 
             // ** 트랜스폼 설정 **
@@ -118,6 +131,19 @@ namespace JDComponent {
                 SetDirty();
             }
 
+            Vec2 GetWorldPosition()
+            {
+                if (m_parent)
+                {
+                    // 부모의 월드 좌표에 나의 상대 좌표를 더한 것이 나의 월드 좌표
+                    // (부모의 회전/스케일이 자식의 위치에 영향을 주는 경우 더 복잡한 계산이 필요하지만,
+                    //  간단한 시스템에서는 이 방식으로 충분히 동작합니다)
+                    return m_parent->GetWorldPosition() + m_position;
+                }
+                // 부모가 없으면 나의 상대 좌표가 곧 월드 좌표
+                return m_position;
+            }
+
             // ** 방향 벡터 **
             Vec2 GetForward() const
             {
@@ -147,9 +173,19 @@ namespace JDComponent {
                 return inv;
             }
 
+            Mat3x2 GetScreenCenterTranslation()
+            {
+                float width = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetWidth());
+                float height = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetHeight());
+
+                return D2D1::Matrix3x2F::Translation(
+                    width * 0.5f,
+                    height * 0.5f
+                );
+            }
+
             // ** 회전과 스케일을 위한 피봇 설정 **
             void SetPivotPreset(PivotPreset preset, const D2D1_SIZE_F& size);
-            void SetPivotPreset(PivotPreset preset);
 
             D2D1_POINT_2F GetPivotPoint() const
             {
@@ -171,6 +207,18 @@ namespace JDComponent {
             Vec2 GetPivot() const
             {
                 return { m_pivot.x, m_pivot.y };
+            }
+
+            // 픽셀 단위인 m_pivot을 0~1 비율의 상대 좌표로 변환해서 반환합니다.
+            Vec2 GetRelativePivot(const D2D1_SIZE_F& size) const
+            {
+                // size가 0일 경우 0으로 나누는 것을 방지
+                if (size.width == 0.0f || size.height == 0.0f)
+                {
+                    return { 0.5f, 0.5f }; // 기본값 반환
+                }
+                // 유니티 좌표계(Y 위가 양수)에 맞춰서 반환
+                return { m_pivot.x / size.width, m_pivot.y / size.height };
             }
 
         private:

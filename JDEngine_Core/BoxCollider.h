@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ColliderBase.h"
 
 namespace JDComponent {
@@ -10,6 +10,7 @@ namespace JDComponent {
 
 		void SetHalfSize(Vec2 halfSize) { m_halfSize = halfSize; }
 		Vec2 GetHalfSize() const { return m_halfSize; }
+		Vec2 GetSize() const { return { m_halfSize.x * 2.0f, m_halfSize.y * 2.0f }; }
 
 		bool Intersect(ColliderBase* other) override;
 		bool IsMouseOver(Vec2 mousePos) override;

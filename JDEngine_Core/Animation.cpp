@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "Animation.h"
 #include "D2DRenderer.h"
@@ -26,20 +26,35 @@ void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F wor
 
     const auto& frame = clip->frames[m_currentFrame];
 
-    // 1) worldTransform ¼¼ÆÃ
+    // 1) worldTransform ì„¸íŒ…
     auto ctx = D2DRenderer::Instance().GetD2DContext();
     ctx->SetTransform(worldTransform);
 
-    // 2) destRect °è»ê (¿øÁ¡ ±âÁØ, ÇÁ·¹ÀÓ Å©±â¸¸Å­)
+    // 2) destRect ê³„ì‚° (ì›ì  'ì¤‘ì‹¬' ê¸°ì¤€, í”„ë ˆì„ í¬ê¸°ë§Œí¼)
     float w = frame.srcRect.right - frame.srcRect.left;
     float h = frame.srcRect.bottom - frame.srcRect.top;
-    D2D1_RECT_F destRect = D2D1::RectF(0.0f, 0.0f, w, h);
+    D2D1_RECT_F destRect = D2D1::RectF(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
 
-    // 3) ·¡ÆÛ È£Ãâ
+    // 3) ë˜í¼ í˜¸ì¶œ
     D2DRenderer::Instance().DrawBitmap(
         static_cast<ID2D1Bitmap1*>(bitmap),
         destRect,
         frame.srcRect,
         1.0f
     );
+}
+
+D2D1_SIZE_F JDComponent::AnimationRender::GetFrameSize() const
+{
+    auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
+    if (!clip || clip->frames.empty())
+    {
+        return { 0, 0 };
+    }
+
+    // ë³´í†µ ì²« ë²ˆì§¸ í”„ë ˆì„ì„ ëŒ€í‘œ í¬ê¸°ë¡œ ì‚¬ìš©í•©ë‹ˆë‹¤.
+    const auto& frame = clip->frames[0];
+    float w = frame.srcRect.right - frame.srcRect.left;
+    float h = frame.srcRect.bottom - frame.srcRect.top;
+    return { w, h };
 }

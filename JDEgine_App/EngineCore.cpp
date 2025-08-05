@@ -643,6 +643,45 @@ void EngineCore::RenderImGui()
         JDComponent::D2DTM::Transform* transform =
             selectObject->GetComponent<JDComponent::D2DTM::Transform>();
 
+        // (1) 객체의 크기를 안정적으로 가져오는 로직
+        D2D1_SIZE_F objectSize = { 0, 0 };
+        bool hasSizeInfo = false;
+
+        // 1순위: 콜라이더에서 크기 정보 가져오기
+        auto col = selectObject->GetComponent<JDComponent::ColliderBase>();
+        if (col)
+        {
+            hasSizeInfo = true;
+            if (col->GetColliderType() == JDComponent::ColliderType::Box)
+            {
+                // BoxCollider로 타입 캐스팅 후 GetSize() 호출
+                if (auto boxCollider = dynamic_cast<JDComponent::BoxCollider*>(col))
+                {
+                    const auto& sizeVec = boxCollider->GetSize();
+                    objectSize = { sizeVec.x, sizeVec.y };
+                }
+            }
+            else if (col->GetColliderType() == JDComponent::ColliderType::Circle)
+            {
+                // CircleCollider로 타입 캐스팅 후 GetRadius() 호출
+                if (auto circleCollider = dynamic_cast<JDComponent::CircleCollider*>(col))
+                {
+                    float radius = circleCollider->GetRadius();
+                    objectSize = { radius * 2.0f, radius * 2.0f };
+                }
+            }
+        }
+        // 2순위: 콜라이더가 없다면 스프라이트에서 크기 정보 가져오기
+        else
+        {
+            auto trComp = selectObject->GetComponent<JDComponent::TextureRenderer>();
+            if (trComp)
+            {
+                hasSizeInfo = true;
+                objectSize = trComp->GetOriginalTextureSize(); // 스프라이트의 원본 크기
+            }
+        }
+
         if (transform)
         {
             ImGui::Separator();
@@ -692,15 +731,19 @@ void EngineCore::RenderImGui()
             // 피벗 (Pivot)
             ImGui::Text("Pivot_");
             ImGui::SameLine(labelWidth);
-
-            // DragFloat2가 차지할 너비 = (전체 너비 - 콤보박스 너비)
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - comboWidth);
 
-            JDComponent::D2DTM::Transform::Vec2 pivot = transform->GetPivot();
-            if (ImGui::DragFloat2("##Pivot_", &pivot.x, 0.01f, 0.0f, 1.0f))
+            // (2) UI 표시를 위해 '상대 피벗' 값을 가져옵니다.
+            JDComponent::D2DTM::Transform::Vec2 relativePivot = transform->GetRelativePivot(objectSize);
+
+            if (ImGui::DragFloat2("##Pivot_", &relativePivot.x, 0.01f, 0.0f, 1.0f))
             {
-                // 수정된 상대 좌표를 SetPivot으로 다시 설정
-                transform->SetPivot(pivot);
+                // (3) 수정된 상대 좌표를 다시 '픽셀 좌표'로 변환하여 SetPivot으로 설정합니다.
+                D2D1_POINT_2F newPixelPivot = {
+                    relativePivot.x * objectSize.width,
+                    relativePivot.y * objectSize.height
+                };
+                transform->SetPivot(newPixelPivot);
             }
 
             // 피벗 프리셋을 위한 콤보박스
@@ -715,15 +758,15 @@ void EngineCore::RenderImGui()
 
             // 현재 피벗 값(상대 좌표)을 보고 어떤 프리셋에 해당하는지 인덱스를 찾습니다.
             int currentPivotPreset = -1; // 일치하는 프리셋이 없으면 -1 (Custom 상태)
-            if (pivot.x == 0.0f && pivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
-            else if (pivot.x == 0.5f && pivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
-            else if (pivot.x == 1.0f && pivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
-            else if (pivot.x == 0.0f && pivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
-            else if (pivot.x == 0.5f && pivot.y == 0.5f)    currentPivotPreset = 4; // Center
-            else if (pivot.x == 1.0f && pivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
-            else if (pivot.x == 0.0f && pivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
-            else if (pivot.x == 0.5f && pivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
-            else if (pivot.x == 1.0f && pivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
+            if (relativePivot.x == 0.0f && relativePivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
+            else if (relativePivot.x == 1.0f && relativePivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
+            else if (relativePivot.x == 0.0f && relativePivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 0.5f)    currentPivotPreset = 4; // Center
+            else if (relativePivot.x == 1.0f && relativePivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
+            else if (relativePivot.x == 0.0f && relativePivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
+            else if (relativePivot.x == 1.0f && relativePivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
 
             // 선택된 프리셋이 있으면 해당 이름을, 없으면 "Custom"을 표시합니다.
             if (ImGui::BeginCombo("##PivotPreset_", currentPivotPreset != -1 ? pivotPresets[currentPivotPreset] : "Custom"))
@@ -737,7 +780,7 @@ void EngineCore::RenderImGui()
                         // 항목을 선택하면, 해당 인덱스(n)를 PivotPreset enum으로 변환하여
                         // SetPivot(PivotPreset) 함수를 직접 호출합니다.
                         // 이 코드는 enum의 정수 값이 0부터 8까지 순서대로라는 것을 전제로 합니다.
-                        transform->SetPivotPreset((JDComponent::D2DTM::Transform::PivotPreset)n);
+                        transform->SetPivotPreset((JDComponent::D2DTM::Transform::PivotPreset)n, objectSize);
                     }
 
                     // 현재 선택된 항목으로 스크롤을 자동으로 맞춰줍니다.

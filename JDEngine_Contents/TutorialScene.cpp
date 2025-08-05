@@ -25,7 +25,11 @@ namespace JDScene {
         CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
-        std::shared_ptr<GameObject>  birdObj = std::make_shared<GameObject>();
+        std::shared_ptr<GameObject> birdObj = std::make_shared<GameObject>();
+
+        // =====================================================================
+        // 게임 오브젝트 생성 (World Space)
+        // =====================================================================
 
         const float startX = -500.0f;
         const float startY = 300.0f;
@@ -34,6 +38,7 @@ namespace JDScene {
 
         for (int col = 0; col < m_totalCols; ++col) {
             for (int row = 0; row < m_totalRows; ++row) {
+
                 // 1) 이름 생성
                 std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
 
@@ -114,6 +119,10 @@ namespace JDScene {
             }
         }
 
+        // =====================================================================
+        // UI 오브젝트 생성 (Screen Space)
+        // =====================================================================
+
         // 1) 배경
         m_Menu = CreateUIObject<Image>(L"MenuBackground");
 
@@ -129,6 +138,7 @@ namespace JDScene {
         auto* bgRect = m_Menu->GetComponent<RectTransform>();
         bgRect->SetPivot({ 0.f,0.f });
         bgRect->SetAnchor({ 0.f,0.f });
+        bgRect->SetPosition({ 50, 50 });
 
         //각버튼 키 목록
         std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
@@ -158,11 +168,28 @@ namespace JDScene {
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
                 auto* rt = btn->GetComponent<RectTransform>();
-                rt->SetPivot({ 0,0 }); rt->SetAnchor({ 0,0 });
-                rt->SetSize({ 50,50 });
+
+                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
                 rt->SetParent(bgRect);
+
+                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
+                rt->SetPivot({ 0.5f, 0.5f });
+                rt->SetAnchor({ 0.0f, 0.0f });
+                rt->SetSize({ 50, 50 });
+
+                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
                 rt->SetPosition({ x, yOffset });
 
+
+                // LEGACY : 과거 코드
+                /*
+                //rt->SetPivot({ 0,0 }); 
+                //rt->SetAnchor({ 0,0 });
+                //rt->SetSize({ 50,50 });
+                //rt->SetParent(bgRect);
+                //rt->SetPosition({ x, yOffset });
+                */
+                
                 m_Menu->AddChild(btn);
                 btn->SetActive(false);
                 m_menuButtons.push_back(btn);
@@ -182,10 +209,26 @@ namespace JDScene {
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
                 auto* rt = btn->GetComponent<RectTransform>();
-                rt->SetPivot({ 0,0 }); rt->SetAnchor({ 0,0 });
-                rt->SetSize({ 50,50 });
+
+                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
                 rt->SetParent(bgRect);
-                rt->SetPosition({ x, xOffset });
+
+                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
+                rt->SetPivot({ 0.5f, 0.5f });
+                rt->SetAnchor({ 0.0f, 0.0f });
+                rt->SetSize({ 50, 50 });
+
+                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
+                rt->SetPosition({ x, yOffset });
+
+                // LEGACY : 과거 코드
+                /*
+                //rt->SetPivot({ 0,0 }); 
+                //rt->SetAnchor({ 0,0 });
+                //rt->SetSize({ 50,50 });
+                //rt->SetParent(bgRect);
+                //rt->SetPosition({ x, xOffset });
+                */
 
                 m_Menu->AddChild(btn);
                 btn->SetActive(false);
@@ -386,20 +429,12 @@ namespace JDScene {
         {
             std::cout << "이거 실행됨?!#";
 
-            // 1. 마우스 스크린 좌표
-            float screenHeight = static_cast<float>(camera.get()->GetScreenHeight());
+            // (1) 마우스 좌표를 한 번만 계산해서 재사용합니다.
+            // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)
+            Vector2F screenMousePos(static_cast<float>(state.pos.x), static_cast<float>(state.pos.y));
+            // 게임 오브젝트 클릭 판정에 사용할 월드 좌표 (Unity 기준: Y 위가 양수)
+            Vector2F worldMousePos = GetMouseWorldPos(); // 우리가 만든 통일된 함수 사용!
 
-            Vector2F mousePos(
-                static_cast<float>(state.pos.x),
-                static_cast<float>(state.pos.y)
-            );
-
-            //디버그용 출력문
-            std::cout << "마우스: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
-            std::cout << "화면 높이: " << screenHeight << std::endl;
-
-
-            // 클릭 여부
             bool clicked = false;
 
             ////////////////////////////////////////////////////////////////////////////////
@@ -412,7 +447,7 @@ namespace JDScene {
                 if (!uiObj) continue;
 
                 auto clickable = uiObj->GetComponent<Editor_Clickable>();
-                if (clickable && clickable->IsHit(mousePos))
+                if (clickable && clickable->IsHit(screenMousePos))
                 {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
@@ -429,9 +464,10 @@ namespace JDScene {
                             //선택된 콜라이더 사이즈
                             Vector2F halfSize = boxCol->GetHalfSize();
                             Vector2F fullSize = { halfSize.x * 2.f, halfSize.y * 2.f };
+
                             // 1) 콜라이더 월드 위치
-                            Vector2F worldPos = m_selectedCollider->GetOwner()
-                                ->GetComponent<Transform>()->GetPosition();
+                            Vector2F tileWorldPos = m_selectedCollider->GetOwner()
+                                ->GetComponent<Transform>()->GetWorldPosition();
 
                             // 2) Building 생성
                             auto* building = CreateGameObject<Building>(
@@ -465,7 +501,7 @@ namespace JDScene {
                             tr->SetTextureName(texKey);
 
                             // 5) Building 월드 위치 배치
-                            building->GetComponent<Transform>()->SetPosition(worldPos);
+                            building->GetComponent<Transform>()->SetPosition(tileWorldPos);
                             
                             // 6) 메뉴 닫기 & 버튼 숨기기
                             m_Menu->SetActive(false);
@@ -487,22 +523,13 @@ namespace JDScene {
 
             if (!clicked)
             {
-                // 게임오브젝트용으로만 Unity 좌표 변환
-                Vector2F unityMousePos(mousePos.x, screenHeight - mousePos.y);
-                // 스크린 좌표를 월드 좌표로 변환
-                Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
-
-                //디버그용 출력문
-                std::cout << "Unity 마우스: (" << unityMousePos.x << ", " << unityMousePos.y << ")" << std::endl;
-                std::cout << "월드 마우스: (" << worldMousePos.x << ", " << worldMousePos.y << ")" << std::endl;
-
-
                 for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
                 {
                     auto& obj = m_gameObjects[i];
-                    if (!obj) continue;
+                    if (!obj || !obj->IsActive()) continue;
 
                     auto clickable = obj->GetComponent<Editor_Clickable>();
+                    // 게임 오브젝트의 IsHit 함수에는 '월드 좌표'를 넘겨줍니다.
                     if (clickable && clickable->IsHit(worldMousePos))
                     {
                         SetSelectedObject(obj.get());
@@ -513,6 +540,7 @@ namespace JDScene {
                 }
             }
 
+            // 아무것도 클릭되지 않았다면 선택 해제
             if (!clicked)
             {
                 SetSelectedObject(nullptr);

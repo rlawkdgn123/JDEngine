@@ -35,3 +35,16 @@ void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F
         /* opacity */ 1.0f
     );
 }
+
+// 텍스처의 원본 사이즈 반환
+D2D1_SIZE_F TextureRenderer::GetOriginalTextureSize() const
+{
+    auto bitmap = static_cast<ID2D1Bitmap1*>(
+        AssetManager::Instance().GetTexture(m_textureName)
+        );
+    if (bitmap)
+    {
+        return bitmap->GetSize();
+    }
+    return { 0, 0 }; // 텍스처가 없으면 0,0 반환
+}

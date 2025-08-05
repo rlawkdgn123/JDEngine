@@ -153,6 +153,9 @@ namespace JDComponent {
                 return m_matrixWorld;
             }
 
+            // 최종 월드(스크린) 좌표계의 사각형을 반환하는 함수
+            D2D1_RECT_F GetWorldRect();
+
             Mat3x2 GetInverseWorldMatrix()
             {
                 Mat3x2 inv = GetWorldMatrix();

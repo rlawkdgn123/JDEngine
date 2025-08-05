@@ -58,6 +58,9 @@
     <ClCompile Include="EmptyMenu.cpp">
       <Filter>Object\UIObject\EmptyMenu</Filter>
     </ClCompile>
+    <ClCompile Include="SelectNationScene.cpp">
+      <Filter>Scene\SelectNation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
@@ -126,6 +129,9 @@
     <ClInclude Include="EmptyMenu.h">
       <Filter>Object\UIObject\EmptyMenu</Filter>
     </ClInclude>
+    <ClInclude Include="SelectNationScene.h">
+      <Filter>Scene\SelectNation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -139,9 +145,6 @@
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{74daeadb-d4ef-40ff-8bf1-297872ca3016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Title">
-      <UniqueIdentifier>{e6963788-0a47-4195-a536-b25016283871}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scene\Test">
       <UniqueIdentifier>{768f9f36-1d5f-4d2b-b1ef-e92f3e9d10bc}</UniqueIdentifier>
@@ -197,14 +200,20 @@
     <Filter Include="Object\GameObject\Player">
       <UniqueIdentifier>{931c9134-311c-4b90-918e-bc440e4fae5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Tutorial">
-      <UniqueIdentifier>{7d39ddd1-aa03-4180-926a-42fc827925cd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\UIObject\EmptyMenu">
       <UniqueIdentifier>{c0f651df-1a33-4bf0-a68d-9b5a94e6c9ee}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\UIObject\BuildingMenu">
       <UniqueIdentifier>{d9eec270-63e9-4964-9608-6c9dcf6b1b5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\SelectNation">
+      <UniqueIdentifier>{f6bc5450-df45-4c7e-b5fd-b2b0f2e36f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Tutorial">
+      <UniqueIdentifier>{7d39ddd1-aa03-4180-926a-42fc827925cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Title">
+      <UniqueIdentifier>{e6963788-0a47-4195-a536-b25016283871}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -95,8 +95,9 @@ namespace JDGameObject {
 			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
 			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
 			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
+			void SetAnchor(const Vector2f& anchor) { if (auto comp = GetComponent<RectTransform>()) comp->SetAnchor(anchor); }
+			void SetPivot(const Vector2f& pivot) { if (auto comp = GetComponent<RectTransform>()) comp->SetPivot(pivot); }
 
-			// Getter
 			Vector2f GetSize() const {
 				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
 				return {};

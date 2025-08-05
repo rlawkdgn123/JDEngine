@@ -53,6 +53,33 @@ namespace JDComponent {
         }
 
 
+        D2D1_RECT_F RectTransform::GetWorldRect()
+        {
+            Vector2F size = GetSize();
+            Mat3x2 renderMatrix = GetRenderMatrix(); // 피벗까지 적용된 최종 행렬
+
+            // 로컬 공간의 모서리 4개 점 정의 (피벗이 적용되었으므로 0,0부터 시작)
+            D2D1_POINT_2F local_tl = { 0.f, 0.f };          // Top-Left
+            D2D1_POINT_2F local_tr = { size.x, 0.f };       // Top-Right
+            D2D1_POINT_2F local_bl = { 0.f, size.y };       // Bottom-Left
+            D2D1_POINT_2F local_br = { size.x, size.y };    // Bottom-Right
+
+            // renderMatrix를 사용해 각 모서리 점을 월드(스크린) 좌표로 변환
+            D2D1_POINT_2F world_tl = renderMatrix.TransformPoint(local_tl);
+            D2D1_POINT_2F world_tr = renderMatrix.TransformPoint(local_tr);
+            D2D1_POINT_2F world_bl = renderMatrix.TransformPoint(local_bl);
+            D2D1_POINT_2F world_br = renderMatrix.TransformPoint(local_br);
+
+            // 변환된 4개 점의 최소/최대 x, y 값을 찾아 최종 사각형을 만듭니다.
+            // 이렇게 하면 회전된 객체도 감싸는 정확한 Bounding Box가 생성됩니다.
+            float left = std::min({ world_tl.x, world_tr.x, world_bl.x, world_br.x });
+            float top = std::min({ world_tl.y, world_tr.y, world_bl.y, world_br.y });
+            float right = std::max({ world_tl.x, world_tr.x, world_bl.x, world_br.x });
+            float bottom = std::max({ world_tl.y, world_tr.y, world_bl.y, world_br.y });
+
+            return { left, top, right, bottom };
+        }
+
         void RectTransform::SetPivot(const Vector2F& relativePivot)
         {
             // 값의 범위를 0~1로 제한 (선택사항)

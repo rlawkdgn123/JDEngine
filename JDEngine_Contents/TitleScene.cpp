@@ -24,62 +24,16 @@ namespace JDScene {
     // TitleScene
     void TitleScene::OnEnter() {
 
-        // GameObject
-        ////////////////////////////////////////////////////////////////////////////////
-        // CreateGameObject<Player>(L"Plyaer");
-
-        //std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
-
-        //const float startX = -500.0f;
-        //const float startY = 300.0f;
-        //const float spacingX = 100.0f;
-        //const float spacingY = -100.0f;
-
-        //for (int col = 0; col < 5; ++col) {
-        //    for (int row = 0; row < 7; ++row) {
-        //        std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
-
-        //        auto* box = CreateGameObject<Grid>(name.c_str());
-
-        //        float x = startX + spacingX * col;
-        //        float y = startY + spacingY * row;
-        //        box->GetComponent<Transform>()->SetPosition({ x, y });
-
-        //        box->AddComponent<BoxCollider>(Vector2F{ 47.0f,47.0f });
-
-        //    }
-        //}
-
-        //{ 
-        //    auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
-        //    boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
-        //    boxObj2->AddComponent<Editor_Clickable>();
-        //    boxObj2->AddComponent<BGM>("MainTheme");
-        //    boxObj2->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        //    auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
-        //    auto size = bitmap->GetSize();
-        //    boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
-        //}
-
-        //{//새 애니메이션 게임오브젝트 생성
-        //    auto birdTf = birdObj->GetComponent<Transform>();
-        //    birdTf->SetPosition({ 100.f, 50.f });
-        //    birdTf->SetScale({ 1.0f, 1.0f });
-
-        //    birdObj->AddComponent<TextureRenderer>("GrayBird");
-        //    birdObj->AddComponent<AnimationRender>("GrayBird", 0.5);// 뒤에 값은 speed
-        //    birdObj->AddComponent<Editor_Clickable>();
-
-        //    m_gameObjects.push_back(std::move(birdObj));
-        //}
+        // Init
+        // 초기화 코드 필요 ( 오브젝트가 계속 생성되는 문제 있음. )
 
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
         //타이틀 배경
         //auto image = CreateUIObject<Image>(L"Title_Image");
-        auto image = CreateUIObject<Image>(L"Title_Exam");
-        image->SetTextureName("Title_Exam");
+        auto image = CreateUIObject<Image>(L"Title");
+        image->SetTextureName("Title");
 
         auto cam =  D2DRenderer::Instance().GetCamera();
         if (cam)
@@ -98,15 +52,25 @@ namespace JDScene {
         // GameStart 버튼
         auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
         gameStart->SetTextureName("GAME_START_B");
-        gameStart->SetSizeToOriginal();
+        gameStart->SetText(L"");
+        gameStart->SetSize({ 340, 58 });
+        gameStart->SetPosition({ -522, 32 });
 
-        // 1. OnClick: 클릭하면 InGameScene으로 전환
-        gameStart->AddOnClick("Load GameScene", []() {
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        gameStart->AddOnClick("Load GameScene", [this]() {
+
+            // 효과음 재생 중이면 정지
+            if (m_hoverSfxChannel)
+            {
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
+
             // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-            SceneManager::Instance().ChangeScene("TutorialScene");
+            SceneManager::Instance().ChangeScene("SelectNationScene");
             });
 
-        // 2. OnEnter: 마우스를 올리면 텍스처 변경 (예: 밝은 버전)
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
         gameStart->AddOnEnter("Highlight On", [this, gameStart]() {
             gameStart->SetTextureName("GAME_START_A");
             if (m_hoverSfxChannel == nullptr)
@@ -119,11 +83,11 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         gameStart->AddOnExit("Highlight Off", [this, gameStart]() {
             gameStart->SetTextureName("GAME_START_B");
-            //if (m_hoverSfxChannel)
-            //{
-            //    m_hoverSfxChannel->stop();        // 사운드 정지
-            //    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-            //}
+            if (m_hoverSfxChannel)
+            {
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
             });
 
 
@@ -131,15 +95,77 @@ namespace JDScene {
 
         // Setting 버튼
         auto setting = CreateUIObject<Button>(L"Setting_Button");
-        setting->SetTextureName("SETTING_A");
-        setting->SetSizeToOriginal();
-        
-        ////////////////////////////////////////////////////////////////////////////////
+        setting->SetTextureName("SETTING_B");
+        setting->SetText(L"");
+        setting->SetSize({ 340, 58 });
+        setting->SetPosition({ -522, 115 });
 
-        //// Quit Game 버튼
-        //auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
-        //quitGame->SetTextureName("QUITGAME_A");
-        //quitGame->SetSizeToOriginal();
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        setting->AddOnClick("OpenSettingUI", []() {
+            
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        setting->AddOnEnter("Highlight On", [this, setting]() {
+            setting->SetTextureName("SETTING_A");
+            if (m_hoverSfxChannel == nullptr)
+            {
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        setting->AddOnExit("Highlight Off", [this, setting]() {
+            setting->SetTextureName("SETTING_B");
+            if (m_hoverSfxChannel)
+            {
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
+            });
+        
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // Quit Game 버튼
+        auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
+        quitGame->SetTextureName("QUIT_GAME_B");
+        quitGame->SetText(L"");
+        quitGame->SetSize({ 340, 58 });
+        quitGame->SetPosition({ -522, 198 });
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        quitGame->AddOnClick("Quit Game", []() {
+
+            // 1. 메인 윈도우의 핸들(HWND)을 가져옵니다.
+            HWND mainWindowHandle = JDGlobal::Window::WindowSize::Instance().GetHWND();
+
+            // 2. PostMessage를 사용해 WM_CLOSE 메시지를 보냅니다.
+            if (mainWindowHandle)
+            {
+                PostMessage(mainWindowHandle, WM_CLOSE, 0, 0);
+            }
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        quitGame->AddOnEnter("Highlight On", [this, quitGame]() {
+            quitGame->SetTextureName("QUIT_GAME_A");
+            if (m_hoverSfxChannel == nullptr)
+            {
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        quitGame->AddOnExit("Highlight Off", [this, quitGame]() {
+            quitGame->SetTextureName("QUIT_GAME_B");
+            if (m_hoverSfxChannel)
+            {
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
+            });
     }
 
     void TitleScene::OnLeave() {

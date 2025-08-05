@@ -32,6 +32,7 @@ namespace JDScene {
 
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
+
 	};
 }
 

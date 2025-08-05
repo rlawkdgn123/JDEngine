@@ -194,12 +194,6 @@
     <Filter Include="Object\GameObject\Player">
       <UniqueIdentifier>{931c9134-311c-4b90-918e-bc440e4fae5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\UIObject\EmptyMenu">
-      <UniqueIdentifier>{c0f651df-1a33-4bf0-a68d-9b5a94e6c9ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\UIObject\BuildingMenu">
-      <UniqueIdentifier>{d9eec270-63e9-4964-9608-6c9dcf6b1b5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene\SelectNation">
       <UniqueIdentifier>{f6bc5450-df45-4c7e-b5fd-b2b0f2e36f66}</UniqueIdentifier>
     </Filter>

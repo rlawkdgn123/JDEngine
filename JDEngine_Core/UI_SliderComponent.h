@@ -3,9 +3,11 @@
 #include "InputManager.h"
 #include "GameObjectBase.h"
 #include "RectTransform.h"
+#include "UI_ButtonComponent.h"
 
 namespace JDComponent {
 
+    using CallbackInfo = JDComponent::CallbackInfo;
     using RectTransform = JDComponent::D2DTM::RectTransform;
     using Vector2F = JDMath::Vector2F;
 
@@ -15,13 +17,6 @@ namespace JDComponent {
         Idle,
         Hovered,
         Dragging
-    };
-
-    // 버튼과 동일한, 인자 없는 콜백 정보 구조체
-    struct CallbackInfo
-    {
-        std::string name;
-        std::function<void()> function;
     };
 
     // float 값을 인자로 받는, 값 변경 콜백 정보 구조체
@@ -56,6 +51,11 @@ namespace JDComponent {
 
         void        SetValue(float value, bool broadcast = true);
         float       GetValue() const { return m_currentValue; }
+
+        void        SetMinValue(float value);
+        float       GetMinValue() const { return m_minValue; }
+        void        SetMaxValue(float value);
+        float       GetMaxValue() const { return m_maxValue; }
 
         float       GetNormalizedValue() const;
 

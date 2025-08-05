@@ -57,14 +57,14 @@ namespace JDScene {
         // 타이틀 텍스트
         auto title_Text = CreateUIObject<Text>(L"Title_Text");
         title_Text->SetText(L"고양이 세계 펠리니아의 승자가 될 국가는?");
-        title_Text->SetTextFormatName("MalgunGothic_70");
+        title_Text->SetTextFormatName("Sebang_40");
         title_Text->SetSize({ 1600, 150 });
         title_Text->SetPosition({ 0, -430 });
 
         // 국가 설명 텍스트
         auto nationDesc_Text = CreateUIObject<Text>(L"NationDesc_Text");
         nationDesc_Text->SetText(L"국가 설명");
-        nationDesc_Text->SetTextFormatName("MalgunGothic_90");
+        nationDesc_Text->SetTextFormatName("Sebang_40");
         nationDesc_Text->SetSize({ 1600, 150 });
         nationDesc_Text->SetPosition({ 0, 330 });
 
@@ -92,20 +92,20 @@ namespace JDScene {
                 L"활달하고 자신감 넘치는 털보 고양이 왕국.\n"
                 L"털보 고양이 60% / 목재 생산량 +10%"
             );
-            nationDesc_Text->SetTextFormatName("MalgunGothic_60");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         felis_Image->AddOnExit("Highlight Off", [this, felis_Image, nationDesc_Text]() {
             nationDesc_Text->SetText(L"국가 설명");
-            nationDesc_Text->SetTextFormatName("MalgunGothic_90");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 팰리스 (Felis) 연합왕국 텍스트
         auto felis_Text = CreateUIObject<Text>(L"Felis_Text");
         felis_Text->SetText(L"팰리스 연합왕국");
         felis_Text->SetSize({ 340, 58 });
-        felis_Text->SetPosition({ 0, 32 });
+        felis_Text->SetPosition({ -522, 32 });
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -129,20 +129,20 @@ namespace JDScene {
                 L"느긋하고 감수성 넘치는 줄무늬 고양이 왕국\n"
                 L"줄무늬 고양이 60% / 식량 생산량 +10%"
             );
-            nationDesc_Text->SetTextFormatName("MalgunGothic_60");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         navi_Image->AddOnExit("Highlight Off", [this, navi_Image, nationDesc_Text]() {
             nationDesc_Text->SetText(L"국가 설명");
-            nationDesc_Text->SetTextFormatName("MalgunGothic_90");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 나비 (Navi) 공화국 텍스트
         auto navi_Text = CreateUIObject<Text>(L"Navi_Text");
         navi_Text->SetText(L"나비 공화국");
         navi_Text->SetSize({ 340, 58 });
-        navi_Text->SetPosition({ -522, 32 });
+        navi_Text->SetPosition({ 0, 32 });
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -166,13 +166,13 @@ namespace JDScene {
                 L"엄격하고 규율 잡힌 검정 고양이들의 산업 제국.\n"
                 L"검정 고양이 60% / 광물 생산량 +10%"
             );
-            nationDesc_Text->SetTextFormatName("MalgunGothic_60");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         kone_Image->AddOnExit("Highlight Off", [this, kone_Image, nationDesc_Text]() {
             nationDesc_Text->SetText(L"국가 설명");
-            nationDesc_Text->SetTextFormatName("MalgunGothic_90");
+            nationDesc_Text->SetTextFormatName("Sebang_40");
             });
 
         // 팰리스 (Felis) 제국 텍스트
@@ -185,6 +185,25 @@ namespace JDScene {
     }
 
     void SelectNationScene::OnLeave() {
+        // 효과음 재생 중이면 정지
+        if (m_hoverSfxChannel)
+        {
+            m_hoverSfxChannel->stop();        // 사운드 정지
+            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+        }
+
+        // 선택된 오브젝트 포인터 초기화
+        SetSelectedObject(nullptr);
+
+        // 오브젝트 제거
+        for (const auto& gameObject : m_gameObjects)
+        {
+            DestroyObject(gameObject.get());
+        }
+        for (const auto& uiObject : m_uiObjects)
+        {
+            DestroyObject(uiObject.get());
+        }
     }
 
     void SelectNationScene::Update(float deltaTime) {

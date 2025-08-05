@@ -79,6 +79,7 @@ public:
     }
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap1> CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RECT_F cropRect);
+
 private:
     D2DRenderer() = default;
 
@@ -104,12 +105,16 @@ private:
     Microsoft::WRL::ComPtr<ID2D1Bitmap1>           m_targetBitmap; // D2D render target bitmap
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>   m_brush;
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>   m_textBrush;
-    // ComPtr<IDWriteTextFormat>      m_textFormat;
-    std::unordered_map<std::string, Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_textFormats;
 
     Microsoft::WRL::ComPtr<ID2D1Device7>           m_d2dDevice;
     Microsoft::WRL::ComPtr<ID2D1DeviceContext7>    m_d2dContext;
 
     Microsoft::WRL::ComPtr<IWICImagingFactory>     m_wicFactory;
+
+    // 외부 폰트 사용하기 위한 ComPtr
+    Microsoft::WRL::ComPtr<IDWriteFactory8>        m_writeFactory;
+    Microsoft::WRL::ComPtr<IDWriteFontCollection1> m_customFontCollection;
+    // ComPtr<IDWriteTextFormat>      m_textFormat;
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_textFormats;
 };
 

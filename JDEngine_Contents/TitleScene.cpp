@@ -24,9 +24,6 @@ namespace JDScene {
     // TitleScene
     void TitleScene::OnEnter() {
 
-        // Init
-        // 초기화 코드 필요 ( 오브젝트가 계속 생성되는 문제 있음. )
-
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
@@ -58,14 +55,6 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         gameStart->AddOnClick("Load GameScene", [this]() {
-
-            // 효과음 재생 중이면 정지
-            if (m_hoverSfxChannel)
-            {
-                m_hoverSfxChannel->stop();        // 사운드 정지
-                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-            }
-
             // SceneManager를 이용해 다음 씬으로 넘어갑니다.
             SceneManager::Instance().ChangeScene("TutorialScene");
             });
@@ -167,12 +156,79 @@ namespace JDScene {
             }
             });
 
+
         m_lightParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 옵션창
+        auto optionUI = CreateUIObject<Image>(L"Option_Popup");
+        optionUI->SetTextureName("Title");
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // BGM 볼륨 조절 슬라이더
+        auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
+        bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        // 이미지 개별 설정
+        bgmSlider->SetBackgroundImage("VOLUME_LINE_2");
+        bgmSlider->SetFillImage("VOLUME_LINE_1");
+        bgmSlider->SetHandleImage("VOLUME_CAT_1");
+
+        // 1. 초기값 설정: 현재 오디오 매니저의 BGM 볼륨 값으로 설정합니다.
+        bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+
+        // 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 BGM 볼륨을 조절하도록 연결합니다.
+        bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+            AudioManager::Instance().SetMusicVolume(newValue);
+            });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //// SFX 볼륨 조절 슬라이더
+        //auto sfxSlider = CreateUIObject<Slider>(L"SFX_Slider");
+        //sfxSlider->Assemble(this);
+        //sfxSlider->SetPosition({ -522, 320 }); // BGM 슬라이더 아래
+
+        //// 이미지 개별 설정
+        //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
+        //bgmSlider->SetFillImage("VOLUME_LINE_2");
+        //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        //// 1. 초기값 설정: 현재 오디오 매니저의 SFX 볼륨 값으로 설정합니다.
+        //sfxSlider->SetValue(AudioManager::Instance().GetSFXVolume());
+
+        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 SFX 볼륨을 조절하도록 연결합니다.
+        //sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
+        //    AudioManager::Instance().SetSFXVolume(newValue);
+        //    });
+
     }
 
     void TitleScene::OnLeave() {
+
+        // 효과음 재생 중이면 정지
+        if (m_hoverSfxChannel)
+        {
+            m_hoverSfxChannel->stop();        // 사운드 정지
+            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+        }
+
+        // 선택된 오브젝트 포인터 초기화
+        SetSelectedObject(nullptr);
+
+        // 오브젝트 제거
+        for (const auto& gameObject : m_gameObjects)
+        {
+            DestroyObject(gameObject.get());
+        }
+        for (const auto& uiObject : m_uiObjects)
+        {
+            DestroyObject(uiObject.get());
+        }
     }
 
     void TitleScene::Update(float deltaTime) {

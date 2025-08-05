@@ -166,8 +166,6 @@ ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RE
     return cropped;
 }
 
-
-
 void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, IDWriteTextFormat* textFormat)
 {
     if (nullptr == m_textBrush)
@@ -463,50 +461,83 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
-    ComPtr<IDWriteFactory> writeFactory = nullptr;
+    // 1. 최신 DirectWrite 팩토리(IDWriteFactory8)를 직접 생성합니다.
     HRESULT hr = DWriteCreateFactory(
         DWRITE_FACTORY_TYPE_SHARED,
-        __uuidof(IDWriteFactory),
-        reinterpret_cast<IUnknown**>(writeFactory.GetAddressOf()));
-
+        __uuidof(IDWriteFactory8),
+        reinterpret_cast<IUnknown**>(m_writeFactory.GetAddressOf())
+    );
     DX::ThrowIfFailed(hr);
 
-    auto CreateFormat = [&](const std::wstring& fontName, float size, const std::string& name) {
-        ComPtr<IDWriteTextFormat> format = nullptr;
+    // 2. 텍스트 포맷 생성 헬퍼 람다
+    //    이 람다는 폰트 컬렉션을 인자로 받아 해당 컬렉션에서 폰트를 찾습니다.
+    auto CreateFormat = [&](
+        const std::wstring& fontFamilyName,
+        IDWriteFontCollection* fontCollection, // 시스템 폰트는 NULL, 커스텀 폰트는 컬렉션 전달
+        float fontSize,
+        const std::string& formatKey)
+        {
+            ComPtr<IDWriteTextFormat> format = nullptr;
+            DX::ThrowIfFailed(m_writeFactory->CreateTextFormat(
+                fontFamilyName.c_str(),
+                fontCollection,
+                DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+                DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ko-kr", &format));
 
-        DX::ThrowIfFailed(writeFactory->CreateTextFormat(
-            fontName.c_str(),
-            NULL,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            size,
-            L"ko-kr",
-            &format));
+            format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
+            m_textFormats[formatKey] = format;
+        };
 
-        format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);             // 수평 가운데 정렬
-        format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);   // 수직 가운데 정렬
-        format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);                 // 줄바꿈 허용
+    // 3. 외부 폰트 파일을 로드하여 컬렉션을 만들고, 그 안에서 포맷을 생성하는 헬퍼 람다
+    auto CreateFormatFromFile = [&](
+        const std::wstring& fontFilePath,
+        float fontSize,
+        const std::string& formatKey)
+        {
+            // --- 이 부분이 잘 동작하던 이전 코드의 핵심 로직입니다 ---
+            ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+            DX::ThrowIfFailed(m_writeFactory->CreateFontSetBuilder(&fontSetBuilder));
 
-        m_textFormats[name] = format;
-    };
+            ComPtr<IDWriteFontFile> fontFile;
+            hr = m_writeFactory->CreateFontFileReference(fontFilePath.c_str(), nullptr, &fontFile);
+            if (FAILED(hr)) {
+                std::wcout << L"[ERROR] Font file not found: " << fontFilePath << std::endl;
+                return;
+            }
+            DX::ThrowIfFailed(fontSetBuilder->AddFontFile(fontFile.Get()));
 
-    // 등록 예시
-    CreateFormat(L"맑은 고딕", 10.0f, "MalgunGothic_10");
-    CreateFormat(L"맑은 고딕", 12.0f, "MalgunGothic_12");
-    CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16");
-    CreateFormat(L"맑은 고딕", 20.0f, "MalgunGothic_20");
-    CreateFormat(L"맑은 고딕", 26.0f, "MalgunGothic_26");
-    CreateFormat(L"맑은 고딕", 38.0f, "MalgunGothic_38");
-    CreateFormat(L"맑은 고딕", 50.0f, "MalgunGothic_50");
-    CreateFormat(L"맑은 고딕", 60.0f, "MalgunGothic_60");
-    CreateFormat(L"맑은 고딕", 70.0f, "MalgunGothic_70");
-    CreateFormat(L"맑은 고딕", 80.0f, "MalgunGothic_80");
-    CreateFormat(L"맑은 고딕", 90.0f, "MalgunGothic_90");
-    CreateFormat(L"맑은 고딕", 100.0f, "MalgunGothic_100");
+            ComPtr<IDWriteFontSet> fontSet;
+            DX::ThrowIfFailed(fontSetBuilder->CreateFontSet(&fontSet));
 
-    CreateFormat(L"Arial", 16.0f, "Arial_16");
-    CreateFormat(L"Segoe UI", 20.0f, "SegoeUI_20");
+            // 폰트 컬렉션을 지역 변수로 생성 (이 함수 안에서만 사용)
+            ComPtr<IDWriteFontCollection1> localFontCollection;
+            DX::ThrowIfFailed(m_writeFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &localFontCollection));
+
+            // 폰트 컬렉션에서 "패밀리 이름"을 동적으로 가져오기
+            ComPtr<IDWriteFontFamily> fontFamily;
+            DX::ThrowIfFailed(localFontCollection->GetFontFamily(0, &fontFamily));
+            ComPtr<IDWriteLocalizedStrings> familyNames;
+            DX::ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
+            UINT32 length = 0;
+            DX::ThrowIfFailed(familyNames->GetStringLength(0, &length));
+
+            std::wstring dynamicFontName(length, L'\0');
+            DX::ThrowIfFailed(familyNames->GetString(0, &dynamicFontName[0], length + 1));
+
+            // 동적으로 얻은 폰트 이름과 로컬 컬렉션으로 TextFormat 생성
+            CreateFormat(dynamicFontName, localFontCollection.Get(), fontSize, formatKey);
+        };
+
+    // 4. 시스템 폰트 및 커스텀 폰트 등록
+    // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
+
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
+    CreateFormatFromFile(L"../Resource/FONT/Pinkfong Baby Shark Font_ Bold.otf", 40.0f, "Pinkfong_Bold_40");
 }
 
 void D2DRenderer::ReleaseRenderTargets()
@@ -565,5 +596,3 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBi
     // DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
 }
-
-

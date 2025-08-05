@@ -104,7 +104,7 @@ bool EngineCore::Initialize()
     AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
     AudioManager::Instance().SetMusicVolume(1.0f);
     FMOD::Channel* bgmChannel = nullptr;
-    //AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -158,6 +158,43 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("QUIT_GAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) 
     { std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl; }
 
+    // OPTION
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("OPTION_1", L"../Resource/OPTION/OPTION_1.png"))
+    { std::cout << "[ERROR] OPTION_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("OPTION_2", L"../Resource/OPTION/OPTION_2.png"))
+    { std::cout << "[ERROR] OPTION_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("OPTION_3", L"../Resource/OPTION/OPTION_3.png"))
+    { std::cout << "[ERROR] OPTION_3 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_1", L"../Resource/OPTION/BACK_1.png"))
+    { std::cout << "[ERROR] BACK_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_2", L"../Resource/OPTION/BACK_2.png"))
+    { std::cout << "[ERROR] BACK_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_GROUND_OPACITY", L"../Resource/OPTION/BACK_GROUND_OPACITY.png"))
+    { std::cout << "[ERROR] BACK_GROUND_OPACITY 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACKTOTITLE_BUTTON_1", L"../Resource/OPTION/BACKTOTITLE_BUTTON_1.png"))
+    { std::cout << "[ERROR] BACKTOTITLE_BUTTON_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACKTOTITLE_BUTTON_2", L"../Resource/OPTION/BACKTOTITLE_BUTTON_2.png"))
+    { std::cout << "[ERROR] BACKTOTITLE_BUTTON_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_BUTTON_1", L"../Resource/OPTION/QUIT_BUTTON_1.png"))
+    { std::cout << "[ERROR] QUIT_BUTTON_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_BUTTON_2", L"../Resource/OPTION/QUIT_BUTTON_2.png"))
+    { std::cout << "[ERROR] QUIT_BUTTON_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("CONTROLS_BUTTON", L"../Resource/OPTION/CONTROLS_BUTTON.png"))
+    { std::cout << "[ERROR] CONTROLS_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("CREDITS_BUTTON", L"../Resource/OPTION/CREDITS_BUTTON.png"))
+    { std::cout << "[ERROR] CREDITS_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_BUTTON", L"../Resource/OPTION/VOLUME_BUTTON.png"))
+    { std::cout << "[ERROR] VOLUME_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_CAT_1", L"../Resource/OPTION/VOLUME_CAT_1.png"))
+    { std::cout << "[ERROR] VOLUME_CAT_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_CAT_2", L"../Resource/OPTION/VOLUME_CAT_2.png"))
+    { std::cout << "[ERROR] VOLUME_CAT_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_LINE_1", L"../Resource/OPTION/VOLUME_LINE_1.png"))
+    { std::cout << "[ERROR] VOLUME_LINE_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_LINE_2", L"../Resource/OPTION/VOLUME_LINE_2.png"))
+    { std::cout << "[ERROR] VOLUME_LINE_2 텍스처 로드 실패" << std::endl; }
+
     // BATTLE
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("CAT", L"../Resource/BATTLE/CAT.png"))
@@ -168,6 +205,7 @@ bool EngineCore::Initialize()
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("Back_Button", L"../Resource/Back_Button.png"))
     { std::cout << "[ERROR] Back_Button 텍스처 로드 실패" << std::endl; }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png")) 
@@ -251,6 +289,9 @@ void EngineCore::Run()
             // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
             continue;
         }
+
+        // 썬 전환 요청이 있으면 확인하고 처리함.
+        SceneManager::Instance().ProcessSceneChange();
 
         // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
         UpdateTime();
@@ -481,7 +522,7 @@ void EngineCore::RenderImGui()
     {
         for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetGameObjects())
         {
-            std::string nameStr = WStringToString(obj->GetName());
+            std::string nameStr = WStringToString(obj->GetID()) + ". " + WStringToString(obj->GetName());
 
             // 현재 선택된 오브젝트와 비교해서 선택 상태 지정 (선택된 오브젝트 포인터 필요)
             auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
@@ -500,7 +541,7 @@ void EngineCore::RenderImGui()
     {
         for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetUIObjects())
         {
-            std::string nameStr = WStringToString(obj->GetName());
+            std::string nameStr = WStringToString(obj->GetID()) + ". " + WStringToString(obj->GetName());
 
             auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
             bool isSelected = (selectedObj == obj.get());
@@ -1247,7 +1288,7 @@ void EngineCore::RenderImGui()
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Text_ImageComponent
+        // UI_TextComponent
         ////////////////////////////////////////////////////////////////////////////////
 
         JDComponent::UI_TextComponent* textComponent =
@@ -1337,7 +1378,7 @@ void EngineCore::RenderImGui()
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Button_ImageComponent
+        // UI_ButtonComponent
         ////////////////////////////////////////////////////////////////////////////////
 
         JDComponent::UI_ButtonComponent* buttonComponent =
@@ -1411,6 +1452,113 @@ void EngineCore::RenderImGui()
             displayCallbackList("On Down", buttonComponent->GetOnDownCallbacks());
             ImGui::Spacing();
             displayCallbackList("On Click", buttonComponent->GetOnClickCallbacks());
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // UI_ButtonComponent
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::UI_SliderComponent* sliderComponent =
+            selectObject->GetComponent<JDComponent::UI_SliderComponent>();
+
+        if (sliderComponent)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(135, 206, 250, 255)); // 연한 파랑색
+            ImGui::Text("SliderComponent");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 상호작용 가능 (Interactable)
+            bool isInteractable = sliderComponent->GetInteractable();
+            if (ImGui::Checkbox("Interactable", &isInteractable))
+            {
+                sliderComponent->SetInteractable(isInteractable);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 현재 값 (Value)
+            float value = sliderComponent->GetValue();
+            float minVal = sliderComponent->GetMinValue();
+            float maxVal = sliderComponent->GetMaxValue();
+            if (ImGui::SliderFloat("Value", &value, minVal, maxVal))
+            {
+                // ImGui에서 값이 변경되면 컴포넌트의 값을 업데이트
+                // (콜백을 다시 호출하지 않도록 broadcast는 false로 설정)
+                sliderComponent->SetValue(value, false);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 최소/최대 값 편집
+            if (ImGui::InputFloat("Min Value", &minVal))
+            {
+                sliderComponent->SetMinValue(minVal);
+            }
+            if (ImGui::InputFloat("Max Value", &maxVal))
+            {
+                sliderComponent->SetMaxValue(maxVal);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 현재 상태 (읽기 전용)
+            ImGui::Text("State: ");
+            ImGui::SameLine();
+            const char* stateStr = "Unknown";
+            switch (sliderComponent->GetState())
+            {
+            case JDComponent::SliderState::Idle:     stateStr = "Idle"; break;
+            case JDComponent::SliderState::Hovered:  stateStr = "Hovered"; break;
+            case JDComponent::SliderState::Dragging: stateStr = "Dragging"; break;
+            }
+            ImGui::TextUnformatted(stateStr);
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 콜백 목록 표시 (읽기 전용)
+            ImGui::Spacing();
+
+            // 1. 인자가 없는 콜백 목록을 표시하는 헬퍼 람다 (OnEnter, OnExit 등)
+            auto displaySimpleCallbackList = [&](const char* title, const std::vector<JDComponent::CallbackInfo>& callbacks) {
+                ImGui::Text(title);
+                ImGui::BeginChild(title, ImVec2(0, 60), true); // 높이를 약간 줄임
+                if (callbacks.empty()) {
+                    ImGui::TextDisabled("(None)");
+                }
+                else {
+                    for (size_t i = 0; i < callbacks.size(); ++i) {
+                        ImGui::Text("[%zu]: %s", i, callbacks[i].name.c_str());
+                    }
+                }
+                ImGui::EndChild();
+                };
+
+            // 2. float 인자가 있는 콜백 목록을 표시하는 헬퍼 람다 (OnValueChanged)
+            auto displayValueCallbackList = [&](const char* title, const std::vector<JDComponent::ValueCallbackInfo>& callbacks) {
+                ImGui::Text(title);
+                ImGui::BeginChild(title, ImVec2(0, 60), true);
+                if (callbacks.empty()) {
+                    ImGui::TextDisabled("(None)");
+                }
+                else {
+                    for (size_t i = 0; i < callbacks.size(); ++i) {
+                        ImGui::Text("[%zu]: %s", i, callbacks[i].name.c_str());
+                    }
+                }
+                ImGui::EndChild();
+                };
+
+            // 3. 각 콜백에 맞는 헬퍼 함수를 호출하여 목록을 표시
+            displayValueCallbackList("On Value Changed", sliderComponent->GetOnValueChangedCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Enter", sliderComponent->GetOnEnterCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Exit", sliderComponent->GetOnExitCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Down", sliderComponent->GetOnDownCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Up", sliderComponent->GetOnUpCallbacks());
         }
     }
     else

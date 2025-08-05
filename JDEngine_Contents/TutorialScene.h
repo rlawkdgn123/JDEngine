@@ -8,6 +8,7 @@
 #include "UI_ButtonComponent.h"
 #include "ColliderBase.h"
 #include "CameraFader.h"
+#include "ParticleSystem.h"
 
 using namespace JDGameObject::Content;
 
@@ -37,6 +38,9 @@ namespace JDScene {
 
         void ShowFilledMenu();
     private:
+        std::unique_ptr<ParticleSystem> m_lightParticles;
+        Vector2F                        m_emitterPos;
+
         int m_totalCols = 4;
         int m_totalRows = 6;
         std::vector<bool> m_isOpen;

@@ -30,6 +30,8 @@ namespace JDScene {
     private:
         FMOD::Channel* m_hoverSfxChannel = nullptr;
 
+        std::unique_ptr<ParticleSystem> m_lightParticles;
+        Vector2F                        m_emitterPos;
 	};
 }
 

@@ -157,6 +157,28 @@ void UI_SliderComponent::SetValue(float value, bool broadcast) {
     }
 }
 
+void JDComponent::UI_SliderComponent::SetMinValue(float value)
+{
+    m_minValue = value;
+    // 최대값이 최소값보다 작아지지 않도록 보정
+    if (m_maxValue < m_minValue) {
+        m_maxValue = m_minValue;
+    }
+    // 현재 값을 새로운 범위에 맞게 다시 조정
+    SetValue(m_currentValue);
+}
+
+void JDComponent::UI_SliderComponent::SetMaxValue(float value)
+{
+    m_maxValue = value;
+    // 최소값이 최대값보다 커지지 않도록 보정
+    if (m_minValue > m_maxValue) {
+        m_minValue = m_maxValue;
+    }
+    // 현재 값을 새로운 범위에 맞게 다시 조정
+    SetValue(m_currentValue);
+}
+
 float UI_SliderComponent::GetNormalizedValue() const {
     if (abs(m_maxValue - m_minValue) < 1e-6) return 0.f;
     return (m_currentValue - m_minValue) / (m_maxValue - m_minValue);

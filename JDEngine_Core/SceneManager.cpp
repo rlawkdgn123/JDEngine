@@ -1,20 +1,20 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
 #include "SceneManager.h"
 
  
-    // Âü°í : ÀÎÅÍÆäÀÌ½º¿¡¼­ SceneBaseÀÇ Using¼±¾ğ µÇ¾îÀÖÀ½
+    // ì°¸ê³  : ì¸í„°í˜ì´ìŠ¤ì—ì„œ SceneBaseì˜ Usingì„ ì–¸ ë˜ì–´ìˆìŒ
     void SceneManager::RegisterScene(std::unique_ptr<SceneBase> scene)
     {
         assert(scene != nullptr);
         assert(!scene->GetID().empty());
 
-        std::cout << "¾À »ı¼º : " << scene->GetID() << std::endl;
+        std::cout << "ì”¬ ìƒì„± : " << scene->GetID() << std::endl;
 
         if (m_SceneTable.size() >= JDGlobal::Core::MAX_SCENES)
         {
-            assert(false && "¾À °³¼ö Á¦ÇÑ ÃÊ°ú. ÇØ°áÇÏ·Á¸é MAX_SCENESÀÇ °ªÀ» º¯°æÇÏ¼¼¿ä.");
+            assert(false && "ì”¬ ê°œìˆ˜ ì œí•œ ì´ˆê³¼. í•´ê²°í•˜ë ¤ë©´ MAX_SCENESì˜ ê°’ì„ ë³€ê²½í•˜ì„¸ìš”.");
             return;
         }
 
@@ -22,9 +22,9 @@
 
         for (const auto& sc : m_SceneTable)
         {
-            if (sc.id == id) // id°¡ µ¿ÀÏÇÏ¸é
+            if (sc.id == id) // idê°€ ë™ì¼í•˜ë©´
             {
-                assert(false && "Áßº¹µÈ ¾À ID µî·Ï");
+                assert(false && "ì¤‘ë³µëœ ì”¬ ID ë“±ë¡");
                 return;
             }
         }
@@ -32,24 +32,39 @@
         m_SceneTable.emplace_back(SceneEntry(std::move(id), std::move(scene)));
     }
 
-    void SceneManager::ChangeScene(const std::string& id) // string& ¾²´Â ÀÌÀ¯ : ÁÖ¼Ò·Î ¹Ù·Î ÂüÁ¶ÇÑ µÚ ÀüÈ¯ (º¯°æ ¹æÁö)
+    void SceneManager::ChangeScene(const std::string& id) // string& ì“°ëŠ” ì´ìœ  : ì£¼ì†Œë¡œ ë°”ë¡œ ì°¸ì¡°í•œ ë’¤ ì „í™˜ (ë³€ê²½ ë°©ì§€)
     {
         assert(!id.empty());
+        m_NextSceneId = id;
+    }
 
+    void SceneManager::ProcessSceneChange()
+    {
+        // ì „í™˜ ìš”ì²­ì´ ì—†ìœ¼ë©´ ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ
+        if (m_NextSceneId.empty())
+        {
+            return;
+        }
+
+        // ê¸°ì¡´ ì”¬ ì „í™˜ ë¡œì§ì„ ì—¬ê¸°ì— ë„£ìŠµë‹ˆë‹¤.
         for (const auto& sc : m_SceneTable)
         {
-            if (sc.id == id) // id°¡ µ¿ÀÏÇÏ¸é
+            if (sc.id == m_NextSceneId)
             {
                 if (m_CurrentScene)
-                    m_CurrentScene->OnLeave();  // ÇöÀç ¾À ³ª°¡±â
-
+                {
+                    m_CurrentScene->OnLeave();              // í˜„ì¬ ì”¬ì˜ ëª¨ë“  ì˜¤ë¸Œì íŠ¸ë¥¼ íŒŒê´´ íì— ë“±ë¡
+                    m_CurrentScene->ProcessDestroyQueue();  // ì”¬ì„ ë°”ê¾¸ê¸° ì§ì „ì—, ë– ë‚˜ëŠ” ì”¬ì˜ íŒŒê´´ íë¥¼ ì²˜ë¦¬.
+                }
+                    
                 m_CurrentScene = sc.ptr.get();
                 m_CurrentScene->OnEnter();
+
+                m_NextSceneId = ""; // ì²˜ë¦¬ ì™„ë£Œ í›„ ìš”ì²­ì„ ë¹„ì›ë‹ˆë‹¤.
                 return;
             }
         }
-
-        assert(false && "ÁöÁ¤µÈ IDÀÇ ¾ÀÀÌ Á¸ÀçÇÏÁö ¾ÊÀ½");
+        assert(false && "ì§€ì •ëœ IDì˜ ì”¬ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ");
     }
 
     void SceneManager::Update(float deltaTime)

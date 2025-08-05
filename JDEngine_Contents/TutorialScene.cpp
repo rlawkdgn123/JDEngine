@@ -5,7 +5,6 @@
 #include "CircleCollider.h"
 #include "RectTransform.h"
 #include "D2DTransform.h"
-#include "Camera.h"
 #include "Texture.h"
 
 using namespace std;
@@ -73,7 +72,21 @@ namespace JDScene {
 
             boxObj2->AddComponent<SFX>("Step");
         }
-        {//Graybird�ִ�
+        {//Text
+            auto* boxObj4 = CreateGameObject<Player>(L"BoxObject4");
+
+            //boxObj4->SetTag(JDGlobal::Base::GameTag::Mover);
+
+            boxObj4->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            //boxObj4->AddComponent<Editor_Clickable>();
+            boxObj4->AddComponent<TextureRenderer>("ATest", RenderLayerInfo{ SortingLayer::BackGround, 3 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("ATest"));
+            auto size = bitmap->GetSize();
+            boxObj4->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+
+            //boxObj4->AddComponent<SFX>("Step");
+        }
+        {//Graybird
             auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<Editor_Clickable>();
@@ -102,44 +115,84 @@ namespace JDScene {
         }
 
         // 1) 배경
-        m_emptyMenu = CreateUIObject<Image>(L"MenuBackground");
-        m_emptyMenu->SetTextureName("Menu");
-        m_emptyMenu->SetSizeToOriginal();
-        m_emptyMenu->SetActive(false);
+        m_Menu = CreateUIObject<Image>(L"MenuBackground");
 
-        auto* bgRect = m_emptyMenu->GetComponent<RectTransform>();
+        auto& uptr = m_uiObjects.back();
+        UIObject* rawPtr = uptr.get();
+        m_TutorialUIObjects.push_back(rawPtr);
+
+        m_Menu->SetTextureName("Menu");
+        m_Menu->SetSizeToOriginal();
+        //m_Menu->SetSize({});
+        m_Menu->SetActive(false);
+
+        auto* bgRect = m_Menu->GetComponent<RectTransform>();
         bgRect->SetPivot({ 0.f,0.f });
         bgRect->SetAnchor({ 0.f,0.f });
 
-
-        std::vector<std::pair<std::wstring, std::string>> buttons = {
+        //각버튼 키 목록
+        std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
         { L"house1", "house" },
         { L"house2", "house2" },
         // 필요하다면 더 추가…
+        }; 
+        std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
+        { L"CAT", "CAT" },
+        // 필요하다면 더 추가…
         };
 
-        // 2) 버튼
-        float yOffset = 75.f;
-        float xOffset = 30.f;
-        for (auto& info : buttons) {
-            auto* btn = CreateUIObject<Button>(info.first);
-            btn->SetTextureName(info.second);
-            btn->SetText(L"");
+        // 공통 초기 오프셋
+        float xOffset = 100.f;
+        float yOffset = 150.f;
+        float gap = 100.f;
 
-            auto* btnRect = btn->GetComponent<RectTransform>();
-            btnRect->SetPivot({ 0.f,0.f });
-            btnRect->SetAnchor({ 0.f,0.f });
-            btnRect->SetSize({ 50.f,50.f });
+        // 2-1) 빈 메뉴용 버튼 생성
+        {
+            float x = xOffset;
+            for (auto& info : EmptyButtons) {
+                auto* btn = CreateUIObject<Button>(info.first);
+                // 튜토리얼용 보관
+                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
+                m_emptyButtons.push_back(btn);
 
-            btnRect->DetachFromParent();
-            btnRect->SetParent(bgRect);
-            btnRect->SetPosition({ xOffset, yOffset });
+                btn->SetTextureName(info.second);
+                btn->SetText(L"");
+                auto* rt = btn->GetComponent<RectTransform>();
+                rt->SetPivot({ 0,0 }); rt->SetAnchor({ 0,0 });
+                rt->SetSize({ 50,50 });
+                rt->SetParent(bgRect);
+                rt->SetPosition({ x, yOffset });
 
-            m_emptyMenu->AddChild(btn);
-            btn->SetActive(false);
-            m_menuButtons.push_back(btn);
+                m_Menu->AddChild(btn);
+                btn->SetActive(false);
+                m_menuButtons.push_back(btn);
 
-            xOffset += 50.f + 10.f; // width + gap
+                x += gap;
+            }
+        }
+
+        // 2-2) 채운 메뉴용 버튼 생성
+        {
+            float x = xOffset;
+            for (auto& info : FilledButtons) {
+                auto* btn = CreateUIObject<Button>(info.first);
+                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
+                m_filledButtons.push_back(btn);
+
+                btn->SetTextureName(info.second);
+                btn->SetText(L"");
+                auto* rt = btn->GetComponent<RectTransform>();
+                rt->SetPivot({ 0,0 }); rt->SetAnchor({ 0,0 });
+                rt->SetSize({ 50,50 });
+                rt->SetParent(bgRect);
+                rt->SetPosition({ x, xOffset });
+
+                m_Menu->AddChild(btn);
+                btn->SetActive(false);
+                m_menuButtons.push_back(btn);
+
+                x += gap;
+            }
         }
     }
 
@@ -204,22 +257,25 @@ namespace JDScene {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
                 // 우클릭: 열린 콜라이더만 동작
 
-                if (!m_emptyMenu) {
+                if (!m_Menu) {
                     std::cerr << "[ERROR] m_emptyMenu is nullptr!\n";
                     return;
                 }
+                m_fader.FadeIn(0.1f, 0.5f);
+
                 m_selectedCollider = collider;
 
-                m_emptyMenu->SetActive(true);
-
-                // 버튼들도 함께 보이기
-                for (auto* btn : m_menuButtons) {
-                    if (btn) {
-                        btn->SetActive(true);
-                    }
-                    else {
-                        std::cerr << "[WARNING] Found nullptr in m_menuButtons\n";
-                    }
+                auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
+                if (boxCol->HasBuilding()) {
+                    std::cout << "한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬";
+                    // 이미 건물이 있다면 → 채운 메뉴
+                    ShowFilledMenu();
+                }
+                else {
+                    std::cout << "장후장후장후장후장후장후장후장후장후장후장후장후장후장후장후";
+                    // 건물이 없으면 → 빈 메뉴
+                    ShowEmptyMenu();
+                    
                 }
             }
         }
@@ -239,7 +295,12 @@ namespace JDScene {
 
     void TutorialScene::Render(float deltaTime) {
         SceneBase::Render(deltaTime);
+
+        m_fader.Update(deltaTime);
+
         auto camera = D2DRenderer::Instance().GetCamera();
+        float screenW = static_cast<float>(camera->GetScreenWidth());
+        float screenH = static_cast<float>(camera->GetScreenHeight());
 
         if (camera)
             D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
@@ -255,9 +316,33 @@ namespace JDScene {
         DrawColider();
 
         for (auto& uiObj : m_uiObjects)
-
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
+        }
+        // 카메라 뷰가 걸려 있는 상태이므로, 
+        // 페이드를 스크린 공간에서 그리려면 Transform을 초기화
+        auto& renderer = D2DRenderer::Instance();
+        auto ctx = renderer.GetD2DContext();
+
+        // 현재 Transform(=카메라 뷰)을 잠시 저장
+        D2D1_MATRIX_3X2_F old;
+        ctx->GetTransform(&old);
+
+        // 스크린 좌표계(Identity) 로 바꿔서 페이드만 그리기
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+        m_fader.Render(ctx, { (float)screenW, (float)screenH });
+
+        // 원래 Transform(카메라 뷰) 복원
+        ctx->SetTransform(old);
+
+        for (auto& tutorialObj : m_TutorialUIObjects)
+        {
+            D2DRenderer::Instance().RenderUIObject(*tutorialObj);
+        }
+
+        for (auto& tutorialObj : m_TutorialObjects)
+        {
+            D2DRenderer::Instance().RenderGameObject(*tutorialObj, deltaTime);
         }
     }
     void TutorialScene::ClickUpdate()
@@ -273,7 +358,7 @@ namespace JDScene {
 
         if (state.leftClicked)
         {
-            std::cout << "이거 실행됨?";
+            std::cout << "이거 실행됨?!#";
 
             // 1. 마우스 스크린 좌표
             float screenHeight = static_cast<float>(camera.get()->GetScreenHeight());
@@ -307,11 +392,17 @@ namespace JDScene {
                     clicked = true;
                     std::cout << " UI 오브젝트 클릭 함!!!!! ";
 
-                    if (uiObj.get()->GetParent() == m_emptyMenu) {
+                    if (uiObj.get()->GetParent() == m_Menu) {
                         m_selectedTool = static_cast<Button*>(uiObj.get());
                         std::wcout << L"선택된 툴: " << m_selectedTool->GetName() << std::endl;
 
                         if (m_selectedCollider) {
+                            auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+                            //건물유무
+                            boxCol->SetHasBuilding(true);
+                            //선택된 콜라이더 사이즈
+                            Vector2F halfSize = boxCol->GetHalfSize();
+                            Vector2F fullSize = { halfSize.x * 2.f, halfSize.y * 2.f };
                             // 1) 콜라이더 월드 위치
                             Vector2F worldPos = m_selectedCollider->GetOwner()
                                 ->GetComponent<Transform>()->GetPosition();
@@ -320,12 +411,25 @@ namespace JDScene {
                             auto* building = CreateGameObject<Building>(
                                 L"Building_" + m_selectedTool->GetName()
                             );
-                          
+                            auto& uptr = m_gameObjects.back();
+                            GameObject* rawPtr = uptr.get();
+                            m_TutorialObjects.push_back(rawPtr);
+
                             // 3) 버튼(UIObject)의 이미지 컴포넌트에서 텍스처 키 가져오기
                             auto* uiImage = m_selectedTool->GetComponent<JDComponent::UI_ImageComponent>();
                             std::string texKey = uiImage
                                 ? uiImage->GetTextureName()
                                 : std::string("DefaultTexture");
+
+                            auto* bitmap = static_cast<ID2D1Bitmap*>(
+                                AssetManager::Instance().GetTexture(texKey));
+                            auto bmpSize = bitmap->GetSize();
+
+                            Vector2F scale = {
+                                fullSize.x / bmpSize.width,
+                                fullSize.y / bmpSize.height
+                            };
+                            building->GetComponent<Transform>()->SetScale(scale);
 
                             // 4) Building에 TextureRenderer 컴포넌트 붙이고 텍스처 설정
                             auto* tr = building->AddComponent<TextureRenderer>(
@@ -336,9 +440,9 @@ namespace JDScene {
 
                             // 5) Building 월드 위치 배치
                             building->GetComponent<Transform>()->SetPosition(worldPos);
-
+                            
                             // 6) 메뉴 닫기 & 버튼 숨기기
-                            m_emptyMenu->SetActive(false);
+                            m_Menu->SetActive(false);
                             for (auto* btn : m_menuButtons)
                                 if (btn) btn->SetActive(false);
 
@@ -388,5 +492,21 @@ namespace JDScene {
                 SetSelectedObject(nullptr);
             }
         }
+    }
+
+    void TutorialScene::ShowEmptyMenu() {
+        m_Menu->SetActive(true);
+        // 빈 메뉴 버튼들만 켜고
+        for (auto* btn : m_emptyButtons)   btn->SetActive(true);
+        // 채운 메뉴 버튼들은 끄기
+        for (auto* btn : m_filledButtons)  btn->SetActive(false);
+    }
+
+    void TutorialScene::ShowFilledMenu() {
+        m_Menu->SetActive(true);
+        // 빈 메뉴 버튼들 끄고
+        for (auto* btn : m_emptyButtons)   btn->SetActive(false);
+        // 채운 메뉴 버튼들 켜기
+        for (auto* btn : m_filledButtons)  btn->SetActive(true);
     }
 }

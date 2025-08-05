@@ -7,6 +7,7 @@
 #include "UI_ImageComponent.h"
 #include "UI_ButtonComponent.h"
 #include "ColliderBase.h"
+#include "CameraFader.h"
 
 using namespace JDGameObject::Content;
 
@@ -31,18 +32,29 @@ namespace JDScene {
         void Render(float deltaTime) override;
 
         void ClickUpdate();
+
+        void ShowEmptyMenu();
+
+        void ShowFilledMenu();
     private:
         int m_totalCols = 4;
         int m_totalRows = 6;
         std::vector<bool> m_isOpen;
 
-        Image* m_emptyMenu = nullptr;
+        CameraFader  m_fader;
+
+        Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;
         Button* m_selectedTool = nullptr;
         JDComponent::ColliderBase* m_selectedCollider = nullptr;
+        
+        std::vector<Button*> m_emptyButtons;
+        std::vector<Button*> m_filledButtons;
 
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;
+        std::vector<UIObject*> m_TutorialUIObjects;
+        std::vector<GameObject*> m_TutorialObjects;
     };
 }

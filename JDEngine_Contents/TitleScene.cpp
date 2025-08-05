@@ -67,7 +67,7 @@ namespace JDScene {
             }
 
             // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-            SceneManager::Instance().ChangeScene("SelectNationScene");
+            SceneManager::Instance().ChangeScene("TutorialScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경

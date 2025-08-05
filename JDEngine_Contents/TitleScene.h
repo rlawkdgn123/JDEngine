@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
+#include "ParticleSystem.h"
 
 namespace JDScene {
 	class TitleScene : public SceneBase

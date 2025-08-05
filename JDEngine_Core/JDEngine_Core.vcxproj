@@ -161,6 +161,7 @@
     <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="InputAction.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RectTransform.h" />
     <ClInclude Include="SceneBase.h" />

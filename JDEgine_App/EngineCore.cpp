@@ -198,7 +198,7 @@ bool EngineCore::Initialize()
     // NORWAY
     ////////////////////////////////////////////////////////////////////////////////
 
-    // 정배율이 1.4로 하기로 했음.
+    // 애니메이션 속도 정배율을 1.4x 가 마음에 든다고 했음.
     if (!AssetManager::Instance().LoadTexture("Norway", L"../Resource/Animation/character_norway_sprite_01.png"))
     {
         std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl;

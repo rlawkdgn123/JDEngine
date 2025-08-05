@@ -80,7 +80,8 @@ D2D1_MATRIX_3X2_F Camera::GetViewMatrix() const
 
     // 최종 뷰 행렬 = S * R * T
     // Y축 반전과 화면 중앙 이동은 이제 Renderer가 담당하므로 여기서는 하지 않습니다.
-    return S * R * T;
+    //return S * R * T;
+    return T * R * S;
 
     // LEGACY
     //// 기본 단위 행렬
@@ -141,25 +142,35 @@ D2D1_MATRIX_3X2_F Camera::GetViewMatrix() const
 
 Vector2F Camera::ScreenToWorldPoint(const Vector2F& screenPoint) const
 {
-    // 1. 화면 중앙 이동의 역행렬
-    JDComponent::D2DTM::Transform tempTransform;
-    D2D1_MATRIX_3X2_F invScreenCenter = tempTransform.GetScreenCenterTranslation();
-    D2D1InvertMatrix(&invScreenCenter);
+    // 렌더링 파이프라인의 완벽한 역순:
+    // Screen -> Inverse Projection -> Inverse View -> World
 
-    // 2. 뷰 행렬의 역행렬
-    D2D1_MATRIX_3X2_F invView = GetViewMatrix();
-    D2D1InvertMatrix(&invView);
+    // 1. 프로젝션 행렬의 역행렬을 계산합니다.
+    //    (D2DRenderer::RenderGameObject 에서 사용한 프로젝션 행렬과 동일해야 함)
+    float screenW = GetScreenWidth();
+    float screenH = GetScreenHeight();
 
-    // 3. 전체 역변환 행렬
-    D2D1_MATRIX_3X2_F screenToWorldMatrix = invScreenCenter * invView;
+    // 프로젝션: Y축 뒤집기 -> 화면 중앙으로 이동
+    auto S_flipY = D2D1::Matrix3x2F::Scale(1.0f, -1.0f);
+    auto T_center = D2D1::Matrix3x2F::Translation(screenW * 0.5f, screenH * 0.5f);
+    D2D1_MATRIX_3X2_F projectionMatrix = S_flipY * T_center;
 
-    // 4. 스크린 좌표를 변환 (D2D 스크린 Y-down -> 로직 Y-up)
-    D2D1_POINT_2F logicalScreenPoint = { screenPoint.x, -screenPoint.y };
+    // 역 프로젝션 계산
+    D2D1InvertMatrix(&projectionMatrix);
 
-    // [수정] TransformPoint 대신 직접 연산
+    // 2. 뷰 행렬의 역행렬을 계산합니다.
+    D2D1_MATRIX_3X2_F viewMatrix = GetViewMatrix();
+    D2D1InvertMatrix(&viewMatrix);
+
+    // 3. 최종 '화면 -> 월드' 변환 행렬
+    //    역변환은 곱셈 순서도 반대입니다: inv(Proj) * inv(View)
+    D2D1_MATRIX_3X2_F screenToWorldMatrix = projectionMatrix * viewMatrix;
+
+    // 4. 스크린 좌표에 최종 역행렬을 곱합니다.
+    D2D1_POINT_2F sp = { screenPoint.x, screenPoint.y };
     D2D1_POINT_2F worldPoint;
-    worldPoint.x = logicalScreenPoint.x * screenToWorldMatrix._11 + logicalScreenPoint.y * screenToWorldMatrix._21 + screenToWorldMatrix._31;
-    worldPoint.y = logicalScreenPoint.x * screenToWorldMatrix._12 + logicalScreenPoint.y * screenToWorldMatrix._22 + screenToWorldMatrix._32;
+    worldPoint.x = sp.x * screenToWorldMatrix._11 + sp.y * screenToWorldMatrix._21 + screenToWorldMatrix._31;
+    worldPoint.y = sp.x * screenToWorldMatrix._12 + sp.y * screenToWorldMatrix._22 + screenToWorldMatrix._32;
 
     return { worldPoint.x, worldPoint.y };
 
@@ -184,27 +195,30 @@ Vector2F Camera::ScreenToWorldPoint(const Vector2F& screenPoint) const
 
 Vector2F Camera::WorldToScreenPoint(const Vector2F& worldPoint) const
 {
+    // 렌더링 파이프라인과 완벽하게 동일한 순서:
+    // World -> View -> Projection -> Screen
+
     D2D1_POINT_2F pt = { worldPoint.x, worldPoint.y };
 
     // 1. 뷰 행렬 적용
     D2D1_MATRIX_3X2_F viewMatrix = GetViewMatrix();
 
-    // [수정] TransformPoint 대신 직접 연산
-    D2D1_POINT_2F ptAfterView;
-    ptAfterView.x = pt.x * viewMatrix._11 + pt.y * viewMatrix._21 + viewMatrix._31;
-    ptAfterView.y = pt.x * viewMatrix._12 + pt.y * viewMatrix._22 + viewMatrix._32;
+    // 2. 프로젝션 행렬 적용
+    float screenW = GetScreenWidth();
+    float screenH = GetScreenHeight();
+    auto S_flipY = D2D1::Matrix3x2F::Scale(1.0f, -1.0f);
+    auto T_center = D2D1::Matrix3x2F::Translation(screenW * 0.5f, screenH * 0.5f);
+    D2D1_MATRIX_3X2_F projectionMatrix = S_flipY * T_center;
 
-    // 2. 화면 중앙 이동 적용
-    JDComponent::D2DTM::Transform tempTransform;
-    D2D1_MATRIX_3X2_F screenCenterMatrix = tempTransform.GetScreenCenterTranslation();
+    // 3. 최종 변환 행렬
+    D2D1_MATRIX_3X2_F worldToScreenMatrix = viewMatrix * projectionMatrix;
 
-    // [수정] TransformPoint 대신 직접 연산
+    // 4. 월드 좌표에 최종 행렬을 곱합니다.
     D2D1_POINT_2F finalScreenPoint;
-    finalScreenPoint.x = ptAfterView.x * screenCenterMatrix._11 + ptAfterView.y * screenCenterMatrix._21 + screenCenterMatrix._31;
-    finalScreenPoint.y = ptAfterView.x * screenCenterMatrix._12 + ptAfterView.y * screenCenterMatrix._22 + screenCenterMatrix._32;
+    finalScreenPoint.x = pt.x * worldToScreenMatrix._11 + pt.y * worldToScreenMatrix._21 + worldToScreenMatrix._31;
+    finalScreenPoint.y = pt.x * worldToScreenMatrix._12 + pt.y * worldToScreenMatrix._22 + worldToScreenMatrix._32;
 
-    // 3. 로직(Y-up) -> D2D 스크린(Y-down) 변환
-    return { finalScreenPoint.x, -finalScreenPoint.y };
+    return { finalScreenPoint.x, finalScreenPoint.y };
 
     //// 1. 카메라 위치 기준으로 변환
     //float relativeX = worldPoint.x - m_position.x;

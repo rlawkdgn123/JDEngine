@@ -93,6 +93,8 @@ bool EngineCore::Initialize()
         return false;
     }
 
+    JDGlobal::Window::WindowSize::Instance().Set(this);
+
     AudioManager::Instance().Initialize();
 
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
@@ -132,66 +134,58 @@ bool EngineCore::Initialize()
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
+    // TITLE
+    ////////////////////////////////////////////////////////////////////////////////
 
-    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
-        std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
-    }
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) 
+    { std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("Title_Exam", L"../Resource/TITLE/TITLE_exam.jpg")) 
+    { std::cout << "[ERROR] Title exam 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) 
+    { std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) 
+    { std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) 
+    { std::cout << "[ERROR] GAME_START_B 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) 
+    { std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) 
+    { std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_GAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) 
+    { std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_GAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) 
+    { std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl; }
 
-    if (!AssetManager::Instance().LoadTexture("Title_Exam", L"../Resource/TITLE/TITLE_exam.jpg")) {
-        std::cout << "[ERROR] Title exam 텍스처 로드 실패" << std::endl;
-    }
+    // BATTLE
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("CAT", L"../Resource/BATTLE/CAT.png"))
+    { std::cout << "[ERROR] CAT 텍스처 로드 실패" << std::endl; }
 
-    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
-        std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) {
-        std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) {
-        std::cout << "[ERROR] GAMESTART_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) {
-        std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) {
-        std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) {
-        std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) {
-        std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
-    }
 
     // TEST Resource
-    if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png")) {
-        std::cout << "[ERROR] house 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("house2", L"../Resource/house2.png")) {
-        std::cout << "[ERROR] house2 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png")) {
-        std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl;
-    }
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("Back_Button", L"../Resource/Back_Button.png"))
+    { std::cout << "[ERROR] Back_Button 텍스처 로드 실패" << std::endl; }
 
     ////////////////////////////////////////////////////////////////////////////////
-    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
-        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
-        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
-    }
+    if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png")) 
+    { std::cout << "[ERROR] house 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("house2", L"../Resource/house2.png")) 
+    { std::cout << "[ERROR] house2 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png")) 
+    { std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl; }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) 
+    { std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) 
+    { std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl; }
 
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TutorialScene>(JDGlobal::Core::SceneType::SCENE_TUTORIAL, "TutorialScene"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::SelectNationScene>(JDGlobal::Core::SceneType::SCENE_SELECTNATION, "SelectNationScene"));
     
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 

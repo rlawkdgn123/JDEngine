@@ -17,6 +17,7 @@ namespace JDWindow {
         virtual ~WindowSizeProvider() = default;
         virtual int GetWidth() const = 0;
         virtual int GetHeight() const = 0;
+        virtual void* GetHandle() const = 0;
     };
     class JDWndBase : public WindowSizeProvider{
     public:

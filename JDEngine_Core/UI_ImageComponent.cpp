@@ -38,60 +38,34 @@ namespace JDComponent {
         return Vector2F{};
     }
 
-    void UI_ImageComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform)
+    void UI_ImageComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F renderTransform)
     {
-        // RectTransform에서 크기를 가져와 그리기 영역을 설정합니다.
-        RectTransform* rectTransform = m_Owner ? m_Owner->GetComponent<RectTransform>() : nullptr;
-        if (!rectTransform) return;
-
         if (!m_Owner || !m_Owner->IsActive())
             return;
 
-        // 렌더링 시점에 리소스 매니저에서 텍스처를 가져옵니다.
-        ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
+        RectTransform* rectTransform = m_Owner->GetComponent<RectTransform>();
+        if (!rectTransform) return;
 
-        // 텍스처가 없으면 아무것도 하지 않고 종료 (안전장치)
+        ID2D1Bitmap* bitmap = AssetManager::Instance().GetTexture(m_textureName);
         if (!bitmap) return;
 
-        // 외부에서 전달받은 변환 행렬을 설정합니다.
-        context->SetTransform(viewTransform);
+        // 1. 외부에서 전달받은 최종 변환 행렬을 설정합니다. (가장 중요!)
+        // 이 행렬에는 위치, 회전, 크기, 피벗, 부모, 앵커 모든 정보가 들어있습니다.
+        context->SetTransform(renderTransform);
 
-        Vector2F pos = rectTransform->GetPosition();
+        // 2. '로컬 공간' 기준의 사각형을 정의합니다.
+        // 피벗은 이미 renderTransform에 적용되었으므로, (0,0)부터 그리면 됩니다.
         Vector2F size = rectTransform->GetSize();
-        Vector2F pivot = rectTransform->GetPivot();
-        Vector2F anchorOffset = { 0.f, 0.f };
+        D2D1_RECT_F localRect = D2D1::RectF(0.f, 0.f, size.x, size.y);
 
-        auto parent = rectTransform->GetParent();
-        if (parent) {
-            Vector2F parentSize = parent->GetSize();
-            Vector2F anchor = rectTransform->GetAnchor();
-            anchorOffset = {
-                parentSize.x * anchor.x,
-                parentSize.y * anchor.y
-            };
-        }
-
-        Vector2F finalPos = {
-            anchorOffset.x + pos.x,
-            anchorOffset.y + pos.y
-        };
-
-        // 화면 중심 변환 제거! (RectTransform에서 이미 처리됨)
-        // 단순히 finalPos 사용
-        D2D1_RECT_F destRect = D2D1::RectF(
-            finalPos.x - size.x * pivot.x,
-            finalPos.y - size.y * pivot.y,
-            finalPos.x + size.x * (1 - pivot.x),
-            finalPos.y + size.y * (1 - pivot.y)
-        );
-
-        // 비트맵을 그립니다.
+        // 3. 비트맵을 로컬 사각형에 그립니다.
+        // D2D가 설정된 변환 행렬(renderTransform)을 통해 알아서 올바른 위치에 그려줍니다.
         context->DrawBitmap(
             bitmap,
-            &destRect,
-            m_color.a, // 불투명도 (0.0f ~ 1.0f)
+            &localRect,
+            m_color.a,
             D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-            nullptr    // 원본 bitmap 영역 (전체 사용 시 nullptr)
+            nullptr
         );
     }
 }

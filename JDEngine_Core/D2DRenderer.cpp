@@ -285,26 +285,24 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
     using RectTransform = JDComponent::D2DTM::RectTransform;
 
     auto rtf = uiObj.GetComponent<RectTransform>();
+    if (!rtf) return; // rtf가 없으면 렌더링 불가
+
     auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
     auto textComponent = uiObj.GetComponent<UI_TextComponent>();
 
-    if (rtf)
-    {
-        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+    ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
 
-        D2D1_MATRIX_3X2_F originalTransform;
-        context->GetTransform(&originalTransform);
+    D2D1_MATRIX_3X2_F originalTransform;
+    context->GetTransform(&originalTransform);
 
-        D2D1_MATRIX_3X2_F worldMatrix = rtf->GetWorldMatrix();
+    // 월드 행렬이 아닌, 피벗까지 적용된 최종 '렌더링 행렬'을 가져옵니다.
+    D2D1_MATRIX_3X2_F renderMatrix = rtf->GetRenderMatrix();
 
-        // context->SetTransform(worldMatrix * originalTransform);
+    // 이 최종 행렬을 각 컴포넌트의 Render 함수에 전달합니다.
+    if (imageComponent) { imageComponent->Render(context, renderMatrix); }
+    if (textComponent) { textComponent->Render(context, renderMatrix); }
 
-        // 카메라 영향을 빼고, 월드 행렬만 사용
-        if (imageComponent) { imageComponent->Render(context, worldMatrix); }
-        if (textComponent) { textComponent->Render(context, worldMatrix); }
-
-        context->SetTransform(originalTransform);
-    }
+    context->SetTransform(originalTransform);
 }
 
 void D2DRenderer::Present()
@@ -494,7 +492,19 @@ void D2DRenderer::CreateWriteResource()
     };
 
     // 등록 예시
-    CreateFormat(L"맑은 고딕", 14.0f, "MalgunGothic_14");
+    CreateFormat(L"맑은 고딕", 10.0f, "MalgunGothic_10");
+    CreateFormat(L"맑은 고딕", 12.0f, "MalgunGothic_12");
+    CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16");
+    CreateFormat(L"맑은 고딕", 20.0f, "MalgunGothic_20");
+    CreateFormat(L"맑은 고딕", 26.0f, "MalgunGothic_26");
+    CreateFormat(L"맑은 고딕", 38.0f, "MalgunGothic_38");
+    CreateFormat(L"맑은 고딕", 50.0f, "MalgunGothic_50");
+    CreateFormat(L"맑은 고딕", 60.0f, "MalgunGothic_60");
+    CreateFormat(L"맑은 고딕", 70.0f, "MalgunGothic_70");
+    CreateFormat(L"맑은 고딕", 80.0f, "MalgunGothic_80");
+    CreateFormat(L"맑은 고딕", 90.0f, "MalgunGothic_90");
+    CreateFormat(L"맑은 고딕", 100.0f, "MalgunGothic_100");
+
     CreateFormat(L"Arial", 16.0f, "Arial_16");
     CreateFormat(L"Segoe UI", 20.0f, "SegoeUI_20");
 }

@@ -62,6 +62,7 @@ namespace JDGameObject {
 				// cout << "Button Awake" << endl;
 
 				AddComponent<Editor_Clickable>();
+				AddComponent<UI_TextComponent>();
 			}
 		}
 		void Text::Start()

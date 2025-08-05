@@ -50,6 +50,7 @@ namespace JDGlobal {
 			None = -1, // 유효하지 않은 초기 상태
 			SCENE_TEST,
 			SCENE_TITLE,
+			SCENE_SELECTNATION,
 			SCENE_TUTORIAL,
 			SCENE_PLAY,
 			SCENE_ENDING,

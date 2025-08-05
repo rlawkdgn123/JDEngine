@@ -7,6 +7,7 @@
 #include "D2DTransform.h"
 #include "Texture.h"
 
+
 using namespace std;
 using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
@@ -30,7 +31,6 @@ namespace JDScene {
         const float startY = 300.0f;
         const float spacingX = 100.0f;
         const float spacingY = -100.0f;
-
 
         for (int col = 0; col < m_totalCols; ++col) {
             for (int row = 0; row < m_totalRows; ++row) {
@@ -194,6 +194,17 @@ namespace JDScene {
                 x += gap;
             }
         }
+
+        auto camera = D2DRenderer::Instance().GetCamera();
+        float screenW = static_cast<float>(camera->GetScreenWidth());
+        float screenH = static_cast<float>(camera->GetScreenHeight());
+
+        // 파티클 시스템 생성
+        m_lightParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+
+        // 이뮬러 위치를 원하는 곳으로 (예: 화면 중앙)
     }
 
     void TutorialScene::OnLeave() {
@@ -267,17 +278,20 @@ namespace JDScene {
 
                 auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
                 if (boxCol->HasBuilding()) {
-                    std::cout << "한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬한슬";
-                    // 이미 건물이 있다면 → 채운 메뉴
                     ShowFilledMenu();
                 }
                 else {
-                    std::cout << "장후장후장후장후장후장후장후장후장후장후장후장후장후장후장후";
-                    // 건물이 없으면 → 빈 메뉴
                     ShowEmptyMenu();
                     
                 }
             }
+        }
+
+        MouseState state = InputManager::Instance().GetMouseState();
+        float mouseX = static_cast<float>(state.pos.x);
+        float mouseY = static_cast<float>(state.pos.y);
+        if (m_lightParticles) {
+            m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
         }
 
         ClickUpdate();
@@ -343,6 +357,18 @@ namespace JDScene {
         for (auto& tutorialObj : m_TutorialObjects)
         {
             D2DRenderer::Instance().RenderGameObject(*tutorialObj, deltaTime);
+        }
+        
+        if (m_lightParticles) {
+            // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
+            auto ctx = D2DRenderer::Instance().GetD2DContext();
+            D2D1_MATRIX_3X2_F old;
+            ctx->GetTransform(&old);
+            ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+            m_lightParticles->Render(ctx);
+
+            ctx->SetTransform(old);
         }
     }
     void TutorialScene::ClickUpdate()

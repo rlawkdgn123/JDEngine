@@ -156,6 +156,11 @@ namespace JDScene {
             }
             });
 
+
+        m_lightParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+
         //////////////////////////////////////////////////////////////////////////////////
 
         // 옵션창
@@ -200,6 +205,7 @@ namespace JDScene {
         //sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
         //    AudioManager::Instance().SetSFXVolume(newValue);
         //    });
+
     }
 
     void TitleScene::OnLeave() {
@@ -227,6 +233,13 @@ namespace JDScene {
 
     void TitleScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
+
+        MouseState state = InputManager::Instance().GetMouseState();
+        float mouseX = static_cast<float>(state.pos.x);
+        float mouseY = static_cast<float>(state.pos.y);
+        if (m_lightParticles) {
+            m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
+        }
 
         ClickUpdate();
     }
@@ -259,6 +272,18 @@ namespace JDScene {
         for (auto& uiObj : m_uiObjects)
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
+        }
+
+        if (m_lightParticles) {
+            // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
+            auto ctx = D2DRenderer::Instance().GetD2DContext();
+            D2D1_MATRIX_3X2_F old;
+            ctx->GetTransform(&old);
+            ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+            m_lightParticles->Render(ctx);
+
+            ctx->SetTransform(old);
         }
     }
 

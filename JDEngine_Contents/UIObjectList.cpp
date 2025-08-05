@@ -180,6 +180,11 @@ namespace JDGameObject {
 			auto handleRect = m_handleImage->GetComponent<RectTransform>();
 			handleRect->SetParent(rootRect);
 
+			// 핸들이 슬라이더의 왼쪽-중앙을 기준으로 움직이도록 Anchor를 설정하고,
+			// 핸들 자체의 중심을 기준으로 위치가 정해지도록 Pivot을 설정합니다.
+			handleRect->SetAnchor({ 0.0f, 0.5f });
+			handleRect->SetPivot({ 0.5f, 0.5f });
+
 			// 4. 슬라이더 로직에 Fill과 Handle의 RectTransform을 연결
 			auto sliderComp = GetComponent<UI_SliderComponent>();
 			if (sliderComp)

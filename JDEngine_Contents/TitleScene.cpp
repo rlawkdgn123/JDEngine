@@ -167,7 +167,6 @@ namespace JDScene {
         // BGM 볼륨 조절 슬라이더
         auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
         bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
-        bgmSlider->SetPosition({ 0, 0 }); // Quit 버튼 아래 적절한 위치
 
         // 이미지 개별 설정
         bgmSlider->SetBackgroundImage("VOLUME_LINE_2");

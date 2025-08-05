@@ -96,9 +96,19 @@ namespace JDScene {
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<Editor_Clickable>();
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-            boxObj3->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
+            boxObj3->AddComponent<AnimationRender>("Norway", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
 
-            auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+            // LEGACY
+            //auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+            //if (frames && !frames->frames.empty()) {
+            //    auto first = frames->frames[0].srcRect;
+            //    float width = first.right - first.left;
+            //    float height = first.bottom - first.top;
+            //    Vector2F halfSize{ width * 0.5f, height * 0.5f };
+            //    birdObj->AddComponent<BoxCollider>(halfSize);
+            //    birdObj->AddComponent<Editor_Clickable>();
+
+            auto frames = AssetManager::Instance().GetAnimationRender("Norway");
             if (frames && !frames->frames.empty()) {
                 auto first = frames->frames[0].srcRect;
                 float width = first.right - first.left;

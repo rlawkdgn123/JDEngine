@@ -195,6 +195,22 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("VOLUME_LINE_2", L"../Resource/OPTION/VOLUME_LINE_2.png"))
     { std::cout << "[ERROR] VOLUME_LINE_2 텍스처 로드 실패" << std::endl; }
 
+    // NORWAY
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // 정배율이 1.4로 하기로 했음.
+    if (!AssetManager::Instance().LoadTexture("Norway", L"../Resource/Animation/character_norway_sprite_01.png"))
+    {
+        std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
+    {
+        std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl;
+    }
+
+
+
     // BATTLE
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("CAT", L"../Resource/BATTLE/CAT.png"))

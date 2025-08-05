@@ -74,22 +74,38 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
 {
-    D2D1_MATRIX_3X2_F currentTransform;
-    m_d2dContext->GetTransform(&currentTransform);
-
-    D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
-    //D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * dest.top - (dest.bottom - dest.top));
-
-    D2D1_MATRIX_3X2_F corrected = flipY * currentTransform;
-    m_d2dContext->SetTransform(corrected);
-
     m_d2dContext->DrawBitmap(bitmap, dest);
 
-    m_d2dContext->SetTransform(currentTransform);
+    // LEGACY : 과거 코드
+    /*
+    //D2D1_MATRIX_3X2_F currentTransform;
+    //m_d2dContext->GetTransform(&currentTransform);
+
+    //D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
+    ////D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * dest.top - (dest.bottom - dest.top));
+
+    //D2D1_MATRIX_3X2_F corrected = flipY * currentTransform;
+    //m_d2dContext->SetTransform(corrected);
+
+    //m_d2dContext->DrawBitmap(bitmap, dest);
+
+    //m_d2dContext->SetTransform(currentTransform);
+    */
+    
 }
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity)
 {
+    m_d2dContext->DrawBitmap(
+        bitmap,
+        destRect,
+        opacity,
+        D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+        srcRect
+    );
+
+    // LEGACY : 과거 코드
+    /*
     D2D1_MATRIX_3X2_F currentTransform;
     m_d2dContext->GetTransform(&currentTransform);
 
@@ -108,6 +124,7 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
     );
 
     m_d2dContext->SetTransform(currentTransform);
+    */
 }
 
 ComPtr<ID2D1Effect> D2DRenderer::CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount)

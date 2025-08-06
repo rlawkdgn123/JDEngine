@@ -1,10 +1,68 @@
 #include "pch.h"
 #include "CombatSystem.h"
+#include <random>
 
 namespace JDGameSystem {
 
-	UnitCounts CombatSystem::ResolveBattle() const
+	void CombatSystem::ResolveBattle(ArmySystem& player, const ArmySystem& enemy)
 	{
-		return UnitCounts();
+		// 총 공격력.
+		float P_my = player.CalculateTotalPower();
+		float P_enemy = enemy.CalculateTotalPower();
+
+		if (P_enemy <= 0.0f) { // 0 이하 나누기 방지.
+			std::cout << "[CombatSystem] Invalid enemy TotalPower." << std::endl;
+			return;
+		}
+
+		// 우세도 계산.
+		float R = P_my / P_enemy;
+
+		// 손실률 계산. 
+		float L;
+
+		if (R <= 1.0f)		L = 1.0f;
+		else if (R > 10.0f) L = 0.29f;
+		else L = 0.772f * std::expf(-0.098f * R);
+
+		//  손실된 병사 수 계산 및 반영.
+		int N_my = player.GetTotalUnits();
+		int N_loss = static_cast<int>(N_my * L);
+
+		std::cout << "[CombatSystem] 현재 병사 수: " << N_my << std::endl;
+		std::cout << "[CombatSystem] 보정 전 손실 병사 수: " << N_loss << std::endl;
+
+		// 랜덤 수치 추가.
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		static std::uniform_int_distribution<int> dist(-3, 3);
+		int randVal = dist(gen);
+
+		N_loss = JDMath::Clamp(N_loss + randVal, 0, N_my);
+
+		std::cout << "[CombatSystem] 보정 후 손실 병사 수: " << N_loss << std::endl;
+
+		UnitCounts counts = player.GetUnitCounts();
+
+		int W_n = counts[UnitType::Novice];
+		//int W_e = counts[UnitType::Expert];
+
+		int w_n_loss = std::min(W_n, N_loss);
+		int w_e_loss = std::max(0, N_loss - W_n);
+
+		counts[UnitType::Novice] -= w_n_loss;
+		counts[UnitType::Expert] -= w_e_loss;
+
+		UnitCounts{ 10, 20 };
+
+		// 손실 출력 (디버깅용)
+		int prevTotalPower = player.CalculateTotalPower();
+
+		player.SetUnitCounts(counts);
+
+		int diffTotalPower = prevTotalPower - player.CalculateTotalPower();
+
+		std::cout << "[CombatSystem] 손실 병사 수: Novice - " << w_n_loss << ", Expert - " << w_e_loss << std::endl;
+		std::cout << "[CombatSystem] 전투력 손실: " << diffTotalPower << std::endl;
 	}
 }

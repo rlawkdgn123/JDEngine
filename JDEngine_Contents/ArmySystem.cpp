@@ -4,40 +4,55 @@
 
 namespace JDGameSystem {
 
-	void ArmySystem::InitUnitTypes() {
-		m_unitTypes[static_cast<int>(UnitType::Temp0)] =
-			UnitTypeData(UnitType::Temp0, Resource(200.f, 50.f, 0.f), 100);
-		m_unitTypes[static_cast<int>(UnitType::Temp1)] =
-			UnitTypeData(UnitType::Temp1, Resource(100.f, 0.f, 50.f), 200);
+	void ArmySystem::InitUnitTypes() // 병력 정보 초기화. (타입, 자원, 전투력)
+	{
+		m_unitTypes[static_cast<int>(UnitType::Novice)] =
+			UnitTypeData(UnitType::Novice, Resource(200.f, 50.f, 0.f), 10);
+		m_unitTypes[static_cast<int>(UnitType::Expert)] =
+			UnitTypeData(UnitType::Expert, Resource(100.f, 0.f, 50.f), 20);
 	}
 
-	bool ArmySystem::RecruitUnits(UnitType type)
+	void ArmySystem::SetUnitCounts(const UnitCounts& army)
+	{
+		const int nowCounts = army.Total(); // 새 병사 수.
+		const int prevCounts = m_unitCounts.Total(); // 이전 병사 수.
+		const int diffCounts = nowCounts - prevCounts; // 차이 계산. 
+
+		auto& rs = ResourceSystem::Instance();
+
+		const int curPopulation = rs.GetCurPopulation();
+		rs.SetCurPopulation(curPopulation + diffCounts); // 현재 인수 수에 반영.
+
+		m_unitCounts = army;
+	}
+
+	bool ArmySystem::RecruitUnits(UnitType type) // 병력 모집.
 	{
 		auto& rs = ResourceSystem::Instance();
-		
-		// 자원 정보 가져오기
+
+		// 자원 정보 가져오기.
 		const int curPopulation = rs.GetCurPopulation();
 		const Resource haveResource = rs.GetTotalResource();
 
-		// 인구 수 보다 더 많은 병력을 모집할 수 없음
+		// 인구 수 보다 더 많은 병력을 모집할 수 없음.
 		if (curPopulation <= m_unitCounts.Total()) {
 			std::cout << "[ArmySystem] lack of population" << std::endl;
 			return false;
 		}
 
-		// 모집하는 병종
+		// 모집하는 병종.
 		const int idx = static_cast<int>(type);
-		if (idx < 0 || idx >= static_cast<int>(UnitType::Count)) {
+		if (idx < 0 || idx >= UnitTypeCount) {
 			std::cout << "[ArmySystem] invalid unit type" << std::endl;
 			return false;
 		}
 
 		const UnitTypeData& unitType = m_unitTypes[idx];
 
-		// 필요 자원
+		// 필요 자원.
 		const Resource needResource = unitType.GetRecruitCost();
 
-		// 자원이 충분한지 검사
+		// 자원이 충분한지 검사.
 		if (!(haveResource.m_food >= needResource.m_food &&
 			haveResource.m_wood >= needResource.m_wood &&
 			haveResource.m_mineral >= needResource.m_mineral)) {
@@ -45,15 +60,16 @@ namespace JDGameSystem {
 			return false;
 		}
 
-		// 자원 감소
+		// 자원 감소.
 		rs.SetTotalResource(haveResource - needResource);
 
-		// 병력 수 증가
+		// 병력 수 증가.
 		++m_unitCounts[type];
 
 		return true;
 	}
-	int ArmySystem::CalculateTotalPower() const
+
+	int ArmySystem::CalculateTotalPower() const // 총 전투력 계산.
 	{
 		int totalPower = 0;
 
@@ -65,7 +81,5 @@ namespace JDGameSystem {
 		}
 
 		return totalPower;
-		
-		return 0;
 	}
 }

@@ -17,6 +17,7 @@ namespace JDComponent {
 		
 		void SetHasBuilding(bool has) { m_hasBuilding = has; }
 		bool HasBuilding()const { return m_hasBuilding; }
+		
 	private:
 		Vec2 m_halfSize;
 		bool m_hasBuilding;

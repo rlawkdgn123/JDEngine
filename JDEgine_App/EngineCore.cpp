@@ -272,6 +272,8 @@ bool EngineCore::Initialize()
     ImGui_ImplWin32_Init(m_hWnd);              // 윈도우 핸들 (GameApp 멤버에 저장된 윈도우 핸들)
     ImGui_ImplDX11_Init(D2DRenderer::Instance().GetD3DDevice(), D2DRenderer::Instance().GetD3DContext());
 
+    
+
     return true;
 }
 
@@ -457,18 +459,50 @@ void EngineCore::UpdateLogic()
                 
             flag = !flag;
         }
-            
-        if (input.GetKeyPressed(VK_F2))
-        {
-            m_fader.FadeIn(1.0f, 1.f);
-        }
+        
         if (input.GetKeyPressed(VK_F1))
         {
-            m_fader.FadeOut(2.5f, 0.f);
+            m_fader.FadeIn(1.0f, 1.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
         }
+        if (input.GetKeyPressed(VK_F2))
+        {
+            m_fader.FadeOut(2.5f, 0.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+
+
+
+
         if (input.GetKeyPressed(VK_F3))
         {
-            m_fader.FadeIn(0.1f, 0.5f);
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F4))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F5))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F6))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F7))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F8))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 1.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F9))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F10))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 0.0f, 1.0f));
         }
     }
 }

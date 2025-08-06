@@ -31,6 +31,9 @@ namespace JDScene {
         // 게임 오브젝트 생성 (World Space)
         // =====================================================================
 
+        m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_fader.FadeIn(1.0f, 0.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
         const float startX = -500.0f;
         const float startY = 300.0f;
         const float spacingX = 100.0f;
@@ -325,7 +328,8 @@ namespace JDScene {
                     std::cerr << "[ERROR] m_emptyMenu is nullptr!\n";
                     return;
                 }
-                m_fader.FadeIn(0.1f, 0.5f);
+                m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f));
+            
 
                 m_selectedCollider = collider;
 
@@ -335,7 +339,6 @@ namespace JDScene {
                 }
                 else {
                     ShowEmptyMenu();
-                    
                 }
             }
         }

@@ -119,7 +119,6 @@ bool EngineCore::Initialize()
     //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer 객체를 shared_ptr로 생성 뒤 m_Renderer에 저장
 
 
-
     //m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
     WindowSize::Instance().Set(this);
@@ -129,9 +128,7 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
-    if (!AssetManager::Instance().LoadAllCSV()) {
-        return false;
-    }
+    DataTableManager::Instance().Initalize();
 
     /*
     DataTableManager::Instance().ParseTestTable();

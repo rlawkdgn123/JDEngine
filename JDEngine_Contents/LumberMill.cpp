@@ -7,7 +7,7 @@ namespace JDGameObject {
         void LumberMill::Awake()
         {
             __super::Awake();
-            DataTableManager::Instance().ParseLumberMillTable(stats);
+            DataTableManager::Instance().GetLumberMillTable(stats);
             //AddComponent<TextureRenderer>(); 동민이 수정
             stats.PrintStats();
         }

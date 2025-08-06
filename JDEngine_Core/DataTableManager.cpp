@@ -4,16 +4,84 @@
 
 using namespace std;
 using namespace JDGlobal::Contents;
-bool DataTableManager::Initalize()
+void DataTableManager::Initalize()
 {
-	return false;
+    LoadAllCSV();
+    void ParseFishingSpotTable();
+    void ParseLumberMillTable();
+    void ParseMineTable();
+    void ParseHouseTable();
+}
+bool DataTableManager::LoadCSV(const std::string& name, const std::string& filePath)
+{
+    std::wifstream wifs(filePath);
+    if (!wifs.is_open())
+    {
+        std::cout << "[ERROR] CSV 파일 열기 실패" << filePath << std::endl;
+        return false;
+    }
+
+    // 파일 인코딩이 UTF-8이면 아래 줄 활성화 필요 (시스템에 따라 생략 가능)
+    //wifs.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+
+    std::wstringstream wbuffer;
+    wbuffer << wifs.rdbuf(); // 전체 파일 내용을 읽음
+
+    std::wstring wcontent = wbuffer.str();
+    std::string content(wcontent.begin(), wcontent.end());
+
+    m_csvFileMap[name] = content;
+    return true;
+}
+
+bool DataTableManager::LoadAllCSV()
+{
+    namespace fs = std::filesystem;
+    bool foundCSV = false;
+
+    for (const auto& entry : fs::directory_iterator(csvFolderPath)) {
+        if (!entry.is_regular_file()) continue;
+
+        fs::path path = entry.path();
+
+        if (path.extension() == L".csv" || path.extension() == L".CSV") {
+            foundCSV = true;
+            std::string key = path.stem().string(); // 키는 확장자 제외 파일명
+            std::string fullPath = path.string(); // 전체 경로 전달
+
+            if (!LoadCSV(key, fullPath)) {
+                std::cout << "[ERROR] CSV 파일 로드 실패 : " << path.filename() << std::endl;
+                continue;
+            }
+
+            std::cout << "[INFO] Document 등록됨 : " << path.filename() << std::endl;
+        }
+    }
+    if (!foundCSV) {
+        std::cout << "[WARNNING] CSV 폴더에 로드할 파일이 없습니다. " << csvFolderPath << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+// CSV 파일명 반환 함수. ex) Doc.CSV
+std::string DataTableManager::GetCSV(const std::string& key) const
+{
+    auto it = m_csvFileMap.find(key); // find 시 찾음 찾지 못하면 end됨
+    if (it != m_csvFileMap.end()) {
+        return it->second;
+    }
+
+    throw std::runtime_error("[AssetManager] GetCSV: 존재하지 않는 키: " + key); // 예외처리
 }
 
 void DataTableManager::ParseTestTable()
 {
 
 	cout << "테스트 진입" << endl;
-	const std::string& csv = AssetManager::Instance().GetCSV("동물소리"); // 동물소리.CSV
+	const std::string& csv = GetCSV("동물소리"); // 동물소리.CSV
 
 	std::istringstream stream(csv); // CSV 문자열 형태에 맞는 입력 스트림 객체를 생성하는 코드.
 	std::string line;
@@ -53,10 +121,10 @@ void DataTableManager::ParseStartResourceTable()
 	
 }
 
-void DataTableManager::ParseFishingSpotTable(BuildingStats& stats)
+void DataTableManager::ParseFishingSpotTable()
 {
     std::cout << "데이터 파싱 진입 - FishingSpot" << std::endl;
-    const std::string& csv = AssetManager::Instance().GetCSV("FishingSpot");
+    const std::string& csv = GetCSV("FishingSpot");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -89,27 +157,27 @@ void DataTableManager::ParseFishingSpotTable(BuildingStats& stats)
         auto toInt = [](const std::string& s) { return std::stoi(s); };
 
         if (resourceName == "Food") {
-            stats.m_initResource.m_food = toInt(tokens[1]);
+            m_fishingSpotTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
+                m_fishingSpotTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Wood") {
-            stats.m_initResource.m_wood = toInt(tokens[1]);
+            m_fishingSpotTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
+                m_fishingSpotTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Mineral") {
-            stats.m_initResource.m_mineral = toInt(tokens[1]);
+            m_fishingSpotTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
+                m_fishingSpotTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
             }
         }
 
@@ -123,10 +191,10 @@ void DataTableManager::ParseFishingSpotTable(BuildingStats& stats)
 }
 
 
-void DataTableManager::ParseLumberMillTable(BuildingStats& stats)
+void DataTableManager::ParseLumberMillTable()
 {
     std::cout << "데이터 파싱 진입 - LumberMill" << std::endl;
-    const std::string& csv = AssetManager::Instance().GetCSV("LumberMill");
+    const std::string& csv = GetCSV("LumberMill");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -156,27 +224,27 @@ void DataTableManager::ParseLumberMillTable(BuildingStats& stats)
         auto toInt = [](const std::string& s) { return std::stoi(s); };
 
         if (resourceName == "Food") {
-            stats.m_initResource.m_food = toInt(tokens[1]);
+            m_lumberMillTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
+                m_lumberMillTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
+                m_lumberMillTable.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Wood") {
-            stats.m_initResource.m_wood = toInt(tokens[1]);
+            m_lumberMillTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
+                m_lumberMillTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
+                m_lumberMillTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Mineral") {
-            stats.m_initResource.m_mineral = toInt(tokens[1]);
+            m_lumberMillTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
+                m_lumberMillTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
+                m_lumberMillTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
             }
         }
 
@@ -189,10 +257,10 @@ void DataTableManager::ParseLumberMillTable(BuildingStats& stats)
 }
 
 
-void DataTableManager::ParseMineTable(BuildingStats& stats)
+void DataTableManager::ParseMineTable()
 {
     std::cout << "데이터 파싱 진입 - Mine" << std::endl;
-    const std::string& csv = AssetManager::Instance().GetCSV("Mine"); // CSV 파일 가져오기
+    const std::string& csv = GetCSV("Mine"); // CSV 파일 가져오기
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -222,27 +290,27 @@ void DataTableManager::ParseMineTable(BuildingStats& stats)
         auto toInt = [](const std::string& s) { return std::stoi(s); };
 
         if (resourceName == "Food") {
-            stats.m_initResource.m_food = toInt(tokens[1]);
+            m_mineTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
+                m_mineTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
+                m_mineTable.m_resourceGenPerSec[level].m_food = toInt(tokens[5 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_food = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Wood") {
-            stats.m_initResource.m_wood = toInt(tokens[1]);
+            m_mineTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
+                m_mineTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
+                m_mineTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[5 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[8 + level]);
             }
         }
         else if (resourceName == "Mineral") {
-            stats.m_initResource.m_mineral = toInt(tokens[1]);
+            m_mineTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                stats.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
-                stats.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
+                m_mineTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
+                m_mineTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[5 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[8 + level]);
             }
         }
 
@@ -254,10 +322,10 @@ void DataTableManager::ParseMineTable(BuildingStats& stats)
     }
 }
 
-void DataTableManager::ParseHouseTable(HouseStats& stats)
+void DataTableManager::ParseHouseTable()
 {
     std::cout << "데이터 파싱 진입 - House" << std::endl;
-    const std::string& csv = AssetManager::Instance().GetCSV("House");
+    const std::string& csv = GetCSV("House");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -289,8 +357,8 @@ void DataTableManager::ParseHouseTable(HouseStats& stats)
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Food 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_food = toInt(tokens[4 + level]);
-                stats.m_resourceSubPerSec[level].m_food = toInt(tokens[7 + level]);
+                m_houseTable.m_upgradeCost[level].m_food = toInt(tokens[4 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_food = toInt(tokens[7 + level]);
             }
             linesParsed++;
         }
@@ -299,8 +367,8 @@ void DataTableManager::ParseHouseTable(HouseStats& stats)
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Wood 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_wood = toInt(tokens[4 + level]);
-                stats.m_resourceSubPerSec[level].m_wood = toInt(tokens[7 + level]);
+                m_houseTable.m_upgradeCost[level].m_wood = toInt(tokens[4 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[7 + level]);
             }
             linesParsed++;
         }
@@ -309,8 +377,8 @@ void DataTableManager::ParseHouseTable(HouseStats& stats)
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Mineral 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_upgradeCost[level].m_mineral = toInt(tokens[4 + level]);
-                stats.m_resourceSubPerSec[level].m_mineral = toInt(tokens[7 + level]);
+                m_houseTable.m_upgradeCost[level].m_mineral = toInt(tokens[4 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[7 + level]);
             }
             linesParsed++;
         }
@@ -319,7 +387,7 @@ void DataTableManager::ParseHouseTable(HouseStats& stats)
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Population 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                stats.m_initPopulation[level] = toInt(tokens[1 + level]);
+                m_houseTable.m_initPopulation[level] = toInt(tokens[1 + level]);
             }
             linesParsed++;
         }

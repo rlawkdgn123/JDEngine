@@ -7,7 +7,7 @@ namespace JDGameObject {
         void Mine::Awake()
         {
             __super::Awake();
-            DataTableManager::Instance().ParseMineTable(stats);
+            DataTableManager::Instance().GetMineTable(stats);
             //AddComponent<TextureRenderer>(); µ¿¹ÎÀÌ ¼öÁ¤
             stats.PrintStats();
         }

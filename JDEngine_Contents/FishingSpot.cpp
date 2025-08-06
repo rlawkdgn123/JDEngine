@@ -9,7 +9,7 @@ namespace JDGameObject {
         void FishingSpot::Awake()
         {
             __super::Awake();
-            DataTableManager::Instance().ParseFishingSpotTable(stats);
+            DataTableManager::Instance().GetFishingSpotTable(stats);
             //AddComponent<TextureRenderer>(); 동민이 수정
             stats.PrintStats();
         }
@@ -18,6 +18,7 @@ namespace JDGameObject {
         }
         void FishingSpot::Update(float deltaTime)
         {
+
         }
         void FishingSpot::LateUpdate(float deltaTime)
         {

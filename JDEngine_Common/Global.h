@@ -11,12 +11,14 @@ namespace JDGlobal {
 		{
 			None,
 			Player,
+			PlayerMove,
 			PlayerCat,
 			PlayerBuilding,
 			Enemy,
+			EnemyMove,
 			EnemyCat,
 			EnemyBuilding,
-
+			Barracks,
 			NPC,
 			UI,
 

@@ -8,6 +8,6 @@ namespace JDGameSystem {
         CombatSystem() = default;
         ~CombatSystem() = default;
 
-        UnitCounts ResolveBattle() const; // 전투 진행 및 잃은 병사 수 계산. 
+        void ResolveBattle(ArmySystem& player, const ArmySystem& enemy);
     };
 }

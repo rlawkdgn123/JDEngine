@@ -176,8 +176,11 @@ bool EngineCore::Initialize()
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
-    SceneManager::Instance().ChangeScene("TestScene01");
+    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    //SceneManager::Instance().ChangeScene("TestScene01");
+
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::GameScene>(JDGlobal::Core::SceneType::SCENE_TEST, "GameScene"));
+    SceneManager::Instance().ChangeScene("GameScene");
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();

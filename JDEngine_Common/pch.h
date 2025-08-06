@@ -24,13 +24,10 @@
 #include <algorithm>
 #include <d2d1helper.h>
 #include <functional>
-#include <cmath>
-#include <stdexcept>
-#include <string>
-#include <algorithm>
-#include <cctype>
 
 #define _USE_MATH_DEFINES
+#include <cmath>
 
+#include <stdexcept>
 
 #endif //PCH_H

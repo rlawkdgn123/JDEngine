@@ -33,8 +33,9 @@ namespace JDGameObject {
             void OnTriggerExit(GameObjectBase* other) override;
 
         protected:
-            JDGlobal::Contents::HouseStats stats;
             ResourceSystem* m_resourceSystem;
+            Resource m_buildCost{ 0,0,0 };
+            int m_initResource = 10;
         };
     }
 }

@@ -50,8 +50,8 @@ namespace JDScene {
         auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
         gameStart->SetTextureName("GAME_START_B");
         gameStart->SetText(L"");
-        gameStart->SetSize({ 340, 58 });
-        gameStart->SetPosition({ -522, 32 });
+        gameStart->SetSize({ 360, 58 });
+        gameStart->SetPosition({ -522, -32 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         gameStart->AddOnClick("Load GameScene", [this]() {
@@ -87,8 +87,8 @@ namespace JDScene {
         auto setting = CreateUIObject<Button>(L"Setting_Button");
         setting->SetTextureName("SETTING_B");
         setting->SetText(L"");
-        setting->SetSize({ 340, 58 });
-        setting->SetPosition({ -522, 115 });
+        setting->SetSize({ 360, 58 });
+        setting->SetPosition({ -522, -115 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         setting->AddOnClick("OpenSettingUI", []() {
@@ -121,8 +121,8 @@ namespace JDScene {
         auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
         quitGame->SetTextureName("QUIT_GAME_B");
         quitGame->SetText(L"");
-        quitGame->SetSize({ 340, 58 });
-        quitGame->SetPosition({ -522, 198 });
+        quitGame->SetSize({ 360, 58 });
+        quitGame->SetPosition({ -522, -198 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         quitGame->AddOnClick("Quit Game", []() {
@@ -158,7 +158,7 @@ namespace JDScene {
             });
 
 
-        m_lightParticles = std::make_unique<ParticleSystem>(
+            m_lightParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
 
@@ -166,26 +166,38 @@ namespace JDScene {
 
         // 옵션창
         auto optionUI = CreateUIObject<Image>(L"Option_Popup");
-        optionUI->SetTextureName("Title");
+        optionUI->SetTextureName("BACK_GROUND_OPACITY");
+        optionUI->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
+
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+
+            // 화면 크기로 설정
+            optionUI->SetSize(Vector2F{ screenWidth, screenHeight });
+            optionUI->SetPosition({ 0.0f,0.0f });
+            optionUI->SetPivot({ 0.5f, 0.5f });
+        }
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        // BGM 볼륨 조절 슬라이더
-        auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
-        bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+        //// BGM 볼륨 조절 슬라이더
+        //auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
+        //bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
 
-        // 이미지 개별 설정
-        bgmSlider->SetBackgroundImage("VOLUME_LINE_2");
-        bgmSlider->SetFillImage("VOLUME_LINE_1");
-        bgmSlider->SetHandleImage("VOLUME_CAT_1");
+        //// 이미지 개별 설정
+        //bgmSlider->SetBackgroundImage("VOLUME_LINE_2");
+        //bgmSlider->SetFillImage("VOLUME_LINE_1");
+        //bgmSlider->SetHandleImage("VOLUME_CAT_1");
 
-        // 1. 초기값 설정: 현재 오디오 매니저의 BGM 볼륨 값으로 설정합니다.
-        bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        //// 1. 초기값 설정: 현재 오디오 매니저의 BGM 볼륨 값으로 설정합니다.
+        //bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
 
-        // 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 BGM 볼륨을 조절하도록 연결합니다.
-        bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
-            AudioManager::Instance().SetMusicVolume(newValue);
-            });
+        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 BGM 볼륨을 조절하도록 연결합니다.
+        //bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+        //    AudioManager::Instance().SetMusicVolume(newValue);
+        //    });
 
         //////////////////////////////////////////////////////////////////////////////////
 

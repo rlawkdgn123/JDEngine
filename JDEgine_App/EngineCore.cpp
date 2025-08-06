@@ -129,6 +129,41 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
+    if (!AssetManager::Instance().LoadAllCSV()) {
+        return false;
+    }
+    
+    DataTableManager::Instance().ParseTestTable();
+    JDGlobal::Contents::BuildingStats statsds;
+
+    // FishingSpot 파싱 및 결과 출력
+    std::cout << "=== FishingSpot 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseFishingSpotTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== FishingSpot 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // LumberMill 파싱 및 결과 출력
+    std::cout << "=== LumberMill 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseLumberMillTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== LumberMill 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // Mine 파싱 및 결과 출력
+    std::cout << "=== Mine 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseMineTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== Mine 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // House 파싱 및 결과 출력
+    std::cout << "=== House 테스트 시작 ===" << std::endl;
+    JDGlobal::Contents::HouseStats hs;
+    DataTableManager::Instance().ParseHouseTable(hs);
+    hs.PrintStats();
+    std::cout << "=== House 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
 
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
@@ -136,7 +171,6 @@ bool EngineCore::Initialize()
 
     // TITLE
     ////////////////////////////////////////////////////////////////////////////////
-
     if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) 
     { std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ATest", L"../Resource/Texture/ATest.png"))
@@ -239,6 +273,8 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) 
     { std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl; }
 
+    AssetManager::Instance().TextureSetUp();
+  
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TutorialScene>(JDGlobal::Core::SceneType::SCENE_TUTORIAL, "TutorialScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::SelectNationScene>(JDGlobal::Core::SceneType::SCENE_SELECTNATION, "SelectNationScene"));

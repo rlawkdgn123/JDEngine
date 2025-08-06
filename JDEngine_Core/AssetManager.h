@@ -2,7 +2,7 @@
 #include "json.hpp"
 //#include "../JDEngine_Common/json.hpp"
 
-//constexpr const char* documentPath = "../Resource/Document/"; // 문서(CSV)관련 기본 위치
+constexpr const char* csvFolderPath = "../Resource/Document/"; // 문서(CSV)관련 기본 위치
 
 struct AnimationRenderFrame {
     D2D1_RECT_F srcRect;
@@ -22,34 +22,35 @@ public:
         static AssetManager instance;
         return instance;
     }
-
-    AssetManager(const AssetManager&) = delete;
-    AssetManager& operator=(const AssetManager&) = delete;
+public:
 
     bool Initialize(ID2D1RenderTarget* renderTarget);
     
     // 텍스처 에셋
-    bool                                 LoadTexture(const std::string& name, const std::wstring& filepath);
+    void TextureSetUp();
+    bool LoadTexture(const std::string& name, const std::wstring& filepath);
     ID2D1Bitmap* GetTexture(const std::string& name) const;
     const std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>>&
-        GetTextures() const { return m_textures; }
+    GetTextures() const { return m_textures; }
 
     // 애니메이션 에셋
-    bool                                 LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
+    bool LoadAnimationRender(const std::string& name, const std::wstring& jsonPath);
     const AnimationRenderClip* GetAnimationRender(const std::string& name) const;
     const std::unordered_map<std::string, AnimationRenderClip>&
-        GetAnimations() const { return m_AnimationRenders; }
+    GetAnimations() const { return m_AnimationRenders; }
 
     // CSV Parsing
-    bool                                 LoadCSV(const std::string& name, const std::wstring& filePath);
-    std::string                          GetCsv(const std::string& name) const;
+    bool LoadCSV(const std::string& name, const std::string& filePath);
+    bool LoadAllCSV();
+    std::string GetCSV(const std::string& key) const;
 
-    void                                 ConvertAllCsvToWstring();
+    void ConvertAllCsvToWstring();
 
 private:
     AssetManager() = default;
     ~AssetManager() = default;
-                                         
+    AssetManager(const AssetManager&) = delete;
+    AssetManager& operator=(const AssetManager&) = delete;
 private:
     // 애니메이션
     Microsoft::WRL::ComPtr<IWICImagingFactory> m_wicFactory;
@@ -61,5 +62,5 @@ private:
     // CSV
     
     // string은 RAII가 이미 적용되어 있으므로, smart_ptr을 적용시킬 필요가 없다.
-    std::unordered_map<std::string, std::string> m_csvRawData; // csv 파일
+    std::unordered_map<std::string, std::string> m_csvFileMap; // csv 파일
 };

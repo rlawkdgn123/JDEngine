@@ -73,6 +73,9 @@
     <Filter Include="Component\Audio">
       <UniqueIdentifier>{ba0aa1bb-627d-4b5d-8a8d-c0fda09cbf17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{9b4f46f1-661f-4b75-a292-ff02639b9a78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneManager.h">
@@ -165,6 +168,9 @@
     <ClInclude Include="SFX.h">
       <Filter>Component\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="DataTableManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
     <ClInclude Include="ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="FMODSystem.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTableManager.cpp">
+      <Filter>Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

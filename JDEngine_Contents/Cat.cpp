@@ -12,7 +12,7 @@ namespace JDGameObject {
 
         void Cat::Start()
         {
-            m_resourceSystem->AddCurPopulation(-m_populationCost);
+            m_resourceSystem->AddCurPopulation(-stats.m_populationCost);
         }
     }
 }

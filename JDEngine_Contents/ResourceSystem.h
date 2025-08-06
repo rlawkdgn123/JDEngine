@@ -10,7 +10,6 @@ namespace JDGameSystem {
 	public:
 		using Resource = JDGlobal::Contents::Resource;
 
-	public:
 		static ResourceSystem& Instance()
 		{
 			static ResourceSystem instance;
@@ -24,36 +23,57 @@ namespace JDGameSystem {
 		ResourceSystem(const ResourceSystem&) = delete;
 		ResourceSystem& operator=(const ResourceSystem&) = delete;
 
-	private:
+		// -MAX_GAME_RESOURCE_BONUS ~ MAX_GAME_RESOURCE_BONUS 범위로 비율 보정
 		Resource ClampBonus(const Resource& value) {
 			return Resource{
-				JDMath::Clamp<float>(value.m_food, -1.0f, 1.0f),
-				JDMath::Clamp<float>(value.m_wood, -1.0f, 1.0f),
-				JDMath::Clamp<float>(value.m_mineral, -1.0f, 1.0f)
+				JDMath::Clamp<int>(value.m_food, -JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS, JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS),
+				JDMath::Clamp<int>(value.m_wood, -JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS, JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS),
+				JDMath::Clamp<int>(value.m_mineral, -JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS, JDGlobal::Contents::MAX_GAME_RESOURCE_BONUS)
 			};
 		}
 
+		// 자원량 상한 제한
 		void ClampResourceToLimits(Resource& value) {
-			value.m_food = JDMath::Clamp<float>(value.m_food, 0.0f, JDGlobal::Contents::MAX_GAME_RESOURCE);
-			value.m_wood = JDMath::Clamp<float>(value.m_wood, 0.0f, JDGlobal::Contents::MAX_GAME_RESOURCE);
-			value.m_mineral = JDMath::Clamp<float>(value.m_mineral, 0.0f, JDGlobal::Contents::MAX_GAME_RESOURCE);
+			value.m_food = JDMath::Clamp<int>(value.m_food, 0, JDGlobal::Contents::MAX_GAME_RESOURCE);
+			value.m_wood = JDMath::Clamp<int>(value.m_wood, 0, JDGlobal::Contents::MAX_GAME_RESOURCE);
+			value.m_mineral = JDMath::Clamp<int>(value.m_mineral, 0, JDGlobal::Contents::MAX_GAME_RESOURCE);
+		}
+
+		Resource FloatToResourceInt(const Resource& res, float factor) {
+			return Resource{
+				static_cast<int>(std::round(res.m_food * factor)),
+				static_cast<int>(std::round(res.m_wood * factor)),
+				static_cast<int>(std::round(res.m_mineral * factor))
+			};
 		}
 
 	public:
 		void UpdateTotalResourcePerSec() {
-			m_totalResourcePerSec = m_resourcePerSec
-				+ (m_resourcePerSec * m_resourceBonus)
-				+ (m_resourcePerSec * m_synergyBonus);
-
-			ClampResourceToLimits(m_totalResourcePerSec);
+			Resource resourceBonus = Resource{
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_food) * static_cast<float>(m_resourceBonus.m_food) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_wood) * static_cast<float>(m_resourceBonus.m_wood) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_mineral) * static_cast<float>(m_resourceBonus.m_mineral) / 100.f)),
+			};
+			Resource synergyBonus = Resource{
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_food) * static_cast<float>(m_synergyBonus.m_food) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_wood) * static_cast<float>(m_synergyBonus.m_wood) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_mineral) * static_cast<float>(m_synergyBonus.m_mineral) / 100.f)),
+			};
+			m_totalResourcePerSec = (m_resourcePerSec + resourceBonus + synergyBonus);
 		}
 
 		void AccumulateResources(float deltaTime) {
-			m_totalResource += m_totalResourcePerSec * Resource(deltaTime, deltaTime, deltaTime);
+			Resource delta(
+				static_cast<int>(m_totalResourcePerSec.m_food * deltaTime),
+				static_cast<int>(m_totalResourcePerSec.m_wood * deltaTime),
+				static_cast<int>(m_totalResourcePerSec.m_mineral * deltaTime)
+			);
+
+			m_totalResource += delta;
 			ClampResourceToLimits(m_totalResource);
 		}
 
-		// Getter
+		// Getters
 		const Resource& GetTotalResourcePerSec() {
 			UpdateTotalResourcePerSec();
 			return m_totalResourcePerSec;
@@ -65,14 +85,9 @@ namespace JDGameSystem {
 		const int& GetMaxPopulation() const { return m_maxPopulation; }
 		const int& GetCurPopulation() const { return m_curPopulation; }
 
-		// Setter
+		// Setters
 		void SetResourcePerSec(const Resource& value) { m_resourcePerSec = value; }
 		void AddResourcePerSec(const Resource& value) { m_resourcePerSec += value; }
-
-		void SetMaxPopulation(const int& value);
-		void AddMaxPopulation(const int& value);
-		void SetCurPopulation(const int& value);
-		void AddCurPopulation(const int& value);
 
 		void SetTotalResource(const Resource& value) {
 			m_totalResource = value;
@@ -90,12 +105,17 @@ namespace JDGameSystem {
 			m_synergyBonus = ClampBonus(value);
 		}
 
+		void SetMaxPopulation(const int& value);
+		void AddMaxPopulation(const int& value);
+		void SetCurPopulation(const int& value);
+		void AddCurPopulation(const int& value);
+
 	private:
-		Resource m_totalResource;			// 자원
-		Resource m_totalResourcePerSec;     // 총 자원 생산량
-		Resource m_resourcePerSec;		    // 초당 건물 생산량
-		Resource m_resourceBonus;		    // 자원 보너스
-		Resource m_synergyBonus;		    // 시너지 보너스
+		Resource m_totalResource;			// 누적 자원
+		Resource m_totalResourcePerSec;     // 총 생산 자원 (보너스 적용)
+		Resource m_resourcePerSec;		    // 기본 초당 자원
+		Resource m_resourceBonus;		    // % 자원 보너스 (예: 10 = 10%)
+		Resource m_synergyBonus;		    // % 시너지 보너스
 		int m_maxPopulation = 10;		    // 최대 인구수
 		int m_curPopulation = 0;		    // 현재 인구수
 	};

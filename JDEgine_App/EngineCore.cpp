@@ -127,51 +127,48 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
+    if (!AssetManager::Instance().LoadAllCSV()) {
+        return false;
+    }
+    
+    DataTableManager::Instance().ParseTestTable();
+    JDGlobal::Contents::BuildingStats statsds;
+
+    // FishingSpot 파싱 및 결과 출력
+    std::cout << "=== FishingSpot 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseFishingSpotTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== FishingSpot 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // LumberMill 파싱 및 결과 출력
+    std::cout << "=== LumberMill 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseLumberMillTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== LumberMill 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // Mine 파싱 및 결과 출력
+    std::cout << "=== Mine 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseMineTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== Mine 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // House 파싱 및 결과 출력
+    std::cout << "=== House 테스트 시작 ===" << std::endl;
+    JDGlobal::Contents::HouseStats hs;
+    DataTableManager::Instance().ParseHouseTable(hs);
+    hs.PrintStats();
+    std::cout << "=== House 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
 
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
 
-    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
-        std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
-        std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) {
-        std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) {
-        std::cout << "[ERROR] GAMESTART_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) {
-        std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) {
-        std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) {
-        std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) {
-        std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
-    }
-
-
-    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
-        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
-        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
-    }
+    AssetManager::Instance().TextureSetUp();
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
     //SceneManager::Instance().ChangeScene("TitleScene");

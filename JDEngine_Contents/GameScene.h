@@ -51,9 +51,9 @@ namespace JDScene {
         const float m_dayTime = 10.f;
         float m_elapsedTime = 0.0f;
 
-        JDGameObject::GameObject* m_playerObject = nullptr;   // 화면에 존재하는 아군 유닛.
-        JDGameObject::GameObject* m_targetEnemy = nullptr;    // 현재 선택된 적 유닛.
-        JDGameObject::GameObject* m_barracksObject = nullptr; // 아군 병영.
+        JDGameObject::GameObjectBase* m_playerObject = nullptr;   // 화면에 존재하는 아군 유닛.
+        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;    // 현재 선택된 적 유닛.
+        JDGameObject::GameObjectBase* m_barracksObject = nullptr; // 아군 병영.
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
     };

@@ -157,6 +157,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="DefaultGameObject.h" />
     <ClInclude Include="GameObjectList.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="House.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -180,6 +181,7 @@
     <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="UIObjectList.h" />
     <ClInclude Include="SceneList.h" />
+    <ClInclude Include="WaveManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArmySystem.cpp" />
@@ -194,6 +196,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="House.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -221,6 +224,7 @@
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="UIObjectList.cpp" />
+    <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JDEngine_Common\JDEngine_Common.vcxproj">

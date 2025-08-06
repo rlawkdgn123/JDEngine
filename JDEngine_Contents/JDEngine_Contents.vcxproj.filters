@@ -58,6 +58,12 @@
     <ClCompile Include="SelectNationScene.cpp">
       <Filter>Scene\SelectNation</Filter>
     </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveManager.cpp">
+      <Filter>GameSystem\Combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
@@ -125,6 +131,12 @@
     </ClInclude>
     <ClInclude Include="SelectNationScene.h">
       <Filter>Scene\SelectNation</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Scene\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveManager.h">
+      <Filter>GameSystem\Combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +214,9 @@
     </Filter>
     <Filter Include="Scene\Title">
       <UniqueIdentifier>{e6963788-0a47-4195-a536-b25016283871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Game">
+      <UniqueIdentifier>{12726fcf-02c5-423d-8176-de9fc3268c98}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

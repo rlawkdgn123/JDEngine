@@ -284,11 +284,11 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
+    // SceneManager::Instance().ChangeScene("GameScene");
+    SceneManager::Instance().ChangeScene("TutorialScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
-
-    SceneManager::Instance().ChangeScene("GameScene");
 
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;

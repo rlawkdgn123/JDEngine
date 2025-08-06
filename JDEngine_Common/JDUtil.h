@@ -1,6 +1,5 @@
 #pragma once
-#include "pch.h"
-#include "framework.h"
+#include <string>
 
 namespace JDUtil {
     inline std::string trim(const std::string& str)

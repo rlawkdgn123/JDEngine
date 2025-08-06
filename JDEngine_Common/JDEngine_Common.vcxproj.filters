@@ -60,5 +60,11 @@
     <ClCompile Include="MathUtil.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="JDGlobal.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="JDUtil.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

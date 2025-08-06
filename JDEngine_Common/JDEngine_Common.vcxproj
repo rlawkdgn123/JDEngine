@@ -150,6 +150,8 @@
     <ClInclude Include="JDUtil.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="JDGlobal.cpp" />
+    <ClCompile Include="JDUtil.cpp" />
     <ClCompile Include="MathUtil.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

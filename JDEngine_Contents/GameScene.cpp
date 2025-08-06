@@ -271,77 +271,123 @@ namespace JDScene {
 
     void GameScene::ClickUpdate()
     {
-        auto camera = D2DRenderer::Instance().GetCamera();
-        if (!camera) return;
+        // ImGui가 마우스 입력을 사용 중이면 게임 내 클릭을 무시합니다.
+        if (ImGui::GetIO().WantCaptureMouse)
+            return;
 
         InputManager& input = InputManager::Instance();
         MouseState state = input.GetMouseState();
 
-        if (ImGui::GetIO().WantCaptureMouse || !state.leftClicked)
-            return;
-
-        // 좌표 변환
-        float screenHeight = static_cast<float>(camera->GetScreenHeight());
-        Vector2F screenMousePos(state.pos.x, state.pos.y);
-        Vector2F unityMousePos(screenMousePos.x, screenHeight - screenMousePos.y);
-        Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
-
-        GameObjectBase* clickedObj = nullptr;
-
-        // 1. UI 오브젝트 검사 (스크린 좌표계)
-        for (int i = static_cast<int>(m_uiObjects.size()) - 1; i >= 0; --i)
+        // state.leftClicked 또는 state.leftPressed 등 필요한 입력 상태를 사용합니다.
+        if (state.leftClicked)
         {
-            auto& uiObj = m_uiObjects[i];
-            if (!uiObj) continue;
+            // (1) 마우스 좌표를 맨 위에서 한 번만 계산해서 재사용합니다.
+            // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)
+            Vector2F screenMousePos(
+                static_cast<float>(state.pos.x),
+                static_cast<float>(state.pos.y)
+            );
+            // 게임 오브젝트 클릭 판정에 사용할 월드 좌표 (Unity 기준: Y 위가 양수)
+            Vector2F worldMousePos = GetMouseWorldPos(); // 우리가 만든 통일된 함수 사용!
 
-            auto clickable = uiObj->GetComponent<Editor_Clickable>();
-            if (clickable && clickable->IsHit(screenMousePos)) {
-                clickedObj = uiObj.get();
-                break;
-            }
-        }
+            bool clicked = false;
 
-        // 2. 게임 오브젝트 검사 (월드 좌표계)
-        if (!clickedObj)
-        {
-            for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
+            ////////////////////////////////////////////////////////////////////////////////
+            // 1. UI 클릭 검사 (스크린 좌표계 사용)
+            ////////////////////////////////////////////////////////////////////////////////
+            // 이 로직은 스크린 좌표를 사용하므로 기존과 동일하게 올바르게 동작합니다.
+            for (int i = static_cast<int>(m_uiObjects.size()) - 1; i >= 0; --i)
             {
-                auto& obj = m_gameObjects[i];
-                if (!obj) continue;
+                auto& uiObj = m_uiObjects[i];
+                if (!uiObj || !uiObj->IsActive()) continue;
 
-                auto clickable = obj->GetComponent<Editor_Clickable>();
-                if (clickable && clickable->IsHit(worldMousePos)) {
-                    clickedObj = obj.get();
-                    break;
+                auto clickable = uiObj->GetComponent<Editor_Clickable>();
+                // UI의 IsHit 함수에는 '스크린 좌표'를 그대로 넘겨줍니다.
+                if (clickable && clickable->IsHit(screenMousePos))
+                {
+                    SetSelectedObject(uiObj.get());
+                    clicked = true;
+                    std::cout << " UI 오브젝트 클릭 함!!!!! ";
+                    break; // UI를 클릭했으면 더 이상 진행 안 함
                 }
             }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 2. 게임오브젝트 클릭 검사 (월드 좌표계 사용)
+            ////////////////////////////////////////////////////////////////////////////////
+            if (!clicked)
+            {
+                // (2) 불필요하고 잘못된 좌표 변환 로직을 모두 제거합니다.
+                /* Vector2F unityMousePos(mousePos.x, screenHeight - mousePos.y);
+                    Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
+                    -> 이 부분은 GetMouseWorldPos()로 대체되었으므로 삭제!
+                */
+
+                for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
+                {
+                    auto& obj = m_gameObjects[i];
+                    if (!obj || !obj->IsActive()) continue;
+
+                    auto clickable = obj->GetComponent<Editor_Clickable>();
+                    // (3) 게임 오브젝트의 IsHit 함수에는 위에서 계산한 '월드 좌표'를 넘겨줍니다.
+                    if (clickable && clickable->IsHit(worldMousePos))
+                    {
+                        SetSelectedObject(obj.get());
+                        clicked = true;
+                        std::cout << " 게임 오브젝트 클릭 함!!!!! ";
+                        break;
+                    }
+                }
+
+                // 태그 기반 처리
+                auto* gameObj = GetSelectedObject();
+                if (!gameObj) return;
+
+                auto tag = gameObj->GetTag();
+                bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy || tag == JDGlobal::Base::GameTag::EnemyMove);
+
+                if (tag == JDGlobal::Base::GameTag::Barracks) {
+                    m_isBarracksSelected = !m_isBarracksSelected;
+                    std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
+                }
+                else if (m_isBarracksSelected && ((isEnemyTag && !m_targetEnemy) || gameObj == m_targetEnemy)) {
+                    if (!m_targetEnemy) m_targetEnemy = gameObj;
+
+                    SpawnPlayerArmy();
+                    m_isBarracksSelected = false;
+                    std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
+                }
+                else { m_isBarracksSelected = false; }
+            }
+
+            // 아무것도 클릭되지 않았다면 선택 해제
+            if (!clicked)
+            {
+                SetSelectedObject(nullptr);
+            }
         }
 
-        SetSelectedObject(clickedObj);
+        // LEGACY : ClickUpdate 변경 전 코드 2025.08.06
+        /*
+        //// 태그 기반 처리
+        //auto* gameObj = GetSelectedObject();
+        //if (!gameObj) return;
 
-        // 클릭된 대상이 없다면
-        if (!clickedObj) {
-            return;
-        }
+        //auto tag = gameObj->GetTag();
+        //bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy || tag == JDGlobal::Base::GameTag::EnemyMove);
+        //
+        //if (tag == JDGlobal::Base::GameTag::Barracks) {
+        //    m_isBarracksSelected = !m_isBarracksSelected;
+        //    std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
+        //}
+        //else if (m_isBarracksSelected && ((isEnemyTag && !m_targetEnemy) || gameObj == m_targetEnemy)) {
+        //    if (!m_targetEnemy) m_targetEnemy = gameObj;
 
-        // 태그 기반 처리
-        auto* gameObj = dynamic_cast<GameObject*>(clickedObj);  
-        if (!gameObj) return;
-
-        auto tag = gameObj->GetTag();
-        bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy || tag == JDGlobal::Base::GameTag::EnemyMove);
-        
-        if (tag == JDGlobal::Base::GameTag::Barracks) {
-            m_isBarracksSelected = !m_isBarracksSelected;
-            std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
-        }
-        else if (m_isBarracksSelected && ((isEnemyTag && !m_targetEnemy) || gameObj == m_targetEnemy)) {
-            if (!m_targetEnemy) m_targetEnemy = gameObj;
-
-            SpawnPlayerArmy();
-            m_isBarracksSelected = false;
-            std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
-        }
-        else { m_isBarracksSelected = false; }
+        //    SpawnPlayerArmy();
+        //    m_isBarracksSelected = false;
+        //    std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
+        //}
+        //else { m_isBarracksSelected = false; }
+        */
     }
 }

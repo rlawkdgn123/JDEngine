@@ -348,6 +348,11 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png")) 
     { std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl; }
 
+    if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/blossom.png"))
+    {
+        std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) 
     { std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl; }
@@ -363,10 +368,10 @@ bool EngineCore::Initialize()
   
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    // SceneManager::Instance().ChangeScene("TitleScene");
+    SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
-    SceneManager::Instance().ChangeScene("TutorialScene");
+    //SceneManager::Instance().ChangeScene("TutorialScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");

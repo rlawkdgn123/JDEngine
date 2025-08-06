@@ -158,7 +158,10 @@ namespace JDScene {
             });
 
 
-        m_lightParticles = std::make_unique<ParticleSystem>(
+        m_mouseParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_sakuraParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
 
@@ -235,11 +238,45 @@ namespace JDScene {
     void TitleScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        MouseState state = InputManager::Instance().GetMouseState();
-        float mouseX = static_cast<float>(state.pos.x);
-        float mouseY = static_cast<float>(state.pos.y);
-        if (m_lightParticles) {
-            m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
+        // 화면 크기 가져오기
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+
+        // 1) 마우스 파티클 업데이트 & Emit
+        {
+            MouseState ms = InputManager::Instance().GetMouseState();
+            Vector2F mousePos{ (float)ms.pos.x, (float)ms.pos.y };
+
+            m_mouseParticles->Update(deltaTime, mousePos);
+            m_mouseParticles->Emit(
+                mousePos,
+                /*count=*/30,
+                D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),  // 파랑
+                /*scale=*/2.5f
+            );
+        }
+
+        // 2) 벚꽃 낙하 파티클 스폰 & 업데이트
+        {
+            m_sakuraEmitAccumulator += deltaTime * m_sakuraEmissionRate;
+            int spawnCount = static_cast<int>(m_sakuraEmitAccumulator);
+            m_sakuraEmitAccumulator -= spawnCount;
+            float scale = RandomFloat(1.0f, 2.0f);
+            float maxLife = RandomFloat(6.0f, 12.0f);
+
+            for (int i = 0; i < spawnCount; ++i) {
+                float x = RandomFloat(sakuraMin.x, sakuraMax.x);
+                float y = RandomFloat(sakuraMin.y, sakuraMax.y);
+                Vector2F spawnPos{ x, y };
+                m_sakuraParticles->SpawnFallingParticle(
+                    spawnPos,
+                    /*color=*/D2D1::ColorF(1.f, 0.8f, 0.9f, 1.f),
+                    /*scale=*/scale,
+                    /*maxLife=*/maxLife
+                );
+            }
+            // Update 에 화면 크기 전달하는 Update 오버로드
+            m_sakuraParticles->UpdateFalling(deltaTime, screenW, screenH);
         }
 
         ClickUpdate();
@@ -275,14 +312,25 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
 
-        if (m_lightParticles) {
+        if (m_mouseParticles) {
             // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
             auto ctx = D2DRenderer::Instance().GetD2DContext();
             D2D1_MATRIX_3X2_F old;
             ctx->GetTransform(&old);
             ctx->SetTransform(D2D1::Matrix3x2F::Identity());
 
-            m_lightParticles->Render(ctx);
+            m_mouseParticles->Render(ctx);
+
+            ctx->SetTransform(old);
+        }
+        if (m_sakuraParticles) {
+            // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
+            auto ctx = D2DRenderer::Instance().GetD2DContext();
+            D2D1_MATRIX_3X2_F old;
+            ctx->GetTransform(&old);
+            ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+            m_sakuraParticles->Render(ctx);
 
             ctx->SetTransform(old);
         }

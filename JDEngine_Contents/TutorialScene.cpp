@@ -354,8 +354,8 @@ namespace JDScene {
         float mouseY = static_cast<float>(state.pos.y);
         if (m_lightParticles) {
             m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
+            m_lightParticles->Emit(Vector2F{ mouseX, mouseY }, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f), 2.5f);
         }
-
         ClickUpdate();
     }
 
@@ -490,8 +490,9 @@ namespace JDScene {
                             Vector2F leftBottom = Vector2F{ tileWorldPos.x - halfSize.x, tileWorldPos.y - halfSize.y };
                             Vector2F rightBottom = Vector2F{ tileWorldPos.x + halfSize.x, tileWorldPos.y - halfSize.y };
 
-                            m_lightParticles->Emit(leftBottom, 30);
-                            m_lightParticles->Emit(rightBottom, 30);
+                            m_lightParticles->Emit(leftBottom, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f));
+                            m_lightParticles->SetParticleLife(2.0f);
+                            m_lightParticles->Emit(worldMousePos, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f));
 
                             auto* uiImage = m_selectedTool->GetComponent<JDComponent::UI_ImageComponent>();
                             std::string texKey = uiImage

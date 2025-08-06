@@ -72,7 +72,7 @@ namespace JDGameSystem {
             std::cout << "최대 인구 크기 도달" << std::endl;*/
         }
         else {
-            m_curPopulation += value;
+            m_maxPopulation += value;
         }
 
         // 현재 인구가 최대 인구를 넘으면 조정 & 넘은 요소 파괴

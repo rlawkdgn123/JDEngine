@@ -10,7 +10,7 @@ namespace JDGameObject {
 
         void Building::Start()
         {
-            m_resourceSystem->AddTotalResource(-stats.m_upgradeCost[m_nowLevel]);
+            m_resourceSystem->AddTotalResource(m_buildCost);
         }
     }
 }

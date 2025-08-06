@@ -49,7 +49,7 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="SingletonBase.h" />
-    <ClInclude Include="JDUtil.h">
+    <ClInclude Include="Util.h">
       <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>

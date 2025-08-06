@@ -55,13 +55,13 @@ namespace JDGameObject {
         virtual void FixedUpdate(float fixedDeltaTime) = 0; // 물리 계산용
         virtual void OnDestroy() = 0;               // 삭제 직전
 
-        virtual void OnCollisionEnter(GameObjectBase* other) = 0;
-        virtual void OnCollisionStay(GameObjectBase* other) = 0;
-        virtual void OnCollisionExit(GameObjectBase* other) = 0;
+        //virtual void OnCollisionEnter(GameObjectBase* other) = 0;
+        //virtual void OnCollisionStay(GameObjectBase* other) = 0;
+        //virtual void OnCollisionExit(GameObjectBase* other) = 0;
 
-        virtual void OnTriggerEnter(GameObjectBase* other) = 0;
-        virtual void OnTriggerStay(GameObjectBase* other) = 0;
-        virtual void OnTriggerExit(GameObjectBase* other) = 0;
+        //virtual void OnTriggerEnter(GameObjectBase* other) = 0;
+        //virtual void OnTriggerStay(GameObjectBase* other) = 0;
+        //virtual void OnTriggerExit(GameObjectBase* other) = 0;
 
         virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) = 0;
         virtual void SendComPonentEvent(const std::string& ev) = 0;
@@ -135,13 +135,13 @@ namespace JDGameObject {
         virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
         virtual void OnDestroy() override {}
 
-        virtual void OnCollisionEnter(GameObjectBase* other) override {}
+        /*virtual void OnCollisionEnter(GameObjectBase* other) override {}
         virtual void OnCollisionStay(GameObjectBase* other) override {}
         virtual void OnCollisionExit(GameObjectBase* other) override {}
 
         virtual void OnTriggerEnter(GameObjectBase* other) override {}
         virtual void OnTriggerStay(GameObjectBase* other) override {}
-        virtual void OnTriggerExit(GameObjectBase* other) override {}
+        virtual void OnTriggerExit(GameObjectBase* other) override {}*/
 
         virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) override {}
         virtual void SendComPonentEvent(const std::string& ev) override {}

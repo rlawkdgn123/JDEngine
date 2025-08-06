@@ -22,6 +22,12 @@ namespace JDScene {
 
         //cout << "[TestScene] OnEnter()\n";
 
+
+        CreateGameObject<House>();
+        CreateGameObject<FishingSpot>();
+        CreateGameObject<Mine>();
+        CreateGameObject<LumberMill>();
+
         CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
@@ -155,8 +161,10 @@ namespace JDScene {
 
         //각버튼 키 목록
         std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
-        { L"house1", "house" },
-        { L"house2", "house2" },
+        { L"FishingSpot", "house" },
+        { L"LumberMill", "house2" },
+        { L"Mine", "house2" },
+        { L"House", "house2" },
         // 필요하다면 더 추가…
         }; 
         std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
@@ -311,6 +319,11 @@ namespace JDScene {
         for (auto& objPtr : m_gameObjects) {
             auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
             if (!collider) continue;
+            
+            auto* grid = dynamic_cast<Grid*>(objPtr.get());
+            if (!grid)
+                continue;
+
             int id = collider->GetIndex();
 
             if (!collider->IsMouseOver(mousePos))
@@ -440,7 +453,6 @@ namespace JDScene {
 
         if (state.leftClicked)
         {
-            std::cout << "이거 실행됨?!#";
 
             // (1) 마우스 좌표를 한 번만 계산해서 재사용합니다.
             // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)
@@ -464,7 +476,7 @@ namespace JDScene {
                 {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
-                    std::cout << " UI 오브젝트 클릭 함!!!!! ";
+                    //std::cout << " UI 오브젝트 클릭";
 
                     if (uiObj.get()->GetParent() == m_Menu) {
                         m_selectedTool = static_cast<Button*>(uiObj.get());

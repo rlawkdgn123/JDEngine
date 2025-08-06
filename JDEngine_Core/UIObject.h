@@ -40,13 +40,13 @@ namespace JDGameObject {
 		virtual void FixedUpdate(float fixedDeltaTime) override { if (!m_active) { return; } }
 		virtual void OnDestroy() override {}
 
-		virtual void OnCollisionEnter(GameObjectBase* other) override {}
-		virtual void OnCollisionStay(GameObjectBase* other) override {}
-		virtual void OnCollisionExit(GameObjectBase* other) override {}
+		//virtual void OnCollisionEnter(GameObjectBase* other) override {}
+		//virtual void OnCollisionStay(GameObjectBase* other) override {}
+		//virtual void OnCollisionExit(GameObjectBase* other) override {}
 
-		virtual void OnTriggerEnter(GameObjectBase* other) override {}
-		virtual void OnTriggerStay(GameObjectBase* other) override {}
-		virtual void OnTriggerExit(GameObjectBase* other) override {}
+		//virtual void OnTriggerEnter(GameObjectBase* other) override {}
+		//virtual void OnTriggerStay(GameObjectBase* other) override {}
+		//virtual void OnTriggerExit(GameObjectBase* other) override {}
 
 		virtual void SendComPonentMessage(const MessageID msg, void* data = nullptr) override {}
 		virtual void SendComPonentEvent(const std::string& ev) override {}

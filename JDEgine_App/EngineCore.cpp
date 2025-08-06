@@ -132,10 +132,11 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadAllCSV()) {
         return false;
     }
-    
+
+    /*
     DataTableManager::Instance().ParseTestTable();
     JDGlobal::Contents::BuildingStats statsds;
-
+    
     // FishingSpot 파싱 및 결과 출력
     std::cout << "=== FishingSpot 테스트 시작 ===" << std::endl;
     DataTableManager::Instance().ParseFishingSpotTable(statsds);
@@ -164,6 +165,7 @@ bool EngineCore::Initialize()
     hs.PrintStats();
     std::cout << "=== House 테스트 종료 ===" << std::endl;
     std::cout << "\n\n";
+    */
 
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))

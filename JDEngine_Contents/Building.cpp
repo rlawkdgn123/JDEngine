@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "framework.h"
+using namespace JDComponent;
 using ResourceSystem = JDGameSystem::ResourceSystem;
 namespace JDGameObject {
     namespace Content {

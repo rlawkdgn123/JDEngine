@@ -10,7 +10,6 @@ namespace JDGameObject {
         {
             __super::Awake();
             DataTableManager::Instance().ParseFishingSpotTable(stats);
-            //AddComponent<TextureRenderer>(); 동민이 수정
             stats.PrintStats();
         }
         void FishingSpot::Start()

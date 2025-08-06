@@ -11,7 +11,7 @@ namespace JDGameObject {
         void House::Awake()
         {
             m_resourceSystem = &ResourceSystem::Instance();
-            DataTableManager::Instance().ParseHouseTable(stats);
+            DataTableManager::Instance().GetHouseTable(stats);
             stats.PrintStats();
         }
         void House::Start()

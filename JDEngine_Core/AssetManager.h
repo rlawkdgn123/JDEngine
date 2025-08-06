@@ -39,13 +39,6 @@ public:
     const std::unordered_map<std::string, AnimationRenderClip>&
     GetAnimations() const { return m_AnimationRenders; }
 
-    // CSV Parsing
-    bool LoadCSV(const std::string& name, const std::string& filePath);
-    bool LoadAllCSV();
-    std::string GetCSV(const std::string& key) const;
-
-    void ConvertAllCsvToWstring();
-
 private:
     AssetManager() = default;
     ~AssetManager() = default;
@@ -59,8 +52,4 @@ private:
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap>> m_textures;
     std::unordered_map<std::string, AnimationRenderClip> m_AnimationRenders;
 
-    // CSV
-    
-    // string은 RAII가 이미 적용되어 있으므로, smart_ptr을 적용시킬 필요가 없다.
-    std::unordered_map<std::string, std::string> m_csvFileMap; // csv 파일
 };

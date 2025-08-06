@@ -205,5 +205,30 @@ namespace JDGlobal {
             return (point.x >= left && point.x <= right) && (point.y >= top && point.y <= bottom);
         }
 
+        void DecomposeMatrix3x2(
+            const D2D1::Matrix3x2F& M,
+            Vector2F& outPosition,
+            float& outRotationDegrees,
+            Vector2F& outScale
+        )
+        {
+            // translation
+            outPosition.x = M._31;
+            outPosition.y = M._32;
+
+            // scale
+            float scaleX = std::sqrt(M._11 * M._11 + M._12 * M._12);
+            float scaleY = std::sqrt(M._21 * M._21 + M._22 * M._22);
+            outScale.x = scaleX;
+            outScale.y = scaleY;
+
+            // rotation (radian)  
+            // M = [ cosθ·sx   sinθ·sx ]
+            //     [ -sinθ·sy  cosθ·sy ]
+            // so angle = atan2( M._12/sx, M._11/sx )
+            float rad = std::atan2(M._12 / scaleX, M._11 / scaleX);
+            outRotationDegrees = rad * 180.0f / static_cast<float>(M_PI);
+        }
+
     }
 }

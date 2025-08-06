@@ -171,6 +171,7 @@
     <ClInclude Include="DataTableManager.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">

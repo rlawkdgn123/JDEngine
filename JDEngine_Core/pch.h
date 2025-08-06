@@ -32,6 +32,7 @@
 #include <dwrite_3.h>                // DirectWrite (최신 텍스트 엔진)
 #include <wincodec.h>                // WIC (이미지 로딩)
 
+#include <random>
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
@@ -46,6 +47,7 @@
 #include <fmod.hpp>
 #include <fmod_studio.hpp>
 #include <map>
+
 #include <filesystem>
 #include <fstream>      // std::wifstream
 #include <sstream>      // std::wstringstream
@@ -53,6 +55,7 @@
 #include <codecvt>      // std::codecvt_utf8<wchar_t> (구버전 MSVC에서는 warning 줄 수도 있음)
 #include <algorithm>
 #include <cctype>
+
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed
 namespace DX
 {

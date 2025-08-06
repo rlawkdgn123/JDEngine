@@ -4,7 +4,7 @@
 
 namespace JDComponent {
 
-    void UI_TextComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform)
+    void UI_TextComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F renderTransform)
     {
         if (m_text.empty()) return;
 
@@ -17,48 +17,27 @@ namespace JDComponent {
         IDWriteTextFormat* textFormat = GetTextFormat();
         if (!textFormat) return;
 
-        context->SetTransform(viewTransform);
+        // 1. 외부에서 전달받은 최종 변환 행렬을 설정합니다.
+        // 이 행렬에 위치, 회전, 스케일, 피벗 등 모든 정보가 담겨있습니다.
+        context->SetTransform(renderTransform);
 
-        Vector2F pos = rectTransform->GetPosition();
+        // 2. '로컬 공간' 기준의 텍스트 레이아웃 사각형을 정의합니다.
+        // 피벗은 이미 renderTransform에 적용되었으므로, (0,0)부터 그리면 됩니다.
         Vector2F size = rectTransform->GetSize();
-        Vector2F pivot = rectTransform->GetPivot();
-        Vector2F anchorOffset = { 0.f, 0.f };
+        D2D1_RECT_F localLayoutRect = D2D1::RectF(0.f, 0.f, size.x, size.y);
 
-        auto parent = rectTransform->GetParent();
-        if (parent) {
-            Vector2F parentSize = parent->GetSize();
-            Vector2F anchor = rectTransform->GetAnchor();
-            anchorOffset = {
-                parentSize.x * anchor.x,
-                parentSize.y * anchor.y
-            };
-        }
-
-        Vector2F finalPos = {
-            anchorOffset.x + pos.x,
-            anchorOffset.y + pos.y
-        };
-
-        // 화면 중심 변환 제거! (RectTransform에서 이미 처리됨)
-        // 단순히 finalPos 사용
-        D2D1_RECT_F layoutRect = D2D1::RectF(
-            finalPos.x - size.x * pivot.x,
-            finalPos.y - size.y * pivot.y,
-            finalPos.x + size.x * (1 - pivot.x),
-            finalPos.y + size.y * (1 - pivot.y)
-        );
-
-        // 텍스트 브러시 생성
+        // 3. 텍스트 브러시를 생성하고 텍스트를 로컬 사각형에 그립니다.
         ComPtr<ID2D1SolidColorBrush> brush;
-        context->CreateSolidColorBrush(m_color, &brush);
-
-        // 텍스트 렌더링
-        context->DrawTextW(
-            m_text.c_str(),
-            static_cast<UINT32>(m_text.length()),
-            textFormat,
-            layoutRect,
-            brush.Get()
-        );
+        HRESULT hr = context->CreateSolidColorBrush(m_color, &brush);
+        if (SUCCEEDED(hr))
+        {
+            context->DrawTextW(
+                m_text.c_str(),
+                static_cast<UINT32>(m_text.length()),
+                textFormat,
+                localLayoutRect, // 로컬 레이아웃 사각형 사용
+                brush.Get()
+            );
+        }
     }
 }

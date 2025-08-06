@@ -26,6 +26,9 @@ namespace JDComponent
         void OnEnable() override {}
         void OnDisable() override {}
 
+        // 이미지 사이즈
+        D2D1_SIZE_F GetFrameSize() const;
+
         // 클립 이름 설정
         void            SetClipName(const std::string& name) { m_clipName = name; }
         std::string     GetClipName() const { return m_clipName; }

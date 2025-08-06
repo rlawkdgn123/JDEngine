@@ -53,11 +53,55 @@ namespace JDGameObject {
 
 		virtual ~UIObject() = default;
 
+		// 부모·자식 관계 함수
+		void AddChild(UIObject* child) {
+			if (!child || child == this)
+				return;
+
+			// 1) UIObject 계층 관계
+			if (child->m_parent)
+				child->m_parent->RemoveChild(child);
+			m_children.push_back(child);
+			child->m_parent = this;
+
+			// 2) RectTransform 포인터 유효성 검사
+			auto* childRect = child->GetComponent<RectTransform>();
+			if (!childRect) {
+				std::cerr << "[ERROR] AddChild: child has no RectTransform!\n";
+			}
+			if (!m_rectTransform) {
+				std::cerr << "[ERROR] AddChild: this has no RectTransform!\n";
+			}
+
+			if (childRect && m_rectTransform) {
+				// 3) 트랜스폼 계층 연결
+				childRect->DetachFromParent();  // 안전하게 분리
+				childRect->SetParent(m_rectTransform);
+			}
+		}
+
+		void RemoveChild(UIObject* child) {
+			if (!child || child->m_parent != this) return;
+			// 트랜스폼 계층 분리
+			child->GetComponent<RectTransform>()->DetachFromParent();
+
+			m_children.erase(
+				std::remove(m_children.begin(), m_children.end(), child),
+				m_children.end()
+			);
+			child->m_parent = nullptr;
+		}
+
+		UIObject* GetParent() const { return m_parent; }
+
+		const std::vector<UIObject*>& GetChildren() const { return m_children; }
+
 		void SetName(const std::wstring& name) { m_name = name; }
 		void SetDirection(const Vector2f& dir) { m_direction = dir; }
 
 	private:
 		RectTransform* m_rectTransform = nullptr;
-
+		UIObject* m_parent = nullptr;
+		std::vector<UIObject*>   m_children;
 	};
 }

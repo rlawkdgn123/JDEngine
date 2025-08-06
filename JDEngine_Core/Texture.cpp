@@ -20,10 +20,10 @@ void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F
     // 비트맵 크기 구해서 중심 기준 destRect 계산
     D2D1_SIZE_F size = bitmap->GetSize();
     D2D1_RECT_F destRect = D2D1::RectF(
-        -size.width * 0.5f,
-        -size.height * 0.5f,
-        size.width * 0.5f,
-        size.height * 0.5f
+        -size.width * 0.5f,     // left
+        size.height * 0.5f,     // top (이제 양수)
+        size.width * 0.5f,      // right
+        -size.height * 0.5f     // bottom (이제 음수)
     );
 
     // srcRect를 nullptr로 넘기면 전체 이미지를 사용합니다.
@@ -34,4 +34,17 @@ void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F
         /* srcRect */ D2D1::RectF(0, 0, size.width, size.height),
         /* opacity */ 1.0f
     );
+}
+
+// 텍스처의 원본 사이즈 반환
+D2D1_SIZE_F TextureRenderer::GetOriginalTextureSize() const
+{
+    auto bitmap = static_cast<ID2D1Bitmap1*>(
+        AssetManager::Instance().GetTexture(m_textureName)
+        );
+    if (bitmap)
+    {
+        return bitmap->GetSize();
+    }
+    return { 0, 0 }; // 텍스처가 없으면 0,0 반환
 }

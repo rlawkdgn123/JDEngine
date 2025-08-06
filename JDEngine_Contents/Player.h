@@ -12,6 +12,5 @@ namespace JDGameObject {
             void LateUpdate(float deltaTime) override;          // Update 후 호출
             void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
         };
-
     }
 }

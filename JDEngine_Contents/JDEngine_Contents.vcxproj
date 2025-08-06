@@ -174,8 +174,10 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ResourceSystem.h" />
     <ClInclude Include="DefaultScene.h" />
+    <ClInclude Include="SelectNationScene.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="UIObjectList.h" />
     <ClInclude Include="SceneList.h" />
   </ItemGroup>
@@ -214,8 +216,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResourceSystem.cpp" />
     <ClCompile Include="DefaultScene.cpp" />
+    <ClCompile Include="SelectNationScene.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="UIObjectList.cpp" />
   </ItemGroup>
   <ItemGroup>

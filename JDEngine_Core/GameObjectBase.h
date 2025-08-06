@@ -3,7 +3,7 @@
 #include "Component.h"
 #include "D2DTransform.h"
 #include "ComponentList.h"
-#include "Global.h"
+#include "JDGlobal.h"
 #include "framework.h"
 // 클래스 구현 설계도
 /*

@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h"
+#include "JDGlobal.h"
 
 namespace JDGameSystem {
     using Resource = JDGlobal::Contents::Resource;

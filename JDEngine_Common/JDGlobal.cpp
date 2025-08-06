@@ -1,6 +1,6 @@
 #include"pch.h"
 #include"framework.h"
-#include"Global.h"
+#include"JDGlobal.h"
 
 namespace JDMath = JDGlobal::Math;
 namespace JDGlobal {

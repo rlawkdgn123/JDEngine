@@ -141,11 +141,11 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="InputUtil.h" />
+    <ClInclude Include="JDGlobal.h" />
     <ClInclude Include="JDMath.h" />
     <ClInclude Include="MathType.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Global.h" />
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="JDUtil.h" />
   </ItemGroup>

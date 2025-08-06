@@ -1,6 +1,6 @@
 #pragma once
 #include "AssetManager.h"
-#include "Global.h"
+#include "JDGlobal.h"
 class DataTableManager
 {
 public:

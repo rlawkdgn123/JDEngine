@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ResourceSystem.h"
-#include "Global.h"
+#include "JDGlobal.h"
 using ResourceSystem = JDGameSystem::ResourceSystem;
 namespace JDGameObject {
     namespace Content {

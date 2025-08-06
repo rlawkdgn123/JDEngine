@@ -45,11 +45,11 @@
     <ClInclude Include="InputUtil.h">
       <Filter>OutputHeader</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>Global</Filter>
-    </ClInclude>
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="JDUtil.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="JDGlobal.h">
       <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>

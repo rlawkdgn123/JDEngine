@@ -253,7 +253,7 @@ namespace JDScene {
         MouseState state = input.GetMouseState();
 
         // state.leftClicked 또는 state.leftPressed 등 필요한 입력 상태를 사용합니다.
-        if (state.leftPressed)
+        if (state.leftClicked)
         {
             // (1) 마우스 좌표를 맨 위에서 한 번만 계산해서 재사용합니다.
             // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)

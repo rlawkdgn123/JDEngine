@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h"
+#include "JDGlobal.h"
 #include <limits>
 #include <iostream>
 

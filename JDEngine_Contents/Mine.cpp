@@ -8,7 +8,6 @@ namespace JDGameObject {
         {
             __super::Awake();
             DataTableManager::Instance().GetMineTable(stats);
-            //AddComponent<TextureRenderer>(); 동민이 수정
             stats.PrintStats();
         }
         void Mine::Start()

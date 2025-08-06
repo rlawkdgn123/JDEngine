@@ -300,9 +300,9 @@ bool EngineCore::Initialize()
     { std::cout << "[ERROR] fishing 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/lab.png"))
     { std::cout << "[ERROR] lab 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/lumbermill.png"))
+    if (!AssetManager::Instance().LoadTexture("lumbermill", L"../Resource/BATTLE/lumbermill.png"))
     { std::cout << "[ERROR] lumbermill 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/mine.png"))
+    if (!AssetManager::Instance().LoadTexture("mine", L"../Resource/BATTLE/mine.png"))
     { std::cout << "[ERROR] mine 텍스처 로드 실패" << std::endl; }
 
     if (!AssetManager::Instance().LoadTexture("MON_1", L"../Resource/BATTLE/MON_1.png"))

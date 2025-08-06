@@ -10,7 +10,9 @@
 #include "CameraFader.h"
 #include "ParticleSystem.h"
 
+
 using namespace JDGameObject::Content;
+class GameTimer;
 
 namespace JDScene {
     class TutorialScene : public SceneBase

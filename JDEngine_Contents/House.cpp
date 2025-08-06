@@ -11,7 +11,6 @@ namespace JDGameObject {
         void House::Awake()
         {
             m_resourceSystem = &ResourceSystem::Instance();
-            //AddComponent<TextureRenderer>(); 동민이 수정
             DataTableManager::Instance().GetHouseTable(stats);
             stats.PrintStats();
         }

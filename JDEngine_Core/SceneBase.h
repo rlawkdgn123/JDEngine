@@ -70,6 +70,7 @@ namespace JDScene {
             for (auto& obj : m_gameObjects) { if (obj) obj->LateUpdate(deltaTime); } 
             for (auto& obj : m_uiObjects) { if (obj) obj->LateUpdate(deltaTime); }
 
+            ProcessDestroyQueue();
         }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
 

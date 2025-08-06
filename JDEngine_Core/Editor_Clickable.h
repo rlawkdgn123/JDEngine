@@ -6,6 +6,7 @@
 
 #include "InputManager.h"
 #include "GameObjectBase.h"
+#include "ColliderBase.h"
 
 namespace JDComponent {
 
@@ -14,70 +15,60 @@ namespace JDComponent {
     using Vector2F = JDGlobal::Math::Vector2F;
     using Transform = JDComponent::D2DTM::Transform;
     using RectTransform = JDComponent::D2DTM::RectTransform;
+    using ColliderBase = JDComponent::ColliderBase;
 
     class Editor_Clickable : public Component
     {
     public:
         bool IsHit(Vector2F mousePos)
         {
-            if (!m_Owner) return false;
+            if (!m_Owner || !m_Owner->IsActive()) return false;
 
+            // =====================================================================
+            // 1. UI 객체 (RectTransform) 클릭 판정
+            // =====================================================================
             if (auto rectTransform = m_Owner->GetComponent<RectTransform>())
             {
-                // 1. 마우스 좌표를 RectTransform의 로컬 좌표계로 변환
-                D2D1_MATRIX_3X2_F worldMatrix = rectTransform->GetWorldMatrix();
-                D2D1_MATRIX_3X2_F inverseMatrix = worldMatrix;
+                // UI의 IsHit 함수에 전달되는 mousePos는 '스크린 좌표'입니다.
+
+                // 1-1. 스크린 좌표인 마우스 위치를 이 UI 객체의 '로컬 좌표'로 변환합니다.
+                D2D1_MATRIX_3X2_F inverseMatrix = rectTransform->GetWorldMatrix();
                 D2D1InvertMatrix(&inverseMatrix);
 
-                // 마우스를 로컬 좌표로 변환
-                Vector2F localMouse = {
-                    inverseMatrix._11 * mousePos.x + inverseMatrix._21 * mousePos.y + inverseMatrix._31,
-                    inverseMatrix._12 * mousePos.x + inverseMatrix._22 * mousePos.y + inverseMatrix._32
-                };
+                D2D1_POINT_2F localMousePoint;
+                localMousePoint.x = mousePos.x * inverseMatrix._11 + mousePos.y * inverseMatrix._21 + inverseMatrix._31;
+                localMousePoint.y = mousePos.x * inverseMatrix._12 + mousePos.y * inverseMatrix._22 + inverseMatrix._32;
 
-                // 2. 렌더링과 똑같은 방식으로 영역 계산 (하지만 로컬 좌표계에서)
-                Vector2F pos = rectTransform->GetPosition();
+                // 1-2. 이 객체의 로컬 공간에서 경계 상자(Bounding Box)를 계산합니다.
+                //      복잡한 앵커 계산은 필요 없습니다. 로컬 공간에서는 피벗과 크기만 알면 됩니다.
                 Vector2F size = rectTransform->GetSize();
-                Vector2F pivot = rectTransform->GetPivot();
-                Vector2F anchorOffset = { 0.f, 0.f };
+                Vector2F pivot = rectTransform->GetPivot(); // 0~1 사이의 상대 피벗
 
-                auto parent = rectTransform->GetParent();
-                if (parent) {
-                    Vector2F parentSize = parent->GetSize();
-                    Vector2F anchor = rectTransform->GetAnchor();
-                    anchorOffset = {
-                        parentSize.x * anchor.x,
-                        parentSize.y * anchor.y
-                    };
-                }
+                // D2D는 Y축이 아래로 향하므로, 로컬 좌표계의 Y도 아래를 양수로 간주합니다.
+                float localLeft = -pivot.x * size.x;
+                float localRight = (1.0f - pivot.x) * size.x;
+                float localTop = -pivot.y * size.y;
+                float localBottom = (1.0f - pivot.y) * size.y;
 
-                Vector2F finalPos = {
-                    anchorOffset.x + pos.x,
-                    anchorOffset.y + pos.y
-                };
-
-                // 로컬 좌표계에서 영역 계산
-                float left = finalPos.x - size.x * pivot.x;
-                float top = finalPos.y - size.y * pivot.y;
-                float right = finalPos.x + size.x * (1 - pivot.x);
-                float bottom = finalPos.y + size.y * (1 - pivot.y);
-
-                bool hit = (localMouse.x >= left && localMouse.x <= right &&
-                    localMouse.y >= top && localMouse.y <= bottom);
-
-                std::cout << "로컬 마우스: (" << localMouse.x << ", " << localMouse.y << ")" << std::endl;
-                std::cout << "로컬 영역: (" << left << ", " << top << ") ~ (" << right << ", " << bottom << ")" << std::endl;
-                std::cout << "결과: " << (hit ? "HIT" : "MISS") << std::endl;
-
-                return hit;
+                // 1-3. 변환된 로컬 마우스 좌표가 로컬 경계 상자 내에 있는지 확인합니다.
+                return (localMousePoint.x >= localLeft && localMousePoint.x <= localRight &&
+                    localMousePoint.y >= localTop && localMousePoint.y <= localBottom);
             }
+            // =====================================================================
+            // 2. 게임 오브젝트 (Transform) 클릭 판정
+            // =====================================================================
             else if (auto transform = m_Owner->GetComponent<Transform>())
             {
-                Vector2F pos = transform->GetPosition();
-                float radius = 50.0f;
-                float dx = mousePos.x - pos.x;
-                float dy = mousePos.y - pos.y;
-                return (dx * dx + dy * dy <= radius * radius);
+                // 게임오브젝트의 IsHit 함수에 전달되는 mousePos는 '월드 좌표'입니다.
+
+                // 2-1. 클릭 판정의 책임을 Collider에게 위임합니다.
+                auto collider = m_Owner->GetComponent<ColliderBase>();
+                if (collider)
+                {
+                    // 2-2. Collider의 IsMouseOver 함수를 호출하고 그 결과를 반환합니다.
+                    //      IsMouseOver 함수는 월드 좌표를 기준으로 올바르게 판정하도록 이미 구현되어 있습니다.
+                    return collider->IsMouseOver(mousePos);
+                }
             }
 
             return false;

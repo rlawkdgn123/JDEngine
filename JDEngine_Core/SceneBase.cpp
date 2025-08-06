@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Component.h"
 #include "GameObjectBase.h"
 #include "ColliderBase.h"
@@ -125,8 +125,14 @@ namespace JDScene {
             if (!tm) continue;
             D2D1_MATRIX_3X2_F world = tm->GetWorldMatrix();
 
-            D2D1_MATRIX_3X2_F worldView = world * view;
-            D2DRenderer::Instance().SetTransform(worldView);
+            // RenderGameObject와 동일하게 수정
+            D2D1_MATRIX_3X2_F finalTransform = world;
+            if (camera)
+            {
+                finalTransform = finalTransform * view; // view는 camera->GetViewMatrix()
+            }
+            finalTransform = finalTransform * tm->GetScreenCenterTranslation();
+            D2DRenderer::Instance().SetTransform(finalTransform);
 
             // 이제 강조 색 결정 (열린 셀만 이 로직을 타게 됩니다)
 
@@ -171,26 +177,60 @@ namespace JDScene {
             }
         }
 
-        // 6) 그리기 끝난 뒤, 원래 매트릭스(뷰만) 복원
-        D2DRenderer::Instance().SetTransform(view);
+        // 6) 그리기 끝난 뒤, 렌더러의 Transform을 초기화합니다.
+        D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
     }
 
     Vec2 SceneBase::GetMouseWorldPos()
     {
         // 1) 마우스 스크린 좌표 얻기
         auto& inputMgr = InputManager::Instance();
-        auto  mousePos = inputMgr.GetMouseState().pos;    // {x, y}
-        Vec2 screenPos{ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
+        auto  mousePos = inputMgr.GetMouseState().pos;
+        D2D1_POINT_2F screenPoint = { static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
 
-        // 2) 스크린 → 월드 변환
-        Vec2 mouseWorld = screenPos;
+        // 2) 최종 변환 행렬의 역행렬 계산
+        D2D1_MATRIX_3X2_F finalTransform = D2D1::Matrix3x2F::Identity();
         auto camera = D2DRenderer::Instance().GetCamera();
-        if (camera) {
-            auto invView = camera->GetViewMatrix();
-            D2D1InvertMatrix(&invView);
-            mouseWorld = camera->TransformPoint(invView, { screenPos.x,screenPos.y });
+        if (camera)
+        {
+            finalTransform = camera->GetViewMatrix();
         }
 
-        return mouseWorld;
+        // 임시 Transform 객체를 사용해 GetScreenCenterTranslation을 가져옵니다.
+        JDComponent::D2DTM::Transform tempTransform;
+        finalTransform = finalTransform * tempTransform.GetScreenCenterTranslation();
+
+        // 최종 행렬의 역행렬을 구합니다. 이것이 화면->월드 변환 행렬입니다.
+        D2D1InvertMatrix(&finalTransform);
+
+        // 3) 스크린 좌표에 역행렬을 곱해 월드 좌표를 얻습니다.
+        //    TransformPoint 멤버 함수 대신 직접 행렬 연산을 수행합니다.
+        D2D1_POINT_2F worldPoint;
+        worldPoint.x = screenPoint.x * finalTransform._11 + screenPoint.y * finalTransform._21 + finalTransform._31;
+        worldPoint.y = screenPoint.x * finalTransform._12 + screenPoint.y * finalTransform._22 + finalTransform._32;
+
+
+        // 4) 유니티 Y-up 좌표계에 맞게 Y 부호를 뒤집어줍니다.
+        return { worldPoint.x, -worldPoint.y };
+
+        // LEGACY : 과거 코드
+        /*
+        //// 1) 마우스 스크린 좌표 얻기
+        //auto& inputMgr = InputManager::Instance();
+        //auto  mousePos = inputMgr.GetMouseState().pos;    // {x, y}
+        //Vec2 screenPos{ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) };
+
+        //// 2) 스크린 → 월드 변환
+        //Vec2 mouseWorld = screenPos;
+        //auto camera = D2DRenderer::Instance().GetCamera();
+        //if (camera) {
+        //    auto invView = camera->GetViewMatrix();
+        //    D2D1InvertMatrix(&invView);
+        //    mouseWorld = camera->TransformPoint(invView, { screenPos.x,screenPos.y });
+        //}
+
+        //return mouseWorld;
+        */
+        
     }
 }

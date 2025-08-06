@@ -1,16 +1,20 @@
 ﻿#pragma once
+#include "SceneBase.h"
 #include "Editor_Clickable.h"
 #include "UI_ImageComponent.h"
 #include "UI_TextComponent.h"
 #include "UI_ButtonComponent.h"
+#include "UI_SliderComponent.h"
 
 namespace JDGameObject {
 	namespace Content {
 
+		using SceneBase = JDScene::SceneBase;
 		using Editor_Clickable = JDComponent::Editor_Clickable;
 		using UI_ImageComponent = JDComponent::UI_ImageComponent;
 		using UI_TextComponent = JDComponent::UI_TextComponent;
 		using UI_ButtonComponent = JDComponent::UI_ButtonComponent;
+		using UI_SliderComponent = JDComponent::UI_SliderComponent;
 
 		class Image : public UIObject {
 		public:
@@ -95,8 +99,9 @@ namespace JDGameObject {
 			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
 			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
 			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
+			void SetAnchor(const Vector2f& anchor) { if (auto comp = GetComponent<RectTransform>()) comp->SetAnchor(anchor); }
+			void SetPivot(const Vector2f& pivot) { if (auto comp = GetComponent<RectTransform>()) comp->SetPivot(pivot); }
 
-			// Getter
 			Vector2f GetSize() const {
 				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
 				return {};
@@ -256,6 +261,86 @@ namespace JDGameObject {
 				auto size = bitmap->GetSize();
 				return { size.width, size.height };
 			}
+		};
+
+		class Slider : public UIObject {
+		public:
+			using RectTransform = JDComponent::D2DTM::RectTransform;
+		public:
+			Slider() : UIObject(L"Slider") {}
+			Slider(const std::wstring& name) : UIObject(name) {}
+		public:
+			void Awake() override;
+			void Start() override;                              // 최초 1회만 호출
+			void Update(float deltaTime) override;              // Update
+			void LateUpdate(float deltaTime) override;          // Update 후 호출
+			void FixedUpdate(float fixedDeltaTime) override;    // 물리 계산용
+
+			void Assemble(JDScene::SceneBase* scene);
+
+		public:
+
+			////////////////////////////////////////////////////////////////////////////////
+			// RectTransform 제어
+			////////////////////////////////////////////////////////////////////////////////
+
+			void SetPosition(const Vector2f& pos) { if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos); }
+			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
+			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
+			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
+			void SetAnchor(const Vector2f& anchor) { if (auto comp = GetComponent<RectTransform>()) comp->SetAnchor(anchor); }
+			void SetPivot(const Vector2f& pivot) { if (auto comp = GetComponent<RectTransform>()) comp->SetPivot(pivot); }
+
+			Vector2f GetSize() const {
+				if (auto comp = GetComponent<RectTransform>()) return comp->GetSize();
+				return {};
+			}
+
+			////////////////////////////////////////////////////////////////////////////////
+			// UI_SliderComponent 제어
+			////////////////////////////////////////////////////////////////////////////////
+
+			// 값 설정 및 조회
+			void  SetValue(float value) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->SetValue(value); }
+			float GetValue() const { if (auto comp = GetComponent<UI_SliderComponent>()) return comp->GetValue(); return 0.f; }
+
+			// 이벤트 콜백 추가
+			void AddOnValueChanged(const std::string& name, std::function<void(float)> callback) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->AddOnValueChanged(name, callback); }
+			void AddOnEnter(const std::string& name, std::function<void()> callback) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->AddOnEnter(name, callback); }
+			void AddOnExit(const std::string& name, std::function<void()> callback) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->AddOnExit(name, callback); }
+			void AddOnDown(const std::string& name, std::function<void()> callback) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->AddOnDown(name, callback); }
+			void AddOnUp(const std::string& name, std::function<void()> callback) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->AddOnUp(name, callback); }
+
+			// 모든 콜백 제거
+			void ClearAllCallbacks() { if (auto comp = GetComponent<UI_SliderComponent>()) comp->ClearAllCallbacks(); }
+
+			// 상호작용 설정
+			void SetInteractable(bool isInteractable) { if (auto comp = GetComponent<UI_SliderComponent>()) comp->SetInteractable(isInteractable); }
+
+			// 상태 및 속성 Getter
+			bool IsInteractable() const {
+				if (auto comp = GetComponent<UI_SliderComponent>()) return comp->GetInteractable();
+				return false;
+			}
+			JDComponent::SliderState GetSliderState() const {
+				if (auto comp = GetComponent<UI_SliderComponent>()) return comp->GetState();
+				return JDComponent::SliderState::Idle;
+			}
+
+			////////////////////////////////////////////////////////////////////////////////
+			// 각 파트 개별적으로 변경
+			////////////////////////////////////////////////////////////////////////////////
+
+			void SetBackgroundImage(const std::string& textureName);
+			void SetFillImage(const std::string& textureName);
+			void SetHandleImage(const std::string& textureName);
+
+		private:
+			bool m_isAssembled = false;
+
+			Image* m_backgroundImage = nullptr;
+			Image* m_fillImage = nullptr;
+			Image* m_handleImage = nullptr;
 		};
 	}
 }

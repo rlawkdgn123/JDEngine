@@ -74,22 +74,37 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
 {
-    D2D1_MATRIX_3X2_F currentTransform;
-    m_d2dContext->GetTransform(&currentTransform);
-
-    D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
-    //D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * dest.top - (dest.bottom - dest.top));
-
-    D2D1_MATRIX_3X2_F corrected = flipY * currentTransform;
-    m_d2dContext->SetTransform(corrected);
-
     m_d2dContext->DrawBitmap(bitmap, dest);
 
-    m_d2dContext->SetTransform(currentTransform);
+    // LEGACY : 과거 코드
+    /*
+    //D2D1_MATRIX_3X2_F currentTransform;
+    //m_d2dContext->GetTransform(&currentTransform);
+
+    //D2D1_MATRIX_3X2_F flipY = D2D1::Matrix3x2F::Scale(1.f, -1.f);
+    ////D2D1_MATRIX_3X2_F translateBack = D2D1::Matrix3x2F::Translation(0.f, -2 * dest.top - (dest.bottom - dest.top));
+
+    //D2D1_MATRIX_3X2_F corrected = flipY * currentTransform;
+    //m_d2dContext->SetTransform(corrected);
+
+    //m_d2dContext->DrawBitmap(bitmap, dest);
+
+    //m_d2dContext->SetTransform(currentTransform);
+    */
 }
 
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity)
 {
+    m_d2dContext->DrawBitmap(
+        bitmap,
+        destRect,
+        opacity,
+        D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+        srcRect
+    );
+
+    // LEGACY : 과거 코드
+    /*
     D2D1_MATRIX_3X2_F currentTransform;
     m_d2dContext->GetTransform(&currentTransform);
 
@@ -108,6 +123,7 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
     );
 
     m_d2dContext->SetTransform(currentTransform);
+    */
 }
 
 ComPtr<ID2D1Effect> D2DRenderer::CreateGaussianBlurEffect(ID2D1Bitmap1* srcBitmap, float blurAmount)
@@ -165,8 +181,6 @@ ComPtr<ID2D1Bitmap1> D2DRenderer::CreateCroppedBitmap(ID2D1Bitmap1* src, D2D1_RE
 
     return cropped;
 }
-
-
 
 void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, IDWriteTextFormat* textFormat)
 {
@@ -251,10 +265,18 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     auto anim = obj.GetComponent<AnimationRender>();
     auto spr = obj.GetComponent<TextureRenderer>();
 
-    // 3) 카메라 뷰 매트릭스 적용
-    D2D1_MATRIX_3X2_F world = tf->GetWorldMatrix();
+    // 3) 최종 렌더링을 위한 행렬 계산
+    //    순서: 오브젝트의 월드 행렬 -> 카메라 적용 -> 화면 중앙으로 이동
+    D2D1_MATRIX_3X2_F finalTransform = tf->GetWorldMatrix();
+
     if (m_camera)
-        world = world * m_camera->GetViewMatrix();
+    {
+        finalTransform = finalTransform * m_camera->GetViewMatrix();
+    }
+
+    // 이제 순수한 월드 좌표가 되었으므로, 렌더러가 화면 중앙으로 옮겨줍니다.
+    // RectTransform의 GetScreenCenterTranslation()을 재사용합니다.
+    finalTransform = finalTransform * tf->GetScreenCenterTranslation();
 
     // 4) 애니메이션이 있으면 업데이트+렌더
     if (anim)
@@ -264,7 +286,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
 
         // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
-        anim->Render(ctx, world);
+        anim->Render(ctx, finalTransform);
         return;
     }
 
@@ -272,7 +294,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     if (spr)
     {
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
-        spr->Render(ctx, world);
+        spr->Render(ctx, finalTransform);
     }
 }
 
@@ -285,26 +307,24 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
     using RectTransform = JDComponent::D2DTM::RectTransform;
 
     auto rtf = uiObj.GetComponent<RectTransform>();
+    if (!rtf) return; // rtf가 없으면 렌더링 불가
+
     auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
     auto textComponent = uiObj.GetComponent<UI_TextComponent>();
 
-    if (rtf)
-    {
-        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+    ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
 
-        D2D1_MATRIX_3X2_F originalTransform;
-        context->GetTransform(&originalTransform);
+    D2D1_MATRIX_3X2_F originalTransform;
+    context->GetTransform(&originalTransform);
 
-        D2D1_MATRIX_3X2_F worldMatrix = rtf->GetWorldMatrix();
+    // 월드 행렬이 아닌, 피벗까지 적용된 최종 '렌더링 행렬'을 가져옵니다.
+    D2D1_MATRIX_3X2_F renderMatrix = rtf->GetRenderMatrix();
 
-        // context->SetTransform(worldMatrix * originalTransform);
+    // 이 최종 행렬을 각 컴포넌트의 Render 함수에 전달합니다.
+    if (imageComponent) { imageComponent->Render(context, renderMatrix); }
+    if (textComponent) { textComponent->Render(context, renderMatrix); }
 
-        // 카메라 영향을 빼고, 월드 행렬만 사용
-        if (imageComponent) { imageComponent->Render(context, worldMatrix); }
-        if (textComponent) { textComponent->Render(context, worldMatrix); }
-
-        context->SetTransform(originalTransform);
-    }
+    context->SetTransform(originalTransform);
 }
 
 void D2DRenderer::Present()
@@ -465,38 +485,83 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
-    ComPtr<IDWriteFactory> writeFactory = nullptr;
+    // 1. 최신 DirectWrite 팩토리(IDWriteFactory8)를 직접 생성합니다.
     HRESULT hr = DWriteCreateFactory(
         DWRITE_FACTORY_TYPE_SHARED,
-        __uuidof(IDWriteFactory),
-        reinterpret_cast<IUnknown**>(writeFactory.GetAddressOf()));
-
+        __uuidof(IDWriteFactory8),
+        reinterpret_cast<IUnknown**>(m_writeFactory.GetAddressOf())
+    );
     DX::ThrowIfFailed(hr);
 
-    auto CreateFormat = [&](const std::wstring& fontName, float size, const std::string& name) {
-        ComPtr<IDWriteTextFormat> format = nullptr;
+    // 2. 텍스트 포맷 생성 헬퍼 람다
+    //    이 람다는 폰트 컬렉션을 인자로 받아 해당 컬렉션에서 폰트를 찾습니다.
+    auto CreateFormat = [&](
+        const std::wstring& fontFamilyName,
+        IDWriteFontCollection* fontCollection, // 시스템 폰트는 NULL, 커스텀 폰트는 컬렉션 전달
+        float fontSize,
+        const std::string& formatKey)
+        {
+            ComPtr<IDWriteTextFormat> format = nullptr;
+            DX::ThrowIfFailed(m_writeFactory->CreateTextFormat(
+                fontFamilyName.c_str(),
+                fontCollection,
+                DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+                DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ko-kr", &format));
 
-        DX::ThrowIfFailed(writeFactory->CreateTextFormat(
-            fontName.c_str(),
-            NULL,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            size,
-            L"ko-kr",
-            &format));
+            format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
+            m_textFormats[formatKey] = format;
+        };
 
-        format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);             // 수평 가운데 정렬
-        format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);   // 수직 가운데 정렬
-        format->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);                 // 줄바꿈 허용
+    // 3. 외부 폰트 파일을 로드하여 컬렉션을 만들고, 그 안에서 포맷을 생성하는 헬퍼 람다
+    auto CreateFormatFromFile = [&](
+        const std::wstring& fontFilePath,
+        float fontSize,
+        const std::string& formatKey)
+        {
+            // --- 이 부분이 잘 동작하던 이전 코드의 핵심 로직입니다 ---
+            ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+            DX::ThrowIfFailed(m_writeFactory->CreateFontSetBuilder(&fontSetBuilder));
 
-        m_textFormats[name] = format;
-    };
+            ComPtr<IDWriteFontFile> fontFile;
+            hr = m_writeFactory->CreateFontFileReference(fontFilePath.c_str(), nullptr, &fontFile);
+            if (FAILED(hr)) {
+                std::wcout << L"[ERROR] Font file not found: " << fontFilePath << std::endl;
+                return;
+            }
+            DX::ThrowIfFailed(fontSetBuilder->AddFontFile(fontFile.Get()));
 
-    // 등록 예시
-    CreateFormat(L"맑은 고딕", 14.0f, "MalgunGothic_14");
-    CreateFormat(L"Arial", 16.0f, "Arial_16");
-    CreateFormat(L"Segoe UI", 20.0f, "SegoeUI_20");
+            ComPtr<IDWriteFontSet> fontSet;
+            DX::ThrowIfFailed(fontSetBuilder->CreateFontSet(&fontSet));
+
+            // 폰트 컬렉션을 지역 변수로 생성 (이 함수 안에서만 사용)
+            ComPtr<IDWriteFontCollection1> localFontCollection;
+            DX::ThrowIfFailed(m_writeFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &localFontCollection));
+
+            // 폰트 컬렉션에서 "패밀리 이름"을 동적으로 가져오기
+            ComPtr<IDWriteFontFamily> fontFamily;
+            DX::ThrowIfFailed(localFontCollection->GetFontFamily(0, &fontFamily));
+            ComPtr<IDWriteLocalizedStrings> familyNames;
+            DX::ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
+            UINT32 length = 0;
+            DX::ThrowIfFailed(familyNames->GetStringLength(0, &length));
+
+            std::wstring dynamicFontName(length, L'\0');
+            DX::ThrowIfFailed(familyNames->GetString(0, &dynamicFontName[0], length + 1));
+
+            // 동적으로 얻은 폰트 이름과 로컬 컬렉션으로 TextFormat 생성
+            CreateFormat(dynamicFontName, localFontCollection.Get(), fontSize, formatKey);
+        };
+
+    // 4. 시스템 폰트 및 커스텀 폰트 등록
+    // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
+
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
+    CreateFormatFromFile(L"../Resource/FONT/Pinkfong Baby Shark Font_ Bold.otf", 40.0f, "Pinkfong_Bold_40");
 }
 
 void D2DRenderer::ReleaseRenderTargets()
@@ -555,5 +620,3 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBi
     // DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
 }
-
-

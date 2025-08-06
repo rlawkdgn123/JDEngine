@@ -1,4 +1,4 @@
-﻿
+﻿#pragma once
 using Vector2F = JDMath::Vector2F;
 
 class Camera

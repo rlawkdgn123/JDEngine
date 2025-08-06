@@ -1,26 +1,26 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "AudioManager.h"
 
-// ½Ì±ÛÅæ ÀÎ½ºÅÏ½º ¹İÈ¯
+// ì‹±ê¸€í†¤ ì¸ìŠ¤í„´ìŠ¤ ë°˜í™˜
 AudioManager& AudioManager::Instance() {
     static AudioManager inst;
     return inst;
 }
 
 void AudioManager::Initialize(int maxChannels) {
-    // 1) FMOD Low-level ½Ã½ºÅÛ ÃÊ±âÈ­
+    // 1) FMOD Low-level ì‹œìŠ¤í…œ ì´ˆê¸°í™”
     FMODSystem::Instance().Initialize(maxChannels);
     FMOD::System* coreSys = FMODSystem::Instance().GetCoreSystem();
 
-    // 2) ¸¶½ºÅÍ ±×·ì°ú ¼­ºê ±×·ì »ı¼º/¿¬°á
+    // 2) ë§ˆìŠ¤í„° ê·¸ë£¹ê³¼ ì„œë¸Œ ê·¸ë£¹ ìƒì„±/ì—°ê²°
     coreSys->getMasterChannelGroup(&masterGroup_);
     coreSys->createChannelGroup("Music", &musicGroup_);
     coreSys->createChannelGroup("SFX", &sfxGroup_);
     masterGroup_->addGroup(musicGroup_);
     masterGroup_->addGroup(sfxGroup_);
 
-    // 3) FMOD Studio ½Ã½ºÅÛ ¹× ¹ö½º °¡Á®¿À±â
+    // 3) FMOD Studio ì‹œìŠ¤í…œ ë° ë²„ìŠ¤ ê°€ì ¸ì˜¤ê¸°
     /*studioSys_ = FMODSystem::Instance().GetStudioSystem();
     studioSys_->getBus("bus:/Music", &musicBus_);
     studioSys_->getBus("bus:/SFX", &sfxBus_);*/
@@ -31,7 +31,7 @@ void AudioManager::Update() {
 }
 
 bool AudioManager::LoadAudio(const std::string& key, const std::string& filepath, bool isBGM) {
-    // TODO: ÆÄÀÏ Á¸Àç Ã¼Å© ·ÎÁ÷ Ãß°¡ °¡´É
+    // TODO: íŒŒì¼ ì¡´ì¬ ì²´í¬ ë¡œì§ ì¶”ê°€ ê°€ëŠ¥
     audioPaths_[key] = filepath;
     if (isBGM)      bgmKeys_.push_back(key);
     else            sfxKeys_.push_back(key);
@@ -89,6 +89,6 @@ bool AudioManager::PlaySFX(const std::string& key, FMOD::Channel** out) {
     auto it = audioPaths_.find(key);
     if (it == audioPaths_.end()) return false;
 
-    FMODSystem::Instance().PlayLooped(it->second, sfxGroup_, out);
+    FMODSystem::Instance().PlayOneShot(it->second, 1.0f, out);
     return true;
 }

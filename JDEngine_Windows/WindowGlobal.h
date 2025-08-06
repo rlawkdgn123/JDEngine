@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "JDWndBase.h"
 //namespace JDWindow {
@@ -44,6 +44,12 @@ namespace JDGlobal {
                     m_instance->GetHeight() * 0.5f
                 );
             }
+
+            HWND GetHWND() const {
+                assert(m_instance);
+                return (HWND)m_instance->GetHandle();
+            }
+
         private:
             WindowSize() = default;
             ~WindowSize() = default;

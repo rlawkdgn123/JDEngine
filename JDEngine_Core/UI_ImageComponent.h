@@ -23,7 +23,7 @@ namespace JDComponent {
             m_color = D2D1::ColorF(D2D1::ColorF::White);
         }
 
-        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F viewTransform);
+        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F renderTransform);
 
         void            SetTextureName(const std::string& name) { m_textureName = name; }
         std::string     GetTextureName() const { return m_textureName; }

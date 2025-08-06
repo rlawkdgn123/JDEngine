@@ -93,6 +93,8 @@ bool EngineCore::Initialize()
         return false;
     }
 
+    JDGlobal::Window::WindowSize::Instance().Set(this);
+
     AudioManager::Instance().Initialize();
 
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
@@ -102,7 +104,7 @@ bool EngineCore::Initialize()
     AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
     AudioManager::Instance().SetMusicVolume(1.0f);
     FMOD::Channel* bgmChannel = nullptr;
-    //AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -127,60 +129,167 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
+    if (!AssetManager::Instance().LoadAllCSV()) {
+        return false;
+    }
+    
+    DataTableManager::Instance().ParseTestTable();
+    JDGlobal::Contents::BuildingStats statsds;
+
+    // FishingSpot 파싱 및 결과 출력
+    std::cout << "=== FishingSpot 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseFishingSpotTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== FishingSpot 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // LumberMill 파싱 및 결과 출력
+    std::cout << "=== LumberMill 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseLumberMillTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== LumberMill 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // Mine 파싱 및 결과 출력
+    std::cout << "=== Mine 테스트 시작 ===" << std::endl;
+    DataTableManager::Instance().ParseMineTable(statsds);
+    statsds.PrintStats();
+    std::cout << "=== Mine 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
+
+    // House 파싱 및 결과 출력
+    std::cout << "=== House 테스트 시작 ===" << std::endl;
+    JDGlobal::Contents::HouseStats hs;
+    DataTableManager::Instance().ParseHouseTable(hs);
+    hs.PrintStats();
+    std::cout << "=== House 테스트 종료 ===" << std::endl;
+    std::cout << "\n\n";
 
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
 
+    // TITLE
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) 
+    { std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ATest", L"../Resource/Texture/ATest.png"))
+    {std::cout << "[ERROR] ATest 텍스처 로드 실패" << std::endl;}
+    if (!AssetManager::Instance().LoadTexture("Title_Exam", L"../Resource/TITLE/TITLE_exam.jpg")) 
+    { std::cout << "[ERROR] Title exam 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) 
+    { std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) 
+    { std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) 
+    { std::cout << "[ERROR] GAME_START_B 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) 
+    { std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) 
+    { std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_GAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) 
+    { std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_GAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) 
+    { std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl; }
 
-    if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
-        std::cout << "[ERROR] Test 텍스처 로드 실패" << std::endl;
+    // OPTION
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("OPTION_1", L"../Resource/OPTION/OPTION_1.png"))
+    { std::cout << "[ERROR] OPTION_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("OPTION_2", L"../Resource/OPTION/OPTION_2.png"))
+    { std::cout << "[ERROR] OPTION_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("OPTION_3", L"../Resource/OPTION/OPTION_3.png"))
+    { std::cout << "[ERROR] OPTION_3 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_1", L"../Resource/OPTION/BACK_1.png"))
+    { std::cout << "[ERROR] BACK_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_2", L"../Resource/OPTION/BACK_2.png"))
+    { std::cout << "[ERROR] BACK_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACK_GROUND_OPACITY", L"../Resource/OPTION/BACK_GROUND_OPACITY.png"))
+    { std::cout << "[ERROR] BACK_GROUND_OPACITY 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACKTOTITLE_BUTTON_1", L"../Resource/OPTION/BACKTOTITLE_BUTTON_1.png"))
+    { std::cout << "[ERROR] BACKTOTITLE_BUTTON_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("BACKTOTITLE_BUTTON_2", L"../Resource/OPTION/BACKTOTITLE_BUTTON_2.png"))
+    { std::cout << "[ERROR] BACKTOTITLE_BUTTON_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_BUTTON_1", L"../Resource/OPTION/QUIT_BUTTON_1.png"))
+    { std::cout << "[ERROR] QUIT_BUTTON_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("QUIT_BUTTON_2", L"../Resource/OPTION/QUIT_BUTTON_2.png"))
+    { std::cout << "[ERROR] QUIT_BUTTON_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("CONTROLS_BUTTON", L"../Resource/OPTION/CONTROLS_BUTTON.png"))
+    { std::cout << "[ERROR] CONTROLS_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("CREDITS_BUTTON", L"../Resource/OPTION/CREDITS_BUTTON.png"))
+    { std::cout << "[ERROR] CREDITS_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_BUTTON", L"../Resource/OPTION/VOLUME_BUTTON.png"))
+    { std::cout << "[ERROR] VOLUME_BUTTON 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_CAT_1", L"../Resource/OPTION/VOLUME_CAT_1.png"))
+    { std::cout << "[ERROR] VOLUME_CAT_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_CAT_2", L"../Resource/OPTION/VOLUME_CAT_2.png"))
+    { std::cout << "[ERROR] VOLUME_CAT_2 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_LINE_1", L"../Resource/OPTION/VOLUME_LINE_1.png"))
+    { std::cout << "[ERROR] VOLUME_LINE_1 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("VOLUME_LINE_2", L"../Resource/OPTION/VOLUME_LINE_2.png"))
+    { std::cout << "[ERROR] VOLUME_LINE_2 텍스처 로드 실패" << std::endl; }
+
+    // NORWAY
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // 애니메이션 속도 정배율을 1.4x 가 마음에 든다고 했음.
+    if (!AssetManager::Instance().LoadTexture("Norway", L"../Resource/Animation/character_norway_sprite_01.png"))
+    {
+        std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl;
     }
 
-    if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
-        std::cout << "[ERROR] Title 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) {
-        std::cout << "[ERROR] GAME_START_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) {
-        std::cout << "[ERROR] GAMESTART_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) {
-        std::cout << "[ERROR] SETTING_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) {
-        std::cout << "[ERROR] SETTING_B 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) {
-        std::cout << "[ERROR] QUITGAME_A 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) {
-        std::cout << "[ERROR] QUITGAME_B 텍스처 로드 실패" << std::endl;
+    if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
+    {
+        std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl;
     }
 
 
-    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
-        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
-        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
-    }
 
-    //SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
-    //SceneManager::Instance().ChangeScene("TitleScene");
+    // BATTLE
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("CAT", L"../Resource/BATTLE/CAT.png"))
+    { std::cout << "[ERROR] CAT 텍스처 로드 실패" << std::endl; }
+
+
+    // TEST Resource
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("Back_Button", L"../Resource/Back_Button.png"))
+    { std::cout << "[ERROR] Back_Button 텍스처 로드 실패" << std::endl; }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png")) 
+    { std::cout << "[ERROR] house 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("house2", L"../Resource/house2.png")) 
+    { std::cout << "[ERROR] house2 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png")) 
+    { std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl; }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) 
+    { std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) 
+    { std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl; }
+
+    AssetManager::Instance().TextureSetUp();
+  
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TitleScene>(JDGlobal::Core::SceneType::SCENE_TITLE, "TitleScene"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TutorialScene>(JDGlobal::Core::SceneType::SCENE_TUTORIAL, "TutorialScene"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::SelectNationScene>(JDGlobal::Core::SceneType::SCENE_SELECTNATION, "SelectNationScene"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::GameScene>(JDGlobal::Core::SceneType::SCENE_TEST, "GameScene"));
+  
+    // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+
+    // SceneManager::Instance().ChangeScene("TitleScene");
+    // SceneManager::Instance().ChangeScene("TestScene01");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
 
-    SceneManager::Instance().RegisterScene(make_unique< JDScene::GameScene>(JDGlobal::Core::SceneType::SCENE_TEST, "GameScene"));
     SceneManager::Instance().ChangeScene("GameScene");
+
     // 이어서 렌더러에게 컨텍스트 받기
     ID3D11DeviceContext* pd3dDeviceContext = nullptr;
     pd3dDeviceContext = D2DRenderer::Instance().GetD3DContext();
@@ -204,6 +313,8 @@ bool EngineCore::Initialize()
     // 플랫폼/렌더러 초기화
     ImGui_ImplWin32_Init(m_hWnd);              // 윈도우 핸들 (GameApp 멤버에 저장된 윈도우 핸들)
     ImGui_ImplDX11_Init(D2DRenderer::Instance().GetD3DDevice(), D2DRenderer::Instance().GetD3DContext());
+
+    
 
     return true;
 }
@@ -238,6 +349,9 @@ void EngineCore::Run()
             // 메시지를 처리했으므로 다음 루프로 넘어갑니다.
             continue;
         }
+
+        // 썬 전환 요청이 있으면 확인하고 처리함.
+        SceneManager::Instance().ProcessSceneChange();
 
         // 메시지 큐가 비어있을 때만 게임 로직을 실행합니다.
         UpdateTime();
@@ -387,14 +501,50 @@ void EngineCore::UpdateLogic()
                 
             flag = !flag;
         }
-            
-        if (input.GetKeyPressed(VK_F2))
-        {
-            m_fader.FadeIn(1.0f);
-        }
+        
         if (input.GetKeyPressed(VK_F1))
         {
-            m_fader.FadeOut(2.5f);
+            m_fader.FadeIn(1.0f, 1.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F2))
+        {
+            m_fader.FadeOut(2.5f, 0.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+
+
+
+
+        if (input.GetKeyPressed(VK_F3))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F4))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F5))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F6))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F7))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 1.0f, 0.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F8))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 1.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F9))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 1.0f, 1.0f));
+        }
+        if (input.GetKeyPressed(VK_F10))
+        {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 0.0f, 1.0f));
         }
     }
 }
@@ -464,7 +614,7 @@ void EngineCore::RenderImGui()
     {
         for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetGameObjects())
         {
-            std::string nameStr = WStringToString(obj->GetName());
+            std::string nameStr = WStringToString(obj->GetID()) + ". " + WStringToString(obj->GetName());
 
             // 현재 선택된 오브젝트와 비교해서 선택 상태 지정 (선택된 오브젝트 포인터 필요)
             auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
@@ -483,7 +633,7 @@ void EngineCore::RenderImGui()
     {
         for (auto& obj : SceneManager::Instance().GetCurrentScene()->GetUIObjects())
         {
-            std::string nameStr = WStringToString(obj->GetName());
+            std::string nameStr = WStringToString(obj->GetID()) + ". " + WStringToString(obj->GetName());
 
             auto selectedObj = SceneManager::Instance().GetCurrentScene()->GetSelectedObject();
             bool isSelected = (selectedObj == obj.get());
@@ -585,6 +735,45 @@ void EngineCore::RenderImGui()
         JDComponent::D2DTM::Transform* transform =
             selectObject->GetComponent<JDComponent::D2DTM::Transform>();
 
+        // (1) 객체의 크기를 안정적으로 가져오는 로직
+        D2D1_SIZE_F objectSize = { 0, 0 };
+        bool hasSizeInfo = false;
+
+        // 1순위: 콜라이더에서 크기 정보 가져오기
+        auto col = selectObject->GetComponent<JDComponent::ColliderBase>();
+        if (col)
+        {
+            hasSizeInfo = true;
+            if (col->GetColliderType() == JDComponent::ColliderType::Box)
+            {
+                // BoxCollider로 타입 캐스팅 후 GetSize() 호출
+                if (auto boxCollider = dynamic_cast<JDComponent::BoxCollider*>(col))
+                {
+                    const auto& sizeVec = boxCollider->GetSize();
+                    objectSize = { sizeVec.x, sizeVec.y };
+                }
+            }
+            else if (col->GetColliderType() == JDComponent::ColliderType::Circle)
+            {
+                // CircleCollider로 타입 캐스팅 후 GetRadius() 호출
+                if (auto circleCollider = dynamic_cast<JDComponent::CircleCollider*>(col))
+                {
+                    float radius = circleCollider->GetRadius();
+                    objectSize = { radius * 2.0f, radius * 2.0f };
+                }
+            }
+        }
+        // 2순위: 콜라이더가 없다면 스프라이트에서 크기 정보 가져오기
+        else
+        {
+            auto trComp = selectObject->GetComponent<JDComponent::TextureRenderer>();
+            if (trComp)
+            {
+                hasSizeInfo = true;
+                objectSize = trComp->GetOriginalTextureSize(); // 스프라이트의 원본 크기
+            }
+        }
+
         if (transform)
         {
             ImGui::Separator();
@@ -634,15 +823,19 @@ void EngineCore::RenderImGui()
             // 피벗 (Pivot)
             ImGui::Text("Pivot_");
             ImGui::SameLine(labelWidth);
-
-            // DragFloat2가 차지할 너비 = (전체 너비 - 콤보박스 너비)
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - comboWidth);
 
-            JDComponent::D2DTM::Transform::Vec2 pivot = transform->GetPivot();
-            if (ImGui::DragFloat2("##Pivot_", &pivot.x, 0.01f, 0.0f, 1.0f))
+            // (2) UI 표시를 위해 '상대 피벗' 값을 가져옵니다.
+            JDComponent::D2DTM::Transform::Vec2 relativePivot = transform->GetRelativePivot(objectSize);
+
+            if (ImGui::DragFloat2("##Pivot_", &relativePivot.x, 0.01f, 0.0f, 1.0f))
             {
-                // 수정된 상대 좌표를 SetPivot으로 다시 설정
-                transform->SetPivot(pivot);
+                // (3) 수정된 상대 좌표를 다시 '픽셀 좌표'로 변환하여 SetPivot으로 설정합니다.
+                D2D1_POINT_2F newPixelPivot = {
+                    relativePivot.x * objectSize.width,
+                    relativePivot.y * objectSize.height
+                };
+                transform->SetPivot(newPixelPivot);
             }
 
             // 피벗 프리셋을 위한 콤보박스
@@ -657,15 +850,15 @@ void EngineCore::RenderImGui()
 
             // 현재 피벗 값(상대 좌표)을 보고 어떤 프리셋에 해당하는지 인덱스를 찾습니다.
             int currentPivotPreset = -1; // 일치하는 프리셋이 없으면 -1 (Custom 상태)
-            if (pivot.x == 0.0f && pivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
-            else if (pivot.x == 0.5f && pivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
-            else if (pivot.x == 1.0f && pivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
-            else if (pivot.x == 0.0f && pivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
-            else if (pivot.x == 0.5f && pivot.y == 0.5f)    currentPivotPreset = 4; // Center
-            else if (pivot.x == 1.0f && pivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
-            else if (pivot.x == 0.0f && pivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
-            else if (pivot.x == 0.5f && pivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
-            else if (pivot.x == 1.0f && pivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
+            if (relativePivot.x == 0.0f && relativePivot.y == 1.0f)         currentPivotPreset = 0; // TopLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 1.0f)    currentPivotPreset = 1; // TopCenter
+            else if (relativePivot.x == 1.0f && relativePivot.y == 1.0f)    currentPivotPreset = 2; // TopRight
+            else if (relativePivot.x == 0.0f && relativePivot.y == 0.5f)    currentPivotPreset = 3; // CenterLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 0.5f)    currentPivotPreset = 4; // Center
+            else if (relativePivot.x == 1.0f && relativePivot.y == 0.5f)    currentPivotPreset = 5; // CenterRight
+            else if (relativePivot.x == 0.0f && relativePivot.y == 0.0f)    currentPivotPreset = 6; // BottomLeft
+            else if (relativePivot.x == 0.5f && relativePivot.y == 0.0f)    currentPivotPreset = 7; // BottomCenter
+            else if (relativePivot.x == 1.0f && relativePivot.y == 0.0f)    currentPivotPreset = 8; // BottomRight
 
             // 선택된 프리셋이 있으면 해당 이름을, 없으면 "Custom"을 표시합니다.
             if (ImGui::BeginCombo("##PivotPreset_", currentPivotPreset != -1 ? pivotPresets[currentPivotPreset] : "Custom"))
@@ -679,7 +872,7 @@ void EngineCore::RenderImGui()
                         // 항목을 선택하면, 해당 인덱스(n)를 PivotPreset enum으로 변환하여
                         // SetPivot(PivotPreset) 함수를 직접 호출합니다.
                         // 이 코드는 enum의 정수 값이 0부터 8까지 순서대로라는 것을 전제로 합니다.
-                        transform->SetPivotPreset((JDComponent::D2DTM::Transform::PivotPreset)n);
+                        transform->SetPivotPreset((JDComponent::D2DTM::Transform::PivotPreset)n, objectSize);
                     }
 
                     // 현재 선택된 항목으로 스크롤을 자동으로 맞춰줍니다.
@@ -1230,7 +1423,7 @@ void EngineCore::RenderImGui()
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Text_ImageComponent
+        // UI_TextComponent
         ////////////////////////////////////////////////////////////////////////////////
 
         JDComponent::UI_TextComponent* textComponent =
@@ -1320,7 +1513,7 @@ void EngineCore::RenderImGui()
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Button_ImageComponent
+        // UI_ButtonComponent
         ////////////////////////////////////////////////////////////////////////////////
 
         JDComponent::UI_ButtonComponent* buttonComponent =
@@ -1394,6 +1587,113 @@ void EngineCore::RenderImGui()
             displayCallbackList("On Down", buttonComponent->GetOnDownCallbacks());
             ImGui::Spacing();
             displayCallbackList("On Click", buttonComponent->GetOnClickCallbacks());
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // UI_ButtonComponent
+        ////////////////////////////////////////////////////////////////////////////////
+
+        JDComponent::UI_SliderComponent* sliderComponent =
+            selectObject->GetComponent<JDComponent::UI_SliderComponent>();
+
+        if (sliderComponent)
+        {
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(135, 206, 250, 255)); // 연한 파랑색
+            ImGui::Text("SliderComponent");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 상호작용 가능 (Interactable)
+            bool isInteractable = sliderComponent->GetInteractable();
+            if (ImGui::Checkbox("Interactable", &isInteractable))
+            {
+                sliderComponent->SetInteractable(isInteractable);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 현재 값 (Value)
+            float value = sliderComponent->GetValue();
+            float minVal = sliderComponent->GetMinValue();
+            float maxVal = sliderComponent->GetMaxValue();
+            if (ImGui::SliderFloat("Value", &value, minVal, maxVal))
+            {
+                // ImGui에서 값이 변경되면 컴포넌트의 값을 업데이트
+                // (콜백을 다시 호출하지 않도록 broadcast는 false로 설정)
+                sliderComponent->SetValue(value, false);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 최소/최대 값 편집
+            if (ImGui::InputFloat("Min Value", &minVal))
+            {
+                sliderComponent->SetMinValue(minVal);
+            }
+            if (ImGui::InputFloat("Max Value", &maxVal))
+            {
+                sliderComponent->SetMaxValue(maxVal);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 현재 상태 (읽기 전용)
+            ImGui::Text("State: ");
+            ImGui::SameLine();
+            const char* stateStr = "Unknown";
+            switch (sliderComponent->GetState())
+            {
+            case JDComponent::SliderState::Idle:     stateStr = "Idle"; break;
+            case JDComponent::SliderState::Hovered:  stateStr = "Hovered"; break;
+            case JDComponent::SliderState::Dragging: stateStr = "Dragging"; break;
+            }
+            ImGui::TextUnformatted(stateStr);
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 콜백 목록 표시 (읽기 전용)
+            ImGui::Spacing();
+
+            // 1. 인자가 없는 콜백 목록을 표시하는 헬퍼 람다 (OnEnter, OnExit 등)
+            auto displaySimpleCallbackList = [&](const char* title, const std::vector<JDComponent::CallbackInfo>& callbacks) {
+                ImGui::Text(title);
+                ImGui::BeginChild(title, ImVec2(0, 60), true); // 높이를 약간 줄임
+                if (callbacks.empty()) {
+                    ImGui::TextDisabled("(None)");
+                }
+                else {
+                    for (size_t i = 0; i < callbacks.size(); ++i) {
+                        ImGui::Text("[%zu]: %s", i, callbacks[i].name.c_str());
+                    }
+                }
+                ImGui::EndChild();
+                };
+
+            // 2. float 인자가 있는 콜백 목록을 표시하는 헬퍼 람다 (OnValueChanged)
+            auto displayValueCallbackList = [&](const char* title, const std::vector<JDComponent::ValueCallbackInfo>& callbacks) {
+                ImGui::Text(title);
+                ImGui::BeginChild(title, ImVec2(0, 60), true);
+                if (callbacks.empty()) {
+                    ImGui::TextDisabled("(None)");
+                }
+                else {
+                    for (size_t i = 0; i < callbacks.size(); ++i) {
+                        ImGui::Text("[%zu]: %s", i, callbacks[i].name.c_str());
+                    }
+                }
+                ImGui::EndChild();
+                };
+
+            // 3. 각 콜백에 맞는 헬퍼 함수를 호출하여 목록을 표시
+            displayValueCallbackList("On Value Changed", sliderComponent->GetOnValueChangedCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Enter", sliderComponent->GetOnEnterCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Exit", sliderComponent->GetOnExitCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Down", sliderComponent->GetOnDownCallbacks());
+            ImGui::Spacing();
+            displaySimpleCallbackList("On Up", sliderComponent->GetOnUpCallbacks());
         }
     }
     else

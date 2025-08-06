@@ -69,32 +69,48 @@ namespace JDComponent {
                 SetDirty();
             }
 
-            void AddChild(RectTransform* child)
+            inline void AddChild(RectTransform* child)
             {
-                // 자식의 로컬 좌표를 부모 좌표계로 변환
-                // 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
-                D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
-
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
-                JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
-
+                // 자식의 로컬 값은 그대로 둔 채, 리스트에 추가하기만 하면 됩니다.
+                // 좌표 변환은 각자의 UpdateMatrices()에서 자동으로 처리됩니다.
                 m_children.push_back(child);
+
+                // LEGACY : 과거 코드
+                /*
+                //// 자식의 로컬 좌표를 부모 좌표계로 변환
+                //// 자식의 로컬 트 랜스폼 * 부모의 월드 트랜스폼의 역행렬을 곱하고 원소 추출
+                //D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                //chiledLocalTM = chiledLocalTM * GetInverseWorldMatrix();
+
+                //auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
+                //JDGlobal::Math::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                //m_children.push_back(child);
+                */
             }
 
-            void RemoveChild(RectTransform* child)
+            inline void RemoveChild(RectTransform* child)
             {
-                // 월드로 보낸다.
-                D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
-                chiledLocalTM = chiledLocalTM * GetWorldMatrix();
-
-                auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
-                JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
-
+                // 리스트에서 제거하기만 하면 됩니다.
                 m_children.erase(
                     std::remove(m_children.begin(), m_children.end(), child),
                     m_children.end()
                 );
+                
+                // LEGACY : 과거 코드
+                /*
+                //// 월드로 보낸다.
+                //D2D1::Matrix3x2F chiledLocalTM = child->GetLocalMatrix();
+                //chiledLocalTM = chiledLocalTM * GetWorldMatrix();
+
+                //auto M_noPivot = JDMath::RemovePivot(chiledLocalTM, child->GetPivot());
+                //JDMath::DecomposeMatrix3x2(M_noPivot, child->m_position, child->m_rotation, child->m_scale);
+
+                //m_children.erase(
+                //    std::remove(m_children.begin(), m_children.end(), child),
+                //    m_children.end()
+                //);
+                */
             }
 
             // ** Width, Height **
@@ -105,6 +121,7 @@ namespace JDComponent {
             void SetPosition(const Vector2F& pos) { m_position = pos; SetDirty(); }
             void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
             void SetScale(const Vector2F& scale) { m_scale = scale; SetDirty(); }
+            void SetLocalPosition(const Vector2F& pos);
 
             const Vector2F& GetPosition() const { return m_position; }
             float GetRotation() const { return m_rotation; }
@@ -152,6 +169,9 @@ namespace JDComponent {
 
                 return m_matrixWorld;
             }
+
+            // 최종 월드(스크린) 좌표계의 사각형을 반환하는 함수
+            D2D1_RECT_F GetWorldRect();
 
             Mat3x2 GetInverseWorldMatrix()
             {

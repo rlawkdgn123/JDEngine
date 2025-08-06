@@ -28,7 +28,9 @@ public:
 
     void RegisterScene(std::unique_ptr<SceneBase> scene); // 씬 생성
 
-    void ChangeScene(const std::string& id); // 씬 전환
+    void ChangeScene(const std::string& id); // 씬 전환 ->< 바꿀 씬의 ID만 저장하고 바로 리턴.
+
+    void ProcessSceneChange();               // 실제 씬 전환 로직을 담당할 새로운 함수
 
     void Update(float deltaTime);
 
@@ -59,7 +61,8 @@ private:
 
     std::vector<SceneEntry> m_SceneTable;
 
-    SceneBase* m_CurrentScene; // 활성화된 씬에 대한 RawPtr
+    SceneBase* m_CurrentScene;      // 활성화된 씬에 대한 RawPtr
+    std::string m_NextSceneId = ""; // 다음에 전환할 씬의 ID를 저장할 변수
 };
 
 

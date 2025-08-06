@@ -23,6 +23,8 @@ namespace JDComponent {
         const RenderLayerInfo&  GetLayerInfo() const { return m_layerInfo; }
         void                    SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
 
+        D2D1_SIZE_F GetOriginalTextureSize() const;
+
         void Update(float dt) override {}
         void OnEvent(const std::string& ev) override {}
         void OnEnable() override{}

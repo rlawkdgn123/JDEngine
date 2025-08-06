@@ -31,9 +31,15 @@ namespace JDScene {
     private:
         FMOD::Channel* m_hoverSfxChannel = nullptr;
 
-        std::unique_ptr<ParticleSystem> m_lightParticles;
+        std::unique_ptr<ParticleSystem> m_mouseParticles;
+        std::unique_ptr<ParticleSystem> m_sakuraParticles;
         Vector2F                        m_emitterPos;
 
+        Vector2F sakuraMin{ 900.0f, 0.0f };
+        Vector2F sakuraMax{ 1920.0f, 500.0f };
+
+        float   m_sakuraEmissionRate = 5.0f;
+        float   m_sakuraEmitAccumulator = 0.0f;
 	};
 }
 

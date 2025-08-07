@@ -9,6 +9,7 @@ namespace JDScene {
     using Image = JDGameObject::Content::Image;
     using Text = JDGameObject::Content::Text;
     using Button = JDGameObject::Content::Button;
+    using Slider = JDGameObject::Content::Slider;
 
 	class TitleScene : public SceneBase
 	{
@@ -36,15 +37,8 @@ namespace JDScene {
     private:
         FMOD::Channel* m_hoverSfxChannel = nullptr;
 
-        std::unique_ptr<ParticleSystem> m_mouseParticles;
-        std::unique_ptr<ParticleSystem> m_sakuraParticles;
+        std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
-
-        Vector2F sakuraMin{ 900.0f, 0.0f };
-        Vector2F sakuraMax{ 1920.0f, 500.0f };
-
-        float   m_sakuraEmissionRate = 5.0f;
-        float   m_sakuraEmitAccumulator = 0.0f;
 
         // 옵션창
         Image* m_optionUI = nullptr;
@@ -63,6 +57,11 @@ namespace JDScene {
         Image* m_selectVolumeDummy = nullptr;
         Image* m_selectControlDummy = nullptr;
         Image* m_selectCreditDummy = nullptr;
+
+        // 볼륨 선택 슬라이더
+        Slider* m_bgmSlider = nullptr;
+        Slider* m_sfxSlider = nullptr;
+
 	};
 }
 

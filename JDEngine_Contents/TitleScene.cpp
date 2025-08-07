@@ -101,6 +101,13 @@ namespace JDScene {
                 m_selectCredit->SetActive(true);
 
                 m_closeOption->SetActive(true);
+
+                m_selectVolumeDummy->SetActive(true);
+                m_selectControlDummy->SetActive(true);
+                m_selectCreditDummy->SetActive(true);
+
+                m_bgmSlider->SetActiveSlider(true);
+                m_sfxSlider->SetActiveSlider(true);
             }
             });
 
@@ -167,12 +174,7 @@ namespace JDScene {
             });
 
 
-
-        m_mouseParticles = std::make_unique<ParticleSystem>(
-            D2DRenderer::Instance().GetD2DContext()
-        );
-        m_sakuraParticles = std::make_unique<ParticleSystem>(
-
+            m_lightParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
 
@@ -197,7 +199,9 @@ namespace JDScene {
 
         //////////////////////////////////////////////////////////////////////////////////
 
+        //////////////////////////////////////////////////////////////////////////////////
         // 볼륨 조절 창
+        //////////////////////////////////////////////////////////////////////////////////
         m_optionVolume = CreateUIObject<Image>(L"Option_Volume");
         m_optionVolume->SetTextureName("OPTION_1");
         m_optionVolume->SetActive(false);
@@ -206,13 +210,61 @@ namespace JDScene {
         m_optionVolume->SetPivot({ 0.5f, 0.5f });
 
         //////////////////////////////////////////////////////////////////////////////////
+        // BGM 볼륨 조절 슬라이더
+        //////////////////////////////////////////////////////////////////////////////////
+
+        m_bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
+        m_bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        m_bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
+        m_bgmSlider->SetFillImage("VOLUME_LINE_2");
+        m_bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        m_bgmSlider->SetSize({ 600, 8 });
+        m_bgmSlider->SetRootSize({ 600, 60 });
+        m_bgmSlider->SetPosition({ 150, 28 });
+        m_bgmSlider->SetFillImagePosition({ -300, 0 });
+
+        m_bgmSlider->SetHandleImageSize({ 39.5f, 35.f });
+
+        m_bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        m_bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+            AudioManager::Instance().SetMusicVolume(newValue);
+            });
+
+        m_bgmSlider->SetActiveSlider(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        m_sfxSlider = CreateUIObject<Slider>(L"SFX_Slider");
+        m_sfxSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        m_sfxSlider->SetBackgroundImage("VOLUME_LINE_1");
+        m_sfxSlider->SetFillImage("VOLUME_LINE_2");
+        m_sfxSlider->SetHandleImage("VOLUME_CAT_2");
+
+        m_sfxSlider->SetSize({ 600, 8 });
+        m_sfxSlider->SetRootSize({ 600, 60 });
+        m_sfxSlider->SetPosition({ 150, -42 });
+        m_sfxSlider->SetFillImagePosition({ -300, 0 });
+
+        m_sfxSlider->SetHandleImageSize({ 39.5f, 35.f });
+
+        m_sfxSlider->SetValue(AudioManager::Instance().GetSFXVolume());
+        m_sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
+            AudioManager::Instance().SetSFXVolume(newValue);
+            });
+
+        m_sfxSlider->SetActiveSlider(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
 
         // 컨트롤 조절 창
         m_optionControl = CreateUIObject<Image>(L"Option_Control");
         m_optionControl->SetTextureName("OPTION_2");
         m_optionControl->SetActive(false);
         m_optionControl->SetSize({ 1920, 1080 });
-        m_optionControl->SetPosition({ 0.0f,0.0f });
+        m_optionControl->SetPosition({ 0.0f, 0.0f });
         m_optionControl->SetPivot({ 0.5f, 0.5f });
 
         //////////////////////////////////////////////////////////////////////////////////
@@ -228,10 +280,17 @@ namespace JDScene {
         //////////////////////////////////////////////////////////////////////////////////
         
         // 옵션 선택 버튼 ( 볼륨 )
+        m_selectVolumeDummy = CreateUIObject<Image>(L"Volume_Button_Dummy");
+        m_selectVolumeDummy->SetTextureName("VOLUME_BUTTON");
+        m_selectVolumeDummy->SetSize({ 115.5f, 23.f });
+        m_selectVolumeDummy->SetPosition({ -497.4f, 244.1f });
+        m_selectVolumeDummy->SetActive(false);
+
         m_selectVolume = CreateUIObject<Button>(L"SelectVolume_Button");
-        m_selectVolume->SetTextureName("VOLUME_BUTTON");
+        m_selectVolume->SetTextureName("Test");
+        m_selectVolume->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
         m_selectVolume->SetText(L"");
-        m_selectVolume->SetSize({ 115.5f, 23.f });
+        m_selectVolume->SetSize({ 180, 70 });
         m_selectVolume->SetPosition({ -497.4f, 244.1f });
         m_selectVolume->SetActive(false);
 
@@ -239,13 +298,27 @@ namespace JDScene {
             m_optionVolume->SetActive(true);
             m_optionControl->SetActive(false);
             m_optionCredit->SetActive(false);
+
+            m_selectVolumeDummy->SetActive(false);
+            m_selectControlDummy->SetActive(true);
+            m_selectCreditDummy->SetActive(true);
+
+            m_bgmSlider->SetActiveSlider(true);
+            m_sfxSlider->SetActiveSlider(true);
             });
 
         // 옵션 선택 버튼 ( 컨트롤 )
+        m_selectControlDummy = CreateUIObject<Image>(L"Control_Button_Dummy");
+        m_selectControlDummy->SetTextureName("CONTROLS_BUTTON");
+        m_selectControlDummy->SetSize({ 115.5f, 23.f });
+        m_selectControlDummy->SetPosition({ -497.4f, 172.7f });
+        m_selectControlDummy->SetActive(false);
+
         m_selectControl = CreateUIObject<Button>(L"SelectControl_Button");
-        m_selectControl->SetTextureName("CONTROLS_BUTTON");
+        m_selectControl->SetTextureName("Test");
+        m_selectControl->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
         m_selectControl->SetText(L"");
-        m_selectControl->SetSize({ 115.5f, 23.f });
+        m_selectControl->SetSize({ 180, 70 });
         m_selectControl->SetPosition({ -497.4f, 172.7f });
         m_selectControl->SetActive(false);
 
@@ -253,13 +326,27 @@ namespace JDScene {
             m_optionVolume->SetActive(false);
             m_optionControl->SetActive(true);
             m_optionCredit->SetActive(false);
+
+            m_selectVolumeDummy->SetActive(true);
+            m_selectControlDummy->SetActive(false);
+            m_selectCreditDummy->SetActive(true);
+
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
             });
 
         // 옵션 선택 버튼 ( 크레딧 )
+        m_selectCreditDummy = CreateUIObject<Image>(L"Credit_Button_Dummy");
+        m_selectCreditDummy->SetTextureName("CREDITS_BUTTON");
+        m_selectCreditDummy->SetSize({ 115.5f, 23.f });
+        m_selectCreditDummy->SetPosition({ -497.4f, 101.6f });
+        m_selectCreditDummy->SetActive(false);
+
         m_selectCredit = CreateUIObject<Button>(L"SelectCredit_Button");
-        m_selectCredit->SetTextureName("CREDITS_BUTTON");
+        m_selectCredit->SetTextureName("Test");
+        m_selectCredit->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
         m_selectCredit->SetText(L"");
-        m_selectCredit->SetSize({ 115.5f, 23.f });
+        m_selectCredit->SetSize({ 180, 70 });
         m_selectCredit->SetPosition({ -497.4f, 101.6f });
         m_selectCredit->SetActive(false);
 
@@ -267,6 +354,13 @@ namespace JDScene {
             m_optionVolume->SetActive(false);
             m_optionControl->SetActive(false);
             m_optionCredit->SetActive(true);
+
+            m_selectVolumeDummy->SetActive(true);
+            m_selectControlDummy->SetActive(true);
+            m_selectCreditDummy->SetActive(false);
+
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
             });
 
         //////////////////////////////////////////////////////////////////////////////////
@@ -291,6 +385,13 @@ namespace JDScene {
             m_selectCredit->SetActive(false);
 
             m_closeOption->SetActive(false);
+
+            m_selectVolumeDummy->SetActive(false);
+            m_selectControlDummy->SetActive(false);
+            m_selectCreditDummy->SetActive(false);
+
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -304,25 +405,6 @@ namespace JDScene {
             // 텍스트 변경
             m_closeOption->SetTextureName("ART_Back01_mouseover");
             });
-
-        //////////////////////////////////////////////////////////////////////////////////
-
-        //// BGM 볼륨 조절 슬라이더
-        //auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
-        //bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
-
-        //// 이미지 개별 설정
-        //bgmSlider->SetBackgroundImage("VOLUME_LINE_2");
-        //bgmSlider->SetFillImage("VOLUME_LINE_1");
-        //bgmSlider->SetHandleImage("VOLUME_CAT_1");
-
-        //// 1. 초기값 설정: 현재 오디오 매니저의 BGM 볼륨 값으로 설정합니다.
-        //bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
-
-        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 BGM 볼륨을 조절하도록 연결합니다.
-        //bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
-        //    AudioManager::Instance().SetMusicVolume(newValue);
-        //    });
 
         //////////////////////////////////////////////////////////////////////////////////
 
@@ -382,45 +464,11 @@ namespace JDScene {
     void TitleScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        // 화면 크기 가져오기
-        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
-        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
-
-        // 1) 마우스 파티클 업데이트 & Emit
-        {
-            MouseState ms = InputManager::Instance().GetMouseState();
-            Vector2F mousePos{ (float)ms.pos.x, (float)ms.pos.y };
-
-            m_mouseParticles->Update(deltaTime, mousePos);
-            m_mouseParticles->Emit(
-                mousePos,
-                /*count=*/30,
-                D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),  // 파랑
-                /*scale=*/2.5f
-            );
-        }
-
-        // 2) 벚꽃 낙하 파티클 스폰 & 업데이트
-        {
-            m_sakuraEmitAccumulator += deltaTime * m_sakuraEmissionRate;
-            int spawnCount = static_cast<int>(m_sakuraEmitAccumulator);
-            m_sakuraEmitAccumulator -= spawnCount;
-            float scale = RandomFloat(1.0f, 2.0f);
-            float maxLife = RandomFloat(6.0f, 12.0f);
-
-            for (int i = 0; i < spawnCount; ++i) {
-                float x = RandomFloat(sakuraMin.x, sakuraMax.x);
-                float y = RandomFloat(sakuraMin.y, sakuraMax.y);
-                Vector2F spawnPos{ x, y };
-                m_sakuraParticles->SpawnFallingParticle(
-                    spawnPos,
-                    /*color=*/D2D1::ColorF(1.f, 0.8f, 0.9f, 1.f),
-                    /*scale=*/scale,
-                    /*maxLife=*/maxLife
-                );
-            }
-            // Update 에 화면 크기 전달하는 Update 오버로드
-            m_sakuraParticles->UpdateFalling(deltaTime, screenW, screenH);
+        MouseState state = InputManager::Instance().GetMouseState();
+        float mouseX = static_cast<float>(state.pos.x);
+        float mouseY = static_cast<float>(state.pos.y);
+        if (m_lightParticles) {
+            m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
         }
 
         ClickUpdate();
@@ -456,25 +504,14 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
 
-        if (m_mouseParticles) {
+        if (m_lightParticles) {
             // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
             auto ctx = D2DRenderer::Instance().GetD2DContext();
             D2D1_MATRIX_3X2_F old;
             ctx->GetTransform(&old);
             ctx->SetTransform(D2D1::Matrix3x2F::Identity());
 
-            m_mouseParticles->Render(ctx);
-
-            ctx->SetTransform(old);
-        }
-        if (m_sakuraParticles) {
-            // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
-            auto ctx = D2DRenderer::Instance().GetD2DContext();
-            D2D1_MATRIX_3X2_F old;
-            ctx->GetTransform(&old);
-            ctx->SetTransform(D2D1::Matrix3x2F::Identity());
-
-            m_sakuraParticles->Render(ctx);
+            m_lightParticles->Render(ctx);
 
             ctx->SetTransform(old);
         }

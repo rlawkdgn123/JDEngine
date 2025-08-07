@@ -177,7 +177,7 @@ bool EngineCore::Initialize()
     { std::cout << "[ERROR] Option_Exam01 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("Option_Exam02", L"../Resource/Option_Exam02.png"))
     { std::cout << "[ERROR] Option_Exam02 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("Option_Exam02", L"../Resource/Option_Exam03.png"))
+    if (!AssetManager::Instance().LoadTexture("Option_Exam03", L"../Resource/Option_Exam03.png"))
     { std::cout << "[ERROR] Option_Exam03 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("SelectCharacter_Exam", L"../Resource/SelectCharacter_Exam.png"))
     { std::cout << "[ERROR] SelectCharacter_Exam 텍스처 로드 실패" << std::endl; }
@@ -279,16 +279,19 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("ART_SelectNavi01_mouseover", L"../Resource/CHARACTER SELECT/ART_SelectNavi01_mouseover.png"))
     { std::cout << "[ERROR] ART_SelectNavi01_mouseover 텍스처 로드 실패" << std::endl; }
 
-    // NORWAY
+    // 고양이 애니메이션 NORWAY, RUSS
     ////////////////////////////////////////////////////////////////////////////////
 
     // 애니메이션 속도 정배율을 1.4x 가 마음에 든다고 했음.
     if (!AssetManager::Instance().LoadTexture("Norway", L"../Resource/Animation/character_norway_sprite_01.png"))
     { std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl; }
-
     if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
     { std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl; }
 
+    if (!AssetManager::Instance().LoadTexture("Russ", L"../Resource/Animation/character_russ_sprite_01.png"))
+    { std::cout << "[ERROR] Russ 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadAnimationRender("Russ", L"../Resource/Animation/character_russ_sprite_01.json"))
+    { std::cout << "[ERROR] Russ 애니메이션 로드 실패!" << std::endl; }
 
     // BATTLE
     ////////////////////////////////////////////////////////////////////////////////
@@ -366,11 +369,11 @@ bool EngineCore::Initialize()
   
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    // SceneManager::Instance().ChangeScene("TitleScene");
+    SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
-    SceneManager::Instance().ChangeScene("SelectNationScene");
+    // SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");

@@ -91,8 +91,17 @@ namespace JDScene {
         setting->SetPosition({ -522, -115 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        setting->AddOnClick("OpenSettingUI", []() {
-            
+        setting->AddOnClick("OpenSettingUI", [this]() {
+            if (m_optionUI) {
+                m_optionUI->SetActive(true);
+                m_optionVolume->SetActive(true);
+
+                m_selectVolume->SetActive(true);
+                m_selectControl->SetActive(true);
+                m_selectCredit->SetActive(true);
+
+                m_closeOption->SetActive(true);
+            }
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -165,9 +174,10 @@ namespace JDScene {
         //////////////////////////////////////////////////////////////////////////////////
 
         // 옵션창
-        auto optionUI = CreateUIObject<Image>(L"Option_Popup");
-        optionUI->SetTextureName("BACK_GROUND_OPACITY");
-        optionUI->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
+        m_optionUI = CreateUIObject<Image>(L"Option_Popup");
+        m_optionUI->SetTextureName("BACK_GROUND_OPACITY");
+        m_optionUI->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
+        m_optionUI->SetActive(false);
 
         if (cam)
         {
@@ -175,10 +185,120 @@ namespace JDScene {
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
             // 화면 크기로 설정
-            optionUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            optionUI->SetPosition({ 0.0f,0.0f });
-            optionUI->SetPivot({ 0.5f, 0.5f });
+            m_optionUI->SetSize(Vector2F{ screenWidth, screenHeight });
+            m_optionUI->SetPosition({ 0.0f,0.0f });
+            m_optionUI->SetPivot({ 0.5f, 0.5f });
         }
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 볼륨 조절 창
+        m_optionVolume = CreateUIObject<Image>(L"Option_Volume");
+        m_optionVolume->SetTextureName("OPTION_1");
+        m_optionVolume->SetActive(false);
+        m_optionVolume->SetSize({ 1920, 1080 });
+        m_optionVolume->SetPosition({ 0.0f,0.0f });
+        m_optionVolume->SetPivot({ 0.5f, 0.5f });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 컨트롤 조절 창
+        m_optionControl = CreateUIObject<Image>(L"Option_Control");
+        m_optionControl->SetTextureName("OPTION_2");
+        m_optionControl->SetActive(false);
+        m_optionControl->SetSize({ 1920, 1080 });
+        m_optionControl->SetPosition({ 0.0f,0.0f });
+        m_optionControl->SetPivot({ 0.5f, 0.5f });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 크레딧 보기 창
+        m_optionCredit = CreateUIObject<Image>(L"Option_Credit");
+        m_optionCredit->SetTextureName("OPTION_3");
+        m_optionCredit->SetActive(false);
+        m_optionCredit->SetSize({ 1920, 1080 });
+        m_optionCredit->SetPosition({ 0.0f,0.0f });
+        m_optionCredit->SetPivot({ 0.5f, 0.5f });
+
+        //////////////////////////////////////////////////////////////////////////////////
+        
+        // 옵션 선택 버튼 ( 볼륨 )
+        m_selectVolume = CreateUIObject<Button>(L"SelectVolume_Button");
+        m_selectVolume->SetTextureName("VOLUME_BUTTON");
+        m_selectVolume->SetText(L"");
+        m_selectVolume->SetSize({ 115.5f, 23.f });
+        m_selectVolume->SetPosition({ -497.4f, 244.1f });
+        m_selectVolume->SetActive(false);
+
+        m_selectVolume->AddOnClick("OpenVolumeUI", [this]() {
+            m_optionVolume->SetActive(true);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(false);
+            });
+
+        // 옵션 선택 버튼 ( 컨트롤 )
+        m_selectControl = CreateUIObject<Button>(L"SelectControl_Button");
+        m_selectControl->SetTextureName("CONTROLS_BUTTON");
+        m_selectControl->SetText(L"");
+        m_selectControl->SetSize({ 115.5f, 23.f });
+        m_selectControl->SetPosition({ -497.4f, 172.7f });
+        m_selectControl->SetActive(false);
+
+        m_selectControl->AddOnClick("OpenControlUI", [this]() {
+            m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(true);
+            m_optionCredit->SetActive(false);
+            });
+
+        // 옵션 선택 버튼 ( 크레딧 )
+        m_selectCredit = CreateUIObject<Button>(L"SelectCredit_Button");
+        m_selectCredit->SetTextureName("CREDITS_BUTTON");
+        m_selectCredit->SetText(L"");
+        m_selectCredit->SetSize({ 115.5f, 23.f });
+        m_selectCredit->SetPosition({ -497.4f, 101.6f });
+        m_selectCredit->SetActive(false);
+
+        m_selectCredit->AddOnClick("OpenCreditUI", [this]() {
+            m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(true);
+            });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 옵션 닫기 버튼 ( Close )
+        m_closeOption = CreateUIObject<Button>(L"CloseSetting_Button");
+        m_closeOption->SetTextureName("ART_Back01_mouseover");
+        m_closeOption->SetText(L"");
+        m_closeOption->SetSize({ 66, 60 });
+        m_closeOption->SetPosition({ -550, 340 });
+        m_closeOption->SetActive(false);
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        m_closeOption->AddOnClick("Load TitleScene", [this]() {
+            m_optionUI->SetActive(false);
+            m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(false);
+
+            m_selectVolume->SetActive(false);
+            m_selectControl->SetActive(false);
+            m_selectCredit->SetActive(false);
+
+            m_closeOption->SetActive(false);
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        m_closeOption->AddOnEnter("Highlight On", [this]() {
+            // 텍스트 변경
+            m_closeOption->SetTextureName("ART_Back01_mouseover");
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        m_closeOption->AddOnExit("Highlight Off", [this]() {
+            // 텍스트 변경
+            m_closeOption->SetTextureName("ART_Back01_mouseover");
+            });
 
         //////////////////////////////////////////////////////////////////////////////////
 
@@ -242,6 +362,16 @@ namespace JDScene {
         {
             DestroyObject(uiObject.get());
         }
+
+        m_optionUI = nullptr;
+        m_optionVolume = nullptr;
+        m_optionControl = nullptr;
+        m_optionCredit = nullptr;
+
+        m_closeOption = nullptr;
+        m_selectVolume = nullptr;
+        m_selectControl = nullptr;
+        m_selectCredit = nullptr;
     }
 
     void TitleScene::Update(float deltaTime) {

@@ -33,6 +33,8 @@ private:
 	void OnResize(int width, int height) override;
 	void OnClose() override;
 
+	void LoadResources();
+
 	std::unique_ptr<GameTimer> m_EngineTimer = nullptr;
 	//std::unique_ptr<SceneManager> m_SceneManager = nullptr;
 	//std::shared_ptr<D2DRenderer> m_Renderer = nullptr;

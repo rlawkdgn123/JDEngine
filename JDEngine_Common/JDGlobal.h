@@ -11,14 +11,14 @@ namespace JDGlobal {
 		{
 			None,
 			Player,
-			PlayerMove,
 			PlayerCat,
 			PlayerBuilding,
 			Enemy,
-			EnemyMove,
 			EnemyCat,
 			EnemyBuilding,
 			Barracks,
+			BattleAnim,
+			Wall,
 			NPC,
 			UI,
 			Mover
@@ -192,6 +192,12 @@ namespace JDGlobal {
 			FishingSpot,
 			LumberMill,
 			Mine
+		};
+
+		enum class State { // 상태.
+			Idle,
+			Move,
+			Back
 		};
 
 		struct WorkerStats {

@@ -49,9 +49,9 @@ namespace JDComponent {
 		virtual void OnTriggerStay(ColliderBase* other) { if (onTriggerStay)  onTriggerStay(other); }
 		virtual void OnTriggerExit(ColliderBase* other) { if (onTriggerExit)  onTriggerExit(other); m_isColliding = false; }
 
-		virtual void OnCollisionEnter(ColliderBase* other) { if (onCollisionEnter) onCollisionEnter(other); m_isColliding = true; }
-		virtual void OnCollisionStay(ColliderBase* other) { if (onCollisionStay)  onCollisionStay(other); }
-		virtual void OnCollisionExit(ColliderBase* other) { if (onCollisionExit)  onCollisionExit(other); m_isColliding = false; }
+		virtual void OnCollisionEnter(ColliderBase* other) { if (onCollisionEnter && !other) onCollisionEnter(other); m_isColliding = true; }
+		virtual void OnCollisionStay(ColliderBase* other) { if (onCollisionStay && !other)  onCollisionStay(other); }
+		virtual void OnCollisionExit(ColliderBase* other) { if (onCollisionExit && !other)  onCollisionExit(other); m_isColliding = false; }
 
 		void    SetIndex(int idx) { m_index = idx; }
 		int     GetIndex() const { return m_index; }

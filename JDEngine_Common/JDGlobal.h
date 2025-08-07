@@ -212,7 +212,6 @@ namespace JDGlobal {
 			Resource m_upgradeCost[MAX_GAME_LEVEL];             // 업그레이드 비용 * 3레벨 (1레벨은 빌드 비용)
 			Resource m_resourceGenPerSec[MAX_GAME_LEVEL];       // 초당 자원 획득량
 			Resource m_resourceSubPerSec[MAX_GAME_LEVEL];       // 초당 자원 유지비용 (소모)
-
 			void PrintStats();
 		};
 

@@ -28,14 +28,14 @@ namespace JDScene {
         rs.SetCurPopulation(100);
 
         // 징병 버튼.
-        auto noviceBtn = CreateUIObject<Button>(L"noviceBtn");
-        noviceBtn->SetTextureName("GAME_START_B");
-        noviceBtn->SetSizeToOriginal();
-        noviceBtn->SetPosition({ 100.0f, 50.0f });
-        noviceBtn->AddOnClick("Recruit Novice", [this]() {
-            player.RecruitUnits(JDGameSystem::UnitType::Novice);
-            std::cout << "Player Power: " << player.CalculateTotalPower() << std::endl;
-            });
+        //auto noviceBtn = CreateUIObject<Button>(L"noviceBtn");
+        //noviceBtn->SetTextureName("GAME_START_B");
+        //noviceBtn->SetSizeToOriginal();
+        //noviceBtn->SetPosition({ 100.0f, 50.0f });
+        //noviceBtn->AddOnClick("Recruit Novice", [this]() {
+        //    player.RecruitUnits(JDGameSystem::UnitType::Novice);
+        //    std::cout << "Player Power: " << player.CalculateTotalPower() << std::endl;
+        //    });
 
         //auto expertBtn = CreateUIObject<Button>(L"expertBtn");
         //expertBtn->SetTextureName("GAME_START_B");
@@ -46,19 +46,38 @@ namespace JDScene {
         //    std::cout << "Player Power: " << player.CalculateTotalPower() << std::endl;
         //    });
 
-        // 병영.
-        auto* barracksObj = CreateGameObject<Player>(L"barracksObj");
+        { // 병영.
+            auto* barracksObj = CreateGameObject<Player>(L"barracksObj");
 
-        barracksObj->SetTag(JDGlobal::Base::GameTag::Barracks);
-        barracksObj->AddComponent<Editor_Clickable>();
-        barracksObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
-        auto size = bitmap->GetSize();
-        barracksObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
-        barracksObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
-        barracksObj->GetComponent<Transform>()->SetPosition({ -500.0f, 100.0f });
+            barracksObj->SetTag(JDGlobal::Base::GameTag::Barracks);
+            barracksObj->AddComponent<Editor_Clickable>();
+            barracksObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+            auto size = bitmap->GetSize();
+            barracksObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+            barracksObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+            barracksObj->GetComponent<Transform>()->SetPosition({ -500.0f, 100.0f });
 
-        m_barracksObject = barracksObj;
+            m_barracksObject = barracksObj;
+        }
+        
+
+        { // 성벽.
+            auto* wallObj = CreateGameObject<Player>(L"wallObj");
+
+            wallObj->SetTag(JDGlobal::Base::GameTag::Wall);
+            wallObj->AddComponent<Editor_Clickable>();
+            wallObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+            auto size = bitmap->GetSize();
+            wallObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+            wallObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+            wallObj->GetComponent<Transform>()->SetPosition({ -800.0f, 100.0f });
+
+            m_wallObject = wallObj;
+        }
+        
+
         //======================================================
     }
 
@@ -69,8 +88,9 @@ namespace JDScene {
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        // 날짜 증가 타이머
+        // 시간 증가 타이머.
         m_elapsedTime += deltaTime;
+        if (m_battleObject) m_btlElapsedTime += deltaTime;
 
         if (m_elapsedTime >= m_dayTime) {
             m_elapsedTime = 0.0f;
@@ -83,10 +103,17 @@ namespace JDScene {
 
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
             if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
-                SpawnWaveEnemy();
+                float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
+                SpawnWaveEnemy({(windowWidth + 100.0F) / 2.0f, 100.0f });
                 AddEnemyDay(warningDay);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
             }
+        }
+
+        if (m_btlElapsedTime >= m_battleTime) {
+            m_btlElapsedTime = 0.0f;
+            SafeDestroy(m_battleObject);
+            std::cout << "[GameScene] 전투 끝." << std::endl;
         }
         ClickUpdate();
         MoveEnemyObjects(deltaTime);
@@ -142,31 +169,35 @@ namespace JDScene {
         DrawColider();
 
         for (auto& uiObj : m_uiObjects)
-
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
 
-    void GameScene::SpawnWaveEnemy() {
+    void GameScene::SpawnWaveEnemy(const Vector2F& pos) {
 
         auto* enemyObj = CreateGameObject<Player>(L"enemyObj");
 
-        enemyObj->SetTag(JDGlobal::Base::GameTag::EnemyMove);
+        enemyObj->SetTag(JDGlobal::Base::GameTag::Enemy);
+        enemyObj->SetState(JDGlobal::Contents::State::Move);
         enemyObj->AddComponent<Editor_Clickable>();
         enemyObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
         auto size = bitmap->GetSize();
+
         enemyObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
         enemyObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
         float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
-        enemyObj->GetComponent<Transform>()->SetPosition({ (windowWidth + size.width) / 2.0f, 100.0f });
+        //enemyObj->GetComponent<Transform>()->SetPosition({ (windowWidth + size.width) / 2.0f, 100.0f });
+        enemyObj->GetComponent<Transform>()->SetPosition(pos);
         enemyObj->AddComponent<JDComponent::SFX>("Step");
     }
 
-    void GameScene::SpawnPlayerArmy() {
+    void GameScene::SpawnPlayerArmy(const Vector2F& pos) {
         auto* playerObj = CreateGameObject<Player>(L"playerObj");
-        playerObj->SetTag(JDGlobal::Base::GameTag::PlayerMove);
+        playerObj->SetTag(JDGlobal::Base::GameTag::Player);
+        playerObj->SetState(JDGlobal::Contents::State::Move);
         playerObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
 
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
@@ -174,100 +205,183 @@ namespace JDScene {
 
         playerObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
         playerObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
-        playerObj->GetComponent<Transform>()->SetPosition({ -400.0f, 100.0f });
+        //playerObj->GetComponent<Transform>()->SetPosition({ -400.0f, 100.0f });
+        playerObj->GetComponent<Transform>()->SetPosition(pos);
         playerObj->AddComponent<JDComponent::SFX>("Step");
 
-        if (!m_playerObject) m_playerObject = playerObj;
+        if (!m_playerObject && !m_battleObject) m_playerObject = playerObj;
+    }
+
+    void GameScene::SpawnBattleObject(const Vector2F& pos)
+    {
+        auto* battleObj = CreateGameObject<Player>(L"battleObj");
+        battleObj->SetTag(JDGlobal::Base::GameTag::BattleAnim);
+        battleObj->AddComponent<Editor_Clickable>();
+        battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+
+        auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+        auto size = bitmap->GetSize();
+
+        battleObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+        battleObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+        battleObj->GetComponent<Transform>()->SetPosition(pos);
+
+        if (!m_battleObject) {
+            m_battleObject = battleObj;
+        }
     }
 
     void GameScene::MoveEnemyObjects(float deltaTime)
     {
-        const float speed = -100.0f; // 픽셀/초
-        const float stopX = -300.0f; // 여기서 정지
-        const Vector2F delta{ speed * deltaTime, 0.f };
+        const float speed = 100.0f; // 픽셀/초
+        Vector2F wallDir = { -1.0f, 0.0f }; // 기본 방향. (성벽이 없다면)
 
         for (auto& objPtr : m_gameObjects)
         {
-            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::EnemyMove)
-                continue;
+            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy || 
+                objPtr->GetState() != JDGlobal::Contents::State::Move) continue;
 
             auto* transform = objPtr->GetComponent<Transform>();
-            auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
             auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
-            if (!transform || !collider) continue;
+            if (!transform) continue;
 
-            if (m_targetEnemy && objPtr.get() != m_targetEnemy)
-            {
-                if (m_playerObject->GetComponent<JDComponent::ColliderBase>()->Intersect(collider)) {
+            // 적이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
+            if (m_battleObject) {
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (!battleTm)  continue;
+                Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    SafeDestroy(objPtr.get());
+                    m_btlElapsedTime = 0.0f;
                     continue;
                 }
             }
 
-            Vector2F pos = transform->GetPosition();
+            // 성벽이랑 충돌하면 멈춤.
+            if (m_wallObject) {
+                auto* wallTm = m_wallObject->GetComponent<Transform>();
+                if (!wallTm)  continue;
+                Vector2F diffPos = wallTm->GetPosition() - transform->GetPosition();
 
-            if (pos.x <= stopX)
-            {
-                objPtr->SetTag(JDGlobal::Base::GameTag::Enemy); 
-                continue;
+                if (diffPos.Length() <= 10.0f) {
+                    objPtr->SetState(JDGlobal::Contents::State::Idle);
+                    continue;
+                }
+                wallDir = diffPos.Normalized();
             }
 
-            // 이동 적용
-            Vector2F newPos = pos + delta;
+            // 이동 적용.
+            Vector2F delta = wallDir * (speed * deltaTime);
+            Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
 
             if (sfx) sfx->Play();  // 이동 시 효과음 재생
         }
     }
 
-    void GameScene::MovePlayerObjects(float deltaTime)
-    {
+    void GameScene::MovePlayerObjects(float deltaTime) {
         const float speed = 100.0f;
-        const float stopX = 600.0f;
-        const Vector2F delta{ speed * deltaTime, 0.f };
+        const float backSpeed = 100.0f;
+        Vector2F delta;
 
         for (auto& objPtr : m_gameObjects)
         {
-            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::PlayerMove)
+            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Player ||
+                (objPtr->GetState() != JDGlobal::Contents::State::Move &&
+                    objPtr->GetState() != JDGlobal::Contents::State::Back))
                 continue;
 
             auto* transform = objPtr->GetComponent<Transform>();
-            auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
             auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
-            if (!transform || !collider) continue;
+            if (!transform) continue;
 
-            // 최초 아군이 아닌 다른 아군이 최초 적과 충돌하면 제거
-            if (m_playerObject && objPtr.get() != m_playerObject)
-            {
-                if (m_targetEnemy->GetComponent<JDComponent::ColliderBase>()->Intersect(collider)) {
+            // 아군이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
+            if (m_battleObject) {
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (!battleTm) continue;
+                Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    SafeDestroy(objPtr.get());
+                    m_btlElapsedTime = 0.0f;
                     continue;
                 }
             }
 
-            // 최초 아군일 경우, 타겟 적과의 충돌 체크
-            if (objPtr.get() == m_playerObject && m_targetEnemy)
-            {
-                auto* enemyCollider = m_targetEnemy->GetComponent<JDComponent::ColliderBase>();
-                if (enemyCollider && collider->Intersect(enemyCollider))
-                {
-                    m_playerObject->SetTag(JDGlobal::Base::GameTag::Player);
-                    m_targetEnemy->SetTag(JDGlobal::Base::GameTag::Enemy);
+            // 최초 아군일 경우, 타겟 적과의 충돌 체크. 충돌하면 제거.
+            if (objPtr.get() == m_playerObject && m_targetEnemy && m_playerObject) {
+                auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
+                if (!enemyTm) continue;
+                Vector2F diffPos = enemyTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    Vector2F pPos = transform->GetPosition();
+                    Vector2F ePos = enemyTm->GetPosition();
+                    Vector2F mid = { (pPos.x + ePos.x) * 0.5f, (pPos.y + ePos.y) * 0.5f };
+
+                    SafeDestroy(m_playerObject);
+                    SafeDestroy(m_targetEnemy);
+
+                    SpawnBattleObject(mid);
                     return;
                 }
             }
 
-            Vector2F pos = transform->GetPosition();
-            if (objPtr.get() == m_playerObject && pos.x >= stopX)
-            {
-                m_playerObject->SetTag(JDGlobal::Base::GameTag::Enemy);
-                return;
+            // 전투 오브젝트가 없고, 일반 아군이면 후퇴 상태로 전환
+            if (!m_battleObject && objPtr.get() != m_playerObject) {
+                if (!m_barracksObject) continue;
+                auto* barracksTm = m_barracksObject->GetComponent<Transform>();
+                if (!barracksTm) continue;
+                Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    SafeDestroy(objPtr.get());
+                    continue;
+                }
+
+                objPtr->SetState(JDGlobal::Contents::State::Back);
             }
 
-            Vector2F newPos = pos + delta;
+            Vector2F direction = { 1.0f, 0.0f }; // 기본값.
+            float moveSpeed = speed;
+
+            if (objPtr->GetState() == JDGlobal::Contents::State::Back) {
+                // 병영 방향으로 후퇴
+                if (m_barracksObject) {
+                    auto* barracksTm = m_barracksObject->GetComponent<Transform>();
+                    if (barracksTm) {
+                        Vector2F diff = barracksTm->GetPosition() - transform->GetPosition();
+                        direction = diff.Normalized();
+                        moveSpeed = backSpeed;
+                    }
+                }
+            }
+            else if (objPtr.get() == m_playerObject && m_targetEnemy) {
+                // 적 유닛 방향으로 이동
+                auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
+                if (enemyTm) {
+                    Vector2F diff = enemyTm->GetPosition() - transform->GetPosition();
+                    direction = diff.Normalized();
+                }
+            }
+            else if (m_battleObject) {
+                // 전투 오브젝트 방향으로 이동
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (battleTm) {
+                    Vector2F diff = battleTm->GetPosition() - transform->GetPosition();
+                    direction = diff.Normalized();
+                }
+            }
+
+            delta = direction * (moveSpeed * deltaTime);
+            Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
 
             if (sfx) sfx->Play();
         }
     }
+
 
     void GameScene::ClickUpdate()
     {
@@ -335,29 +449,36 @@ namespace JDScene {
                         SetSelectedObject(obj.get());
                         clicked = true;
                         std::cout << " 게임 오브젝트 클릭 함!!!!! ";
+
+                        // 태그 기반 처리
+                        auto* gameObj = GetSelectedObject();
+                        if (!gameObj) return;
+
+                        auto tag = gameObj->GetTag();
+                        bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy);
+
+                        if (tag == JDGlobal::Base::GameTag::Barracks) {
+                            m_isBarracksSelected = !m_isBarracksSelected;
+                            std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
+                        }
+                        else if (m_isBarracksSelected && !m_battleObject && (isEnemyTag && !m_targetEnemy)) {
+                            m_targetEnemy = gameObj;
+                            SpawnPlayerArmy({ -400.0f, 100.0f });
+                            m_isBarracksSelected = false;
+                            std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
+                        }
+                        else if (m_isBarracksSelected && tag == JDGlobal::Base::GameTag::BattleAnim) {
+                            SpawnPlayerArmy({ -400.0f, 100.0f });
+                            m_isBarracksSelected = false;
+                            std::cout << "[GameScene] 병영 클릭 -> 전투중 클릭." << std::endl;
+                        }
+                        else {
+                            m_isBarracksSelected = false; 
+                            std::cout << "[GameScene] 이상한 거 클릭." << std::endl;
+                        }
                         break;
                     }
                 }
-
-                // 태그 기반 처리
-                auto* gameObj = GetSelectedObject();
-                if (!gameObj) return;
-
-                auto tag = gameObj->GetTag();
-                bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy || tag == JDGlobal::Base::GameTag::EnemyMove);
-
-                if (tag == JDGlobal::Base::GameTag::Barracks) {
-                    m_isBarracksSelected = !m_isBarracksSelected;
-                    std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
-                }
-                else if (m_isBarracksSelected && ((isEnemyTag && !m_targetEnemy) || gameObj == m_targetEnemy)) {
-                    if (!m_targetEnemy) m_targetEnemy = gameObj;
-
-                    SpawnPlayerArmy();
-                    m_isBarracksSelected = false;
-                    std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
-                }
-                else { m_isBarracksSelected = false; }
             }
 
             // 아무것도 클릭되지 않았다면 선택 해제
@@ -366,28 +487,17 @@ namespace JDScene {
                 SetSelectedObject(nullptr);
             }
         }
+    }
 
-        // LEGACY : ClickUpdate 변경 전 코드 2025.08.06
-        /*
-        //// 태그 기반 처리
-        //auto* gameObj = GetSelectedObject();
-        //if (!gameObj) return;
+    void GameScene::SafeDestroy(GameObjectBase* obj)
+    {
+        if (!obj) return;
 
-        //auto tag = gameObj->GetTag();
-        //bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy || tag == JDGlobal::Base::GameTag::EnemyMove);
-        //
-        //if (tag == JDGlobal::Base::GameTag::Barracks) {
-        //    m_isBarracksSelected = !m_isBarracksSelected;
-        //    std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
-        //}
-        //else if (m_isBarracksSelected && ((isEnemyTag && !m_targetEnemy) || gameObj == m_targetEnemy)) {
-        //    if (!m_targetEnemy) m_targetEnemy = gameObj;
+        if (m_playerObject == obj) m_playerObject = nullptr;
+        if (m_targetEnemy == obj) m_targetEnemy = nullptr;
+        if (m_battleObject == obj) m_battleObject = nullptr;
+        if (GetSelectedObject() == obj) SetSelectedObject(nullptr);
 
-        //    SpawnPlayerArmy();
-        //    m_isBarracksSelected = false;
-        //    std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
-        //}
-        //else { m_isBarracksSelected = false; }
-        */
+        SceneBase::DestroyObject(obj);
     }
 }

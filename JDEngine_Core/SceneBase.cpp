@@ -44,6 +44,7 @@ namespace JDScene {
         for (auto& curr : m_currPairs) {
             auto* colA = curr.A->GetComponent<JDComponent::ColliderBase>();
             auto* colB = curr.B->GetComponent<JDComponent::ColliderBase>();
+            if (!colA || !colB) continue;
 
             bool wasColliding = false;
             for (auto& prev : m_prevPairs) {
@@ -79,7 +80,7 @@ namespace JDScene {
         for (auto& prev : m_prevPairs) {
             auto* colA = prev.A->GetComponent<JDComponent::ColliderBase>();
             auto* colB = prev.B->GetComponent<JDComponent::ColliderBase>();
-
+            
             bool stillColliding = false; // 현재 충돌쌍과 같은 과거 충돌쌍이 없다면 false.(Exit)
             for (auto& curr : m_currPairs) {
                 if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
@@ -88,13 +89,21 @@ namespace JDScene {
                 }
             }
             if (!stillColliding) { // 충돌이 끝났다면 Exit.
-                if (colA->IsTrigger() || colB->IsTrigger()) {
-                    colA->OnTriggerExit(colB);
-                    colB->OnTriggerExit(colA);
+                if (colA && colB) {
+                    if (colA->IsTrigger() || colB->IsTrigger()) {
+                        colA->OnTriggerExit(colB);
+                        colB->OnTriggerExit(colA);
+                    }
+                    else {
+                        colA->OnCollisionExit(colB);
+                        colB->OnCollisionExit(colA);
+                    }
                 }
-                else {
-                    colA->OnCollisionExit(colB);
-                    colB->OnCollisionExit(colA);
+                else if (colA) {
+                    colA->OnTriggerExit(colB);
+                }
+                else if (colB) {
+                    colB->OnTriggerExit(colA);
                 }
             }
         }

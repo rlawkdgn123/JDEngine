@@ -32,6 +32,7 @@ namespace JDGameObject {
         using MessageID = JDGlobal::Core::MessageID;
         using Component = JDComponent::Component;
         using Transform = JDComponent::D2DTM::Transform;
+        using State = JDGlobal::Contents::State;
         
     public:
         GameObjectBase(const std::wstring& name) : m_name(name) {}
@@ -79,6 +80,9 @@ namespace JDGameObject {
         Tag GetTag() const { return m_tag; }
         void SetTag(const Tag& tag) { m_tag = tag; }
 
+        State GetState() const { return m_state; }
+        void SetState(const State& state) { m_state = state; }
+
         bool IsActive() const { return m_active; }
         void SetActive(bool active) { 
             if (m_active == active) return; // 변경이 없으면 무시
@@ -95,6 +99,7 @@ namespace JDGameObject {
         std::wstring m_name;
         Tag m_tag = Tag::None;
         int m_layer = 0;
+        State m_state = State::Idle;
 
         int m_id = -1;
         bool m_active = true; // 게임 오브젝트 전체의 활성/비활성

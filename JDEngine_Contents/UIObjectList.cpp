@@ -168,8 +168,10 @@ namespace JDGameObject {
 			m_fillImage->SetTextureName("VOLUME_LINE_1"); // 기본 채우기 텍스처
 			auto fillRect = m_fillImage->GetComponent<RectTransform>();
 			fillRect->SetParent(rootRect);
+			// Fill 이미지가 왼쪽에서 오른쪽으로 채워지도록 설정
 			fillRect->SetAnchor({ 0.0f, 0.5f });
 			fillRect->SetPivot({ 0.0f, 0.5f });
+			fillRect->SetPosition({ 0.0f, 0.0f });
 			// 채우기 영역의 크기도 배경 크기와 동일하게 초기화합니다.
 			fillRect->SetSize(rootRect->GetSize());
 

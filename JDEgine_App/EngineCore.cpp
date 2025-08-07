@@ -99,8 +99,8 @@ bool EngineCore::Initialize()
 
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
-    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
-    //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
+    //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
+    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
     AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
     AudioManager::Instance().SetMusicVolume(1.0f);
     FMOD::Channel* bgmChannel = nullptr;
@@ -171,19 +171,19 @@ bool EngineCore::Initialize()
 
     // 예시 파일 Exam
     ////////////////////////////////////////////////////////////////////////////////
-    if (!AssetManager::Instance().LoadTexture("TITLE_Exam", L"../Resource/Texture/TITLE_Exam.jpg"))
+    if (!AssetManager::Instance().LoadTexture("TITLE_Exam", L"../Resource/TITLE_Exam.jpg"))
     { std::cout << "[ERROR] TITLE_Exam 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("Option_Exam01", L"../Resource/Texture/Option_Exam01.png"))
+    if (!AssetManager::Instance().LoadTexture("Option_Exam01", L"../Resource/Option_Exam01.png"))
     { std::cout << "[ERROR] Option_Exam01 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("Option_Exam02", L"../Resource/Texture/Option_Exam02.png"))
+    if (!AssetManager::Instance().LoadTexture("Option_Exam02", L"../Resource/Option_Exam02.png"))
     { std::cout << "[ERROR] Option_Exam02 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("Option_Exam02", L"../Resource/Texture/Option_Exam03.png"))
+    if (!AssetManager::Instance().LoadTexture("Option_Exam03", L"../Resource/Option_Exam03.png"))
     { std::cout << "[ERROR] Option_Exam03 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("SelectCharacter_Exam", L"../Resource/Texture/SelectCharacter_Exam.png"))
+    if (!AssetManager::Instance().LoadTexture("SelectCharacter_Exam", L"../Resource/SelectCharacter_Exam.png"))
     { std::cout << "[ERROR] SelectCharacter_Exam 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_Exam", L"../Resource/Texture/BATTLE_MAP_Exam.png"))
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_Exam", L"../Resource/BATTLE_MAP_Exam.png"))
     { std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/Texture/UI_Exam.png"))
+    if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/UI_Exam.png"))
     { std::cout << "[ERROR] UI_Exam 텍스처 로드 실패" << std::endl; }
 
     // TITLE
@@ -252,17 +252,19 @@ bool EngineCore::Initialize()
     { std::cout << "[ERROR] ART_Back01_mouseover 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_CH_BACK", L"../Resource/CHARACTER SELECT/ART_CH_BACK.png"))
     { std::cout << "[ERROR] ART_CH_BACK 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CHAT", L"../Resource/CHARACTER SELECT/ART_CHAT.png"))
+    { std::cout << "[ERROR] ART_CHAT 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_CHAT_mouseout", L"../Resource/CHARACTER SELECT/ART_CHAT_mouseout.png"))
     { std::cout << "[ERROR] ART_CHAT_mouseout 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_CHAT_mouseover", L"../Resource/CHARACTER SELECT/ART_CHAT_mouseover.png"))
     { std::cout << "[ERROR] ART_CHAT_mouseover 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("ART_Q_1", L"../Resource/CHARACTER SELECT/ART_Q_1.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_Q_1", L"../Resource/CHARACTER SELECT/ART_Q_1.png"))  // 기본
     { std::cout << "[ERROR] ART_Q_1 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("ART_Q_2", L"../Resource/CHARACTER SELECT/ART_Q_2.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_Q_2", L"../Resource/CHARACTER SELECT/ART_Q_2.png"))  // 코네
     { std::cout << "[ERROR] ART_Q_2 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("ART_Q_3", L"../Resource/CHARACTER SELECT/ART_Q_3.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_Q_3", L"../Resource/CHARACTER SELECT/ART_Q_3.png"))  // 펠리스
     { std::cout << "[ERROR] ART_Q_3 텍스처 로드 실패" << std::endl; }
-    if (!AssetManager::Instance().LoadTexture("ART_Q_4", L"../Resource/CHARACTER SELECT/ART_Q_4.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_Q_4", L"../Resource/CHARACTER SELECT/ART_Q_4.png"))  // 나비
     { std::cout << "[ERROR] ART_Q_4 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_SelectFelis01_mouseout", L"../Resource/CHARACTER SELECT/ART_SelectFelis01_mouseout.png"))
     { std::cout << "[ERROR] ART_SelectFelis01_mouseout 텍스처 로드 실패" << std::endl; }
@@ -277,16 +279,19 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().LoadTexture("ART_SelectNavi01_mouseover", L"../Resource/CHARACTER SELECT/ART_SelectNavi01_mouseover.png"))
     { std::cout << "[ERROR] ART_SelectNavi01_mouseover 텍스처 로드 실패" << std::endl; }
 
-    // NORWAY
+    // 고양이 애니메이션 NORWAY, RUSS
     ////////////////////////////////////////////////////////////////////////////////
 
     // 애니메이션 속도 정배율을 1.4x 가 마음에 든다고 했음.
     if (!AssetManager::Instance().LoadTexture("Norway", L"../Resource/Animation/character_norway_sprite_01.png"))
     { std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl; }
-
     if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
     { std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl; }
 
+    if (!AssetManager::Instance().LoadTexture("Russ", L"../Resource/Animation/character_russ_sprite_01.png"))
+    { std::cout << "[ERROR] Russ 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadAnimationRender("Russ", L"../Resource/Animation/character_russ_sprite_01.json"))
+    { std::cout << "[ERROR] Russ 애니메이션 로드 실패!" << std::endl; }
 
     // BATTLE
     ////////////////////////////////////////////////////////////////////////////////
@@ -364,10 +369,11 @@ bool EngineCore::Initialize()
   
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    // SceneManager::Instance().ChangeScene("TitleScene");
+    SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
-    SceneManager::Instance().ChangeScene("TutorialScene");
+    // SceneManager::Instance().ChangeScene("TutorialScene");
+    // SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");

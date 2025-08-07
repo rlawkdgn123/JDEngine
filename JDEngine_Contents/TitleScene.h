@@ -5,6 +5,11 @@
 #include "ParticleSystem.h"
 
 namespace JDScene {
+
+    using Image = JDGameObject::Content::Image;
+    using Text = JDGameObject::Content::Text;
+    using Button = JDGameObject::Content::Button;
+
 	class TitleScene : public SceneBase
 	{
     public:
@@ -34,6 +39,16 @@ namespace JDScene {
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
 
+        // 옵션창
+        Image* m_optionUI = nullptr;
+        Image* m_optionVolume = nullptr;
+        Image* m_optionControl = nullptr;
+        Image* m_optionCredit = nullptr;
+
+        Button* m_closeOption = nullptr;
+        Button* m_selectVolume = nullptr;
+        Button* m_selectControl = nullptr;
+        Button* m_selectCredit = nullptr;
 	};
 }
 

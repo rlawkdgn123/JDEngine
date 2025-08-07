@@ -22,3 +22,4 @@
 #include "BGM.h"
 #include "SFX.h"
 
+#include "DataTableManager.h"

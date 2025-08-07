@@ -119,7 +119,6 @@ bool EngineCore::Initialize()
     //m_Renderer = std::make_shared<D2DRenderer>(); // D2DRenderer 객체를 shared_ptr로 생성 뒤 m_Renderer에 저장
 
 
-
     //m_SceneManager = make_unique<SceneManager>(); // 팩토리에서 SceneManager unique 형태로 할당
 
     WindowSize::Instance().Set(this);
@@ -129,41 +128,8 @@ bool EngineCore::Initialize()
     if (!AssetManager::Instance().Initialize(renderTarget)) {
         return false;
     }
-    if (!AssetManager::Instance().LoadAllCSV()) {
-        return false;
-    }
 
-    DataTableManager::Instance().ParseTestTable();
-    JDGlobal::Contents::BuildingStats statsds;
-
-    // FishingSpot 파싱 및 결과 출력
-    std::cout << "=== FishingSpot 테스트 시작 ===" << std::endl;
-    DataTableManager::Instance().ParseFishingSpotTable(statsds);
-    statsds.PrintStats();
-    std::cout << "=== FishingSpot 테스트 종료 ===" << std::endl;
-    std::cout << "\n\n";
-
-    // LumberMill 파싱 및 결과 출력
-    std::cout << "=== LumberMill 테스트 시작 ===" << std::endl;
-    DataTableManager::Instance().ParseLumberMillTable(statsds);
-    statsds.PrintStats();
-    std::cout << "=== LumberMill 테스트 종료 ===" << std::endl;
-    std::cout << "\n\n";
-
-    // Mine 파싱 및 결과 출력
-    std::cout << "=== Mine 테스트 시작 ===" << std::endl;
-    DataTableManager::Instance().ParseMineTable(statsds);
-    statsds.PrintStats();
-    std::cout << "=== Mine 테스트 종료 ===" << std::endl;
-    std::cout << "\n\n";
-
-    // House 파싱 및 결과 출력
-    std::cout << "=== House 테스트 시작 ===" << std::endl;
-    JDGlobal::Contents::HouseStats hs;
-    DataTableManager::Instance().ParseHouseTable(hs);
-    hs.PrintStats();
-    std::cout << "=== House 테스트 종료 ===" << std::endl;
-    std::cout << "\n\n";
+    DataTableManager::Instance().Initalize();
 
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))

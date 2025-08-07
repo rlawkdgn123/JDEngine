@@ -22,6 +22,12 @@ namespace JDScene {
 
         //cout << "[TestScene] OnEnter()\n";
 
+
+        CreateGameObject<House>();
+        CreateGameObject<FishingSpot>();
+        CreateGameObject<Mine>();
+        CreateGameObject<LumberMill>();
+
         CreateGameObject<Player>(L"Plyaer");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
@@ -155,8 +161,10 @@ namespace JDScene {
 
         //각버튼 키 목록
         std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
-        { L"house1", "house" },
-        { L"house2", "house2" },
+        { L"FishingSpot", "fishing" },
+        { L"LumberMill", "lumbermill" },
+        { L"Mine", "mine" },
+        { L"House", "cabin" },
         // 필요하다면 더 추가…
         }; 
         std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
@@ -165,13 +173,14 @@ namespace JDScene {
         };
 
         // 공통 초기 오프셋
-        float xOffset = 100.f;
-        float yOffset = 150.f;
+        float xOffset = 0.f;
+        float yOffset = -150.f;
         float gap = 100.f;
 
         // 2-1) 빈 메뉴용 버튼 생성
         {
             float x = xOffset;
+            float y = yOffset;
             for (auto& info : EmptyButtons) {
                 auto* btn = CreateUIObject<Button>(info.first);
                 // 튜토리얼용 보관
@@ -186,12 +195,12 @@ namespace JDScene {
                 rt->SetParent(bgRect);
 
                 // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
-                rt->SetPivot({ 0.5f, 0.5f });
+                rt->SetPivot({ 0.0f, 0.0f });
                 rt->SetAnchor({ 0.0f, 0.0f });
                 rt->SetSize({ 50, 50 });
 
                 // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
-                rt->SetPosition({ x, yOffset });
+                rt->SetPosition({ x, y });
 
 
                 // LEGACY : 과거 코드
@@ -311,6 +320,11 @@ namespace JDScene {
         for (auto& objPtr : m_gameObjects) {
             auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
             if (!collider) continue;
+            
+            auto* grid = dynamic_cast<Grid*>(objPtr.get());
+            if (!grid)
+                continue;
+
             int id = collider->GetIndex();
 
             if (!collider->IsMouseOver(mousePos))
@@ -322,14 +336,6 @@ namespace JDScene {
             }
             else if (right && collider->IsOpen()) {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
-                // 우클릭: 열린 콜라이더만 동작
-
-                if (!m_Menu) {
-                    std::cerr << "[ERROR] m_emptyMenu is nullptr!\n";
-                    return;
-                }
-                m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 0.0f, 0.0f, 1.0f));
-            
 
                 m_selectedCollider = collider;
 
@@ -348,8 +354,8 @@ namespace JDScene {
         float mouseY = static_cast<float>(state.pos.y);
         if (m_lightParticles) {
             m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
+            m_lightParticles->Emit(Vector2F{ mouseX, mouseY }, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f), 2.5f);
         }
-
         ClickUpdate();
     }
 
@@ -440,7 +446,6 @@ namespace JDScene {
 
         if (state.leftClicked)
         {
-            std::cout << "이거 실행됨?!#";
 
             // (1) 마우스 좌표를 한 번만 계산해서 재사용합니다.
             // UI 클릭 판정에 사용할 스크린 좌표 (D2D 기준: Y 아래가 양수)
@@ -464,7 +469,7 @@ namespace JDScene {
                 {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
-                    std::cout << " UI 오브젝트 클릭 함!!!!! ";
+                    //std::cout << " UI 오브젝트 클릭";
 
                     if (uiObj.get()->GetParent() == m_Menu) {
                         m_selectedTool = static_cast<Button*>(uiObj.get());
@@ -474,28 +479,26 @@ namespace JDScene {
                             auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
                             //건물유무
                             boxCol->SetHasBuilding(true);
-                            //선택된 콜라이더 사이즈
+
+                            //콜라이더 월드 위치 및 스케일 가져와서 이미지에 적용
                             Vector2F halfSize = boxCol->GetHalfSize();
                             Vector2F fullSize = { halfSize.x * 2.f, halfSize.y * 2.f };
 
-                            // 1) 콜라이더 월드 위치
                             Vector2F tileWorldPos = m_selectedCollider->GetOwner()
                                 ->GetComponent<Transform>()->GetWorldPosition();
 
-                            // 2) Building 생성
-                            auto* building = CreateGameObject<Building>(
-                                L"Building_" + m_selectedTool->GetName()
-                            );
-                            auto& uptr = m_gameObjects.back();
-                            GameObject* rawPtr = uptr.get();
-                            m_TutorialObjects.push_back(rawPtr);
+                            Vector2F leftBottom = Vector2F{ tileWorldPos.x - halfSize.x, tileWorldPos.y - halfSize.y };
+                            Vector2F rightBottom = Vector2F{ tileWorldPos.x + halfSize.x, tileWorldPos.y - halfSize.y };
 
-                            // 3) 버튼(UIObject)의 이미지 컴포넌트에서 텍스처 키 가져오기
+                            m_lightParticles->Emit(leftBottom, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f));
+                            m_lightParticles->SetParticleLife(2.0f);
+                            m_lightParticles->Emit(worldMousePos, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f));
+
                             auto* uiImage = m_selectedTool->GetComponent<JDComponent::UI_ImageComponent>();
                             std::string texKey = uiImage
                                 ? uiImage->GetTextureName()
                                 : std::string("DefaultTexture");
-
+                            
                             auto* bitmap = static_cast<ID2D1Bitmap*>(
                                 AssetManager::Instance().GetTexture(texKey));
                             auto bmpSize = bitmap->GetSize();
@@ -504,18 +507,45 @@ namespace JDScene {
                                 fullSize.x / bmpSize.width,
                                 fullSize.y / bmpSize.height
                             };
-                            building->GetComponent<Transform>()->SetScale(scale);
-
-                            // 4) Building에 TextureRenderer 컴포넌트 붙이고 텍스처 설정
-                            auto* tr = building->AddComponent<TextureRenderer>(
-                                texKey,
-                                RenderLayerInfo{ SortingLayer::BackGround, 0 }
-                            );
-                            tr->SetTextureName(texKey);
-
-                            // 5) Building 월드 위치 배치
-                            building->GetComponent<Transform>()->SetPosition(tileWorldPos);
                             
+                            //선택한 버튼에 타입에 따른 오브젝트 생성
+                            GameObject* building = nullptr;
+
+                            if (texKey == "fishing") {
+                                building = CreateGameObject<FishingSpot>(L"FishingSpot_" + m_selectedTool->GetName());
+                            }
+                            else if (texKey == "lumbermill") {
+                                building = CreateGameObject<House>(L"House_" + m_selectedTool->GetName());
+                            }
+                            else if (texKey == "mine") {
+                                building = CreateGameObject<LumberMill>(L"LumberMill_" + m_selectedTool->GetName());
+                            }
+                            else if (texKey == "cabin") {
+                                building = CreateGameObject<Mine>(L"Mine_" + m_selectedTool->GetName());
+                            }
+                            else {
+                                // 그 외 Building 기본 생성
+                                //building = CreateGameObject<Building>(L"Building_" + m_selectedTool->GetName());
+                            }
+
+                            if (building) {
+                                m_TutorialObjects.push_back(building);
+                                std::cout << "건물 추가됨" << std::endl;
+                                building->GetComponent<Transform>()->SetScale(scale);
+                                auto* tr = building->AddComponent<TextureRenderer>(
+                                    texKey,
+                                    RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                                );
+
+                                tr->SetTextureName(texKey);
+
+                                building->GetComponent<Transform>()->SetPosition(tileWorldPos);
+                            }
+                            else
+                            {
+                                std::cout << "건물 추가 에러발생 장~후~장~후~~~~" << std::endl;
+                            }
+
                             // 6) 메뉴 닫기 & 버튼 숨기기
                             m_Menu->SetActive(false);
                             for (auto* btn : m_menuButtons)

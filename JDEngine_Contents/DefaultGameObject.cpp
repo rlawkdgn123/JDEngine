@@ -21,5 +21,21 @@ namespace JDGameObject {
             else { return; }
         }
 
+        void DefaultObject::Update(float deltaTime)
+        {
+        }
+
+        void DefaultObject::LateUpdate(float deltaTime)
+        {
+        }
+
+        void DefaultObject::FixedUpdate(float fixedDeltaTime)
+        {
+        }
+
+        void DefaultObject::OnDestroy()
+        {
+        }
+
     }
 }

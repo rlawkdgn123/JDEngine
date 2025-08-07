@@ -15,7 +15,6 @@ using JDComponent::BoxCollider;
 
 namespace JDScene {
 
-
     void DefaultScene::OnEnter() {}
 
     void DefaultScene::OnLeave() {}

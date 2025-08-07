@@ -7,14 +7,19 @@ using SortingLayer = JDGlobal::Base::SortingLayer;
 
 namespace JDComponent {
     class TextureRenderer : public Component {
+
     public:
+
         TextureRenderer(std::string textureName,
             const RenderLayerInfo& layerInfo = { SortingLayer::None, 0 })
             : m_textureName(std::move(textureName))
             , m_layerInfo(layerInfo)
         {
         }
+    private:
+        TextureRenderer() = delete;
 
+    public:
         void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
 
         void        SetTextureName(std::string& name) { m_textureName = name; }

@@ -5,6 +5,11 @@
 #include "ParticleSystem.h"
 
 namespace JDScene {
+
+    using Image = JDGameObject::Content::Image;
+    using Text = JDGameObject::Content::Text;
+    using Button = JDGameObject::Content::Button;
+
 	class TitleScene : public SceneBase
 	{
     public:

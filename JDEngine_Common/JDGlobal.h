@@ -11,14 +11,14 @@ namespace JDGlobal {
 		{
 			None,
 			Player,
-			PlayerMove,
 			PlayerCat,
 			PlayerBuilding,
 			Enemy,
-			EnemyMove,
 			EnemyCat,
 			EnemyBuilding,
 			Barracks,
+			BattleAnim,
+			Wall,
 			NPC,
 			UI,
 			Mover
@@ -211,6 +211,12 @@ namespace JDGlobal {
 			inline int GetAllCats() {return (Felis + Navi + Kone);}
 		};
 
+		enum class State { // 상태.
+			Idle,
+			Move,
+			Back
+		};
+
 		struct WorkerStats {
 			int m_populationCost;            // 인구 비용
 			Resource m_resourceBonus[3];     // 자원 보너스 (고양이 타입 * 3)
@@ -223,7 +229,6 @@ namespace JDGlobal {
 			Resource m_upgradeCost[MAX_GAME_LEVEL];             // 업그레이드 비용 * 3레벨 (1레벨은 빌드 비용)
 			Resource m_resourceGenPerSec[MAX_GAME_LEVEL];       // 초당 자원 획득량
 			Resource m_resourceSubPerSec[MAX_GAME_LEVEL];       // 초당 자원 유지비용 (소모)
-
 			void PrintStats();
 		};
 

@@ -105,7 +105,7 @@ namespace JDScene {
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<Editor_Clickable>();
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-            boxObj3->AddComponent<AnimationRender>("Norway", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
+            boxObj3->AddComponent<AnimationRender>("Russ", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
 
             // LEGACY
             //auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
@@ -117,7 +117,7 @@ namespace JDScene {
             //    birdObj->AddComponent<BoxCollider>(halfSize);
             //    birdObj->AddComponent<Editor_Clickable>();
 
-            auto frames = AssetManager::Instance().GetAnimationRender("Norway");
+            auto frames = AssetManager::Instance().GetAnimationRender("Russ");
             if (frames && !frames->frames.empty()) {
                 auto first = frames->frames[0].srcRect;
                 float width = first.right - first.left;

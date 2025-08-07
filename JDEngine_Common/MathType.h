@@ -142,6 +142,11 @@ namespace JDGlobal {
 				return (this->x * this->x + this->y * this->y);
 			}
 
+			Vector2F Normalized() const {
+				float len = Length();
+				return (len > 0.001f) ? *this / len : Vector2F(0, 0);
+			}
+
 			float Normalize()
 			{
 				float length = Length();

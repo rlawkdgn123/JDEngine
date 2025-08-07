@@ -558,9 +558,13 @@ void D2DRenderer::CreateWriteResource()
     // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
 
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 58.0f, "Sebang_58");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 32.0f, "Sebang_Bold_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 58.0f, "Sebang_Bold_58");
     CreateFormatFromFile(L"../Resource/FONT/Pinkfong Baby Shark Font_ Bold.otf", 40.0f, "Pinkfong_Bold_40");
 }
 

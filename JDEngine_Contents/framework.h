@@ -23,3 +23,4 @@
 #include "SFX.h"
 
 #include "DataTableManager.h"
+#include "SceneList.h"

@@ -6,7 +6,7 @@ namespace JDGameObject {
         class LumberMill : public JDGameObject::Content::Building
         {
         public:
-            LumberMill() : Building(L"DefaultObject") {}
+            LumberMill() : Building(L"LumberMill") {}
             LumberMill(const std::wstring& name) : Building(name) {}
             void Awake() override;                               // 최초 1회만 호출
             void Start() override;                               // 최초 1회만 호출

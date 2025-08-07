@@ -9,7 +9,7 @@
 #include "ColliderBase.h"
 #include "CameraFader.h"
 #include "ParticleSystem.h"
-
+#include "BuildSystem.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -36,15 +36,13 @@ namespace JDScene {
 
         void ClickUpdate();
 
-        void ShowEmptyMenu();
+        void ShowGridCreateMenu();
 
-        void ShowFilledMenu();
+        void ShowGridSettingMenu();
     private:
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
 
-        int m_totalCols = 4;
-        int m_totalRows = 6;
         std::vector<bool> m_isOpen;
 
         CameraFader  m_fader;
@@ -54,13 +52,15 @@ namespace JDScene {
         Button* m_selectedTool = nullptr;
         JDComponent::ColliderBase* m_selectedCollider = nullptr;
         
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        std::vector<Button*> m_gridCreateButtons;
 
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;
         std::vector<UIObject*> m_TutorialUIObjects;
         std::vector<GameObject*> m_TutorialObjects;
+
+        std::unique_ptr<BuildSystem> m_BuildSystem;
     };
 }

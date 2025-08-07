@@ -108,7 +108,10 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_RESOURCE = 9999;  // 자원 최대치
 		constexpr int MAX_GAME_POPULATION = 999; // 인구 최대치
 		constexpr int MAX_GAME_LEVEL = 3;	 // 업그레이드 최대치
-		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치
+		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
+		constexpr int MAX_GAME_GRID_COL = 4;
+		constexpr int MAX_GAME_GRID_RAW = 6;
+		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_RAW;
 		constexpr int RESOURCE_COUNT = 3;
 		struct Resource {
 
@@ -192,7 +195,8 @@ namespace JDGlobal {
 		};
 
 		enum class CatType : int {
-			Felis = 0,
+			None = -1,
+			Felis,
 			Navi,
 			Kone,
 			CatTypeMAX // 고양이 종족 수

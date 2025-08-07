@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace JDGameObject::Content;
+using namespace JDGlobal::Contents;
 using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
@@ -22,16 +23,12 @@ namespace JDScene {
 
         //cout << "[TestScene] OnEnter()\n";
 
-
-        CreateGameObject<House>();
-        CreateGameObject<FishingSpot>();
-        CreateGameObject<Mine>();
-        CreateGameObject<LumberMill>();
-
-        CreateGameObject<Player>(L"Plyaer");
+        CreateGameObject<Player>(L"Player");
 
         std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
         std::shared_ptr<GameObject> birdObj = std::make_shared<GameObject>();
+
+        m_BuildSystem = make_unique<BuildSystem>(); // 빌드 시스템 추가 (게임 관련 씬에만 추가할 것)
 
         // =====================================================================
         // 게임 오브젝트 생성 (World Space)
@@ -40,32 +37,7 @@ namespace JDScene {
         m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
         m_fader.FadeIn(1.0f, 0.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
-        const float startX = -500.0f;
-        const float startY = 300.0f;
-        const float spacingX = 100.0f;
-        const float spacingY = -100.0f;
-
-        for (int col = 0; col < m_totalCols; ++col) {
-            for (int row = 0; row < m_totalRows; ++row) {
-
-                // 1) 이름 생성
-                std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
-
-                // 2) 생성
-                auto* box = CreateGameObject<Grid>(name.c_str());
-
-                // 3) 위치 세팅
-                float x = startX + spacingX * col;
-                float y = startY + spacingY * row;
-                box->GetComponent<Transform>()->SetPosition({ x, y });
-                box->AddComponent<Editor_Clickable>();
-
-                // 4) 콜라이더 추가 및 인덱스 부여
-                auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
-                int idx = col * m_totalRows + row;         // 0부터 (5*7-1) = 34 까지
-                collider->SetIndex(idx);
-            }
-        }
+        m_BuildSystem->CreateGrid(this);
 
         auto* circObj = CreateGameObject<Player>(L"CircleObject");
         circObj->GetComponent<Transform>()->SetPosition({ 200.0f, 100.0f });
@@ -128,15 +100,15 @@ namespace JDScene {
             }
         }
 
-        int startCol = 1, startRow = 2;
-        int regionW = 3, regionH = 3;
+        //int startCol = 1, startrow = 2;
+        //int regionW = 3, regionH = 3;
 
-        for (int c = startCol; c < startCol + regionW; ++c) {
-            for (int r = startRow; r < startRow + regionH; ++r) {
-                int idx = c * m_totalRows + r;
-                m_gameObjects[idx]->GetComponent<ColliderBase>()->SetOpen(true);
-            }
-        }
+        //for (int c = startCol; c < startCol + regionW; ++c) {
+        //    for (int r = startrow; r < startrow + regionH; ++r) {
+        //        int idx = c * m_totalrows + r;
+        //        m_gameObjects[idx]->GetComponent<ColliderBase>()->SetOpen(true);
+        //    }
+        //}
 
         // =====================================================================
         // UI 오브젝트 생성 (Screen Space)
@@ -185,7 +157,7 @@ namespace JDScene {
                 auto* btn = CreateUIObject<Button>(info.first);
                 // 튜토리얼용 보관
                 m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_emptyButtons.push_back(btn);
+                m_gridCreateButtons.push_back(btn);
 
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
@@ -226,7 +198,7 @@ namespace JDScene {
             for (auto& info : FilledButtons) {
                 auto* btn = CreateUIObject<Button>(info.first);
                 m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_filledButtons.push_back(btn);
+                m_gridSettingButtons.push_back(btn);
 
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
@@ -318,34 +290,46 @@ namespace JDScene {
         auto mousePos = GetMouseWorldPos();
 
         for (auto& objPtr : m_gameObjects) {
+
             auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
-            if (!collider) continue;
-            
             auto* grid = dynamic_cast<Grid*>(objPtr.get());
-            if (!grid)
-                continue;
 
+            if (!collider || !grid) continue;
+                
+            if (!collider->IsMouseOver(mousePos)) continue;
+                
             int id = collider->GetIndex();
-
-            if (!collider->IsMouseOver(mousePos))
-                continue;
 
             if (left) {
                 collider->SetOpen(true);
                 std::cout << "[DEBUG] left ID: " << id << std::endl;
             }
-            else if (right && collider->IsOpen()) {
+            else if (right) {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
 
-                m_selectedCollider = collider;
-
-                auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
-                if (boxCol->HasBuilding()) {
-                    ShowFilledMenu();
+                if (!collider->IsOpen()) return;
+                
+                if (!grid->IsOccupied()) {
+                    if (grid->IsExpanded()) {
+                        cout << "타일 확장 시도..." << endl;
+                        m_BuildSystem->ExpandTile(grid);
+                    }
+                    else { std::cout << "[DEBUG] 타일 선택 불가!!" << std::endl; return; }
+                    
                 }
                 else {
-                    ShowEmptyMenu();
+                    m_selectedCollider = collider;
+
+                    if (grid->HasBuilding()) {
+                        ShowGridSettingMenu();
+                        cout << "고양창 열어욧" << endl;
+                    }
+                    else {
+                        ShowGridCreateMenu();
+                        cout << "건설창 열어욧" << endl;
+                    }
                 }
+               
             }
         }
 
@@ -478,7 +462,10 @@ namespace JDScene {
                         if (m_selectedCollider) {
                             auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
                             //건물유무
-                            boxCol->SetHasBuilding(true);
+                            if (Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner())) {
+                                if(!grid->HasBuilding()) 
+                                    grid->SetHasBuilding(true);
+                            }
 
                             //콜라이더 월드 위치 및 스케일 가져와서 이미지에 적용
                             Vector2F halfSize = boxCol->GetHalfSize();
@@ -511,7 +498,19 @@ namespace JDScene {
                             //선택한 버튼에 타입에 따른 오브젝트 생성
                             GameObject* building = nullptr;
 
-                            if (texKey == "fishing") {
+                            if (texKey.empty()) {
+                                std::cout << "유효하지 않은 텍스처 키입니다." << std::endl;
+                                // 6) 메뉴 닫기 & 버튼 숨기기
+                                m_Menu->SetActive(false);
+                                for (auto* btn : m_menuButtons)
+                                    if (btn) btn->SetActive(false);
+
+                                // 7) 선택 초기화
+                                m_selectedTool = nullptr;
+                                m_selectedCollider = nullptr;
+                                break;
+                            }
+                            else if (texKey == "fishing") {
                                 building = CreateGameObject<FishingSpot>(L"FishingSpot_" + m_selectedTool->GetName());
                             }
                             else if (texKey == "lumbermill") {
@@ -526,10 +525,13 @@ namespace JDScene {
                             else {
                                 // 그 외 Building 기본 생성
                                 //building = CreateGameObject<Building>(L"Building_" + m_selectedTool->GetName());
+                                cout << "texKey 오류 : 찾을 수 없음" << endl;
                             }
 
                             if (building) {
                                 m_TutorialObjects.push_back(building);
+                                dynamic_cast<Grid*>(boxCol->GetOwner())->SetBuilding(building);
+                                
                                 std::cout << "건물 추가됨" << std::endl;
                                 building->GetComponent<Transform>()->SetScale(scale);
                                 auto* tr = building->AddComponent<TextureRenderer>(
@@ -543,7 +545,7 @@ namespace JDScene {
                             }
                             else
                             {
-                                std::cout << "건물 추가 에러발생 장~후~장~후~~~~" << std::endl;
+                                std::cout << "건물 추가 에러발생" << std::endl;
                             }
 
                             // 6) 메뉴 닫기 & 버튼 숨기기
@@ -591,19 +593,19 @@ namespace JDScene {
         }
     }
 
-    void TutorialScene::ShowEmptyMenu() {
-        m_Menu->SetActive(true);
-        // 빈 메뉴 버튼들만 켜고
-        for (auto* btn : m_emptyButtons)   btn->SetActive(true);
-        // 채운 메뉴 버튼들은 끄기
-        for (auto* btn : m_filledButtons)  btn->SetActive(false);
-    }
-
-    void TutorialScene::ShowFilledMenu() {
+    void TutorialScene::ShowGridCreateMenu() {
         m_Menu->SetActive(true);
         // 빈 메뉴 버튼들 끄고
-        for (auto* btn : m_emptyButtons)   btn->SetActive(false);
+        for (auto* btn : m_gridSettingButtons)   btn->SetActive(false);
         // 채운 메뉴 버튼들 켜기
-        for (auto* btn : m_filledButtons)  btn->SetActive(true);
+        for (auto* btn : m_gridCreateButtons)  btn->SetActive(true);
+    }
+
+    void TutorialScene::ShowGridSettingMenu() {
+        m_Menu->SetActive(true);
+        // 빈 메뉴 버튼들만 켜고
+        for (auto* btn : m_gridSettingButtons)   btn->SetActive(true);
+        // 채운 메뉴 버튼들은 끄기
+        for (auto* btn : m_gridCreateButtons)  btn->SetActive(false);
     }
 }

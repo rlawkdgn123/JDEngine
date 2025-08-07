@@ -45,6 +45,24 @@ namespace JDScene {
 
         float   m_sakuraEmissionRate = 5.0f;
         float   m_sakuraEmitAccumulator = 0.0f;
+
+        // 옵션창
+        Image* m_optionUI = nullptr;
+        Image* m_optionVolume = nullptr;
+        Image* m_optionControl = nullptr;
+        Image* m_optionCredit = nullptr;
+
+        Button* m_closeOption = nullptr;
+
+        // 옵션 선택 실제 버튼
+        Button* m_selectVolume = nullptr;
+        Button* m_selectControl = nullptr;
+        Button* m_selectCredit = nullptr;
+
+        // 옵션 선택 더미 이미지
+        Image* m_selectVolumeDummy = nullptr;
+        Image* m_selectControlDummy = nullptr;
+        Image* m_selectCreditDummy = nullptr;
 	};
 }
 

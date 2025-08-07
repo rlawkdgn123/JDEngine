@@ -3,12 +3,20 @@
 #include"JDGlobal.h"
 
 namespace JDMath = JDGlobal::Math;
+
 namespace JDGlobal {
 	namespace Base {
 	}
 	namespace Core {
 	}
 	namespace Contents {
+
+		void Resource::ResourcePrint() const{
+			std::cout << "m_food : " << m_food << std::endl;
+			std::cout << "m_wood : " << m_food << std::endl;
+			std::cout << "m_mineral : " << m_food << std::endl;
+		}
+
 		void BuildingStats::PrintStats() {
 			// 헤더 출력
 			std::cout << "자원,초기자원,"

@@ -126,6 +126,8 @@ namespace JDGlobal {
 			int m_wood;
 			int m_mineral;
 
+			void ResourcePrint() const;
+
 			Resource& operator=(const Resource& other) {
 				m_food = other.m_food;
 				m_wood = other.m_wood;
@@ -155,6 +157,14 @@ namespace JDGlobal {
 					m_food - other.m_food,
 					m_wood - other.m_wood,
 					m_mineral - other.m_mineral
+				};
+			}
+
+			Resource operator*(const int& num) const {
+				return Resource{
+					m_food * num,
+					m_wood * num,
+					m_mineral * num
 				};
 			}
 
@@ -192,6 +202,13 @@ namespace JDGlobal {
 			FishingSpot,
 			LumberMill,
 			Mine
+		};
+		
+		struct Cats {
+			int Felis;
+			int Navi;
+			int Kone;
+			inline int GetAllCats() {return (Felis + Navi + Kone);}
 		};
 
 		struct WorkerStats {

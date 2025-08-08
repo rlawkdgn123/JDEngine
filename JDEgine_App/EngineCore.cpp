@@ -1859,9 +1859,10 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
-    {
-        std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl;
-    }
+    { std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("f1", L"../Resource/character/Norway/f1.png"))
+    { std::cout << "[ERROR] f1 텍스처 로드 실패!" << std::endl; }
 
     if (!AssetManager::Instance().LoadTexture("Russ", L"../Resource/Animation/character_russ_sprite_01.png"))
     {

@@ -210,9 +210,6 @@ namespace JDScene {
             });
 
 
-            m_lightParticles = std::make_unique<ParticleSystem>(
-            D2DRenderer::Instance().GetD2DContext()
-        );
 
         //////////////////////////////////////////////////////////////////////////////////
 
@@ -568,7 +565,7 @@ namespace JDScene {
                 float x = RandomFloat(sakuraMin.x, sakuraMax.x);
                 float y = RandomFloat(sakuraMin.y, sakuraMax.y);
                 Vector2F spawnPos{ x, y };
-                m_lightParticles->SpawnFallingParticle(
+                m_sakuraParticles->SpawnFallingParticle(
                     spawnPos,
                     /*color=*/D2D1::ColorF(1.f, 0.8f, 0.9f, 1.f),
                     /*scale=*/scale,

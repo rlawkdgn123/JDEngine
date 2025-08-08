@@ -221,6 +221,29 @@ namespace JDGlobal {
 			Back
 		};
 
+		enum class UnitType : int // 병사 종류.
+		{
+			Novice = 0, // 견습냥이.
+			Expert, // 숙련냥이
+			Count
+		};
+
+		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
+		public:
+			UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
+				: m_unitType(type), m_recruitCost(cost), m_power(power) {
+			}
+
+			UnitType GetUnitType() const { return m_unitType; }
+			Resource GetRecruitCost() const { return m_recruitCost; }
+			int GetPower() const { return m_power; }
+
+		private:
+			UnitType m_unitType;
+			Resource m_recruitCost;
+			int m_power;
+		};
+
 		struct WorkerStats {
 			int m_populationCost;            // 인구 비용
 			Resource m_resourceBonus[3];     // 자원 보너스 (고양이 타입 * 3)

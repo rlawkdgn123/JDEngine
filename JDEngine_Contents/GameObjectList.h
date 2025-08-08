@@ -15,3 +15,4 @@
 // others
 #include "Grid.h"
 #include "Player.h"
+#include "Soldier.h"

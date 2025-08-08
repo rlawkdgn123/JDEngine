@@ -3,31 +3,10 @@
 
 namespace JDGameSystem {
     using Resource = JDGlobal::Contents::Resource;
-
-    enum class UnitType : int // 병사 종류.
-    {
-        Novice = 0, // 견습냥이.
-        Expert, // 숙련냥이
-        Count
-    };
+    using UnitType = JDGlobal::Contents::UnitType;
+    using UnitTypeData = JDGlobal::Contents::UnitTypeData;
 
     constexpr int UnitTypeCount = static_cast<int>(UnitType::Count);
-
-    class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
-    public:
-        UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
-            : m_unitType(type), m_recruitCost(cost), m_power(power) {
-        }
-
-        UnitType GetUnitType() const { return m_unitType; }
-        Resource GetRecruitCost() const { return m_recruitCost; }
-        int GetPower() const { return m_power; }
-
-    private:
-        UnitType m_unitType;
-        Resource m_recruitCost;
-        int m_power;
-    };
 
     struct UnitCounts { // 병사 수 정보.
         std::array<int, UnitTypeCount> counts{};
@@ -38,6 +17,13 @@ namespace JDGameSystem {
 
         const int& operator[](UnitType type) const {
             return counts[static_cast<int>(type)];
+        }
+
+        UnitCounts& operator+=(const UnitCounts& other) {
+            for (int i = 0; i < UnitTypeCount; ++i) {
+                counts[i] += other.counts[i];
+            }
+            return *this;
         }
 
         int Total() const {
@@ -58,14 +44,16 @@ namespace JDGameSystem {
         int GetTotalUnits() const { return m_unitCounts.Total(); }
         const std::array<UnitTypeData, UnitTypeCount>& GetUnitTypes() const { return m_unitTypes; }
 
-        void SetUnitCounts(const UnitCounts& army); // 인구 수 변화 있음.
+        // void SetUnitCounts(const UnitCounts& army); // 인구 수 변화 있음. 일단 필요 없어 보여서 주석처리.
         void OverrideUnitCounts(const UnitCounts& army) { m_unitCounts = army; } // 인구 수 변화 없음.
 
         bool RecruitUnits(UnitType type);
+        bool DecreaseUnitCount();
+
         int CalculateTotalPower() const;
 
     private:
-        std::array<UnitTypeData, UnitTypeCount> m_unitTypes;
+        std::array<UnitTypeData, UnitTypeCount> m_unitTypes; // 병종 정보 저장용.
         UnitCounts m_unitCounts;
     };
 }

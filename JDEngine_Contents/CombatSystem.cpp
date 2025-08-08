@@ -53,16 +53,80 @@ namespace JDGameSystem {
 		counts[UnitType::Novice] -= w_n_loss;
 		counts[UnitType::Expert] -= w_e_loss;
 
-		UnitCounts{ 10, 20 };
-
 		// 손실 출력 (디버깅용)
-		int prevTotalPower = player.CalculateTotalPower();
+		//int prevTotalPower = player.CalculateTotalPower();
 
-		player.SetUnitCounts(counts);
+		////player.SetUnitCounts(counts);
 
-		int diffTotalPower = prevTotalPower - player.CalculateTotalPower();
+		//int diffTotalPower = prevTotalPower - player.CalculateTotalPower();
 
-		std::cout << "[CombatSystem] 손실 병사 수: Novice - " << w_n_loss << ", Expert - " << w_e_loss << std::endl;
-		std::cout << "[CombatSystem] 전투력 손실: " << diffTotalPower << std::endl;
+		//std::cout << "[CombatSystem] 손실 병사 수: Novice - " << w_n_loss << ", Expert - " << w_e_loss << std::endl;
+		//std::cout << "[CombatSystem] 전투력 손실: " << diffTotalPower << std::endl;
+	}
+
+	void CombatSystem::ResolveBattle(const UnitCounts& playerUnits, int playerPower,
+		                             const UnitCounts& enemyUnits, int enemyPower,
+		                             UnitCounts& outPlayerResult, UnitCounts& outEnemyResult) {
+		// 총 공격력.
+		float P_my = static_cast<float>(playerPower);
+		float P_enemy = static_cast<float>(enemyPower);
+
+		if (P_enemy <= 0.0f) { // 0 이하 나누기 방지.
+			outPlayerResult = playerUnits;
+			std::cout << "[CombatSystem] Invalid enemy TotalPower." << P_enemy <<std::endl;
+			return;
+		}
+
+		if (P_my <= 0.0f) { // 0 이하 나누기 방지.
+			outEnemyResult = enemyUnits;
+			std::cout << "[CombatSystem] Invalid player TotalPower." << std::endl;
+			return;
+		}
+
+		// 우세도 계산.
+		float R_my = P_my / P_enemy;
+		float R_enemy = P_enemy / P_my;
+
+		// 손실률 계산. 
+		float L_my;
+		float L_enemy;
+
+		if (R_my <= 1.0f)		L_my = 1.0f;
+		else if (R_my > 10.0f) L_my = 0.29f;
+		else L_my = 0.772f * std::expf(-0.098f * R_my);
+
+		if (R_enemy <= 1.0f)		L_enemy = 1.0f;
+		else if (R_enemy > 10.0f) L_enemy = 0.29f;
+		else L_enemy = 0.772f * std::expf(-0.098f * R_enemy);
+
+		//  손실된 병사 수 계산 및 반영.
+		int N_my = playerUnits.Total();
+		int N_loss_my = static_cast<int>(N_my * L_my);
+
+		int N_enemy = enemyUnits.Total();
+		int N_loss_enemy = static_cast<int>(N_enemy * L_enemy);
+
+		// 랜덤 수치 추가. 이건 아군만 적용.
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		static std::uniform_int_distribution<int> dist(-3, 3);
+		int randVal = dist(gen);
+		N_loss_my = JDMath::Clamp(N_loss_my + randVal, 0, N_my);
+
+		// 결과.
+		int W_n_my = playerUnits[UnitType::Novice];
+		int w_n_loss_my = std::min(W_n_my, N_loss_my);
+		int w_e_loss_my = std::max(0, N_loss_my - W_n_my);
+
+		outPlayerResult[UnitType::Novice] = std::max(0, playerUnits[UnitType::Novice] - w_n_loss_my);
+		outPlayerResult[UnitType::Expert] = std::max(0, playerUnits[UnitType::Expert] - w_e_loss_my);
+
+		int W_n_enemy = enemyUnits[UnitType::Novice];
+		int w_n_loss_enemy = std::min(W_n_enemy, N_loss_enemy);
+		int w_e_loss_enemy = std::max(0, N_loss_enemy - W_n_enemy);
+
+		outEnemyResult[UnitType::Novice] = std::max(0, enemyUnits[UnitType::Novice] - w_n_loss_enemy);
+		outEnemyResult[UnitType::Expert] = std::max(0, enemyUnits[UnitType::Expert] - w_e_loss_enemy);
+
 	}
 }

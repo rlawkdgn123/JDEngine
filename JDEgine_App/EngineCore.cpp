@@ -130,7 +130,7 @@ bool EngineCore::Initialize()
     }
 
     DataTableManager::Instance().Initalize();
-
+    DataTableManager::Instance().PrintAllTable();
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/

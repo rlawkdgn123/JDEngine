@@ -18,6 +18,7 @@ namespace JDGameObject {
         {
             __super::Start();
             Resource bonus = JDUtil::GetCatBonus(m_cat);
+            m_resourceSystem->AddResourcePerSec(stats.m_resourceGenPerSec[m_nowLevel]);
             //m_resourceSystem->
         }
         void FishingSpot::Update(float deltaTime)
@@ -32,7 +33,6 @@ namespace JDGameObject {
                 //초당 작업 입력
                 cout << "FishingSpot - 1초가 지났읍니다..." << endl;
 
-                m_resourceSystem->AddResourcePerSec(stats.m_resourceGenPerSec[m_nowLevel]);
                 m_resourceSystem->GetTotalResourcePerSec().ResourcePrint();
             }
         }

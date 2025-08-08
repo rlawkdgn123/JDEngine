@@ -137,10 +137,14 @@ namespace JDScene {
         { L"LumberMill", "lumbermill" },
         { L"Mine", "mine" },
         { L"House", "cabin" },
+        { L"House", "cabin" },
         // 필요하다면 더 추가…
         }; 
         std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
-        { L"CAT", "CAT" },
+        { L"Felis", "CAT" },
+        { L"Navi", "CAT" },
+        { L"Kone", "CAT" },
+        { L"None", "CAT" },
         // 필요하다면 더 추가…
         };
 

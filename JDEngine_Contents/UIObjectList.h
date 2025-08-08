@@ -143,12 +143,18 @@ namespace JDGameObject {
 			// RectTransform 제어
 			////////////////////////////////////////////////////////////////////////////////
 
-			void SetPosition(const Vector2f& pos) { if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos); }
-			void SetSize(const Vector2f& size) { if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size); }
-			void SetRotation(float angle) { if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle); }
-			void SetScale(const Vector2f& scale) { if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale); }
-			void SetAnchor(const Vector2f& anchor) { if (auto comp = GetComponent<RectTransform>()) comp->SetAnchor(anchor); }
-			void SetPivot(const Vector2f& pivot) { if (auto comp = GetComponent<RectTransform>()) comp->SetPivot(pivot); }
+			void SetPosition(const Vector2f& pos) {
+				if (auto comp = GetComponent<RectTransform>()) comp->SetPosition(pos);
+			}
+			void SetSize(const Vector2f& size) {
+				if (auto comp = GetComponent<RectTransform>()) comp->SetSize(size);
+			}
+			void SetRotation(float angle) {
+				if (auto comp = GetComponent<RectTransform>()) comp->SetRotation(angle);
+			}
+			void SetScale(const Vector2f& scale) {
+				if (auto comp = GetComponent<RectTransform>()) comp->SetScale(scale);
+			}
 
 			// Getter
 			Vector2f GetPosition() const {

@@ -199,11 +199,9 @@ namespace JDGlobal {
 		};
 
 		enum class BuildingType : int {
-			House,
 			FishingSpot,
 			LumberMill,
-			Mine,
-			Lab
+			Mine
 		};
 		
 		struct Cats {

@@ -112,25 +112,22 @@ namespace JDComponent {
 		// 코드 간소화 - 피벗 이동을 매트릭스에 포함시킴
 		void Transform::UpdateMatrices()
 		{
-			// 1. 피벗을 원점으로 이동시키는 행렬
+			// 1. 피벗의 위치를 원점으로 옮기는 행렬
+			//    (Scale과 Rotation을 피벗 기준으로 적용하기 위함)
 			const auto P = D2D1::Matrix3x2F::Translation(-m_pivot.x, -m_pivot.y);
 
-			// 2. 크기 조절 행렬
+			// 2. 크기 및 회전 행렬
 			const auto S = D2D1::Matrix3x2F::Scale(m_scale.x, m_scale.y);
-
-			// 3. 회전 행렬
 			const auto R = D2D1::Matrix3x2F::Rotation(m_rotation);
 
-			// 4. 피벗을 다시 원래 위치로 되돌리는 행렬 (P의 역행렬)
-			const auto P_inv = D2D1::Matrix3x2F::Translation(m_pivot.x, m_pivot.y);
-
-			// 5. 최종 월드 좌표로 이동시키는 행렬
-			//    Y-up 좌표계를 D2D의 Y-down으로 맞추기 위해 Y 부호 반전
+			// 3. 최종 위치 이동 행렬
+			//    'Y 위쪽이 양수'인 유니티 좌표계를 위해 m_position.y 부호를 뒤집습니다.
 			const auto T = D2D1::Matrix3x2F::Translation(m_position.x, -m_position.y);
 
-			// 올바른 연산 순서: (P * S * R * P_inv) * T
-			// 오브젝트를 제자리에서 스케일/회전시킨 후, 최종 위치로 이동시킵니다.
-			m_matrixLocal = P * S * R * P_inv * T;
+			// 4. 로컬 행렬 계산: P-SR-T 순서 (더 직관적인 방식)
+			//    연산 순서: 피벗을 원점으로 -> 스케일 -> 회전 -> '피벗'을 최종 위치로 이동
+			//    P_inv(피벗 원위치)를 제거하고 T(최종 위치)를 마지막에 곱합니다.
+			m_matrixLocal = P * S * R * T;
 
 			if (m_parent)
 			{
@@ -141,33 +138,6 @@ namespace JDComponent {
 				m_matrixWorld = m_matrixLocal;
 			}
 			m_dirty = false;
-
-			//// 1. 피벗의 위치를 원점으로 옮기는 행렬
-			////    (Scale과 Rotation을 피벗 기준으로 적용하기 위함)
-			//const auto P = D2D1::Matrix3x2F::Translation(-m_pivot.x, -m_pivot.y);
-
-			//// 2. 크기 및 회전 행렬
-			//const auto S = D2D1::Matrix3x2F::Scale(m_scale.x, m_scale.y);
-			//const auto R = D2D1::Matrix3x2F::Rotation(m_rotation);
-
-			//// 3. 최종 위치 이동 행렬
-			////    'Y 위쪽이 양수'인 유니티 좌표계를 위해 m_position.y 부호를 뒤집습니다.
-			//const auto T = D2D1::Matrix3x2F::Translation(m_position.x, -m_position.y);
-
-			//// 4. 로컬 행렬 계산: P-SR-T 순서 (더 직관적인 방식)
-			////    연산 순서: 피벗을 원점으로 -> 스케일 -> 회전 -> '피벗'을 최종 위치로 이동
-			////    P_inv(피벗 원위치)를 제거하고 T(최종 위치)를 마지막에 곱합니다.
-			//m_matrixLocal = P * S * R * T;
-
-			//if (m_parent)
-			//{
-			//	m_matrixWorld = m_matrixLocal * m_parent->GetWorldMatrix();
-			//}
-			//else
-			//{
-			//	m_matrixWorld = m_matrixLocal;
-			//}
-			//m_dirty = false;
 		}
 	}
 }

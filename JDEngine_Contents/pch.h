@@ -46,7 +46,6 @@
 #include <functional>
 #include <fmod.hpp>
 #include <fmod_studio.hpp>
-#include <sstream>
 
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed
 namespace DX

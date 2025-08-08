@@ -13,38 +13,263 @@ using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
-
-
 namespace JDScene {
 
     // TestScene
     void TutorialScene::OnEnter() {
         using namespace JDGameObject;
         using namespace JDComponent;
-        using JDScene::TutorialScene;
 
-        // 게임 맵 생성
-        CreateGameMap();
+        //cout << "[TestScene] OnEnter()\n";
 
-        //// 1) 배경
-        //auto battleMap = CreateUIObject<Image>(L"BATTLE_MAP");
-        //battleMap->SetTextureName("BATTLE_MAP(old)");
 
-        //if (cam)
-        //{
-        //    float screenWidth = static_cast<float>(cam->GetScreenWidth());
-        //    float screenHeight = static_cast<float>(cam->GetScreenHeight());
+        CreateGameObject<House>();
+        CreateGameObject<FishingSpot>();
+        CreateGameObject<Mine>();
+        CreateGameObject<LumberMill>();
 
-        //    // 화면 크기로 설정
-        //    battleMap->SetSize(Vector2F{ screenWidth, screenHeight });
-        //    battleMap->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.25f));
-        //    battleMap->SetPosition({ 0.0f,0.0f });
-        //    battleMap->SetPivot({ 0.5f, 0.5f });
-        //}
+        CreateGameObject<Player>(L"Plyaer");
 
-        // [추가] 튜토리얼 시작
-        m_currentStep = TutorialStep::STEP_1_NOTICE_A;
-        EnterStep1_NoticeA(); // 첫 번째 튜토리얼 단계 시작
+        std::shared_ptr<GameObject> testObject = std::make_shared<GameObject>();
+        std::shared_ptr<GameObject> birdObj = std::make_shared<GameObject>();
+
+        // =====================================================================
+        // 게임 오브젝트 생성 (World Space)
+        // =====================================================================
+
+        m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_fader.FadeIn(1.0f, 0.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+        const float startX = -500.0f;
+        const float startY = 300.0f;
+        const float spacingX = 100.0f;
+        const float spacingY = -100.0f;
+
+        for (int col = 0; col < m_totalCols; ++col) {
+            for (int row = 0; row < m_totalRows; ++row) {
+
+                // 1) 이름 생성
+                std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
+
+                // 2) 생성
+                auto* box = CreateGameObject<Grid>(name.c_str());
+
+                // 3) 위치 세팅
+                float x = startX + spacingX * col;
+                float y = startY + spacingY * row;
+                box->GetComponent<Transform>()->SetPosition({ x, y });
+                box->AddComponent<Editor_Clickable>();
+
+                // 4) 콜라이더 추가 및 인덱스 부여
+                auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
+                int idx = col * m_totalRows + row;         // 0부터 (5*7-1) = 34 까지
+                collider->SetIndex(idx);
+            }
+        }
+
+        auto* circObj = CreateGameObject<Player>(L"CircleObject");
+        circObj->GetComponent<Transform>()->SetPosition({ 200.0f, 100.0f });
+        circObj->AddComponent<Editor_Clickable>();
+        circObj->AddComponent<CircleCollider>(50.0f);
+
+        {//Text
+            auto* boxObj2 = CreateGameObject<Player>(L"BoxObject2");
+
+            boxObj2->SetTag(JDGlobal::Base::GameTag::Mover);
+
+            boxObj2->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            boxObj2->AddComponent<Editor_Clickable>();
+            boxObj2->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+            auto size = bitmap->GetSize();
+            boxObj2->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+
+            boxObj2->AddComponent<SFX>("Step");
+        }
+        {//Text
+            auto* boxObj4 = CreateGameObject<Player>(L"BoxObject4");
+
+            //boxObj4->SetTag(JDGlobal::Base::GameTag::Mover);
+
+            boxObj4->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            //boxObj4->AddComponent<Editor_Clickable>();
+            boxObj4->AddComponent<TextureRenderer>("ATest", RenderLayerInfo{ SortingLayer::BackGround, 3 });
+            auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("ATest"));
+            auto size = bitmap->GetSize();
+            boxObj4->AddComponent<BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+
+            //boxObj4->AddComponent<SFX>("Step");
+        }
+        {//Graybird
+            auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
+            boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
+            boxObj3->AddComponent<Editor_Clickable>();
+            boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            boxObj3->AddComponent<AnimationRender>("Russ", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
+
+            // LEGACY
+            //auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+            //if (frames && !frames->frames.empty()) {
+            //    auto first = frames->frames[0].srcRect;
+            //    float width = first.right - first.left;
+            //    float height = first.bottom - first.top;
+            //    Vector2F halfSize{ width * 0.5f, height * 0.5f };
+            //    birdObj->AddComponent<BoxCollider>(halfSize);
+            //    birdObj->AddComponent<Editor_Clickable>();
+
+            auto frames = AssetManager::Instance().GetAnimationRender("Russ");
+            if (frames && !frames->frames.empty()) {
+                auto first = frames->frames[0].srcRect;
+                float width = first.right - first.left;
+                float height = first.bottom - first.top;
+                Vector2F halfSize{ width * 0.5f, height * 0.5f };
+                birdObj->AddComponent<BoxCollider>(halfSize);
+                birdObj->AddComponent<Editor_Clickable>();
+            }
+        }
+
+        int startCol = 1, startRow = 2;
+        int regionW = 3, regionH = 3;
+
+        for (int c = startCol; c < startCol + regionW; ++c) {
+            for (int r = startRow; r < startRow + regionH; ++r) {
+                int idx = c * m_totalRows + r;
+                m_gameObjects[idx]->GetComponent<ColliderBase>()->SetOpen(true);
+            }
+        }
+
+        // =====================================================================
+        // UI 오브젝트 생성 (Screen Space)
+        // =====================================================================
+
+        // 1) 배경
+        m_Menu = CreateUIObject<Image>(L"MenuBackground");
+
+        auto& uptr = m_uiObjects.back();
+        UIObject* rawPtr = uptr.get();
+        m_TutorialUIObjects.push_back(rawPtr);
+
+        m_Menu->SetTextureName("Menu");
+        m_Menu->SetSizeToOriginal();
+        //m_Menu->SetSize({});
+        m_Menu->SetActive(false);
+
+        auto* bgRect = m_Menu->GetComponent<RectTransform>();
+        bgRect->SetPivot({ 0.f,0.f });
+        bgRect->SetAnchor({ 0.f,0.f });
+        bgRect->SetPosition({ 50, 50 });
+
+        //각버튼 키 목록
+        std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
+        { L"FishingSpot", "fishing" },
+        { L"LumberMill", "lumbermill" },
+        { L"Mine", "mine" },
+        { L"House", "cabin" },
+        // 필요하다면 더 추가…
+        }; 
+        std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
+        { L"CAT", "CAT" },
+        // 필요하다면 더 추가…
+        };
+
+        // 공통 초기 오프셋
+        float xOffset = 0.f;
+        float yOffset = -150.f;
+        float gap = 100.f;
+
+        // 2-1) 빈 메뉴용 버튼 생성
+        {
+            float x = xOffset;
+            float y = yOffset;
+            for (auto& info : EmptyButtons) {
+                auto* btn = CreateUIObject<Button>(info.first);
+                // 튜토리얼용 보관
+                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
+                m_emptyButtons.push_back(btn);
+
+                btn->SetTextureName(info.second);
+                btn->SetText(L"");
+                auto* rt = btn->GetComponent<RectTransform>();
+
+                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
+                rt->SetParent(bgRect);
+
+                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
+                rt->SetPivot({ 0.0f, 0.0f });
+                rt->SetAnchor({ 0.0f, 0.0f });
+                rt->SetSize({ 50, 50 });
+
+                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
+                rt->SetPosition({ x, y });
+
+
+                // LEGACY : 과거 코드
+                /*
+                //rt->SetPivot({ 0,0 }); 
+                //rt->SetAnchor({ 0,0 });
+                //rt->SetSize({ 50,50 });
+                //rt->SetParent(bgRect);
+                //rt->SetPosition({ x, yOffset });
+                */
+                
+                m_Menu->AddChild(btn);
+                btn->SetActive(false);
+                m_menuButtons.push_back(btn);
+
+                x += gap;
+            }
+        }
+
+        // 2-2) 채운 메뉴용 버튼 생성
+        {
+            float x = xOffset;
+            for (auto& info : FilledButtons) {
+                auto* btn = CreateUIObject<Button>(info.first);
+                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
+                m_filledButtons.push_back(btn);
+
+                btn->SetTextureName(info.second);
+                btn->SetText(L"");
+                auto* rt = btn->GetComponent<RectTransform>();
+
+                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
+                rt->SetParent(bgRect);
+
+                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
+                rt->SetPivot({ 0.5f, 0.5f });
+                rt->SetAnchor({ 0.0f, 0.0f });
+                rt->SetSize({ 50, 50 });
+
+                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
+                rt->SetPosition({ x, yOffset });
+
+                // LEGACY : 과거 코드
+                /*
+                //rt->SetPivot({ 0,0 }); 
+                //rt->SetAnchor({ 0,0 });
+                //rt->SetSize({ 50,50 });
+                //rt->SetParent(bgRect);
+                //rt->SetPosition({ x, xOffset });
+                */
+
+                m_Menu->AddChild(btn);
+                btn->SetActive(false);
+                m_menuButtons.push_back(btn);
+
+                x += gap;
+            }
+        }
+
+        auto camera = D2DRenderer::Instance().GetCamera();
+        float screenW = static_cast<float>(camera->GetScreenWidth());
+        float screenH = static_cast<float>(camera->GetScreenHeight());
+
+        // 파티클 시스템 생성
+        m_lightParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+
+        // 이뮬러 위치를 원하는 곳으로 (예: 화면 중앙)
     }
 
     void TutorialScene::OnLeave() {
@@ -53,12 +278,6 @@ namespace JDScene {
 
     void TutorialScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-
-        // 튜토리얼 로직 업데이트
-        UpdateTutorial(deltaTime);
-
-
-        ////////////////////////////////////////////////////////////////////////////////
 
         float speed = 100.f;  // 픽셀/초
         Vector2F delta{ speed * deltaTime, 0.f };
@@ -125,8 +344,7 @@ namespace JDScene {
                     ShowFilledMenu();
                 }
                 else {
-                    isbuild = true;
-                    ShowBuildMenu();
+                    ShowEmptyMenu();
                 }
             }
         }
@@ -138,8 +356,6 @@ namespace JDScene {
             m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
             m_lightParticles->Emit(Vector2F{ mouseX, mouseY }, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f), 2.5f);
         }
-
-        // 클릭 업데이트
         ClickUpdate();
     }
 
@@ -255,25 +471,12 @@ namespace JDScene {
                     clicked = true;
                     //std::cout << " UI 오브젝트 클릭";
 
-                    // 건물 건설 취소
-                    if (isbuild == true && GetSelectedObject() != m_buildUI
-                        && GetSelectedObject() != m_buildHouse && GetSelectedObject() != m_buildFishingspot
-                        && GetSelectedObject() != m_buildRumbermill && GetSelectedObject() != m_buildMine
-                        )
-                    {
-                        isbuild = false;
-                        CloseBuildMenu();
-                        break;
-                    }
-
                     if (uiObj.get()->GetParent() == m_Menu) {
                         m_selectedTool = static_cast<Button*>(uiObj.get());
                         std::wcout << L"선택된 툴: " << m_selectedTool->GetName() << std::endl;
 
                         if (m_selectedCollider) {
-
                             auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
-
                             //건물유무
                             boxCol->SetHasBuilding(true);
 
@@ -388,124 +591,12 @@ namespace JDScene {
         }
     }
 
-    void TutorialScene::InitBuildMenu()
-    {
-        // 기본 UI 보이기
-        m_defaultUI->SetActive(true);
-        m_buildUI->SetActive(false);
-        m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
-
-        // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
-        m_buildHouse->SetActive(false);
-        m_buildFishingspot->SetActive(false);
-        m_buildRumbermill->SetActive(false);
-        m_buildMine->SetActive(false);
-
-        // 건설 Info
-        m_buildTypeText->SetActive(false);
-
-        m_costInfoText->SetActive(false);
-        m_costText->SetActive(false);
-        m_costImage->SetActive(false);
-
-        m_effectInfoText->SetActive(false);
-        m_effectText->SetActive(false);
-        m_effctImage->SetActive(false);
-    }
-
-    void TutorialScene::ShowBuildMenu()
-    {
-        // 건설 UI 보이기
-        m_defaultUI->SetActive(false);
-        m_buildUI->SetActive(true);
-        m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
-
-        // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
-        m_buildHouse->SetActive(true);
-        m_buildFishingspot->SetActive(true);
-        m_buildRumbermill->SetActive(true);
-        m_buildMine->SetActive(true);
-
-        // 건설 Info
-        CloseBuildInfo();
-    }
-
-    void TutorialScene::CloseBuildMenu()
-    {
-        // 건설 UI 끄기
-        m_defaultUI->SetActive(true);
-        m_buildUI->SetActive(false);
-        m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
-
-        // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
-        m_buildHouse->SetActive(false);
-        m_buildFishingspot->SetActive(false);
-        m_buildRumbermill->SetActive(false);
-        m_buildMine->SetActive(false);
-
-        // 건설 Info
-        m_buildTypeText->SetActive(false);
-
-        m_costInfoText->SetActive(false);
-        m_costText->SetActive(false);
-        m_costImage->SetActive(false);
-
-        m_effectInfoText->SetActive(false);
-        m_effectText->SetActive(false);
-        m_effctImage->SetActive(false);
-    }
-
-    void TutorialScene::ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
-    {
-        ChangeBuildInfo(buildType, costText, effectText);
-
-        m_costInfoText->SetActive(true);
-        m_costText->SetActive(true);
-        m_costImage->SetActive(true);
-
-        m_effectInfoText->SetActive(true);
-        m_effectText->SetActive(true);
-        m_effctImage->SetActive(true);
-    }
-
-    void TutorialScene::CloseBuildInfo()
-    {
-        // 건설 Info
-        m_buildTypeText->SetActive(true);
-        m_buildTypeText->SetText(L"건물 정보");
-
-        m_costInfoText->SetActive(false);
-        m_costText->SetActive(false);
-        m_costImage->SetActive(false);
-
-        m_effectInfoText->SetActive(false);
-        m_effectText->SetActive(false);
-        m_effctImage->SetActive(false);
-    }
-
-    void TutorialScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
-    {
-        switch (buildType)
-        {
-        case JDGlobal::Contents::BuildingType::House:
-            m_buildTypeText->SetText(L"주거지");
-            break;
-        case JDGlobal::Contents::BuildingType::FishingSpot:
-            m_buildTypeText->SetText(L"낚시터");
-            break;
-        case JDGlobal::Contents::BuildingType::LumberMill:
-            m_buildTypeText->SetText(L"제재소");
-            break;
-        case JDGlobal::Contents::BuildingType::Mine:
-            m_buildTypeText->SetText(L"광산");
-            break;
-        case JDGlobal::Contents::BuildingType::Lab:
-            m_buildTypeText->SetText(L"연구소");
-            break;
-        }
+    void TutorialScene::ShowEmptyMenu() {
+        m_Menu->SetActive(true);
+        // 빈 메뉴 버튼들만 켜고
+        for (auto* btn : m_emptyButtons)   btn->SetActive(true);
+        // 채운 메뉴 버튼들은 끄기
+        for (auto* btn : m_filledButtons)  btn->SetActive(false);
     }
 
     void TutorialScene::ShowFilledMenu() {
@@ -515,863 +606,4 @@ namespace JDScene {
         // 채운 메뉴 버튼들 켜기
         for (auto* btn : m_filledButtons)  btn->SetActive(true);
     }
-
-    void TutorialScene::CreateGameMap()
-    {
-        using namespace JDGameObject;
-        using namespace JDComponent;
-        using JDScene::TutorialScene;
-
-        // =====================================================================
-        // 게임 오브젝트 생성 (World Space)
-        // =====================================================================
-
-        // 배경
-        auto* map_backGround = CreateGameObject<GameObject>(L"Map_Background");
-        map_backGround->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
-        auto map_backGroundTexture = map_backGround->AddComponent<TextureRenderer>("BACK_GROUND_OPACITY", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_backGroundTexture->SetSize({ 3840, 2160 });
-
-        // 배경 풀 밭
-        auto* map_battle = CreateGameObject<GameObject>(L"Map_Field");
-        map_battle->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
-        auto map_battleTexture = map_battle->AddComponent<TextureRenderer>("ART_BattleMap01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        // auto map_battleTexture = map_battle->AddComponent<TextureRenderer>("BATTLE_MAP(old)", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_battleTexture->SetSize({ JDGlobal::Window::WindowSize::Instance().GetSize() });
-
-        // 풀 밭 _ 레이어 1
-        auto* map_battleLayer01 = CreateGameObject<GameObject>(L"Map_FieldLayer01");
-        map_battleLayer01->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
-        auto map_battleLayer01Texture = map_battleLayer01->AddComponent<TextureRenderer>("ART_BattleMapLayer01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_battleLayer01Texture->SetSize({ JDGlobal::Window::WindowSize::Instance().GetSize() });
-
-        // 성벽
-        auto* map_castle = CreateGameObject<GameObject>(L"Map_Castle");
-        map_castle->AddComponent<Transform>();
-        auto map_castleTexture = map_castle->AddComponent<TextureRenderer>("ART_Rampart01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_castleTexture->SetSize({ 715, 960 });
-        auto map_castleTR = map_castle->GetComponent<Transform>();
-        map_castleTR->SetPosition(Vector2F{ -556.f, -13.f });
-
-        // 배럭 01
-        auto* map_barrack01 = CreateGameObject<GameObject>(L"Map_Barrack01");
-        map_barrack01->AddComponent<Transform>();
-        auto map_barrack01Texture = map_barrack01->AddComponent<TextureRenderer>("ART_Barracks01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_barrack01Texture->SetSize({ 87.5f, 80.f });
-        auto map_barrack01TR = map_barrack01->GetComponent<Transform>();
-        map_barrack01TR->SetPosition(Vector2F{ -135.f, 190.f });
-
-        // 배럭 02
-        auto* map_barrack02 = CreateGameObject<GameObject>(L"Map_Barrack02");
-        map_barrack02->AddComponent<Transform>();
-        auto map_barrack02Texture = map_barrack02->AddComponent<TextureRenderer>("ART_Barracks02", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_barrack02Texture->SetSize({ 175, 280 });
-        auto map_barrack02TR = map_barrack02->GetComponent<Transform>();
-        map_barrack02TR->SetPosition(Vector2F{ -195.f, 80.f });
-
-        // 그리드
-        // =====================================================================
-        // 그리드 배치 정보
-        // =====================================================================
-
-        // 그리드를 배치할 전체 영역의 크기
-        const float areaWidth = 515.0f;
-        const float areaHeight = 760.0f;
-
-        // 그리드를 배치할 영역의 좌측 상단 월드 좌표
-        const Vector2F areaTopLeft = { -850.0f, 350.0f };
-
-        // 그리드의 행과 열 개수
-        m_totalCols = 4;
-        m_totalRows = 6;
-
-        // 셀과 셀 사이의 간격 (여백)
-        const float padding = 10.0f;
-
-        // =====================================================================
-        // 그리드 생성 로직
-        // =====================================================================
-
-        // 1. 실제 셀들이 배치될 수 있는 공간 계산 (전체 영역 - 총 간격)
-        float contentWidth = areaWidth - (padding * (m_totalCols - 1));
-        float contentHeight = areaHeight - (padding * (m_totalRows - 1));
-
-        // 2. 정사각형 셀의 한 변의 최대 크기 계산
-        float cellWidthPossible = contentWidth / m_totalCols;
-        float cellHeightPossible = contentHeight / m_totalRows;
-
-        // 3. 정사각형 유지를 위해 가능한 크기 중 더 작은 쪽을 최종 셀 크기로 선택
-        const float squareCellSize = std::min(cellWidthPossible, cellHeightPossible);
-
-        // 4. 최종 그리드의 전체 크기 계산
-        float finalGridWidth = (squareCellSize * m_totalCols) + (padding * (m_totalCols - 1));
-        float finalGridHeight = (squareCellSize * m_totalRows) + (padding * (m_totalRows - 1));
-
-        // 5. 전체 그리드를 영역 내에서 중앙에 배치하기 위한 시작 오프셋 계산
-        float offsetX = (areaWidth - finalGridWidth) / 2.0f;
-        float offsetY = (areaHeight - finalGridHeight) / 2.0f;
-
-
-        for (int col = 0; col < m_totalCols; ++col) {
-            for (int row = 0; row < m_totalRows; ++row) {
-
-                std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
-                auto* box = CreateGameObject<Grid>(name.c_str());
-
-                // 6. 각 셀의 최종 위치 계산
-                //    시작점 + 중앙 오프셋 + (셀 크기 + 간격) * 인덱스 + 셀 중앙 보정
-                float x = areaTopLeft.x + offsetX + (col * (squareCellSize + padding)) + (squareCellSize / 2.0f);
-                float y = areaTopLeft.y - offsetY - (row * (squareCellSize + padding)) - (squareCellSize / 2.0f);
-
-                box->GetComponent<Transform>()->SetPosition({ x, y });
-                box->AddComponent<Editor_Clickable>();
-
-                // TextureRenderer를 먼저 추가합니다. (이때 텍스처 이름은 비워둡니다)
-                auto* textureRenderer = box->AddComponent<TextureRenderer>("");
-
-                // ==========================================================
-                // 박스 텍스처 이름 동적 생성 및 설정
-                // ==========================================================
-                int idx = col * m_totalRows + row; // 0 ~ 23
-                int textureNumber = idx + 1;       // 1 ~ 24
-
-                // stringstream을 사용해 "ART_Tile" + "0" + "숫자" 형태로 조합
-                std::stringstream ss;
-                ss << "ART_Tile" << std::setw(2) << std::setfill('0') << textureNumber;
-
-                // 완성된 텍스처 키("ART_Tile01", "ART_Tile02" 등)를 설정
-                textureRenderer->SetTextureName(ss.str());
-                // ==========================================================
-
-                // 크기 설정 및 콜라이더 추가
-                textureRenderer->SetSize({ squareCellSize, squareCellSize });
-
-                auto* collider = box->AddComponent<BoxCollider>(Vector2F{ squareCellSize / 2.0f, squareCellSize / 2.0f });
-                collider->SetIndex(idx);
-            }
-        }
-
-        // =====================================================================
-        // UI 오브젝트 생성 (Screen Space)
-        // =====================================================================
-
-        auto cam = D2DRenderer::Instance().GetCamera();
-
-        // 1) [상단] 자원
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 인구
-        m_resPop = CreateUIObject<Button>(L"UI_ResPop");
-        m_resPop->SetText(L"");
-        m_resPop->SetTextureName("ART_RESPop01");
-        m_resPop->SetSize({ 155.0f, 65.f });
-        m_resPop->SetPosition({ -858.f, 492.f });
-        m_resPop->SetAnchor({ 0.0f, 1.0f });
-
-        // 인구 텍스트
-        m_resPopText = CreateUIObject<Text>(L"UI_ResPopText");
-        m_resPopText->SetText(L"1234");
-        m_resPopText->SetTextFormatName("Sebang_24");
-        m_resPopText->SetColor(D2D1::ColorF(0x69512C));
-        m_resPopText->SetSize({ 300, 100 });
-        m_resPopText->SetPosition({ -835, 489 });
-
-        // 인구 보너스
-        m_resPopBonusText = CreateUIObject<Text>(L"UI_ResPopBonusText");
-        m_resPopBonusText->SetText(L"+1234");
-        m_resPopBonusText->SetTextFormatName("Sebang_16");
-        m_resPopBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resPopBonusText->SetSize({ 300, 100 });
-        m_resPopBonusText->SetPosition({ -776, 515 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 식량
-        m_resFood = CreateUIObject<Button>(L"UI_ResFood");
-        m_resFood->SetText(L"");
-        m_resFood->SetTextureName("ART_RESFood01");
-        m_resFood->SetSize({ 165.0f, 65.f });
-        m_resFood->SetPosition({ -660.f, 492.f });
-        m_resFood->SetAnchor({ 0.0f, 1.0f });
-
-        // 식량 텍스트
-        m_resFoodText = CreateUIObject<Text>(L"UI_ResFoodText");
-        m_resFoodText->SetText(L"1234");
-        m_resFoodText->SetTextFormatName("Sebang_24");
-        m_resFoodText->SetColor(D2D1::ColorF(0x69512C));
-        m_resFoodText->SetSize({ 300, 100 });
-        m_resFoodText->SetPosition({ -630, 489 });
-
-        // 식량 보너스
-        m_resFoodBonusText = CreateUIObject<Text>(L"UI_ResFoodBonusText");
-        m_resFoodBonusText->SetText(L"+1234");
-        m_resFoodBonusText->SetTextFormatName("Sebang_16");
-        m_resFoodBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resFoodBonusText->SetSize({ 300, 100 });
-        m_resFoodBonusText->SetPosition({ -570, 515 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 목재
-        m_resWood = CreateUIObject<Button>(L"UI_ResWood");
-        m_resWood->SetText(L"");
-        m_resWood->SetTextureName("ART_RESWood01");
-        m_resWood->SetSize({ 165.0f, 68.f });
-        m_resWood->SetPosition({ -450.f, 492.f });
-        m_resWood->SetAnchor({ 0.0f, 1.0f });
-
-        // 목재 텍스트
-        m_resWoodText = CreateUIObject<Text>(L"UI_ResWoodText");
-        m_resWoodText->SetText(L"1234");
-        m_resWoodText->SetTextFormatName("Sebang_24");
-        m_resWoodText->SetColor(D2D1::ColorF(0x69512C));
-        m_resWoodText->SetSize({ 300, 100 });
-        m_resWoodText->SetPosition({ -420, 489 });
-
-        // 목재 보너스
-        m_resWoodBonusText = CreateUIObject<Text>(L"UI_ResWoodBonusText");
-        m_resWoodBonusText->SetText(L"+1234");
-        m_resWoodBonusText->SetTextFormatName("Sebang_16");
-        m_resWoodBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resWoodBonusText->SetSize({ 300, 100 });
-        m_resWoodBonusText->SetPosition({ -358, 515 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 광물
-        m_resMineral = CreateUIObject<Button>(L"UI_ResMineral");
-        m_resMineral->SetText(L"");
-        m_resMineral->SetTextureName("ART_RESMineral01");
-        m_resMineral->SetSize({ 165.0f, 64.f });
-        m_resMineral->SetPosition({ -252.f, 489.f });
-        m_resMineral->SetAnchor({ 0.0f, 1.0f });
-
-        // 광물 텍스트
-        m_resMineralText = CreateUIObject<Text>(L"UI_ResMineralText");
-        m_resMineralText->SetText(L"1234");
-        m_resMineralText->SetTextFormatName("Sebang_24");
-        m_resMineralText->SetColor(D2D1::ColorF(0x69512C));
-        m_resMineralText->SetSize({ 300, 100 });
-        m_resMineralText->SetPosition({ -220, 489 });
-
-        // 광물 보너스
-        m_resMineralBonusText = CreateUIObject<Text>(L"UI_ResMineralBonusText");
-        m_resMineralBonusText->SetText(L"+1234");
-        m_resMineralBonusText->SetTextFormatName("Sebang_16");
-        m_resMineralBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resMineralBonusText->SetSize({ 300, 100 });
-        m_resMineralBonusText->SetPosition({ -157, 515 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 1) [상단] 몬스터 웨이브
-        m_monsterWaveBackground = CreateUIObject<Image>(L"UI_MonWaveBackground");
-        m_monsterWaveBackground->SetTextureName("ART_UIWaveGauge01");
-        m_monsterWaveBackground->SetSize({ 500.0f, 74.f });
-        m_monsterWaveBackground->SetPosition({ 330.f, 485.f });
-        m_monsterWaveBackground->SetAnchor({ 1.0f, 1.0f });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 1) [상단] 날짜 및 옵션 패널 ( 일시정지, 재생, 빠른재생, 옵션 )
-        m_datePanel = CreateUIObject<Image>(L"UI_ART_UIDate01");
-        m_datePanel->SetTextureName("ART_UIDate01");
-        m_datePanel->SetSize({ 350.0f, 166.f });
-        m_datePanel->SetPosition({ 785.f, 447.f });
-        m_datePanel->SetAnchor({ 1.0f, 1.0f });
-
-        // 년 (Year) 텍스트
-        m_yearText = CreateUIObject<Text>(L"UI_YearText");
-        m_yearText->SetText(L"1995");
-        m_yearText->SetTextFormatName("Sebang_24");
-        m_yearText->SetColor(D2D1::ColorF(0x69512C));
-        m_yearText->SetSize({ 300, 100 });
-        m_yearText->SetPosition({ 690, 390 });
-
-        // 월 (Month) 텍스트
-        m_monthText = CreateUIObject<Text>(L"UI_MonthText");
-        m_monthText->SetText(L"12");
-        m_monthText->SetTextFormatName("Sebang_24");
-        m_monthText->SetColor(D2D1::ColorF(0x69512C));
-        m_monthText->SetSize({ 300, 100 });
-        m_monthText->SetPosition({ 785, 390 });
-
-        // 일 (Day) 텍스트
-        m_dayText = CreateUIObject<Text>(L"UI_DayText");
-        m_dayText->SetText(L"18");
-        m_dayText->SetTextFormatName("Sebang_24");
-        m_dayText->SetColor(D2D1::ColorF(0x69512C));
-        m_dayText->SetSize({ 300, 100 });
-        m_dayText->SetPosition({ 880, 390 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 정지 버튼
-        m_stopButton = CreateUIObject<Button>(L"UI_StopButton");
-        m_stopButton->SetTextureName("ART_Pause01");
-        m_stopButton->SetText(L"");
-        m_stopButton->SetSize({ 40, 47 });
-        m_stopButton->SetPosition({ 679.5f, 475.f });
-
-        // 정지 버튼 클릭하면 실행될 이벤트
-        m_stopButton->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 정지 버튼 마우스를 올리면 실행될 이벤트
-        m_stopButton->AddOnEnter("Highlight On", [this]()
-            {
-
-            });
-
-        // 정지 버튼 마우스가 벗어나면 실행될 이벤트
-        m_stopButton->AddOnExit("Highlight Off", [this]()
-            {
-
-            });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 재생 버튼
-        m_playButton = CreateUIObject<Button>(L"UI_PlayButton");
-        m_playButton->SetTextureName("ART_Play01");
-        m_playButton->SetText(L"");
-        m_playButton->SetSize({ 31.5f, 45.f });
-        m_playButton->SetPosition({ 762.f, 475.f });
-
-        // 재생 버튼 클릭하면 실행될 이벤트
-        m_playButton->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 재생 버튼 마우스를 올리면 실행될 이벤트
-        m_playButton->AddOnEnter("Highlight On", [this]()
-            {
-
-            });
-
-        // 재생 버튼 마우스가 벗어나면 실행될 이벤트
-        m_playButton->AddOnExit("Highlight Off", [this]()
-            {
-
-            });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 스피드 버튼
-        m_speedButton = CreateUIObject<Button>(L"UI_SpeedButton");
-        m_speedButton->SetTextureName("ART_Fast01");
-        m_speedButton->SetText(L"");
-        m_speedButton->SetSize({ 45.f, 45.f });
-        m_speedButton->SetPosition({ 842.f, 475.f });
-
-        // 스피드 버튼 클릭하면 실행될 이벤트
-        m_speedButton->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 스피드 버튼 마우스를 올리면 실행될 이벤트
-        m_speedButton->AddOnEnter("Highlight On", [this]()
-            {
-
-            });
-
-        // 스피드 버튼 마우스가 벗어나면 실행될 이벤트
-        m_speedButton->AddOnExit("Highlight Off", [this]()
-            {
-
-            });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 옵션 버튼
-        m_optionButton = CreateUIObject<Button>(L"UI_OptionButton");
-        m_optionButton->SetTextureName("ART_SettingIcon01");
-        m_optionButton->SetText(L"");
-        m_optionButton->SetSize({ 48.f, 50.5f });
-        m_optionButton->SetPosition({ 919, 483 });
-        m_optionButton->SetScale({ 0.85f, 0.85f });
-
-        // 옵션 버튼 클릭하면 실행될 이벤트
-        m_optionButton->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 스피드 버튼 마우스를 올리면 실행될 이벤트
-        m_optionButton->AddOnEnter("Highlight On", [this]()
-            {
-
-            });
-
-        // 스피드 버튼 마우스가 벗어나면 실행될 이벤트
-        m_optionButton->AddOnExit("Highlight Off", [this]()
-            {
-
-            });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 0) 기본 UI
-        // TODO : 리소스가 아직 없음.
-        m_defaultUI = CreateUIObject<Image>(L"UI_Default");
-        m_defaultUI->SetTextureName("ART_UIBuilding01");
-        if (cam)
-        {
-            float screenWidth = static_cast<float>(cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(cam->GetScreenHeight());
-
-            // 화면 크기로 설정
-            m_defaultUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_defaultUI->SetPosition({ 0.0f, 0.0f });
-            m_defaultUI->SetPivot({ 0.5f, 0.5f });
-            m_defaultUI->SetAnchor({ 1.0f, 0.0f });
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 1) 건설 UI
-        m_buildUI = CreateUIObject<Image>(L"UI_Build");
-        m_buildUI->SetTextureName("ART_UIBuilding01");
-        if (cam)
-        {
-            float screenWidth = static_cast<float>(cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(cam->GetScreenHeight());
-
-            // 화면 크기로 설정
-            m_buildUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_buildUI->SetPosition({ 0.0f, 0.0f });
-            m_buildUI->SetPivot({ 0.5f, 0.5f });
-            m_buildUI->SetAnchor({ 1.0f, 0.0f });
-        }
-
-        ////////////////////////////////////////
-        // 건설 UI _ Info
-        ////////////////////////////////////////
-
-        // 건설 타입 텍스트
-        m_buildTypeText = CreateUIObject<Text>(L"UI_BuildTypeText");
-        m_buildTypeText->SetText(L"광산");
-        m_buildTypeText->SetTextFormatName("Sebang_Bold_24");
-        m_buildTypeText->SetColor(D2D1::ColorF(0x69512C));
-        m_buildTypeText->SetSize({ 300, 100 });
-        m_buildTypeText->SetPosition({ -64, -390 });
-
-        // 코스트 텍스트
-        m_costInfoText = CreateUIObject<Text>(L"UI_BuildCostInfoText");
-        m_costInfoText->SetText(L"코스트");
-        m_costInfoText->SetTextFormatName("Sebang_16");
-        m_costInfoText->SetColor(D2D1::ColorF(0x69512C));
-        m_costInfoText->SetSize({ 300, 100 });
-        m_costInfoText->SetPosition({ -120, -428 });
-
-        m_costText = CreateUIObject<Text>(L"UI_BuildCostText");
-        m_costText->SetText(L"50");
-        m_costText->SetTextFormatName("Sebang_16");
-        m_costText->SetColor(D2D1::ColorF(0x69512C));
-        m_costText->SetSize({ 300, 100 });
-        m_costText->SetPosition({ 0, -428 });
-
-        // 코스트 이미지
-        m_costImage = CreateUIObject<Image>(L"UI_BuildCostImage");
-        m_costImage->SetTextureName("ART_CostWood01");
-        m_costImage->SetSize({ 40, 31 });
-        m_costImage->SetPosition({ -46, -428 });
-        m_costImage->SetAnchor({ 1.0f, 0.0f });
-
-        // 효과 텍스트
-        m_effectInfoText = CreateUIObject<Text>(L"UI_BuildEffectInfoText");
-        m_effectInfoText->SetText(L"효과");
-        m_effectInfoText->SetTextFormatName("Sebang_16");
-        m_effectInfoText->SetColor(D2D1::ColorF(0x69512C));
-        m_effectInfoText->SetSize({ 300, 100 });
-        m_effectInfoText->SetPosition({ -113, -470 });
-
-        m_effectText = CreateUIObject<Text>(L"UI_BuildEffectText");
-        m_effectText->SetText(L"1/초");
-        m_effectText->SetTextFormatName("Sebang_16");
-        m_effectText->SetColor(D2D1::ColorF(0x69512C));
-        m_effectText->SetSize({ 300, 100 });
-        m_effectText->SetPosition({ 0, -470 });
-
-        // 효과 이미지
-        m_effctImage = CreateUIObject<Image>(L"UI_BuildEffctImage");
-        m_effctImage->SetTextureName("ART_CostFood01");
-        m_effctImage->SetSize({ 40, 31 });
-        m_effctImage->SetPosition({ -46, -470 });
-        m_effctImage->SetAnchor({ 1.0f, 0.0f });
-
-        ////////////////////////////////////////
-        // 건설 UI _ 주거지
-        ////////////////////////////////////////
-        m_buildHouse = CreateUIObject<Button>(L"UI_Build_House");
-        m_buildHouse->SetTextureName("ART_BuildCabin01");
-        m_buildHouse->SetText(L"");
-        m_buildHouse->SetSize({ 166.f, 166.f });
-        m_buildHouse->SetPosition({ 200.f, -430.f });
-
-        // 주거지 버튼 클릭하면 실행될 이벤트
-        m_buildHouse->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 주거지 버튼 마우스를 올리면 실행될 이벤트
-        m_buildHouse->AddOnEnter("Highlight On", [this]()
-            {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::House, "50", "1/초");
-            });
-
-        // 주거지 버튼 마우스가 벗어나면 실행될 이벤트
-        m_buildHouse->AddOnExit("Highlight Off", [this]()
-            {
-                CloseBuildInfo();
-            });
-
-
-        ////////////////////////////////////////
-        // 건설 UI _ 낚시터
-        ////////////////////////////////////////
-        m_buildFishingspot = CreateUIObject<Button>(L"UI_Build_Fishing");
-        m_buildFishingspot->SetTextureName("ART_BuildFishing01");
-        m_buildFishingspot->SetText(L"");
-        m_buildFishingspot->SetSize({ 166.f, 166.f });
-        m_buildFishingspot->SetPosition({ 400.f, -430.f });
-
-        // 낚시터 버튼 클릭하면 실행될 이벤트
-        m_buildFishingspot->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 낚시터 버튼 마우스를 올리면 실행될 이벤트
-        m_buildFishingspot->AddOnEnter("Highlight On", [this]()
-            {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::FishingSpot, "40", "2/초");
-            });
-
-        // 낚시터 버튼 마우스가 벗어나면 실행될 이벤트
-        m_buildFishingspot->AddOnExit("Highlight Off", [this]()
-            {
-                CloseBuildInfo();
-            });
-
-
-        ////////////////////////////////////////
-        // 건설 UI _ 제재소
-        ////////////////////////////////////////
-        m_buildRumbermill = CreateUIObject<Button>(L"UI_Build_Lumbermill");
-        m_buildRumbermill->SetTextureName("ART_BuildLumbermill01");
-        m_buildRumbermill->SetText(L"");
-        m_buildRumbermill->SetSize({ 166.f, 166.f });
-        m_buildRumbermill->SetPosition({ 600.f, -430.f });
-
-        // 제재소 버튼 클릭하면 실행될 이벤트
-        m_buildRumbermill->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 제재소 버튼 마우스를 올리면 실행될 이벤트
-        m_buildRumbermill->AddOnEnter("Highlight On", [this]()
-            {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::LumberMill, "30", "3/초");
-            });
-
-        // 제재소 버튼 마우스가 벗어나면 실행될 이벤트
-        m_buildRumbermill->AddOnExit("Highlight Off", [this]()
-            {
-                CloseBuildInfo();
-            });
-
-
-        ////////////////////////////////////////
-        // 건설 UI _ 광산
-        ////////////////////////////////////////
-        m_buildMine = CreateUIObject<Button>(L"UI_Build_Mine");
-        m_buildMine->SetTextureName("ART_BuildMine01");
-        m_buildMine->SetText(L"");
-        m_buildMine->SetSize({ 166.f, 166.f });
-        m_buildMine->SetPosition({ 800.f, -430.f });
-
-        // 광산 버튼 클릭하면 실행될 이벤트
-        m_buildMine->AddOnClick("Quit Game", [this]()
-            {
-
-            });
-
-        // 광산 버튼 마우스를 올리면 실행될 이벤트
-        m_buildMine->AddOnEnter("Highlight On", [this]()
-            {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::Mine, "20", "4/초");
-            });
-
-        // 광산 버튼 마우스가 벗어나면 실행될 이벤트
-        m_buildMine->AddOnExit("Highlight Off", [this]()
-            {
-                CloseBuildInfo();
-            });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 2) 건물 업그레이트 및 고양이 배치 UI
-        m_upgradeUI = CreateUIObject<Image>(L"UI_Upgrade");
-        m_upgradeUI->SetTextureName("ART_UICharSelect01");
-        if (cam)
-        {
-            float screenWidth = static_cast<float>(cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(cam->GetScreenHeight());
-
-            // 화면 크기로 설정
-            m_upgradeUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_upgradeUI->SetPosition({ 0.0f, 0.0f });
-            m_upgradeUI->SetPivot({ 0.5f, 0.5f });
-            m_upgradeUI->SetAnchor({ 1.0f, 0.0f });
-        }
-
-        // 3) 징병 및 원정 UI
-        m_expeditionUI = CreateUIObject<Image>(L"UI_Expedition");
-        m_expeditionUI->SetTextureName("ART_UIRecruit01");
-        if (cam)
-        {
-            float screenWidth = static_cast<float>(cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(cam->GetScreenHeight());
-
-            // 화면 크기로 설정
-            m_expeditionUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_expeditionUI->SetPosition({ 0.0f, 0.0f });
-            m_expeditionUI->SetPivot({ 0.5f, 0.5f });
-            m_expeditionUI->SetAnchor({ 1.0f, 0.0f });
-        }
-
-        //// 2) 필터
-        //m_fillter = CreateUIObject<Image>(L"Fillter_Image");
-        //m_fillter->SetTextureName("BACK_GROUND_OPACITY");
-        //m_fillter->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
-
-        //if (cam)
-        //{
-        //    float screenWidth = static_cast<float>(cam->GetScreenWidth());
-        //    float screenHeight = static_cast<float>(cam->GetScreenHeight());
-
-        //    // 화면 크기로 설정
-        //    m_fillter->SetSize(Vector2F{ screenWidth, screenHeight });
-        //    m_fillter->SetPosition({ 0.0f,0.0f });
-        //    m_fillter->SetPivot({ 0.5f, 0.5f });
-        //}
-
-        //// 3) 대사
-        //m_narration = CreateUIObject<Text>(L"Narration_Text");
-        //// 튜토리얼 이벤트로 넘겼음.
-        ///*m_narration->SetText(
-        //    L"\"의 새로운 집사로 취임한 것을 환영합니다.\"\n"
-        //    L"당신은 건물을 지어 마을을 키우고 도시를 지켜내야 합니다.\n"
-        //);*/
-        //m_narration->SetTextFormatName("Sebang_40");
-        //m_narration->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        //m_narration->SetSize({ 1600, 300 });
-        //m_narration->SetPosition({ 0, 320 });
-
-
-        // 4) 그리드 클릭하면 나오는 메뉴
-        m_Menu = CreateUIObject<Image>(L"MenuBackground");
-
-        auto& uptr = m_uiObjects.back();
-        UIObject* rawPtr = uptr.get();
-        m_TutorialUIObjects.push_back(rawPtr);
-
-        m_Menu->SetTextureName("Menu");
-        m_Menu->SetSizeToOriginal();
-        //m_Menu->SetSize({});
-        m_Menu->SetActive(false);
-
-        auto* bgRect = m_Menu->GetComponent<RectTransform>();
-        bgRect->SetPivot({ 0.f,0.f });
-        bgRect->SetAnchor({ 0.f,0.f });
-        bgRect->SetPosition({ 50, 50 });
-
-        //각버튼 키 목록
-        std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
-        { L"FishingSpot", "fishing" },
-        { L"LumberMill", "lumbermill" },
-        { L"Mine", "mine" },
-        { L"House", "cabin" },
-        // 필요하다면 더 추가…
-        };
-        std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
-        { L"CAT", "CAT" },
-        // 필요하다면 더 추가…
-        };
-
-        // 공통 초기 오프셋
-        float xOffset = 0.f;
-        float yOffset = -150.f;
-        float gap = 100.f;
-
-        // 2-1) 빈 메뉴용 버튼 생성
-        {
-            float x = xOffset;
-            float y = yOffset;
-            for (auto& info : EmptyButtons) {
-                auto* btn = CreateUIObject<Button>(info.first);
-                // 튜토리얼용 보관
-                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_emptyButtons.push_back(btn);
-
-                btn->SetTextureName(info.second);
-                btn->SetText(L"");
-                auto* rt = btn->GetComponent<RectTransform>();
-
-                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
-                rt->SetParent(bgRect);
-
-                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
-                rt->SetPivot({ 0.0f, 0.0f });
-                rt->SetAnchor({ 0.0f, 0.0f });
-                rt->SetSize({ 50, 50 });
-
-                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
-                rt->SetPosition({ x, y });
-
-
-                // LEGACY : 과거 코드
-                /*
-                //rt->SetPivot({ 0,0 });
-                //rt->SetAnchor({ 0,0 });
-                //rt->SetSize({ 50,50 });
-                //rt->SetParent(bgRect);
-                //rt->SetPosition({ x, yOffset });
-                */
-
-                m_Menu->AddChild(btn);
-                btn->SetActive(false);
-                m_menuButtons.push_back(btn);
-
-                x += gap;
-            }
-        }
-
-        // 2-2) 채운 메뉴용 버튼 생성
-        {
-            float x = xOffset;
-            for (auto& info : FilledButtons) {
-                auto* btn = CreateUIObject<Button>(info.first);
-                m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_filledButtons.push_back(btn);
-
-                btn->SetTextureName(info.second);
-                btn->SetText(L"");
-                auto* rt = btn->GetComponent<RectTransform>();
-
-                // [수정] RectTransform의 SetParent로만 부모-자식 관계를 설정합니다.
-                rt->SetParent(bgRect);
-
-                // [수정] 피벗을 중앙으로 설정하여 위치를 잡기 쉽게 합니다.
-                rt->SetPivot({ 0.5f, 0.5f });
-                rt->SetAnchor({ 0.0f, 0.0f });
-                rt->SetSize({ 50, 50 });
-
-                // 이제 이 Position은 버튼의 '중앙'을 부모의 (x, yOffset)으로 이동시킵니다.
-                rt->SetPosition({ x, yOffset });
-
-                // LEGACY : 과거 코드
-                /*
-                //rt->SetPivot({ 0,0 });
-                //rt->SetAnchor({ 0,0 });
-                //rt->SetSize({ 50,50 });
-                //rt->SetParent(bgRect);
-                //rt->SetPosition({ x, xOffset });
-                */
-
-                m_Menu->AddChild(btn);
-                btn->SetActive(false);
-                m_menuButtons.push_back(btn);
-
-                x += gap;
-            }
-        }
-
-        // 기본 UI 보이기
-        InitBuildMenu();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // 튜토리얼 로직
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // 튜토리얼 로직을 별도로 처리할 함수
-    void TutorialScene::UpdateTutorial(float deltaTime)
-    {
-        // 튜토리얼이 완료되면 아무것도 하지 않음
-        if (m_currentStep == TutorialStep::COMPLETE) return;
-
-        // ImGui 창 위에 마우스가 있으면 튜토리얼 진행을 막음
-        if (ImGui::GetIO().WantCaptureMouse) return;
-
-        bool isClicked = InputManager::Instance().GetMouseState().leftClicked;
-
-        // 현재 단계에 따라 로직을 분기
-        switch (m_currentStep)
-        {
-        case TutorialStep::STEP_1_NOTICE_A:
-        {
-            // 마우스 클릭을 감지하면
-            if (isClicked)
-            {
-                // 다음 단계로 상태를 변경
-                m_currentStep = TutorialStep::STEP_1_NOTICE_B;
-                // 다음 단계의 초기화 함수 호출
-                EnterStep1_NoticeB();
-            }
-            break;
-        }
-
-        case TutorialStep::STEP_1_NOTICE_B:
-        {
-            // 여기에서 다음 단계로 넘어가는 조건을 체크합니다.
-            // 예를 들어, 다시 한번 클릭하면 3단계로 넘어갈 수 있습니다.
-            if (isClicked)
-            {
-                m_currentStep = TutorialStep::STEP_1_CLICKEMPTYGRID;
-                EnterStep1_ClickEmptyGrid();
-            }
-            break;
-        }
-
-        case TutorialStep::STEP_1_CLICKEMPTYGRID:
-            // 3단계 로직
-            break;
-
-            // ... 다른 단계들의 case 추가 ...
-
-        default:
-            break;
-        }
-    }
-
-    void TutorialScene::EnterStep1_NoticeA()
-    {
-        if (m_narration)
-            m_narration->SetText(L"\"의 새로운 집사로 취임한 것을 환영합니다.\"");
-    }
-
-    void TutorialScene::EnterStep1_NoticeB()
-    {
-        if (m_narration)
-        {
-            m_narration->SetText(
-                L"\"당신은 건물을 지어 마을을 키우고 도시를 지켜내야 합니다.\"\n"
-                L"먼저 빈 타일을 클릭하세요."
-            );
-        }
-    }
-
-    void TutorialScene::EnterStep1_ClickEmptyGrid()
-    {
-        if (m_fillter) m_fillter->SetActive(false);
-    }
-
 }

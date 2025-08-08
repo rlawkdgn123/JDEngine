@@ -54,39 +54,30 @@ namespace JDScene {
         gameStart->SetPosition({ -522, -32 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        gameStart->AddOnClick("Load GameScene", [this]() 
-            {
-                if (isOpenOption) return;
-
-                // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-                // SceneManager::Instance().ChangeScene("TutorialScene");
-                SceneManager::Instance().ChangeScene("SelectNationScene");
+        gameStart->AddOnClick("Load GameScene", [this]() {
+            // SceneManager를 이용해 다음 씬으로 넘어갑니다.
+            // SceneManager::Instance().ChangeScene("TutorialScene");
+            SceneManager::Instance().ChangeScene("SelectNationScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        gameStart->AddOnEnter("Highlight On", [this, gameStart]() 
+        gameStart->AddOnEnter("Highlight On", [this, gameStart]() {
+            gameStart->SetTextureName("GAME_START_A");
+            if (m_hoverSfxChannel == nullptr)
             {
-                if (isOpenOption) return;
-
-                gameStart->SetTextureName("GAME_START_A");
-                if (m_hoverSfxChannel == nullptr)
-                {
-                    // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
-                }
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        gameStart->AddOnExit("Highlight Off", [this, gameStart]() 
+        gameStart->AddOnExit("Highlight Off", [this, gameStart]() {
+            gameStart->SetTextureName("GAME_START_B");
+            if (m_hoverSfxChannel)
             {
-                if (isOpenOption) return;
-
-                gameStart->SetTextureName("GAME_START_B");
-                if (m_hoverSfxChannel)
-                {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-                }
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
             });
 
 
@@ -100,63 +91,44 @@ namespace JDScene {
         setting->SetPosition({ -522, -115 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        setting->AddOnClick("OpenSettingUI", [this, setting]() 
-            {
-                if (isOpenOption) return;
+        setting->AddOnClick("OpenSettingUI", [this]() {
+            if (m_optionUI) {
+                m_optionUI->SetActive(true);
+                m_optionVolume->SetActive(true);
 
-                isOpenOption = true;
+                m_selectVolume->SetActive(true);
+                m_selectControl->SetActive(true);
+                m_selectCredit->SetActive(true);
 
-                if (m_optionUI) {
-                    m_optionUI->SetActive(true);
-                    m_optionVolume->SetActive(true);
+                m_closeOption->SetActive(true);
 
-                    m_selectVolume->SetActive(true);
-                    m_selectControl->SetActive(true);
-                    m_selectCredit->SetActive(true);
+                m_selectVolumeDummy->SetActive(true);
+                m_selectControlDummy->SetActive(true);
+                m_selectCreditDummy->SetActive(true);
 
-                    m_closeOption->SetActive(true);
-
-                    m_selectVolumeDummy->SetActive(true);
-                    m_selectControlDummy->SetActive(true);
-                    m_selectCreditDummy->SetActive(true);
-
-                    m_bgmSlider->SetActiveSlider(true);
-                    m_sfxSlider->SetActiveSlider(true);
-                }
-
-                // 마우스 벗어남 이벤트 수동 실행
-                setting->SetTextureName("SETTING_B");
-                if (m_hoverSfxChannel)
-                {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-                }
+                m_bgmSlider->SetActiveSlider(true);
+                m_sfxSlider->SetActiveSlider(true);
+            }
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        setting->AddOnEnter("Highlight On", [this, setting]() 
+        setting->AddOnEnter("Highlight On", [this, setting]() {
+            setting->SetTextureName("SETTING_A");
+            if (m_hoverSfxChannel == nullptr)
             {
-                if (isOpenOption) return;
-
-                setting->SetTextureName("SETTING_A");
-                if (m_hoverSfxChannel == nullptr)
-                {
-                    // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
-                }
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        setting->AddOnExit("Highlight Off", [this, setting]() 
+        setting->AddOnExit("Highlight Off", [this, setting]() {
+            setting->SetTextureName("SETTING_B");
+            if (m_hoverSfxChannel)
             {
-                if (isOpenOption) return;
-
-                setting->SetTextureName("SETTING_B");
-                if (m_hoverSfxChannel)
-                {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-                }
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
             });
         
         //////////////////////////////////////////////////////////////////////////////////
@@ -169,44 +141,36 @@ namespace JDScene {
         quitGame->SetPosition({ -522, -198 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        quitGame->AddOnClick("Quit Game", [this]()
+        quitGame->AddOnClick("Quit Game", []() {
+
+            // 1. 메인 윈도우의 핸들(HWND)을 가져옵니다.
+            HWND mainWindowHandle = JDGlobal::Window::WindowSize::Instance().GetHWND();
+
+            // 2. PostMessage를 사용해 WM_CLOSE 메시지를 보냅니다.
+            if (mainWindowHandle)
             {
-                if (isOpenOption) return;
-
-                // 1. 메인 윈도우의 핸들(HWND)을 가져옵니다.
-                HWND mainWindowHandle = JDGlobal::Window::WindowSize::Instance().GetHWND();
-
-                // 2. PostMessage를 사용해 WM_CLOSE 메시지를 보냅니다.
-                if (mainWindowHandle)
-                {
-                    PostMessage(mainWindowHandle, WM_CLOSE, 0, 0);
-                }
+                PostMessage(mainWindowHandle, WM_CLOSE, 0, 0);
+            }
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        quitGame->AddOnEnter("Highlight On", [this, quitGame]() 
+        quitGame->AddOnEnter("Highlight On", [this, quitGame]() {
+            quitGame->SetTextureName("QUIT_GAME_A");
+            if (m_hoverSfxChannel == nullptr)
             {
-                if (isOpenOption) return;
-
-                quitGame->SetTextureName("QUIT_GAME_A");
-                if (m_hoverSfxChannel == nullptr)
-                {
-                    // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
-                }
+                // 채널 포인터를 TitleScene의 멤버 변수에 저장
+                AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+            }
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        quitGame->AddOnExit("Highlight Off", [this, quitGame]() 
+        quitGame->AddOnExit("Highlight Off", [this, quitGame]() {
+            quitGame->SetTextureName("QUIT_GAME_B");
+            if (m_hoverSfxChannel)
             {
-                if (isOpenOption) return;
-
-                quitGame->SetTextureName("QUIT_GAME_B");
-                if (m_hoverSfxChannel)
-                {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-                }
+                m_hoverSfxChannel->stop();        // 사운드 정지
+                m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            }
             });
 
 
@@ -428,8 +392,6 @@ namespace JDScene {
 
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
-
-            isOpenOption = false;
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -446,10 +408,24 @@ namespace JDScene {
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        // 파티클
-        m_lightParticles = std::make_unique<ParticleSystem>(
-            D2DRenderer::Instance().GetD2DContext()
-        );
+        //// SFX 볼륨 조절 슬라이더
+        //auto sfxSlider = CreateUIObject<Slider>(L"SFX_Slider");
+        //sfxSlider->Assemble(this);
+        //sfxSlider->SetPosition({ -522, 320 }); // BGM 슬라이더 아래
+
+        //// 이미지 개별 설정
+        //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
+        //bgmSlider->SetFillImage("VOLUME_LINE_2");
+        //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        //// 1. 초기값 설정: 현재 오디오 매니저의 SFX 볼륨 값으로 설정합니다.
+        //sfxSlider->SetValue(AudioManager::Instance().GetSFXVolume());
+
+        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 SFX 볼륨을 조절하도록 연결합니다.
+        //sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
+        //    AudioManager::Instance().SetSFXVolume(newValue);
+        //    });
+
     }
 
     void TitleScene::OnLeave() {
@@ -488,34 +464,13 @@ namespace JDScene {
     void TitleScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        // 파티클
-        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
-        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
-        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
-
-        {
-            m_sakuraEmitAccumulator += deltaTime * m_sakuraEmissionRate;
-            int spawnCount = static_cast<int>(m_sakuraEmitAccumulator);
-            m_sakuraEmitAccumulator -= spawnCount;
-            float scale = RandomFloat(1.0f, 2.0f);
-            float maxLife = RandomFloat(6.0f, 12.0f);
-
-            for (int i = 0; i < spawnCount; ++i) {
-                float x = RandomFloat(sakuraMin.x, sakuraMax.x);
-                float y = RandomFloat(sakuraMin.y, sakuraMax.y);
-                Vector2F spawnPos{ x, y };
-                m_lightParticles->SpawnFallingParticle(
-                    spawnPos,
-                    /*color=*/D2D1::ColorF(1.f, 0.8f, 0.9f, 1.f),
-                    /*scale=*/scale,
-                    /*maxLife=*/maxLife
-                );
-            }
-            // Update 에 화면 크기 전달하는 Update 오버로드
-            m_lightParticles->UpdateFalling(deltaTime, screenW, screenH);
+        MouseState state = InputManager::Instance().GetMouseState();
+        float mouseX = static_cast<float>(state.pos.x);
+        float mouseY = static_cast<float>(state.pos.y);
+        if (m_lightParticles) {
+            m_lightParticles->Update(deltaTime, Vector2F{ mouseX, mouseY });
         }
 
-        // 클릭
         ClickUpdate();
     }
 
@@ -549,14 +504,14 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
 
-        { //파티클 그리기
+        if (m_lightParticles) {
+            // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
             auto ctx = D2DRenderer::Instance().GetD2DContext();
             D2D1_MATRIX_3X2_F old;
             ctx->GetTransform(&old);
             ctx->SetTransform(D2D1::Matrix3x2F::Identity());
 
-            if (m_lightParticles) m_lightParticles->Render(ctx);
-        
+            m_lightParticles->Render(ctx);
 
             ctx->SetTransform(old);
         }

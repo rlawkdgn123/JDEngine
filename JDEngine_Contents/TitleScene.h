@@ -40,7 +40,15 @@ namespace JDScene {
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
 
+        Vector2F sakuraMin{ 900.0f, 0.0f };
+        Vector2F sakuraMax{ 1920.0f, 500.0f };
+
+        float   m_sakuraEmissionRate = 5.0f;
+        float   m_sakuraEmitAccumulator = 0.0f;
+
         // 옵션창
+        bool isOpenOption = false;
+
         Image* m_optionUI = nullptr;
         Image* m_optionVolume = nullptr;
         Image* m_optionControl = nullptr;

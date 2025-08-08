@@ -1,4 +1,4 @@
-ï»¿#include "pch.h"
+#include "pch.h"
 #include "framework.h"
 #include "AssetManager.h"
 
@@ -26,43 +26,43 @@ bool AssetManager::Initialize(ID2D1RenderTarget* renderTarget)
 
 void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadTexture("Test", L"../Resource/Texture/Test.png")) {
-        std::cout << "[ERROR] Test í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] Test ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("Title", L"../Resource/TITLE/TITLE.png")) {
-        std::cout << "[ERROR] Title í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] Title ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("GAME_START_A", L"../Resource/TITLE/GAME_START_A.png")) {
-        std::cout << "[ERROR] GAME_START_A í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] GAME_START_A ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("GAME_START_B", L"../Resource/TITLE/GAME_START_B.png")) {
-        std::cout << "[ERROR] GAMESTART_B í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] GAMESTART_B ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("SETTING_A", L"../Resource/TITLE/SETTING_A.png")) {
-        std::cout << "[ERROR] SETTING_A í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] SETTING_A ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("SETTING_B", L"../Resource/TITLE/SETTING_B.png")) {
-        std::cout << "[ERROR] SETTING_B í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] SETTING_B ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("QUITGAME_A", L"../Resource/TITLE/QUIT_GAME_A.png")) {
-        std::cout << "[ERROR] QUITGAME_A í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] QUITGAME_A ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("QUITGAME_B", L"../Resource/TITLE/QUIT_GAME_B.png")) {
-        std::cout << "[ERROR] QUITGAME_B í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] QUITGAME_B ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
 
 
     if (!AssetManager::Instance().LoadTexture("GrayBird", L"../Resource/Animation/graybirdsheet.png")) {
-        std::cout << "[ERROR] GrayBird í…ìŠ¤ì²˜ ë¡œë“œ ì‹¤íŒ¨" << std::endl;
+        std::cout << "[ERROR] GrayBird ÅØ½ºÃ³ ·Îµå ½ÇÆÐ" << std::endl;
     }
     if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
-        std::cout << "[ERROR] ì• ë‹ˆë©”ì´ì…˜ ë¡œë“œ ì‹¤íŒ¨!" << std::endl;
+        std::cout << "[ERROR] ¾Ö´Ï¸ÞÀÌ¼Ç ·Îµå ½ÇÆÐ!" << std::endl;
     }
 }
 
@@ -87,18 +87,18 @@ bool AssetManager::LoadTexture(const std::string& name, const std::wstring& file
     if (FAILED(hr)) return false;
 
     if (!converter) {
-        std::cout << "[ì—ëŸ¬] converter is null\n";
+        std::cout << "[¿¡·¯] converter is null\n";
         return false;
     }
     if (!m_renderTarget) {
-        std::cout << "[ì—ëŸ¬] render target is null\n";
+        std::cout << "[¿¡·¯] render target is null\n";
         return false;
     }
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap;
     hr = m_renderTarget->CreateBitmapFromWicBitmap(converter.Get(), nullptr, &bitmap);
     if (FAILED(hr)) {
-        std::cout << "[ì—ëŸ¬] CreateBitmapFromWicBitmap ì‹¤íŒ¨. HR = 0x" << std::hex << hr << std::endl;
+        std::cout << "[¿¡·¯] CreateBitmapFromWicBitmap ½ÇÆÐ. HR = 0x" << std::hex << hr << std::endl;
         return false;
     }
     m_textures[name] = bitmap;
@@ -119,7 +119,7 @@ bool AssetManager::LoadAnimationRender(const std::string& name, const std::wstri
 {
     std::ifstream ifs(jsonPath);
     if (!ifs.is_open()) {
-        std::cout << "[ERROR] JSON íŒŒì¼ ì—´ê¸° ì‹¤íŒ¨: " << std::string(jsonPath.begin(), jsonPath.end()) << std::endl;
+        std::cout << "[ERROR] JSON ÆÄÀÏ ¿­±â ½ÇÆÐ: " << std::string(jsonPath.begin(), jsonPath.end()) << std::endl;
         return false;
     }
 
@@ -129,8 +129,8 @@ bool AssetManager::LoadAnimationRender(const std::string& name, const std::wstri
     AnimationRenderClip clip;
 
     for (auto& item : j["frames"].items()) {
-        //std::string key = item.key();     // â† í‚¤ ì ‘ê·¼
-        auto& val = item.value();         // â† ê°’ ì ‘ê·¼
+        //std::string key = item.key();     // ¡ç Å° Á¢±Ù
+        auto& val = item.value();         // ¡ç °ª Á¢±Ù
 
         auto frame = val["frame"];
         AnimationRenderFrame anim;
@@ -140,7 +140,6 @@ bool AssetManager::LoadAnimationRender(const std::string& name, const std::wstri
             static_cast<float>(frame["x"]) + static_cast<float>(frame["w"]),
             static_cast<float>(frame["y"]) + static_cast<float>(frame["h"])
         );
-
         anim.duration = val["duration"].get<float>() / 1000.0f;
 
         clip.frames.push_back(anim);

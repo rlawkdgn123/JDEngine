@@ -9,6 +9,7 @@ namespace JDScene {
     using Image = JDGameObject::Content::Image;
     using Text = JDGameObject::Content::Text;
     using Button = JDGameObject::Content::Button;
+    using Slider = JDGameObject::Content::Slider;
 
 	class TitleScene : public SceneBase
 	{
@@ -54,6 +55,8 @@ namespace JDScene {
         float m_sakuraEmitAccumulator = 0.0f;
 
         // 옵션창
+        bool isOpenOption = false;
+
         Image* m_optionUI = nullptr;
         Image* m_optionVolume = nullptr;
         Image* m_optionControl = nullptr;
@@ -70,6 +73,11 @@ namespace JDScene {
         Image* m_selectVolumeDummy = nullptr;
         Image* m_selectControlDummy = nullptr;
         Image* m_selectCreditDummy = nullptr;
+
+        // 볼륨 선택 슬라이더
+        Slider* m_bgmSlider = nullptr;
+        Slider* m_sfxSlider = nullptr;
+
 	};
 }
 

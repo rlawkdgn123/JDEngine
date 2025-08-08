@@ -446,8 +446,56 @@ namespace JDScene {
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        // 파티클
-        m_lightParticles = std::make_unique<ParticleSystem>(
+        //// BGM 볼륨 조절 슬라이더
+        //auto bgmSlider = CreateUIObject<Slider>(L"BGM_Slider");
+        //bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        //// 이미지 개별 설정
+        //bgmSlider->SetBackgroundImage("VOLUME_LINE_2");
+        //bgmSlider->SetFillImage("VOLUME_LINE_1");
+        //bgmSlider->SetHandleImage("VOLUME_CAT_1");
+
+        //// 1. 초기값 설정: 현재 오디오 매니저의 BGM 볼륨 값으로 설정합니다.
+        //bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+
+        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 BGM 볼륨을 조절하도록 연결합니다.
+        //bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+        //    AudioManager::Instance().SetMusicVolume(newValue);
+        //    });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //// SFX 볼륨 조절 슬라이더
+        //auto sfxSlider = CreateUIObject<Slider>(L"SFX_Slider");
+        //sfxSlider->Assemble(this);
+        //sfxSlider->SetPosition({ -522, 320 }); // BGM 슬라이더 아래
+
+        //// 이미지 개별 설정
+        //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
+        //bgmSlider->SetFillImage("VOLUME_LINE_2");
+        //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        //// 1. 초기값 설정: 현재 오디오 매니저의 SFX 볼륨 값으로 설정합니다.
+        //sfxSlider->SetValue(AudioManager::Instance().GetSFXVolume());
+
+        //// 2. OnValueChanged: 슬라이더 값이 바뀔 때마다 SFX 볼륨을 조절하도록 연결합니다.
+        //sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
+        //    AudioManager::Instance().SetSFXVolume(newValue);
+        //    });
+        //파티클 초기화
+        m_mouseParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_sakuraParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_dustParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_dust2Particles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_sparkleParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
     }
@@ -493,10 +541,26 @@ namespace JDScene {
         float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
         Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
 
+        // 1) 마우스 파티클 업데이트 & Emit
+        {
+            MouseState ms = InputManager::Instance().GetMouseState();
+            Vector2F mousePos{ (float)ms.pos.x, (float)ms.pos.y };
+
+            m_mouseParticles->Update(deltaTime, mousePos);
+            m_mouseParticles->Emit(
+                mousePos,
+                /*count=*/30,
+                D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
+                /*scale=*/2.5f
+            );
+        }
+
+        // 2) 벚꽃 낙하 파티클 스폰 & 업데이트
         {
             m_sakuraEmitAccumulator += deltaTime * m_sakuraEmissionRate;
             int spawnCount = static_cast<int>(m_sakuraEmitAccumulator);
             m_sakuraEmitAccumulator -= spawnCount;
+
             float scale = RandomFloat(1.0f, 2.0f);
             float maxLife = RandomFloat(6.0f, 12.0f);
 
@@ -511,11 +575,71 @@ namespace JDScene {
                     /*maxLife=*/maxLife
                 );
             }
-            // Update 에 화면 크기 전달하는 Update 오버로드
-            m_lightParticles->UpdateFalling(deltaTime, screenW, screenH);
+            m_sakuraParticles->UpdateFalling(deltaTime, screenW, screenH);
         }
 
-        // 클릭
+        // 3) 먼지 구름 파티클 스폰 & 업데이트
+        {
+            const float spawnRate = 12.f;
+            static float emitAcc = 0.f;
+
+            emitAcc += deltaTime * spawnRate;
+            int cnt = static_cast<int>(emitAcc);
+            emitAcc -= cnt;
+
+            for (int i = 0; i < cnt; ++i) {
+                m_dustParticles->SpawnDustParticle(
+                    centerPos,
+                    /*color*/      D2D1::ColorF(0.6f, 0.6f, 0.6f, 1.f),
+                    /*scale*/      7.0f,
+                    /*maxLife*/    2.0f,
+                    /*spreadRadius*/20.f
+                );
+            }
+
+            m_dustParticles->UpdateDust(deltaTime, screenW, screenH);
+            for (int i = 0; i < cnt; ++i) {
+                m_dust2Particles->SpawnDustParticle(
+                    centerPos,
+                    /*color*/      D2D1::ColorF(0.6f, 0.6f, 0.6f, 1.f),
+                    /*scale*/      7.0f,
+                    /*maxLife*/    1.0f,
+                    /*spreadRadius*/20.f
+                );
+            }
+
+            m_dust2Particles->UpdateDust(deltaTime, screenW, screenH);
+        }
+
+        // 4) 스파클 파티클 스폰 & 업데이트
+        {
+            // 화면을 벗어나지 않는 랜덤 위치 생성용
+            auto randomPos = [&](void)->Vector2F {
+                float x = RandomFloat(50.f, screenW / 2);
+                float y = RandomFloat(100.f, screenH / 2);
+                return { x, y };
+                };
+
+            const float sparkleRate = 1.f;
+            static float sparkleAcc = 0.f;
+            sparkleAcc += deltaTime * sparkleRate;
+            int sparkleCount = static_cast<int>(sparkleAcc);
+            sparkleAcc -= sparkleCount;
+
+            for (int i = 0; i < sparkleCount; ++i) {
+                Vector2F spawnPos = randomPos();
+                m_sparkleParticles->SpawnSparkleParticle(
+                    spawnPos,
+                    /*count=*/1,
+                    /*scale=*/10.0f,
+                    /*radius=*/0.f,
+                    /*maxLife=*/0.5f
+                );
+            }
+
+            // UpdateSparkle 호출
+            m_sparkleParticles->UpdateSparkle(deltaTime);
+        }
         ClickUpdate();
     }
 
@@ -549,14 +673,18 @@ namespace JDScene {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
 
+
         { //파티클 그리기
             auto ctx = D2DRenderer::Instance().GetD2DContext();
             D2D1_MATRIX_3X2_F old;
             ctx->GetTransform(&old);
             ctx->SetTransform(D2D1::Matrix3x2F::Identity());
 
-            if (m_lightParticles) m_lightParticles->Render(ctx);
-        
+            if (m_mouseParticles) m_mouseParticles->RenderGlow(ctx);
+            if (m_sakuraParticles) m_sakuraParticles->Render(ctx);
+            if (m_dustParticles) m_dustParticles->RenderDust(ctx);
+            if (m_dust2Particles) m_dust2Particles->RenderDust2(ctx);
+            if (m_sparkleParticles) m_sparkleParticles->RenderSparkle(ctx);
 
             ctx->SetTransform(old);
         }

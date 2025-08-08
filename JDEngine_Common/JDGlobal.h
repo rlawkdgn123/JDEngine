@@ -108,7 +108,10 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_RESOURCE = 9999;  // 자원 최대치
 		constexpr int MAX_GAME_POPULATION = 999; // 인구 최대치
 		constexpr int MAX_GAME_LEVEL = 3;	 // 업그레이드 최대치
-		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치
+		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
+		constexpr int MAX_GAME_GRID_COL = 4;
+		constexpr int MAX_GAME_GRID_RAW = 6;
+		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_RAW;
 		constexpr int RESOURCE_COUNT = 3;
 		struct Resource {
 
@@ -192,7 +195,8 @@ namespace JDGlobal {
 		};
 
 		enum class CatType : int {
-			Felis = 0,
+			None = -1,
+			Felis,
 			Navi,
 			Kone,
 			CatTypeMAX // 고양이 종족 수
@@ -217,6 +221,29 @@ namespace JDGlobal {
 			Idle,
 			Move,
 			Back
+		};
+
+		enum class UnitType : int // 병사 종류.
+		{
+			Novice = 0, // 견습냥이.
+			Expert, // 숙련냥이
+			Count
+		};
+
+		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
+		public:
+			UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
+				: m_unitType(type), m_recruitCost(cost), m_power(power) {
+			}
+
+			UnitType GetUnitType() const { return m_unitType; }
+			Resource GetRecruitCost() const { return m_recruitCost; }
+			int GetPower() const { return m_power; }
+
+		private:
+			UnitType m_unitType;
+			Resource m_recruitCost;
+			int m_power;
 		};
 
 		struct WorkerStats {

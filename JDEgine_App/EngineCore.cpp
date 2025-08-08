@@ -130,7 +130,7 @@ bool EngineCore::Initialize()
     }
 
     DataTableManager::Instance().Initalize();
-
+    DataTableManager::Instance().PrintAllTable();
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
@@ -592,6 +592,29 @@ void EngineCore::RenderImGui()
             selectObject->SetTag(static_cast<JDGlobal::Base::GameTag>(currentTag));
         }
         ImGui::PopItemWidth();
+
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        if (auto* grid = dynamic_cast<Grid*>(selectObject)) {
+            ImGui::Text("isOccupied - 확장 완료했는지"); ImGui::SameLine();
+            bool isOccupied = grid->IsOccupied();
+            ImGui::Checkbox("##isOccupied", &isOccupied);
+            grid->SetOccupied(isOccupied);
+
+            ImGui::Text("isExpanded - 레벨업 시 확장 선택 가능한지"); ImGui::SameLine();
+            bool isExpanded = grid->IsExpanded();
+            ImGui::Checkbox("##isExpanded", &isExpanded);
+            grid->SetExpanded(isExpanded);
+
+            ImGui::Text("hasBuilding - 건물 소유중인지"); ImGui::SameLine();
+            bool hasBuilding = grid->HasBuilding();
+            ImGui::Checkbox("##hasBuilding", &hasBuilding);
+            grid->SetHasBuilding(hasBuilding);
+        }
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
 
         ////////////////////////////////////////////////////////////////////////////////
         // Transform
@@ -2033,6 +2056,44 @@ void EngineCore::LoadResources()
     { std::cout << "[ERROR] ART_Tile24 텍스처 로드 실패" << std::endl; }
 
 
+    if (!AssetManager::Instance().LoadTexture("PLAY", L"../Resource/BATTLE/PLAY.png"))
+    {
+        std::cout << "[ERROR] PLAY 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("FAST", L"../Resource/BATTLE/FAST.png"))
+    {
+        std::cout << "[ERROR] FAST 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("STOP", L"../Resource/BATTLE/STOP.png"))
+    {
+        std::cout << "[ERROR] STOP 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("SETTING_ICON", L"../Resource/BATTLE/SETTING_ICON.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    // Patikle Resource
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust2", L"../Resource/Dust2.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
 
     // TEST Resource
     ////////////////////////////////////////////////////////////////////////////////

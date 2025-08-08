@@ -9,6 +9,7 @@
 #include "ColliderBase.h"
 #include "CameraFader.h"
 #include "ParticleSystem.h"
+#include "BuildSystem.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -126,10 +127,12 @@ namespace JDScene {
 
         // 게임 맵을 생성합니다.
         void CreateGameMap();
-
     private:
+        std::unique_ptr<BuildSystem> m_BuildSystem;
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
+        
+        std::vector<bool> m_isOpen;
 
         CameraFader  m_fader;
 
@@ -138,8 +141,8 @@ namespace JDScene {
         Button* m_selectedTool = nullptr;
         JDComponent::ColliderBase* m_selectedCollider = nullptr;
         
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        std::vector<Button*> m_gridCreateButtons;
 
         std::shared_ptr<Camera> m_camera;
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
@@ -147,7 +150,6 @@ namespace JDScene {
         std::vector<UIObject*> m_TutorialUIObjects;
         std::vector<GameObject*> m_TutorialObjects;
 
-       
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -324,7 +326,5 @@ namespace JDScene {
         // 튜토리얼 완료
         // ==========================================================
         void EnterComplete();               // 튜토리얼 완료 처리
-
-        
     };
 }

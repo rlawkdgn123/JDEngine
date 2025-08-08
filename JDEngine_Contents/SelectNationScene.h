@@ -14,6 +14,8 @@ namespace JDScene {
     {
     public:
 
+        ////////////////////////////////////////////////////////////////////////////////
+
         SelectNationScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
         ~SelectNationScene() override {}
@@ -32,10 +34,23 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        void ClickUpdate();
+        void CreateSelectNationScene();     // 국가 선택 씬 생성
+        void FinalizeSelectNationScene();   // 국가 선택 씬 정리
 
-        // 호버된 캐릭터 클리어
-        void ClearHoveredCharacter();
+        void InitSound();                   // 사운드 초기화
+        void InitParticle();                // 파티클 초기화
+
+        void LogicUpdate();                     // 로직 업데이트
+        void ClickUpdate();                     // 클릭 업데이트
+        void ParticleUpdate(float deltaTime);   // 파티클 업데이트
+
+        void RenderSelectNationScene(float deltaTime);      // 국가 선택 씬 렌더
+        void RenderParticle();                              // 파티클 렌더
+
+
+        void ClearHoveredCharacter();   // 호버된 캐릭터 클리어
+
+        ////////////////////////////////////////////////////////////////////////////////
 
     private:
         FMOD::Channel* m_hoverSfxChannel = nullptr;

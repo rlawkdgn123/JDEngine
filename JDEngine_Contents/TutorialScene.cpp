@@ -58,10 +58,17 @@ namespace JDScene {
         // [추가] 튜토리얼 시작
         m_currentStep = TutorialStep::STEP_1_NOTICE_A;
         EnterStep1_NoticeA(); // 첫 번째 튜토리얼 단계 시작
+
+        /////////////////////////////////////////////////////////////////////////////
+        AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
     }
 
     void TutorialScene::OnLeave() {
         //cout << "[TestScene] OnLeave()\n";
+        if (bgmChannel) {
+            bgmChannel->stop(); // FMOD에서 채널을 멈춤
+            bgmChannel = nullptr; // 포인터도 초기화 (안전)
+        }
     }
 
     void TutorialScene::Update(float deltaTime) {

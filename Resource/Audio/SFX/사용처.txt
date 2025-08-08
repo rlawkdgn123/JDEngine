@@ -1,0 +1,17 @@
+SFX_Button_Click - 버튼 클릭 시
+SFX_Button_Hover - 버튼 위에 마우스 호버 시
+SFX_Button_Close - 팝업 닫기 버튼 클릭 시
+
+SFX_Building_Build - 타일 위에 건물 건설 시
+SFX_Building_Upgrade - 건물을 업그레이드 시
+
+SFX_Cat_Put - 건물에 고양이 배치 시
+SFX_Change - 건물에 배치한 고양이 교체 시
+
+SFX_Battle_Unit - 병영 클릭 후 징병 버튼 클릭 시
+SFX_Battle_Expedition - 병영 클릭 후 원정 버튼 클릭 시
+SFX_GroundAdd - 신규 타일 확장 시
+
+SFX_Battle_War - 적 유닛과 아군 유닛 충돌 시
+SFX_Battle_Win - 병력 비교에서 승리 시
+SFX_Battle_Defeat - 병력 비교에서 패배 시

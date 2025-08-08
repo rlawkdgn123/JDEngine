@@ -35,7 +35,8 @@ namespace JDScene {
 
         void ClickUpdate();
     private:
-        FMOD::Channel* m_hoverSfxChannel = nullptr;
+        FMOD::Channel* bgmChannel = nullptr;
+        FMOD::Channel* sfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_mouseParticles;
         std::unique_ptr<ParticleSystem> m_sakuraParticles;

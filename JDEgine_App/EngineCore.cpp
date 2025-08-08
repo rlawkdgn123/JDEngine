@@ -83,6 +83,7 @@ std::wstring UTF8ToWString(const std::string& utf8Str)
 
 bool EngineCore::Initialize()
 {
+    
     // 유니코드 기반의 윈도우 클래스 이름과 윈도우 이름 설정
     const wchar_t* className = L"JDEngine";
     const wchar_t* windowName = L"JDEngine";
@@ -100,11 +101,22 @@ bool EngineCore::Initialize()
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
-    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
-    AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
-    AudioManager::Instance().SetMusicVolume(1.0f);
-    FMOD::Channel* bgmChannel = nullptr;
-    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    AudioManager::Instance().LoadAudio("BGM_Battle", "../Resource/Audio/BGM/Battle.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Fiield", "../Resource/Audio/BGM/Fiield.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Title", "../Resource/Audio/BGM/Title.mp3", true);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Defeat", "../Resource/Audio/SFX/SFX_Battle_Defeat.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Expedition", "../Resource/Audio/SFX/SFX_Battle_Expedition.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Unit", "../Resource/Audio/SFX/SFX_Battle_Unit.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_War", "../Resource/Audio/SFX/SFX_Battle_War.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Win", "../Resource/Audio/SFX/SFX_Battle_Win.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Build", "../Resource/Audio/SFX/SFX_Building_Build.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Upgrade", "../Resource/Audio/SFX/SFX_Building_Upgrade.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Click", "../Resource/Audio/SFX/SFX_Button_Click.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Close", "../Resource/Audio/SFX/SFX_Button_Close.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Hover", "../Resource/Audio/SFX/SFX_Button_Hover.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Cat_Put", "../Resource/Audio/SFX/SFX_Cat_Put.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Change", "../Resource/Audio/SFX/SFX_Change.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_GroundAdd", "../Resource/Audio/SFX/SFX_GroundAdd.mp3", false);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))

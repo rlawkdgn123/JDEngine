@@ -94,10 +94,16 @@ namespace JDScene {
             }*/
 
         }
+        /////////////////////////////////////////////////////////////////////////////
+        AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
     }
 
     void GameScene::OnLeave() {
         //cout << "[GameScene] OnLeave()\n";
+        if (bgmChannel) {
+            bgmChannel->stop(); // FMOD에서 채널을 멈춤
+            bgmChannel = nullptr; // 포인터도 초기화 (안전)
+        }
     }
 
     void GameScene::Update(float deltaTime) {

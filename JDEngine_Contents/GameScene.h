@@ -94,6 +94,9 @@ namespace JDScene {
         void ShowFilledMenu();
 
     private:
+        FMOD::Channel* bgmChannel = nullptr;
+        FMOD::Channel* sfxChannel = nullptr;
+
         std::vector<bool> m_isOpen;
         std::vector<int> m_showedDays;
 

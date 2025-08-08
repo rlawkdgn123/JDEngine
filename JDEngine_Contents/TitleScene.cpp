@@ -23,7 +23,7 @@ namespace JDScene {
 
     // TitleScene
     void TitleScene::OnEnter() {
-
+        ShowCursor(FALSE);
         // UI
         ////////////////////////////////////////////////////////////////////////////////
         
@@ -57,10 +57,11 @@ namespace JDScene {
         gameStart->AddOnClick("Load GameScene", [this]() 
             {
                 if (isOpenOption) return;
-
+                
                 // SceneManager를 이용해 다음 씬으로 넘어갑니다.
-                // SceneManager::Instance().ChangeScene("TutorialScene");
                 SceneManager::Instance().ChangeScene("SelectNationScene");
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -69,10 +70,10 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 gameStart->SetTextureName("GAME_START_A");
-                if (m_hoverSfxChannel == nullptr)
+                if (sfxChannel == nullptr)
                 {
                     // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+                    AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
                 }
             });
 
@@ -82,10 +83,9 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 gameStart->SetTextureName("GAME_START_B");
-                if (m_hoverSfxChannel)
+                if (sfxChannel)
                 {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+                    sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
                 }
             });
 
@@ -126,11 +126,7 @@ namespace JDScene {
 
                 // 마우스 벗어남 이벤트 수동 실행
                 setting->SetTextureName("SETTING_B");
-                if (m_hoverSfxChannel)
-                {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-                }
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -139,10 +135,10 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 setting->SetTextureName("SETTING_A");
-                if (m_hoverSfxChannel == nullptr)
+                if (sfxChannel == nullptr)
                 {
                     // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+                    AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
                 }
             });
 
@@ -152,10 +148,9 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 setting->SetTextureName("SETTING_B");
-                if (m_hoverSfxChannel)
+                if (sfxChannel)
                 {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+                    sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
                 }
             });
         
@@ -172,7 +167,7 @@ namespace JDScene {
         quitGame->AddOnClick("Quit Game", [this]()
             {
                 if (isOpenOption) return;
-
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
                 // 1. 메인 윈도우의 핸들(HWND)을 가져옵니다.
                 HWND mainWindowHandle = JDGlobal::Window::WindowSize::Instance().GetHWND();
 
@@ -189,10 +184,10 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 quitGame->SetTextureName("QUIT_GAME_A");
-                if (m_hoverSfxChannel == nullptr)
+                if (sfxChannel == nullptr)
                 {
                     // 채널 포인터를 TitleScene의 멤버 변수에 저장
-                    AudioManager::Instance().PlaySFX("Step", &m_hoverSfxChannel);
+                    AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
                 }
             });
 
@@ -202,10 +197,9 @@ namespace JDScene {
                 if (isOpenOption) return;
 
                 quitGame->SetTextureName("QUIT_GAME_B");
-                if (m_hoverSfxChannel)
+                if (sfxChannel)
                 {
-                    m_hoverSfxChannel->stop();        // 사운드 정지
-                    m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+                    sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
                 }
             });
 
@@ -328,6 +322,7 @@ namespace JDScene {
         m_selectVolume->SetActive(false);
 
         m_selectVolume->AddOnClick("OpenVolumeUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             m_optionVolume->SetActive(true);
             m_optionControl->SetActive(false);
             m_optionCredit->SetActive(false);
@@ -356,6 +351,7 @@ namespace JDScene {
         m_selectControl->SetActive(false);
 
         m_selectControl->AddOnClick("OpenControlUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             m_optionVolume->SetActive(false);
             m_optionControl->SetActive(true);
             m_optionCredit->SetActive(false);
@@ -384,6 +380,7 @@ namespace JDScene {
         m_selectCredit->SetActive(false);
 
         m_selectCredit->AddOnClick("OpenCreditUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             m_optionVolume->SetActive(false);
             m_optionControl->SetActive(false);
             m_optionCredit->SetActive(true);
@@ -408,6 +405,7 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_closeOption->AddOnClick("Load TitleScene", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             m_optionUI->SetActive(false);
             m_optionVolume->SetActive(false);
             m_optionControl->SetActive(false);
@@ -432,13 +430,13 @@ namespace JDScene {
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_closeOption->AddOnEnter("Highlight On", [this]() {
             // 텍스트 변경
-            m_closeOption->SetTextureName("ART_Back01_mouseover");
+            m_closeOption->SetTextureName("BACK_2");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_closeOption->AddOnExit("Highlight Off", [this]() {
             // 텍스트 변경
-            m_closeOption->SetTextureName("ART_Back01_mouseover");
+            m_closeOption->SetTextureName("BACK_1");
             });
 
         //////////////////////////////////////////////////////////////////////////////////
@@ -495,15 +493,21 @@ namespace JDScene {
         m_sparkleParticles = std::make_unique<ParticleSystem>(
             D2DRenderer::Instance().GetD2DContext()
         );
+        /////////////////////////////////////////////////////////////////////////////
+        AudioManager::Instance().PlayBGM("BGM_Title", &bgmChannel);
     }
 
     void TitleScene::OnLeave() {
-
+        ShowCursor(TRUE);
         // 효과음 재생 중이면 정지
-        if (m_hoverSfxChannel)
+        if (sfxChannel)
         {
-            m_hoverSfxChannel->stop();        // 사운드 정지
-            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            //sfxChannel->stop();        // 사운드 정지
+            sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+        }
+        if (bgmChannel) {
+            bgmChannel->stop(); // FMOD에서 채널을 멈춤
+            bgmChannel = nullptr; // 포인터도 초기화 (안전)
         }
 
         // 선택된 오브젝트 포인터 초기화
@@ -695,7 +699,6 @@ namespace JDScene {
 
         InputManager& input = InputManager::Instance();
         MouseState state = input.GetMouseState();
-
         // state.leftClicked 또는 state.leftPressed 등 필요한 입력 상태를 사용합니다.
         if (state.leftClicked)
         {
@@ -761,6 +764,7 @@ namespace JDScene {
             // 아무것도 클릭되지 않았다면 선택 해제
             if (!clicked)
             {
+                
                 SetSelectedObject(nullptr);
             }
         }

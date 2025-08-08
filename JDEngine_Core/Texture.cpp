@@ -13,16 +13,21 @@ void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F
         );
     if (!bitmap) return;
 
-    // 월드 변환 설정
-    auto ctx = D2DRenderer::Instance().GetD2DContext();
-    ctx->SetTransform(worldTransform);
-
     D2D1_RECT_F destRect = D2D1::RectF(
         -m_size.width * 0.5f,   // left
         m_size.height * 0.5f,  // top
         m_size.width * 0.5f,    // right
         -m_size.height * 0.5f   // bottom
     );
+
+    D2D1_MATRIX_3X2_F flipMatrix = D2D1::Matrix3x2F::Identity();
+    if (m_flipX) {
+        // 중심 기준이므로 (0,0) 기준에서 X축 반전
+        flipMatrix = D2D1::Matrix3x2F::Scale(-1.0f, 1.0f, D2D1::Point2F(0, 0));
+    }
+
+    auto ctx = D2DRenderer::Instance().GetD2DContext();
+    ctx->SetTransform(flipMatrix * worldTransform);
 
     D2D1_SIZE_F originalSize = bitmap->GetSize();
     D2DRenderer::Instance().DrawBitmap(

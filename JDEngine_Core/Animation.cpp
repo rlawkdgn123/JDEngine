@@ -26,16 +26,19 @@ void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F wor
 
     const auto& frame = clip->frames[m_currentFrame];
 
-    // 1) worldTransform 세팅
-    auto ctx = D2DRenderer::Instance().GetD2DContext();
-    ctx->SetTransform(worldTransform);
-
-    // 2) destRect 계산 (원점 '중심' 기준, 프레임 크기만큼)
     float w = frame.srcRect.right - frame.srcRect.left;
     float h = frame.srcRect.bottom - frame.srcRect.top;
     D2D1_RECT_F destRect = D2D1::RectF(-w * 0.5f, h * 0.5f, w * 0.5f, -h * 0.5f);
 
-    // 3) 래퍼 호출
+    D2D1_MATRIX_3X2_F flipMatrix = D2D1::Matrix3x2F::Identity();
+    if (m_flipX) {
+        // 중심 기준이므로 (0,0) 기준에서 X축 반전
+        flipMatrix = D2D1::Matrix3x2F::Scale(-1.0f, 1.0f, D2D1::Point2F(0, 0));
+    }
+
+    auto ctx = D2DRenderer::Instance().GetD2DContext();
+    ctx->SetTransform(flipMatrix * worldTransform);
+
     D2DRenderer::Instance().DrawBitmap(
         static_cast<ID2D1Bitmap1*>(bitmap),
         destRect,

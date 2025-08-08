@@ -45,7 +45,7 @@ enum class TutorialStep
     STEP_3_CLICKBUILDING_B,     // 제재소 클릭
     STEP_3_SETWORKCAT_B,        // 펠리스 고양이 배치
     STEP_3_CLEAR,               // 
-    
+
     // 4. 건물 업그레이드
     STEP_4_NOTICE_A,            // "건물을 새로 짓는 대신 건물 레벨을..."
     STEP_4_NOTICE_B,            // "낚시터를 레벨업해서 식량을 보충하세요"
@@ -127,36 +127,37 @@ namespace JDScene {
 
         // 게임 맵을 생성합니다.
         void CreateGameMap();
+
     private:
-        std::unique_ptr<BuildSystem> m_BuildSystem;
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
-        
-        std::vector<bool> m_isOpen;
 
         CameraFader  m_fader;
+
+        std::shared_ptr<Camera> m_camera;
+        std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
+        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
+        std::vector<GameObject*> m_TutorialObjects;
+
+
+        // 맵 생성 변수
+        ////////////////////////////////////////////////////////////////////////////////
+
+        std::vector<UIObject*> m_TutorialUIObjects;
+        std::unique_ptr <BuildSystem> m_buildSystem;
+
+        // 그리드
+        int m_totalCols = 4;
+        int m_totalRows = 6;
+        // std::vector<bool> m_isOpen;
+
+        std::vector<Button*> m_emptyButtons;
+        std::vector<Button*> m_filledButtons;
 
         Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;
         Button* m_selectedTool = nullptr;
         JDComponent::ColliderBase* m_selectedCollider = nullptr;
-        
-        std::vector<Button*> m_gridSettingButtons;
-        std::vector<Button*> m_gridCreateButtons;
-
-        std::shared_ptr<Camera> m_camera;
-        std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
-        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
-        std::vector<UIObject*> m_TutorialUIObjects;
-        std::vector<GameObject*> m_TutorialObjects;
-
-        // 맵 생성 변수
-        ////////////////////////////////////////////////////////////////////////////////
-
-        // 그리드
-        int m_totalCols = 4;
-        int m_totalRows = 6;
-        std::vector<bool> m_isOpen;
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -220,14 +221,14 @@ namespace JDScene {
         // Button* m_buildLab = nullptr;
 
         // 1. 건설 Info
-        Text*  m_buildTypeText = nullptr;
+        Text* m_buildTypeText = nullptr;
 
-        Text*  m_costInfoText = nullptr;
-        Text*  m_costText = nullptr;
+        Text* m_costInfoText = nullptr;
+        Text* m_costText = nullptr;
         Image* m_costImage = nullptr;
 
-        Text*  m_effectInfoText = nullptr;
-        Text*  m_effectText = nullptr;
+        Text* m_effectInfoText = nullptr;
+        Text* m_effectText = nullptr;
         Image* m_effctImage = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -326,5 +327,7 @@ namespace JDScene {
         // 튜토리얼 완료
         // ==========================================================
         void EnterComplete();               // 튜토리얼 완료 처리
+
+
     };
 }

@@ -155,6 +155,7 @@ namespace JDScene {
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_experiencedCatParentButton->AddOnClick("Load GameScene", []() {
             // TODO : 게임 씬으로 이동
+            SceneManager::Instance().ChangeScene("GameScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경

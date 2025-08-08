@@ -6,11 +6,11 @@
 #include "RectTransform.h"
 #include "D2DTransform.h"
 #include "Texture.h"
+#include "BuildSystem.h"
 
 
 using namespace std;
 using namespace JDGameObject::Content;
-using namespace JDGlobal::Contents;
 using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
@@ -23,6 +23,18 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
         using JDScene::TutorialScene;
+
+        m_buildSystem = make_unique<BuildSystem>();
+        
+        // 주거지 데이터 받아오기
+        JDGlobal::Contents::HouseStats house;
+
+        DataTableManager::Instance().GetHouseTable(house);
+        ResourceSystem::Instance().GetCurPopulation();
+        ResourceSystem::Instance().GetResourcePerSec();
+
+        // 그리드 클릭했을 때, 건설
+        
 
         // 게임 맵 생성
         CreateGameMap();
@@ -100,38 +112,35 @@ namespace JDScene {
         auto mousePos = GetMouseWorldPos();
 
         for (auto& objPtr : m_gameObjects) {
-
             auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
-            auto* grid = dynamic_cast<Grid*>(objPtr.get());
+            if (!collider) continue;
 
-            if (!collider || !grid) continue;
-                
-            if (!collider->IsMouseOver(mousePos)) continue;
-                
+            auto* grid = dynamic_cast<Grid*>(objPtr.get());
+            if (!grid)
+                continue;
+
             int id = collider->GetIndex();
+
+            if (!collider->IsMouseOver(mousePos))
+                continue;
 
             if (left) {
                 collider->SetOpen(true);
                 std::cout << "[DEBUG] left ID: " << id << std::endl;
             }
-            else if (right) {
+            else if (right && collider->IsOpen()) {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
 
-                if (!collider->IsOpen()) return;
-                
-                if (!grid->IsOccupied()) {
-                    if (grid->IsExpanded()) {
-                        cout << "타일 확장 시도..." << endl;
-                        m_BuildSystem->ExpandTile(grid);
-                    }
-                    else { std::cout << "[DEBUG] 타일 선택 불가!!" << std::endl; return; }
-                    
+                m_selectedCollider = collider;
+
+                auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
+                if (boxCol->HasBuilding()) {
+                    ShowFilledMenu();
                 }
                 else {
                     isbuild = true;
                     ShowBuildMenu();
                 }
-               
             }
         }
 
@@ -208,7 +217,7 @@ namespace JDScene {
         {
             D2DRenderer::Instance().RenderGameObject(*tutorialObj, deltaTime);
         }
-        
+
         if (m_lightParticles) {
             // 스크린 좌표로 바로 그릴 거면 Transform 초기화 후
             auto ctx = D2DRenderer::Instance().GetD2DContext();
@@ -279,10 +288,7 @@ namespace JDScene {
                             auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
 
                             //건물유무
-                            if (Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner())) {
-                                if(!grid->HasBuilding()) 
-                                    grid->SetHasBuilding(true);
-                            }
+                            boxCol->SetHasBuilding(true);
 
                             //콜라이더 월드 위치 및 스케일 가져와서 이미지에 적용
                             Vector2F halfSize = boxCol->GetHalfSize();
@@ -302,7 +308,7 @@ namespace JDScene {
                             std::string texKey = uiImage
                                 ? uiImage->GetTextureName()
                                 : std::string("DefaultTexture");
-                            
+
                             auto* bitmap = static_cast<ID2D1Bitmap*>(
                                 AssetManager::Instance().GetTexture(texKey));
                             auto bmpSize = bitmap->GetSize();
@@ -311,23 +317,11 @@ namespace JDScene {
                                 fullSize.x / bmpSize.width,
                                 fullSize.y / bmpSize.height
                             };
-                            
+
                             //선택한 버튼에 타입에 따른 오브젝트 생성
                             GameObject* building = nullptr;
 
-                            if (texKey.empty()) {
-                                std::cout << "유효하지 않은 텍스처 키입니다." << std::endl;
-                                // 6) 메뉴 닫기 & 버튼 숨기기
-                                m_Menu->SetActive(false);
-                                for (auto* btn : m_menuButtons)
-                                    if (btn) btn->SetActive(false);
-
-                                // 7) 선택 초기화
-                                m_selectedTool = nullptr;
-                                m_selectedCollider = nullptr;
-                                break;
-                            }
-                            else if (texKey == "fishing") {
+                            if (texKey == "fishing") {
                                 building = CreateGameObject<FishingSpot>(L"FishingSpot_" + m_selectedTool->GetName());
                             }
                             else if (texKey == "lumbermill") {
@@ -342,13 +336,10 @@ namespace JDScene {
                             else {
                                 // 그 외 Building 기본 생성
                                 //building = CreateGameObject<Building>(L"Building_" + m_selectedTool->GetName());
-                                cout << "texKey 오류 : 찾을 수 없음" << endl;
                             }
 
                             if (building) {
                                 m_TutorialObjects.push_back(building);
-                                dynamic_cast<Grid*>(boxCol->GetOwner())->SetBuilding(building);
-                                
                                 std::cout << "건물 추가됨" << std::endl;
                                 building->GetComponent<Transform>()->SetScale(scale);
                                 auto* tr = building->AddComponent<TextureRenderer>(
@@ -362,7 +353,7 @@ namespace JDScene {
                             }
                             else
                             {
-                                std::cout << "건물 추가 에러발생" << std::endl;
+                                std::cout << "건물 추가 에러발생 장~후~장~후~~~~" << std::endl;
                             }
 
                             // 6) 메뉴 닫기 & 버튼 숨기기
@@ -530,12 +521,12 @@ namespace JDScene {
         }
     }
 
-    void TutorialScene::ShowGridSettingMenu() {
+    void TutorialScene::ShowFilledMenu() {
         m_Menu->SetActive(true);
-        // 빈 메뉴 버튼들만 켜고
-        for (auto* btn : m_gridSettingButtons)   btn->SetActive(true);
-        // 채운 메뉴 버튼들은 끄기
-        for (auto* btn : m_gridCreateButtons)  btn->SetActive(false);
+        // 빈 메뉴 버튼들 끄고
+        for (auto* btn : m_emptyButtons)   btn->SetActive(false);
+        // 채운 메뉴 버튼들 켜기
+        for (auto* btn : m_filledButtons)  btn->SetActive(true);
     }
 
     void TutorialScene::CreateGameMap()
@@ -595,6 +586,8 @@ namespace JDScene {
         // =====================================================================
         // 그리드 배치 정보
         // =====================================================================
+
+        m_buildSystem->CreateGrid(this);
 
         // 그리드를 배치할 전체 영역의 크기
         const float areaWidth = 515.0f;
@@ -1038,7 +1031,7 @@ namespace JDScene {
         // 주거지 버튼 클릭하면 실행될 이벤트
         m_buildHouse->AddOnClick("Quit Game", [this]()
             {
-
+                
             });
 
         // 주거지 버튼 마우스를 올리면 실행될 이벤트

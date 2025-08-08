@@ -557,6 +557,7 @@ void D2DRenderer::CreateWriteResource()
     // 4. 시스템 폰트 및 커스텀 폰트 등록
     // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
 
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 16.0f, "Sebang_16");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");

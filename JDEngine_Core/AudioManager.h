@@ -27,6 +27,10 @@ public:
     void SetSFXVolume(float vol);
     float GetSFXVolume() const;
 
+    /// 전체 볼륨 (Master Volume)
+    void SetMasterVolume(float vol);
+    float GetMasterVolume() const;
+
     /// 전역 뮤트 토글
     void SetMute(bool mute);
     bool IsMuted() const;
@@ -45,5 +49,6 @@ private:
 
     float musicVolume_ = 1.0f;
     float sfxVolume_ = 1.0f;
+    float masterVolume_ = 1.0f;
     bool  isMuted_ = false;
 };

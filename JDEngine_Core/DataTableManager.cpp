@@ -6,11 +6,12 @@ using namespace std;
 using namespace JDGlobal::Contents;
 void DataTableManager::Initalize()
 {
+    cout << "데이터 테이블 이니셜라이즈 진입" << endl;
     LoadAllCSV();
-    void ParseFishingSpotTable();
-    void ParseLumberMillTable();
-    void ParseMineTable();
-    void ParseHouseTable();
+    ParseFishingSpotTable();
+    ParseLumberMillTable();
+    ParseMineTable();
+    ParseHouseTable();
 }
 bool DataTableManager::LoadCSV(const std::string& name, const std::string& filePath)
 {
@@ -508,5 +509,21 @@ void DataTableManager::ParseArmyTable()
 
 void DataTableManager::ParseEnemyTable()
 {
+}
+
+void DataTableManager::PrintAllTable()
+{
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+    cout << "파싱 테스트" << endl;
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+    m_fishingSpotTable.PrintStats();
+    m_lumberMillTable.PrintStats();
+    m_mineTable.PrintStats();
+    m_houseTable.PrintStats();
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+
 }
 

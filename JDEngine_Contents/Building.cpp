@@ -15,5 +15,12 @@ namespace JDGameObject {
             __super::Start();
             m_resourceSystem->AddTotalResource(-stats.m_upgradeCost[m_nowLevel]);
         }
+        void Building::Update(float deltaTime)
+        {
+            __super::Update(deltaTime);
+            if (m_cat == CatType::None) {
+                return;
+            }
+        }
     }
 }

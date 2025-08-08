@@ -74,7 +74,18 @@ namespace JDGameObject {
 		}
 		void Text::Update(float deltaTime)
 		{
-			// __super::Update(deltaTime);
+			__super::Update(deltaTime);
+
+			if (m_index < m_fullText.size()) {
+				m_timer += deltaTime;
+				float interval = 1.0f / m_charsPerSecond;
+				while (m_timer >= interval && m_index < m_fullText.size()) {
+					m_timer -= interval;
+					++m_index;
+				}
+				// 3) 현재까지 자른 문자열을 TextComponent에 넘기기
+				SetText(m_fullText.substr(0, m_index));
+			}
 		}
 		void Text::LateUpdate(float deltaTime)
 		{
@@ -113,6 +124,16 @@ namespace JDGameObject {
 		void Button::Update(float deltaTime)
 		{
 			__super::Update(deltaTime);
+			if (m_index < m_fullText.size()) {
+				m_timer += deltaTime;
+				float interval = 1.0f / m_charsPerSecond;
+				while (m_timer >= interval && m_index < m_fullText.size()) {
+					m_timer -= interval;
+					++m_index;
+				}
+				// 3) 현재까지 자른 문자열을 TextComponent에 넘기기
+				SetText(m_fullText.substr(0, m_index));
+			}
 		}
 		void Button::LateUpdate(float deltaTime)
 		{

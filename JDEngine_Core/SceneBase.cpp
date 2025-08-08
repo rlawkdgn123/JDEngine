@@ -130,6 +130,8 @@ namespace JDScene {
             auto* col = obj->GetComponent<JDComponent::ColliderBase>();
             if (!col) continue;
 
+            if (!col->IsRenderCollider())continue;
+
             auto* tm = obj->GetComponent<JDComponent::D2DTM::Transform>();
             if (!tm) continue;
             D2D1_MATRIX_3X2_F world = tm->GetWorldMatrix();

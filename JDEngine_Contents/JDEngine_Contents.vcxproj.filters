@@ -69,6 +69,8 @@
     </ClCompile>
     <ClCompile Include="ExpeditionSystem.cpp">
       <Filter>GameSystem\Combat</Filter>
+    <ClCompile Include="BuildSystem.cpp">
+      <Filter>GameSystem\Build</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +151,8 @@
     </ClInclude>
     <ClInclude Include="ExpeditionSystem.h">
       <Filter>GameSystem\Combat</Filter>
+    <ClInclude Include="BuildSystem.h">
+      <Filter>GameSystem\Build</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +236,8 @@
     </Filter>
     <Filter Include="Object\GameObject\Soldier">
       <UniqueIdentifier>{85b058c0-fc87-4c81-b864-2ca5296ad3c8}</UniqueIdentifier>
+    <Filter Include="GameSystem\Build">
+      <UniqueIdentifier>{85827179-73d1-4a99-800a-db9c8afb9c21}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

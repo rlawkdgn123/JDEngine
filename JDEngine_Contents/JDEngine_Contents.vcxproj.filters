@@ -64,6 +64,12 @@
     <ClCompile Include="WaveManager.cpp">
       <Filter>GameSystem\Combat</Filter>
     </ClCompile>
+    <ClCompile Include="Soldier.cpp">
+      <Filter>Object\GameObject\Soldier</Filter>
+    </ClCompile>
+    <ClCompile Include="ExpeditionSystem.cpp">
+      <Filter>GameSystem\Combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UIObjectList.h">
@@ -136,6 +142,12 @@
       <Filter>Scene\Game</Filter>
     </ClInclude>
     <ClInclude Include="WaveManager.h">
+      <Filter>GameSystem\Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Soldier.h">
+      <Filter>Object\GameObject\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpeditionSystem.h">
       <Filter>GameSystem\Combat</Filter>
     </ClInclude>
   </ItemGroup>
@@ -217,6 +229,9 @@
     </Filter>
     <Filter Include="Scene\Game">
       <UniqueIdentifier>{12726fcf-02c5-423d-8176-de9fc3268c98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\GameObject\Soldier">
+      <UniqueIdentifier>{85b058c0-fc87-4c81-b864-2ca5296ad3c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

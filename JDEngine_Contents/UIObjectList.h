@@ -114,7 +114,6 @@ namespace JDGameObject {
 			void SetText(const std::wstring& text) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetText(text); }
 			void SetColor(const D2D1_COLOR_F& color) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetColor(color); }
 			void SetTextFormatName(const std::string& formatName) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetTextFormatName(formatName); }
-
 			// Getter
 			std::wstring GetText() const {
 				if (auto comp = GetComponent<UI_TextComponent>()) return comp->GetText();
@@ -122,6 +121,11 @@ namespace JDGameObject {
 			}
 
 			////////////////////////////////////////////////////////////////////////////////
+		private:
+			std::wstring m_fullText;     // 최종 보여줄 전체 문자열
+			float        m_charsPerSecond = 20.f; // 텍스트 속도(글자/초)
+			float        m_timer = 0.f;  // 시간 누적
+			size_t       m_index = 0;    // 현재까지 표시된 글자 수
 		};
 
 
@@ -197,6 +201,13 @@ namespace JDGameObject {
 				if (auto comp = GetComponent<UI_TextComponent>()) comp->SetTextFormatName(formatName);
 			}
 
+			void PlayTyping(const std::wstring& text, float charsPerSecond = 20.f) {
+				m_fullText = text;
+				m_charsPerSecond = charsPerSecond;
+				m_timer = 0.f;
+				m_index = 0;
+				SetText(L"");
+			}
 
 			////////////////////////////////////////////////////////////////////////////////
 			// ButtonComponent 제어
@@ -261,6 +272,12 @@ namespace JDGameObject {
 				auto size = bitmap->GetSize();
 				return { size.width, size.height };
 			}
+
+			private:
+				std::wstring m_fullText;     // 최종 보여줄 전체 문자열
+				float        m_charsPerSecond = 20.f; // 텍스트 속도(글자/초)
+				float        m_timer = 0.f;  // 시간 누적
+				size_t       m_index = 0;    // 현재까지 표시된 글자 수
 		};
 
 		class Slider : public UIObject {

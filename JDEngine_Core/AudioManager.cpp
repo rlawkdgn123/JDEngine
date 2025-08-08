@@ -19,11 +19,9 @@ void AudioManager::Initialize(int maxChannels) {
     coreSys->createChannelGroup("SFX", &sfxGroup_);
     masterGroup_->addGroup(musicGroup_);
     masterGroup_->addGroup(sfxGroup_);
-
-    // 3) FMOD Studio 시스템 및 버스 가져오기
-    /*studioSys_ = FMODSystem::Instance().GetStudioSystem();
-    studioSys_->getBus("bus:/Music", &musicBus_);
-    studioSys_->getBus("bus:/SFX", &sfxBus_);*/
+    masterGroup_->setVolume(masterVolume_);
+    musicGroup_->setVolume(musicVolume_);
+    sfxGroup_->setVolume(sfxVolume_);
 }
 
 void AudioManager::Update() {
@@ -68,6 +66,22 @@ float AudioManager::GetSFXVolume() const {
     return sfxVolume_;
 }
 
+void AudioManager::SetMasterVolume(float vol) {
+    
+        if (masterGroup_) {
+            masterGroup_->setVolume(vol);
+            std::cout << "[AudioManager] MasterGroup_ volume = " << vol << "\n";
+        }
+        else {
+            std::cerr << "[AudioManager ERROR] masterGroup_ is null\n";
+        }
+        masterVolume_ = vol;
+}
+
+float AudioManager::GetMasterVolume() const {
+    return masterVolume_;
+}
+
 void AudioManager::SetMute(bool mute) {
     if (masterGroup_) masterGroup_->setMute(mute);
     isMuted_ = mute;
@@ -89,6 +103,6 @@ bool AudioManager::PlaySFX(const std::string& key, FMOD::Channel** out) {
     auto it = audioPaths_.find(key);
     if (it == audioPaths_.end()) return false;
 
-    FMODSystem::Instance().PlayOneShot(it->second, 1.0f, out);
+    FMODSystem::Instance().PlayOneShot(it->second, sfxGroup_, out);
     return true;
 }

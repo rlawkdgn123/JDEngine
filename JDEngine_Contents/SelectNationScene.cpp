@@ -146,6 +146,12 @@ namespace JDScene {
         m_experiencedCatParentButton->SetTextFormatName("Sebang_40");
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
+        //타이핑 함수 사용법
+        //m_experiencedCatParentButton->PlayTyping(
+        //    L"고양이 세계 펠리니아의 승자가 될 국가는?",
+        //    10.f  // 초당 글자 수
+        //);
+        
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_experiencedCatParentButton->AddOnClick("Load GameScene", []() {
             // TODO : 게임 씬으로 이동

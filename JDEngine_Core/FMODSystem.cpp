@@ -50,7 +50,7 @@ void FMODSystem::PlayLooped(
 }
 
 
-void FMODSystem::PlayOneShot(const std::string& filepath, float volume, FMOD::Channel** outChannel)
+void FMODSystem::PlayOneShot(const std::string& filepath, FMOD::ChannelGroup* group, FMOD::Channel** outChannel)
 {
     if (!coreSys_) return;
 
@@ -66,9 +66,8 @@ void FMODSystem::PlayOneShot(const std::string& filepath, float volume, FMOD::Ch
 
     // 2) Àç»ý
     FMOD::Channel* channel = nullptr;
-    coreSys_->playSound(sound, nullptr, true, &channel);
+    coreSys_->playSound(sound, group, true, &channel);
     if (channel) {
-        channel->setVolume(volume);
         channel->setPaused(false);
     }
     if (outChannel) {

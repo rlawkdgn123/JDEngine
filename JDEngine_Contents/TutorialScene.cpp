@@ -62,6 +62,7 @@ namespace JDScene {
 
                 // 4) 콜라이더 추가 및 인덱스 부여
                 auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
+                collider->SetRenderCollider(true);
                 int idx = col * m_totalRows + row;         // 0부터 (5*7-1) = 34 까지
                 collider->SetIndex(idx);
             }
@@ -107,6 +108,7 @@ namespace JDScene {
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
             boxObj3->AddComponent<AnimationRender>("Russ", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
 
+
             // LEGACY
             //auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
             //if (frames && !frames->frames.empty()) {
@@ -123,11 +125,11 @@ namespace JDScene {
                 float width = first.right - first.left;
                 float height = first.bottom - first.top;
                 Vector2F halfSize{ width * 0.5f, height * 0.5f };
-                birdObj->AddComponent<BoxCollider>(halfSize);
-                birdObj->AddComponent<Editor_Clickable>();
+                boxObj3->AddComponent<BoxCollider>(halfSize);
+                boxObj3->AddComponent<Editor_Clickable>();
             }
         }
-
+        
         int startCol = 1, startRow = 2;
         int regionW = 3, regionH = 3;
 

@@ -559,10 +559,14 @@ void D2DRenderer::CreateWriteResource()
 
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 16.0f, "Sebang_16");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 22.0f, "Sebang_22");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 20.0f, "Sebang_20");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 58.0f, "Sebang_58");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 22.0f, "Sebang_Bold_22");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 20.0f, "Sebang_Bold_20");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 32.0f, "Sebang_Bold_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 58.0f, "Sebang_Bold_58");

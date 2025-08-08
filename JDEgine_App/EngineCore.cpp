@@ -1680,6 +1680,18 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_1_Exam", L"../Resource/BATTLE_MAP_1_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_1_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_2_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_3_Exam", L"../Resource/BATTLE_MAP_3_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_3_Exam 텍스처 로드 실패" << std::endl;
+    }
     if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/UI_Exam.png"))
     {
         std::cout << "[ERROR] UI_Exam 텍스처 로드 실패" << std::endl;
@@ -2004,6 +2016,8 @@ void EngineCore::LoadResources()
     if (!AssetManager::Instance().LoadTexture("ART_TileMine01", L"../Resource/BATTLE/ART_TileMine01.png"))
     { std::cout << "[ERROR] ART_TileMine01 텍스처 로드 실패" << std::endl; }
 
+    if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01_Board", L"../Resource/BATTLE/ART_UIBuilding01_Board.png"))
+    { std::cout << "[ERROR] ART_UIBuilding01_Board 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01", L"../Resource/BATTLE/ART_UIBuilding01.png"))
     { std::cout << "[ERROR] ART_UIBuilding01 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_UICharSelect01", L"../Resource/BATTLE/ART_UICharSelect01.png"))

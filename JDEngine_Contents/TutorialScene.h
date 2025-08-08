@@ -114,14 +114,27 @@ namespace JDScene {
 
         void ClickUpdate();
 
+        // 1. 건설 UI
         void InitBuildMenu();
         void ShowBuildMenu();
         void CloseBuildMenu();
 
+        // 건설 UI
         void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
         void CloseBuildInfo();
-
         void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
+
+        // 2. 업그레이드 UI
+        void InitUpgradeMenu();
+        void ShowUpgradeMenu();
+        void CloseUpgradeMenu();
+
+        // 업그레이드 UI 
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void CloseCatInfo();
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+
 
         void ShowFilledMenu();
 
@@ -201,6 +214,12 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        // 원정 이미지
+        Image* m_away = nullptr;
+        Image* m_awayGauge = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
         bool isbuild = false;
         bool isupgrade = false;
@@ -233,6 +252,39 @@ namespace JDScene {
         Text* m_effectInfoText = nullptr;
         Text* m_effectText = nullptr;
         Image* m_effctImage = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // 2. 업그레이드 Info
+        // 고양이 배치
+        Text* m_catTypeText = nullptr;
+
+        Text*  m_catCostInfoText = nullptr;
+        Text*  m_catCostText = nullptr;
+        Image* m_catCostImage = nullptr;
+
+        Text*  m_catEffectInfoText = nullptr;
+        Text*  m_catEffectText = nullptr;
+        Image* m_catEffctImage = nullptr;
+        
+        // 고양이 선택 버튼
+        Button* m_naviSetButton = nullptr;
+        Button* m_felisSetButton = nullptr;
+        Button* m_koneSetButton = nullptr;
+
+        // 업그레이드 건물 정보
+        Text*  m_builtTypeText = nullptr;
+
+        Text*  m_upgradeCostInfoText = nullptr;
+        Text*  m_upgradeCostText = nullptr;
+        Image* m_upgradeCostImage = nullptr;
+
+        Text*  m_upgradeEffectInfoText = nullptr;
+        Text*  m_upgradeEffectText = nullptr;
+        Image* m_upgradeEffctImage = nullptr;
+
+        Button* m_downgradeButton = nullptr;
+        Button* m_upgradeButton = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
 

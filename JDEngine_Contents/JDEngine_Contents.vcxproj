@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="ArmySystem.h" />
     <ClInclude Include="Building.h" />
+    <ClInclude Include="BuildSystem.h" />
     <ClInclude Include="Cat.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -186,6 +187,7 @@
   <ItemGroup>
     <ClCompile Include="ArmySystem.cpp" />
     <ClCompile Include="Building.cpp" />
+    <ClCompile Include="BuildSystem.cpp" />
     <ClCompile Include="Cat.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

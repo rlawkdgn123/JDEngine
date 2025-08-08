@@ -130,7 +130,7 @@ bool EngineCore::Initialize()
     }
 
     DataTableManager::Instance().Initalize();
-
+    DataTableManager::Instance().PrintAllTable();
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
@@ -147,10 +147,12 @@ bool EngineCore::Initialize()
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
     SceneManager::Instance().ChangeScene("TitleScene");
+
     //SceneManager::Instance().ChangeScene("TestScene01");
     //SceneManager::Instance().ChangeScene("GameScene");
     //SceneManager::Instance().ChangeScene("TutorialScene");
     //SceneManager::Instance().ChangeScene("SelectNationScene");
+
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
@@ -592,6 +594,29 @@ void EngineCore::RenderImGui()
             selectObject->SetTag(static_cast<JDGlobal::Base::GameTag>(currentTag));
         }
         ImGui::PopItemWidth();
+
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        if (auto* grid = dynamic_cast<Grid*>(selectObject)) {
+            ImGui::Text("isOccupied - 확장 완료했는지"); ImGui::SameLine();
+            bool isOccupied = grid->IsOccupied();
+            ImGui::Checkbox("##isOccupied", &isOccupied);
+            grid->SetOccupied(isOccupied);
+
+            ImGui::Text("isExpanded - 레벨업 시 확장 선택 가능한지"); ImGui::SameLine();
+            bool isExpanded = grid->IsExpanded();
+            ImGui::Checkbox("##isExpanded", &isExpanded);
+            grid->SetExpanded(isExpanded);
+
+            ImGui::Text("hasBuilding - 건물 소유중인지"); ImGui::SameLine();
+            bool hasBuilding = grid->HasBuilding();
+            ImGui::Checkbox("##hasBuilding", &hasBuilding);
+            grid->SetHasBuilding(hasBuilding);
+        }
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
 
         ////////////////////////////////////////////////////////////////////////////////
         // Transform

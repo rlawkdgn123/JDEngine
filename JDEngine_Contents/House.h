@@ -14,7 +14,7 @@ namespace JDGameObject {
             using ResourceSystem = JDGameSystem::ResourceSystem;
             using Resource = JDGlobal::Contents::Resource;
         public:
-            House() : GameObject(L"Building") { m_tag = Tag::PlayerBuilding; }
+            House() : GameObject(L"House") { m_tag = Tag::PlayerBuilding; }
             House(const std::wstring& name) : GameObject(name) { m_tag = Tag::PlayerBuilding; }
         public:
             void Awake() override;                               // 최초 1회만 호출

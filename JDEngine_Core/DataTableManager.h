@@ -25,6 +25,7 @@ public:
     bool LoadAllCSV();
     std::string GetCSV(const std::string& key) const;
 
+    void PrintAllTable();
 private:
     // CSV 파싱 함수
     void ParseTestTable();      // 테스트용 테이블
@@ -37,6 +38,7 @@ private:
     void ParseCatTable();       // 운영용 고양이 스탯 테이블
     void ParseArmyTable();      // 전투용 고양이 스탯 테이블
     void ParseEnemyTable();     // 적 스탯 & 물량 테이블
+    
 private:
     // string은 RAII가 이미 적용되어 있으므로, smart_ptr을 적용시킬 필요가 없다.
     std::unordered_map<std::string, std::string> m_csvFileMap; // csv 파일

@@ -6,7 +6,7 @@ namespace JDGameObject {
         class FishingSpot : public JDGameObject::Content::Building
         {
         public:
-            FishingSpot() : Building(L"DefaultObject") {}
+            FishingSpot() : Building(L"FishingSpot") {}
             FishingSpot(const std::wstring& name) : Building(name) {}
             void Awake() override;                               // 최초 1회만 호출
             void Start() override;                               // 최초 1회만 호출
@@ -15,13 +15,13 @@ namespace JDGameObject {
             void FixedUpdate(float fixedDeltaTime) override;     // 물리 계산용
             void OnDestroy() override;              // 삭제 직전
 
-           /* void OnCollisionEnter(GameObjectBase* other) override;
-            void OnCollisionStay(GameObjectBase* other) override;
-            void OnCollisionExit(GameObjectBase* other) override;
+            /* void OnCollisionEnter(GameObjectBase* other) override;
+             void OnCollisionStay(GameObjectBase* other) override;
+             void OnCollisionExit(GameObjectBase* other) override;
 
-            void OnTriggerEnter(GameObjectBase* other) override;
-            void OnTriggerStay(GameObjectBase* other) override;
-            void OnTriggerExit(GameObjectBase* other) override;*/
+             void OnTriggerEnter(GameObjectBase* other) override;
+             void OnTriggerStay(GameObjectBase* other) override;
+             void OnTriggerExit(GameObjectBase* other) override;*/
         };
     }
 }

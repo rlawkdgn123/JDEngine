@@ -38,13 +38,20 @@ namespace JDScene {
 
         std::unique_ptr<ParticleSystem> m_mouseParticles;
         std::unique_ptr<ParticleSystem> m_sakuraParticles;
+        std::unique_ptr<ParticleSystem> m_dustParticles;
+        std::unique_ptr<ParticleSystem> m_dust2Particles;
+        std::unique_ptr<ParticleSystem> m_sparkleParticles;
         Vector2F                        m_emitterPos;
 
         Vector2F sakuraMin{ 900.0f, 0.0f };
         Vector2F sakuraMax{ 1920.0f, 500.0f };
 
-        float   m_sakuraEmissionRate = 5.0f;
-        float   m_sakuraEmitAccumulator = 0.0f;
+        float m_sakuraTimer = 0.f;
+        const float kSakuraIntervalMin = 0.5f;  // 최소 0.5초
+        const float kSakuraIntervalMax = 1.5f;  // 최대 1.5초
+
+        float m_sakuraEmissionRate = 1.5f;//초당 생성 갯수
+        float m_sakuraEmitAccumulator = 0.0f;
 
         // 옵션창
         Image* m_optionUI = nullptr;

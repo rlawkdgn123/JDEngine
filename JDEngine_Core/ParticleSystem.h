@@ -11,31 +11,25 @@ using namespace JDGlobal::Math;
 struct Particle {
     Vector2F pos;
     Vector2F vel;
-    float     life;      // 남은 수명 (초)
-    float     size;      // 크기 (픽셀)
-    float     alpha;     // 투명도 (0~1)
-    D2D1::ColorF color;  // 파티클 색상
+    float     life;
+    float     size;
+    float     alpha;
+    D2D1::ColorF color;
 
     float imageScale;
     float rotation;
     float rotationSpeed;
 
     Particle()
-        : pos{ 0,0 }
-        , vel{ 0,0 }
-        , life{ 0 }
-        , size{ 0 }
-        , alpha{ 0 }
-        , color{ 0.f,0.f,0.f,0.f }  // 원하는 초기값
-        , imageScale{ 1.0f }
-        , rotation{ 0.f }
-        , rotationSpeed{ 0.0f }
-    {}
+        : pos{ 0,0 }, vel{ 0,0 }, life{ 0 }, size{ 0 }, alpha{ 0 },
+        color{ 0,0,0,0 }, imageScale{ 1.0f },
+        rotation{ 0 }, rotationSpeed{ 0 }
+    {
+    }
 };
 
 static std::mt19937_64 rng{ std::random_device{}() };
 
-// lo ≤ x < hi 범위의 랜덤 실수 생성 함수
 static float RandomFloat(float lo, float hi) {
     std::uniform_real_distribution<float> dist(lo, hi);
     return dist(rng);
@@ -44,151 +38,306 @@ static float RandomFloat(float lo, float hi) {
 class ParticleSystem {
 public:
     std::vector<Particle> particles;
-    float emissionRate = 20;      // 초당 생성 개수
-    float emitAccumulator = 0;    // 생성 누적 시간
-    ID2D1SolidColorBrush* brush = nullptr;   // 브러시
+    float emissionRate = 20;
+    float emitAccumulator = 0;
+    ID2D1SolidColorBrush* brush = nullptr;
 
     ID2D1Bitmap* particleBitmap = nullptr;
-    // 자동 방출에 사용할 기본 색상
-    D2D1::ColorF defaultColor = D2D1::ColorF(1.f, 1.f, 1.f, 1.f);
+    ID2D1Bitmap* dustBitmap = nullptr;
+    ID2D1Bitmap* dust2Bitmap = nullptr;
+    ID2D1Bitmap* MouseBitmap = nullptr;
+    ID2D1Bitmap* sparkleBitmap = nullptr;
+
+    D2D1::ColorF defaultColor = D2D1::ColorF(1, 1, 1, 1);
 
     ParticleSystem(ID2D1DeviceContext7* ctx) {
-        // 초기 브러시(흰색, 완전 불투명)
         ctx->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &brush);
-
         particleBitmap = AssetManager::Instance().GetTexture("blossom");
+        dustBitmap = AssetManager::Instance().GetTexture("dust");
+        dust2Bitmap = AssetManager::Instance().GetTexture("dust2");
+        MouseBitmap = AssetManager::Instance().GetTexture("mouse");
+        sparkleBitmap = AssetManager::Instance().GetTexture("spakle");
     }
 
-    // 수정: color 파라미터 추가, 세미콜론 빠진 부분 보강
     void SpawnParticle(const Vector2F& pos, D2D1::ColorF color, float scale = 1.0f) {
         Particle p;
         p.pos = pos;
-        float angle = RandomFloat(0.f, 2.f * 3.14159265f);
-        float speed = RandomFloat(20.f, 80.f);
+        float angle = RandomFloat(0, 2 * 3.14159265f);
+        float speed = RandomFloat(20, 80);
         p.vel = { std::cos(angle) * speed, std::sin(angle) * speed };
-        p.life = RandomFloat(0.5f, 1.f);
-        p.size = RandomFloat(10.f, 12.f);
-        p.alpha = 1.f;
+        p.life = RandomFloat(0.5f, 1);
+        p.size = RandomFloat(10, 12);
+        p.alpha = 1;
         p.color = color;
         p.imageScale = scale;
         particles.push_back(p);
     }
-    
-    void SpawnFallingParticle(const Vector2F& pos,
-        D2D1::ColorF color,
-        float scale = 1.0f,
-        float maxLife = 4.0f)
-    {
+
+    void SpawnFallingParticle(const Vector2F& pos, D2D1::ColorF color, float scale = 1.0f, float maxLife = 4.0f) {
         Particle p;
         p.pos = pos;
-        // 좌우 drift: -20~+20 픽셀/sec, 아래 속도: 50~80 픽셀/sec
-        p.vel = { RandomFloat(-80.f, -20.f), RandomFloat(50.f, 80.f) };
+        p.vel = { RandomFloat(-80, -20), RandomFloat(50, 80) };
         p.life = maxLife;
-        p.size = RandomFloat(10.f, 12.f);
-        p.alpha = 1.f;
+        p.size = RandomFloat(10, 12);
+        p.alpha = 1;
         p.color = color;
         p.imageScale = scale;
-        p.rotation = RandomFloat(0.f, 360.f);
-        p.rotationSpeed = RandomFloat(-30.f, 30.f);
+        p.rotation = RandomFloat(0, 360);
+        p.rotationSpeed = RandomFloat(-30, 30);
         particles.push_back(p);
     }
-    // dt 동안 자동 방출 + 기존 파티클 업데이트
+
+    void SpawnDustParticle(const Vector2F& pos, D2D1::ColorF color, float scale = 5.0f, float maxLife = 2.0f, float spreadRadius = 20.0f) {
+        Particle p;
+        p.pos = pos;
+        float angle = RandomFloat(0, 2 * 3.14159265f);
+        float radius = RandomFloat(0, spreadRadius);
+        p.pos.x += std::cos(angle) * radius;
+        p.pos.y += std::sin(angle) * radius;
+        p.vel = { RandomFloat(-50, 50), RandomFloat(-15, 15) };
+        p.life = maxLife;
+        p.size = RandomFloat(5, 7);
+        p.imageScale = scale * 0.7f;
+        p.alpha = 1;
+        p.color = color;
+        p.rotation = RandomFloat(0, 360);
+        p.rotationSpeed = RandomFloat(-10, 10);
+        particles.push_back(p);
+    }
+
+    void SpawnSparkleParticle(const Vector2F& center, int count = 5, float scale = 5.0f, float radius = 16.f, float maxLife = 0.5f)
+    {
+        for (int i = 0; i < count; ++i) {
+            Particle p;
+            // 1) 위치: 아이콘 영역 내 랜덤
+            float angle = RandomFloat(0, 2 * 3.14159265f);
+            float dist = RandomFloat(0, radius);
+            p.pos = { center.x + std::cos(angle) * dist,
+                             center.y + std::sin(angle) * dist };
+            // 2) 속도: 거의 없거나 아주 짧게 퍼지게
+            p.vel = { RandomFloat(-10, 10), RandomFloat(-10, 10) };
+            // 3) 수명·크기·알파
+            p.life = maxLife;
+            p.size = RandomFloat(4, 8);
+            p.imageScale = scale;
+            p.alpha = 1.0f;
+            // 4) 컬러: 노랑빛 스파클
+            p.color = D2D1::ColorF(1.0f, 0.9f, 0.6f, 1.0f);
+            // 5) 회전 없어도 됨
+            p.rotation = 0;
+            p.rotationSpeed = 0;
+            particles.push_back(p);
+        }
+    }
+
     void Update(float dt, const Vector2F& emitterPos) {
-        // 1) 자동 방출 (defaultColor 사용)
         emitAccumulator += dt * emissionRate;
         int count = static_cast<int>(emitAccumulator);
         emitAccumulator -= count;
-        for (int i = 0; i < count; ++i) {
-            SpawnParticle(emitterPos, defaultColor);
-        }
 
-        // 2) 기존 파티클 업데이트
+        for (int i = 0; i < count; ++i)
+            SpawnParticle(emitterPos, defaultColor);
+
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
             it->pos += it->vel * dt;
-            it->alpha = (it->life > 0.f) ? it->life : 0.f;
+            it->alpha = (it->life > 0) ? it->life : 0;
             it->size *= it->alpha;
-            if (it->life <= 0.f) it = particles.erase(it);
-            else                 ++it;
+            it = (it->life <= 0) ? particles.erase(it) : ++it;
         }
     }
 
-    void UpdateFalling(float dt, float screenWidth, float screenHeight) {
+    void UpdateFalling(float dt, float screenW, float screenH) {
+        for (auto it = particles.begin(); it != particles.end();) {
+            // 1) 수명 감소
+            it->life -= dt;
+
+            // 2) 위치 및 회전 업데이트
+            it->pos += it->vel * dt;
+            it->rotation += it->rotationSpeed * dt;
+
+            // 3) life 기반 알파 계산 (maxLife = 4초 기준)
+            it->alpha = (it->life > 0.f) ? (it->life / 4.0f) : 0.f;
+
+            // 4) 화면 아래로 벗어나거나 life 종료 시 삭제
+            bool expired = (it->life <= 0.f) || (it->pos.y > screenH + 50.f);
+            if (expired) {
+                it = particles.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+
+
+    void UpdateDust(float dt, float screenW, float screenH) {
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
             it->pos += it->vel * dt;
-            //회전
             it->rotation += it->rotationSpeed * dt;
-            // life 비율로 alpha 조정
-            it->alpha = (it->life > 0.f) ? (it->life / 4.0f) : 0.f;
-
-            // 화면 아래 + life 다 소진 시 삭제
-            if (it->life <= 0.f || it->pos.y > screenHeight + 50.f)
+            it->imageScale += dt * 1.0f;
+            it->alpha = (it->life > 0) ? (it->life / 2.0f) : 0;
+            bool offscreen = it->pos.x < -50 || it->pos.x > screenW + 50 || it->pos.y < -50 || it->pos.y > screenH + 50;
+            if (it->life <= 0 || offscreen)
                 it = particles.erase(it);
             else
                 ++it;
         }
     }
 
-    // 지정 위치에서 원하는 색으로 한 번에 방출
-    void Emit(const Vector2F& pos, int count, D2D1::ColorF color, float scale = 1.0f) {
-        for (int i = 0; i < count; ++i) {
-            SpawnParticle(pos, color, scale);
+    void UpdateSparkle(float dt) {
+        for (auto it = particles.begin(); it != particles.end();) {
+            it->life -= dt;
+            it->pos += it->vel * dt;
+            // 알파는 life 비율로
+            it->alpha = (it->life > 0) ? (it->life / 0.5f) : 0;
+            if (it->life <= 0)
+                it = particles.erase(it);
+            else
+                ++it;
         }
     }
 
-    void SetParticleLife(float life) { Particle p; p.life = life; }
 
-    // 렌더링: 각 파티클의 color와 alpha 적용
+    void Emit(const Vector2F& pos, int count, D2D1::ColorF color, float scale = 1.0f) {
+        for (int i = 0; i < count; ++i)
+            SpawnParticle(pos, color, scale);
+    }
+
+    void SetParticleLife(float life) {
+        Particle p; p.life = life;
+    }
+
     void Render(ID2D1DeviceContext7* ctx) {
-        //ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
-
-        D2D1_MATRIX_3X2_F oldTM;
-        ctx->GetTransform(&oldTM);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
 
         for (auto& p : particles) {
-            if (particleBitmap) {
-                //회전
-                D2D1_POINT_2F center = { p.pos.x, p.pos.y };
-                auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, center);
-                ctx->SetTransform(rot * oldTM);
-                // 그릴 위치와 크기 결정
-                float half = p.size * p.imageScale * 0.5f;
-                D2D1_RECT_F dest = {
-                  p.pos.x - half, p.pos.y - half,
-                  p.pos.x + half, p.pos.y + half
-                };
-                // 알파만 조절
-                ctx->DrawBitmap(
-                    particleBitmap,
-                    dest,
-                    p.alpha,                                   // opacity
-                    D2D1_INTERPOLATION_MODE_LINEAR,
-                    D2D1_RECT_F{ 0,0,
-                      (float)particleBitmap->GetPixelSize().width,
-                      (float)particleBitmap->GetPixelSize().height }
-                );
-            }
-            else {
-                // 텍스처 없으면 기존 방식
-                brush->SetColor(D2D1::ColorF(p.color.r, p.color.g, p.color.b, p.alpha));
-                D2D1_ELLIPSE e = D2D1::Ellipse({ p.pos.x, p.pos.y }, p.size, p.size);
-                ctx->FillEllipse(e, brush);
-            }
-
+            if (!particleBitmap) continue;
+            auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
+            ctx->SetTransform(rot * oldTM);
+            float half = p.size * p.imageScale * 0.5f;
+            D2D1_RECT_F dest = { p.pos.x - half, p.pos.y - half, p.pos.x + half, p.pos.y + half };
+            ctx->DrawBitmap(particleBitmap, dest, p.alpha, D2D1_INTERPOLATION_MODE_LINEAR,
+                D2D1_RECT_F{ 0,0,(float)particleBitmap->GetPixelSize().width,(float)particleBitmap->GetPixelSize().height });
             ctx->SetTransform(oldTM);
-
         }
-        //for (auto& p : particles) {
-        //    // p.color의 RGB + p.alpha 이용
-        //    brush->SetColor(D2D1::ColorF(p.color.r, p.color.g, p.color.b, p.alpha));
-        //    D2D1_ELLIPSE e = D2D1::Ellipse(
-        //        D2D1::Point2F(p.pos.x, p.pos.y),
-        //        p.size, p.size
-        //    );
-        //    ctx->FillEllipse(e, brush);
-        //}
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+    }
+
+    void RenderDust(ID2D1DeviceContext7* ctx) {
+        if (!dustBitmap) return;
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
+
+        for (auto& p : particles) {
+            float baseAlpha = p.alpha;
+            const int layers = 4;
+            for (int i = 0; i < layers; ++i) {
+                float factor = 1.0f + i * 0.3f;
+                float half = p.size * p.imageScale * factor * 0.5f;
+                float spread = p.size * 0.2f * factor;
+                float dx = RandomFloat(-spread, spread);
+                float dy = RandomFloat(-spread, spread);
+                float layerAlpha = baseAlpha * (1.0f - float(i) / layers);
+
+                auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
+                ctx->SetTransform(rot * oldTM);
+                D2D1_RECT_F dest = { p.pos.x - half + dx, p.pos.y - half + dy, p.pos.x + half + dx, p.pos.y + half + dy };
+                ctx->DrawBitmap(dustBitmap, dest, layerAlpha, D2D1_INTERPOLATION_MODE_LINEAR,
+                    D2D1_RECT_F{ 0,0,(float)dustBitmap->GetPixelSize().width,(float)dustBitmap->GetPixelSize().height });
+            }
+            ctx->SetTransform(oldTM);
+        }
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+    }
+
+    void RenderDust2(ID2D1DeviceContext7* ctx) {
+        if (!dust2Bitmap) return;
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
+
+        for (auto& p : particles) {
+            if (RandomFloat(0, 1) > 0.3f) continue;
+            float baseAlpha = p.alpha * 0.6f;
+            const int layers = 3;
+            for (int i = 0; i < layers; ++i) {
+                float factor = 1.0f + i * 0.4f;
+                float half = p.size * p.imageScale * factor * 0.5f;
+                float spread = p.size * 0.1f * factor;
+                float dx = RandomFloat(-spread, spread);
+                float dy = RandomFloat(-spread, spread);
+                float layerAlpha = baseAlpha * (1.0f - float(i) / layers);
+
+                auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
+                ctx->SetTransform(rot * oldTM);
+                D2D1_RECT_F dest = { p.pos.x - half + dx, p.pos.y - half + dy, p.pos.x + half + dx, p.pos.y + half + dy };
+                ctx->DrawBitmap(dust2Bitmap, dest, layerAlpha, D2D1_INTERPOLATION_MODE_LINEAR,
+                    D2D1_RECT_F{ 0,0,(float)dust2Bitmap->GetPixelSize().width,(float)dust2Bitmap->GetPixelSize().height });
+            }
+            ctx->SetTransform(oldTM);
+        }
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+    }
+
+    void RenderMouse(ID2D1DeviceContext7* ctx) {
+        if (!MouseBitmap) return;
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
+
+        for (auto& p : particles) {
+            auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
+            ctx->SetTransform(rot * oldTM);
+            float half = p.size * p.imageScale * 0.5f;
+            D2D1_RECT_F dest = { p.pos.x - half, p.pos.y - half, p.pos.x + half, p.pos.y + half };
+            ctx->DrawBitmap(MouseBitmap, dest, p.alpha, D2D1_INTERPOLATION_MODE_LINEAR,
+                D2D1_RECT_F{ 0,0,(float)MouseBitmap->GetPixelSize().width,(float)MouseBitmap->GetPixelSize().height });
+            ctx->SetTransform(oldTM);
+        }
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+    }
+
+    void RenderGlow(ID2D1DeviceContext7* ctx) {
+        if (!MouseBitmap) return;
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        for (auto& p : particles) {
+            auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
+            ctx->SetTransform(rot * oldTM);
+            for (float factor : {1.0f, 1.5f, 2.0f}) {
+                float half = p.size * p.imageScale * factor * 0.5f;
+                D2D1_RECT_F dest = { p.pos.x - half, p.pos.y - half, p.pos.x + half, p.pos.y + half };
+                float alpha = p.alpha * (1.0f - (factor - 1.0f));
+                ctx->DrawBitmap(MouseBitmap, dest, alpha, D2D1_INTERPOLATION_MODE_LINEAR,
+                    D2D1_RECT_F{ 0,0,(float)MouseBitmap->GetPixelSize().width,(float)MouseBitmap->GetPixelSize().height });
+            }
+            ctx->SetTransform(oldTM);
+        }
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+    }
+
+    void RenderSparkle(ID2D1DeviceContext7* ctx) {
+        if (!sparkleBitmap) return;
+        ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
+        D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
+        for (auto& p : particles) {
+            float half = p.size * p.imageScale * 0.5f;
+            D2D1_RECT_F dest = {
+                p.pos.x - half, p.pos.y - half,
+                p.pos.x + half, p.pos.y + half
+            };
+            ctx->DrawBitmap(
+                sparkleBitmap,
+                dest,
+                p.alpha,
+                D2D1_INTERPOLATION_MODE_LINEAR
+            );
+        }
+
+        ctx->SetTransform(oldTM);
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 };

@@ -59,6 +59,9 @@ namespace JDComponent {
 		void    SetOpen(bool o) { m_isOpen = o; }
 		bool    IsOpen() const { return m_isOpen; }
 
+		void    SetRenderCollider(bool o) { m_renderCollider = o; }
+		bool    IsRenderCollider() const { return m_renderCollider; }
+
 		bool GetColliding() const { return m_isColliding; }
 		virtual bool IsMouseOver(Vec2 mousePos) = 0;
 
@@ -85,5 +88,6 @@ namespace JDComponent {
 		Callback onCollisionStay;
 		Callback onCollisionExit;
 
+		bool m_renderCollider = false;
 	};
 }

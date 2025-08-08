@@ -39,6 +39,7 @@ namespace JDScene {
 
         m_BuildSystem->CreateGrid(this);
 
+
         auto* circObj = CreateGameObject<Player>(L"CircleObject");
         circObj->GetComponent<Transform>()->SetPosition({ 200.0f, 100.0f });
         circObj->AddComponent<Editor_Clickable>();
@@ -79,6 +80,7 @@ namespace JDScene {
             boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
             boxObj3->AddComponent<AnimationRender>("Russ", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
 
+
             // LEGACY
             //auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
             //if (frames && !frames->frames.empty()) {
@@ -95,13 +97,14 @@ namespace JDScene {
                 float width = first.right - first.left;
                 float height = first.bottom - first.top;
                 Vector2F halfSize{ width * 0.5f, height * 0.5f };
-                birdObj->AddComponent<BoxCollider>(halfSize);
-                birdObj->AddComponent<Editor_Clickable>();
+                boxObj3->AddComponent<BoxCollider>(halfSize);
+                boxObj3->AddComponent<Editor_Clickable>();
             }
         }
 
         //int startCol = 1, startrow = 2;
         //int regionW = 3, regionH = 3;
+
 
         //for (int c = startCol; c < startCol + regionW; ++c) {
         //    for (int r = startrow; r < startrow + regionH; ++r) {

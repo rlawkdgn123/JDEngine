@@ -147,10 +147,12 @@ bool EngineCore::Initialize()
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
     SceneManager::Instance().ChangeScene("TitleScene");
-    // SceneManager::Instance().ChangeScene("TestScene01");
-    // SceneManager::Instance().ChangeScene("GameScene");
-    // SceneManager::Instance().ChangeScene("TutorialScene");
-    // SceneManager::Instance().ChangeScene("SelectNationScene");
+
+    //SceneManager::Instance().ChangeScene("TestScene01");
+    //SceneManager::Instance().ChangeScene("GameScene");
+    //SceneManager::Instance().ChangeScene("TutorialScene");
+    //SceneManager::Instance().ChangeScene("SelectNationScene");
+
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
@@ -1912,7 +1914,28 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }
-
+    // Patikle Resource
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust2", L"../Resource/Dust2.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
     // TEST Resource
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png"))

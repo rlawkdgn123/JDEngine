@@ -15,6 +15,8 @@ namespace JDScene {
 	{
     public:
 
+        ////////////////////////////////////////////////////////////////////////////////
+
         TitleScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
         ~TitleScene() override {}
@@ -33,8 +35,25 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        void ClickUpdate();
+        void CreateTitleScene();                // 타이틀 씬 생성 ( 게임오브젝트 & UI )
+        void FinalizeTitleScene();              // 타이틀 씬 정리
+
+        void InitSound();                       // 사운드 초기화
+        void InitParticle();                    // 파티클 초기화
+
+        void ClickUpdate();                     // 클릭 업데이트
+        void ParticleUpdate(float deltaTime);   // 파티클 업데이트
+
+        void RenderTitleScene(float deltaTime); // 타이틀 씬 렌더
+        void RenderParticle();                  // 파티클 렌더
+
+        ////////////////////////////////////////////////////////////////////////////////
+
     private:
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 파티클
+
         FMOD::Channel* m_hoverSfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_mouseParticles;
@@ -54,7 +73,9 @@ namespace JDScene {
         float m_sakuraEmissionRate = 1.5f;//초당 생성 갯수
         float m_sakuraEmitAccumulator = 0.0f;
 
+        ////////////////////////////////////////////////////////////////////////////////
         // 옵션창
+
         bool isOpenOption = false;
 
         Image* m_optionUI = nullptr;
@@ -75,9 +96,16 @@ namespace JDScene {
         Image* m_selectCreditDummy = nullptr;
 
         // 볼륨 선택 슬라이더
+        Slider* m_masterSlider = nullptr;
         Slider* m_bgmSlider = nullptr;
         Slider* m_sfxSlider = nullptr;
 
+        // 배속 키 텍스트
+        Text* m_stopKeyText = nullptr;
+        Text* m_playKeyText = nullptr;
+        Text* m_speedKeyText = nullptr;
+        
+        ////////////////////////////////////////////////////////////////////////////////
 	};
 }
 

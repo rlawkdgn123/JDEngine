@@ -227,6 +227,7 @@ namespace JDScene {
         if (enemyResult.Total() > 0) {
             auto* enemyObj = CreateSoldierUnit(enemyResult, JDGlobal::Base::GameTag::Enemy, 
                 JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "f1");
+
         }
 
         m_btlElapsedTime = 0.0f;
@@ -397,6 +398,10 @@ namespace JDScene {
             // 전투 오브젝트가 없고, 일반 아군이면 후퇴 상태로 전환
             if (!m_battleObject && objPtr.get() != m_playerObject) {
                 if (!m_barracksObject) continue;
+                auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
+                if (texRenderer) {
+                    texRenderer->SetFlipX(true); // 좌우 반전!
+                }
                 auto* barracksTm = m_barracksObject->GetComponent<Transform>();
                 if (!barracksTm) continue;
                 Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();
@@ -628,6 +633,10 @@ namespace JDScene {
 
         if (tag == JDGlobal::Base::GameTag::Enemy) {
             obj->AddComponent<Editor_Clickable>();
+            auto* texRenderer = obj->GetComponent<TextureRenderer>();
+            if (texRenderer) {
+                texRenderer->SetFlipX(true); // 좌우 반전!
+            }
         }
 
         return obj;

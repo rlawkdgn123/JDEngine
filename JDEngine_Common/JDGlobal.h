@@ -107,7 +107,7 @@ namespace JDGlobal {
 	namespace Contents {
 		constexpr int MAX_GAME_RESOURCE = 9999;  // 자원 최대치
 		constexpr int MAX_GAME_POPULATION = 999; // 인구 최대치
-		constexpr int MAX_GAME_LEVEL = 3;	 // 업그레이드 최대치
+		constexpr int MAX_GAME_LEVEL = 10;	 // 업그레이드 최대치
 		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
 		constexpr int MAX_GAME_GRID_COL = 4;
 		constexpr int MAX_GAME_GRID_ROW = 6;

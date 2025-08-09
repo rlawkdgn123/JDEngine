@@ -221,6 +221,17 @@ namespace JDGlobal {
 			inline int GetAllCats() {return (Felis + Navi + Kone);}
 		};
 
+		struct CatResourceBonus {
+			CatResourceBonus()
+				: FelisBonus( 10,0,0 ),
+				NaviBonus( 0, 10, 0),
+				KoneBonus(0, 0, 10) {}
+
+			Resource FelisBonus;
+			Resource NaviBonus;
+			Resource KoneBonus;
+		};
+
 		enum class State { // 상태.
 			Idle,
 			Move,

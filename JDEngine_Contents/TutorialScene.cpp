@@ -1,13 +1,12 @@
 ﻿#include "pch.h"
 #include "framework.h"
-#include "TutorialScene.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "RectTransform.h"
 #include "D2DTransform.h"
 #include "Texture.h"
 #include "BuildSystem.h"
-
+#include "TutorialScene.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -114,6 +113,9 @@ namespace JDScene {
 
         // 클릭 업데이트
         ClickUpdate();
+
+        // 자원 시스템 업데이트
+        ResourceSystem::Instance().Update(deltaTime);
     }
 
     void TutorialScene::FixedUpdate(float fixedDeltaTime) {

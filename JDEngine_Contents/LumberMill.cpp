@@ -10,8 +10,8 @@ namespace JDGameObject {
         void LumberMill::Awake()
         {
             __super::Awake();
-            DataTableManager::Instance().GetLumberMillTable(stats);
-            stats.PrintStats();
+            DataTableManager::Instance().GetLumberMillTable(m_stats);
+            m_stats.PrintStats();
         }
         void LumberMill::Start()
         {

@@ -147,6 +147,15 @@ namespace JDGlobal {
 			}
 			std::cout << "\n";
 		}
-
+		
+		void StartResources::PrintResources() {
+			std::cout << "==================================" << std::endl;
+			std::cout << "Start Resources Info" << std::endl;
+			std::cout << "Food		 : " << this->m_food << std::endl;
+			std::cout << "Wood		 : " << this->m_wood << std::endl;
+			std::cout << "Mineral	 : " << this->m_mineral << std::endl;
+			std::cout << "Population : " << this->m_population << std::endl;
+			std::cout << "==================================" << std::endl;
+		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "JDGlobal.h"
 #include <limits>
 #include <iostream>
+#include "DataTableManager.h"
 
 namespace JDGameSystem {
 
@@ -9,7 +10,7 @@ namespace JDGameSystem {
 	{
 	public:
 		using Resource = JDGlobal::Contents::Resource;
-
+		using StartResources = JDGlobal::Contents::StartResources;
 		static ResourceSystem& Instance()
 		{
 			static ResourceSystem instance;
@@ -17,7 +18,7 @@ namespace JDGameSystem {
 		}
 
 	private:
-		ResourceSystem() = default;
+		ResourceSystem() { DataTableManager::Instance().GetStartResourcesTable(m_totalResource, m_maxPopulation); }
 		~ResourceSystem() = default;
 
 		ResourceSystem(const ResourceSystem&) = delete;
@@ -49,12 +50,13 @@ namespace JDGameSystem {
 
 	public:
 		void Clear() {
-			m_totalResource.Clear();			// 누적 자원
+			DataTableManager::Instance().GetStartResourcesTable(m_totalResource, m_maxPopulation);
+			//m_totalResource.Clear();			// 누적 자원
 			m_totalResourcePerSec.Clear();     // 총 생산 자원 (보너스 적용)
 			m_resourcePerSec.Clear();		    // 기본 초당 자원
 			m_resourceBonus.Clear();		    // % 자원 보너스 (예: 10 = 10%)
 			m_synergyBonus.Clear();		    // % 시너지 보너스
-			m_maxPopulation = 10;		    // 최대 인구수
+			//m_maxPopulation = 10;		    // 최대 인구수
 			m_curPopulation = 0;		    // 현재 인구수
 		}
 		void Update(float deltaTime) {

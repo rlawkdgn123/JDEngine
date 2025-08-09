@@ -10,9 +10,8 @@ namespace JDGameObject {
         void FishingSpot::Awake()
         {
             __super::Awake();
-            DataTableManager::Instance().GetFishingSpotTable(stats);
-
-            stats.PrintStats();
+            DataTableManager::Instance().GetFishingSpotTable(m_stats);
+            m_stats.PrintStats();
         }
         void FishingSpot::Start()
         {

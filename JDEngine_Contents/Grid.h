@@ -35,6 +35,7 @@ namespace JDGameObject {
             bool m_hasBuilding = false; // 건물 소유 여부
 
             JDGameObject::GameObject* BuildingRaw; // 소유중인 건물 참조 ptr
+            Grid* others;
         };
     }
 }

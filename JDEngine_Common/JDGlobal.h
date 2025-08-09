@@ -105,14 +105,15 @@ namespace JDGlobal {
 		};
 	}
 	namespace Contents {
-		constexpr int MAX_GAME_RESOURCE = 9999;  // 자원 최대치
-		constexpr int MAX_GAME_POPULATION = 999; // 인구 최대치
+		constexpr int MAX_GAME_RESOURCE = 10000;  // 자원 최대치
+		constexpr int MAX_GAME_POPULATION = 1000; // 인구 최대치
 		constexpr int MAX_GAME_LEVEL = 10;	 // 업그레이드 최대치
 		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
 		constexpr int MAX_GAME_GRID_COL = 4;
 		constexpr int MAX_GAME_GRID_ROW = 6;
 		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_ROW;
 		constexpr int RESOURCE_COUNT = 3;
+
 		struct Resource {
 
 			Resource() = default;
@@ -214,6 +215,8 @@ namespace JDGlobal {
 			Lab
 		};
 		
+		
+
 		struct Cats {
 			int Felis;
 			int Navi;
@@ -260,7 +263,8 @@ namespace JDGlobal {
 			Resource m_recruitCost;
 			int m_power;
 		};
-
+		
+		// 사용안함
 		struct WorkerStats {
 			int m_populationCost;            // 인구 비용
 			Resource m_resourceBonus[3];     // 자원 보너스 (고양이 타입 * 3)
@@ -281,6 +285,14 @@ namespace JDGlobal {
 			Resource m_upgradeCost[MAX_GAME_LEVEL];          // 업그레이드 비용 * 3레벨 (1레벨은 빌드 비용)
 			Resource m_resourceSubPerSec[MAX_GAME_LEVEL];    // 초당 자원 유지비용 (소모)
 			void PrintStats();
+		};
+
+		struct StartResources {
+			int m_food;
+			int m_wood;
+			int m_mineral;
+			int m_population;
+			void PrintResources();
 		};
 	}
 }

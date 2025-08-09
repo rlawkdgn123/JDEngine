@@ -8,6 +8,7 @@ void DataTableManager::Initalize()
 {
     cout << "데이터 테이블 이니셜라이즈 진입" << endl;
     LoadAllCSV();
+    ParseStartResourceTable();
     ParseFishingSpotTable();
     ParseLumberMillTable();
     ParseMineTable();
@@ -119,7 +120,67 @@ void DataTableManager::ParseTestTable()
 
 void DataTableManager::ParseStartResourceTable()
 {
-	
+    std::cout << "데이터 파싱 진입 - StartResource" << std::endl;
+    const std::string& csv = GetCSV("StartResource");
+    std::istringstream stream(csv);
+    std::string dataLine;
+    int linesParsed = 0; // 파싱된 행의 수를 세는 변수
+
+    // 'Food' 행을 찾을 때까지 헤더와 빈 줄을 건너뜁니다.
+    do {
+        if (!std::getline(stream, dataLine)) {
+            throw std::runtime_error("[ParseStartResourceTable] 파일에서 유효한 데이터 행을 찾을 수 없습니다.");
+        }
+    } while (JDUtil::trim(dataLine).rfind("Food", 0) != 0);
+
+    // Food, Wood, Mineral, Population 4개의 데이터 행을 순차적으로 파싱합니다.
+    int linesToParse = 4;
+    while (linesParsed < linesToParse && !dataLine.empty())
+    {
+        std::vector<std::string> tokens;
+        std::istringstream lineStream(dataLine);
+        std::string cell;
+
+        while (std::getline(lineStream, cell, ',')) {
+            tokens.push_back(JDUtil::trim(cell));
+        }
+
+        // CSV 포맷 오류: 열 개수가 부족한지 확인
+        if (tokens.size() < 2) {
+            throw std::runtime_error("[ParseStartResourceTable] CSV 포맷 오류 : 열 개수 부족");
+        }
+
+        std::cout << "[DEBUG] 자원 데이터 줄: \"" << dataLine << "\"" << std::endl;
+
+        const std::string& resourceName = tokens[0];
+        auto toInt = [](const std::string& s) { return std::stoi(s); };
+
+        if (resourceName == "Food") {
+            m_startResourceTable.m_food = toInt(tokens[1]);
+        }
+        else if (resourceName == "Wood") {
+            m_startResourceTable.m_wood = toInt(tokens[1]);
+        }
+        else if (resourceName == "Mineral") {
+            m_startResourceTable.m_mineral = toInt(tokens[1]);
+        }
+        else if (resourceName == "Population") {
+            m_startResourceTable.m_population = toInt(tokens[1]);
+        }
+
+        linesParsed++;
+
+        // 다음 데이터 행을 읽습니다. (마지막 행이 아니면)
+        if (linesParsed < linesToParse) {
+            if (!std::getline(stream, dataLine)) {
+                throw std::runtime_error("[ParseStartResourceTable] 예상보다 데이터 행이 적습니다.");
+            }
+        }
+    }
+
+    if (linesParsed < linesToParse) {
+        throw std::runtime_error("[ParseStartResourceTable] 예상보다 데이터 행이 적습니다.");
+    }
 }
 
 void DataTableManager::ParseFishingSpotTable()
@@ -522,6 +583,7 @@ void DataTableManager::PrintAllTable()
     cout << "파싱 테스트" << endl;
     cout << "=========================================" << endl;
     cout << "=========================================" << endl;
+    m_startResourceTable.PrintResources();
     m_fishingSpotTable.PrintStats();
     m_lumberMillTable.PrintStats();
     m_mineTable.PrintStats();

@@ -10,7 +10,7 @@ namespace JDGameObject {
         class Grid : public JDGameObject::GameObject
         {
         public:
-            Grid() : GameObject(L"Player") {}
+            Grid() : GameObject(L"Grid") {}
             Grid(const std::wstring& name) : GameObject(name) {}
             void Awake() override;
             void Start() override;                              // 최초 1회만 호출
@@ -35,6 +35,7 @@ namespace JDGameObject {
             bool m_hasBuilding = false; // 건물 소유 여부
 
             JDGameObject::GameObject* BuildingRaw; // 소유중인 건물 참조 ptr
+            Grid* others;
         };
     }
 }

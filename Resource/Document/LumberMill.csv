@@ -1,31 +1,31 @@
-﻿,,,,,,,,,,
-자원,m_initResource,m_upgradeCost_1,m_upgradeCost_2,m_upgradeCost_3,m_resourceGenPerSec_1,m_resourceGenPerSec_2,m_resourceGenPerSec_3,m_resourceSubPerSec_1,m_resourceSubPerSec_2,m_resourceSubPerSec_3
-Food,0,0,0,0,0,0,0,0,0,0
-Wood,0,50,100,150,3,6,9,0,0,0
-Mineral,0,0,0,0,0,0,0,0,0,0
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
+﻿,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+자원,m_initResource,m_upgradeCost_1,m_upgradeCost_2,m_upgradeCost_3,m_upgradeCost_4,m_upgradeCost_5,m_upgradeCost_6,m_upgradeCost_7,m_upgradeCost_8,m_upgradeCost_9,m_upgradeCost_10,m_resourceGenPerSec_1,m_resourceGenPerSec_2,m_resourceGenPerSec_3,m_resourceGenPerSec_4,m_resourceGenPerSec_5,m_resourceGenPerSec_6,m_resourceGenPerSec_7,m_resourceGenPerSec_8,m_resourceGenPerSec_9,m_resourceGenPerSec_10,m_resourceSubPerSec_1,m_resourceSubPerSec_2,m_resourceSubPerSec_3,m_resourceSubPerSec_4,m_resourceSubPerSec_5,m_resourceSubPerSec_6,m_resourceSubPerSec_7,m_resourceSubPerSec_8,m_resourceSubPerSec_9,m_resourceSubPerSec_10
+Food,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Wood,0,50,100,150,200,250,300,350,400,450,500,3,6,9,12,15,18,21,24,27,30,0,0,0,0,0,0,0,0,0,0
+Mineral,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 "struct BuildingStats {
 	Resource m_initResource;							// 건물 설치 시 일회성 획득 자원
 	Resource m_upgradeCost[MAX_GAME_LEVEL];             // 업그레이드 비용 * 3레벨 (1레벨은 빌드 비용)
 	Resource m_resourceGenPerSec[MAX_GAME_LEVEL];       // 초당 자원 획득량
 	Resource m_resourceSubPerSec[MAX_GAME_LEVEL];       // 초당 자원 유지비용 (소모)
-};",,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-"Resource : (int, int, int)",,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
+};",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Resource : (int, int, int)",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -125,7 +125,7 @@ void DataTableManager::ParseStartResourceTable()
 void DataTableManager::ParseFishingSpotTable()
 {
     std::cout << "데이터 파싱 진입 - FishingSpot" << std::endl;
-    const std::string& csv = GetCSV("FishingSpot_New"); // 변경된 파일명으로 수정
+    const std::string& csv = GetCSV("FishingSpot");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -147,7 +147,6 @@ void DataTableManager::ParseFishingSpotTable()
             tokens.push_back(JDUtil::trim(cell));
         }
 
-        // CSV 포맷 오류 : 기존 11개에서 32개로 열 개수 증가.
         // MAX_GAME_LEVEL * 3(업글비용,획득량,유지비) + 2(자원명,초기자원) = 10 * 3 + 2 = 32
         if (tokens.size() < 32) {
             throw std::runtime_error("[ParseFishingSpotTable] CSV 포맷 오류 : 열 개수 부족");
@@ -162,24 +161,24 @@ void DataTableManager::ParseFishingSpotTable()
             m_fishingSpotTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_fishingSpotTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                m_fishingSpotTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]); // 인덱스 변경
-                m_fishingSpotTable.m_resourceSubPerSec[level].m_food = toInt(tokens[22 + level]); // 인덱스 변경
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_food = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Wood") {
             m_fishingSpotTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_fishingSpotTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                m_fishingSpotTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]); // 인덱스 변경
-                m_fishingSpotTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[22 + level]); // 인덱스 변경
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_wood = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Mineral") {
             m_fishingSpotTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_fishingSpotTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                m_fishingSpotTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]); // 인덱스 변경
-                m_fishingSpotTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[22 + level]); // 인덱스 변경
+                m_fishingSpotTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]);
+                m_fishingSpotTable.m_resourceSubPerSec[level].m_mineral = -std::abs(toInt(tokens[22 + level]));
             }
         }
 
@@ -196,7 +195,7 @@ void DataTableManager::ParseFishingSpotTable()
 void DataTableManager::ParseLumberMillTable()
 {
     std::cout << "데이터 파싱 진입 - LumberMill" << std::endl;
-    const std::string& csv = GetCSV("LumberMill_New");
+    const std::string& csv = GetCSV("LumberMill");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -216,7 +215,6 @@ void DataTableManager::ParseLumberMillTable()
             tokens.push_back(JDUtil::trim(cell));
         }
 
-        // CSV 포맷 오류: 기존 11개에서 32개로 열 개수 증가.
         // MAX_GAME_LEVEL * 3(업글비용,획득량,유지비) + 2(자원명,초기자원) = 10 * 3 + 2 = 32
         if (tokens.size() < 32) {
             throw std::runtime_error("[ParseLumberMillTable] CSV 포맷 오류 : 열 개수 부족");
@@ -231,24 +229,24 @@ void DataTableManager::ParseLumberMillTable()
             m_lumberMillTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_lumberMillTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                m_lumberMillTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]); // 인덱스 변경
-                m_lumberMillTable.m_resourceSubPerSec[level].m_food = toInt(tokens[22 + level]); // 인덱스 변경
+                m_lumberMillTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_food = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Wood") {
             m_lumberMillTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_lumberMillTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                m_lumberMillTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]); // 인덱스 변경
-                m_lumberMillTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[22 + level]); // 인덱스 변경
+                m_lumberMillTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_wood = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Mineral") {
             m_lumberMillTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_lumberMillTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                m_lumberMillTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]); // 인덱스 변경
-                m_lumberMillTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[22 + level]); // 인덱스 변경
+                m_lumberMillTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]);
+                m_lumberMillTable.m_resourceSubPerSec[level].m_mineral = -std::abs(toInt(tokens[22 + level]));
             }
         }
 
@@ -264,7 +262,7 @@ void DataTableManager::ParseLumberMillTable()
 void DataTableManager::ParseMineTable()
 {
     std::cout << "데이터 파싱 진입 - Mine" << std::endl;
-    const std::string& csv = GetCSV("Mine_New");
+    const std::string& csv = GetCSV("Mine");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -284,7 +282,6 @@ void DataTableManager::ParseMineTable()
             tokens.push_back(JDUtil::trim(cell));
         }
 
-        // CSV 포맷 오류: 기존 11개에서 32개로 열 개수 증가.
         // MAX_GAME_LEVEL * 3(업글비용,획득량,유지비) + 2(자원명,초기자원) = 10 * 3 + 2 = 32
         if (tokens.size() < 32) {
             throw std::runtime_error("[ParseMineTable] CSV 포맷 오류 : 열 개수 부족");
@@ -299,24 +296,24 @@ void DataTableManager::ParseMineTable()
             m_mineTable.m_initResource.m_food = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_mineTable.m_upgradeCost[level].m_food = toInt(tokens[2 + level]);
-                m_mineTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]); // 인덱스 변경
-                m_mineTable.m_resourceSubPerSec[level].m_food = toInt(tokens[22 + level]); // 인덱스 변경
+                m_mineTable.m_resourceGenPerSec[level].m_food = toInt(tokens[12 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_food = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Wood") {
             m_mineTable.m_initResource.m_wood = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_mineTable.m_upgradeCost[level].m_wood = toInt(tokens[2 + level]);
-                m_mineTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]); // 인덱스 변경
-                m_mineTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[22 + level]); // 인덱스 변경
+                m_mineTable.m_resourceGenPerSec[level].m_wood = toInt(tokens[12 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_wood = -std::abs(toInt(tokens[22 + level]));
             }
         }
         else if (resourceName == "Mineral") {
             m_mineTable.m_initResource.m_mineral = toInt(tokens[1]);
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
                 m_mineTable.m_upgradeCost[level].m_mineral = toInt(tokens[2 + level]);
-                m_mineTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]); // 인덱스 변경
-                m_mineTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[22 + level]); // 인덱스 변경
+                m_mineTable.m_resourceGenPerSec[level].m_mineral = toInt(tokens[12 + level]);
+                m_mineTable.m_resourceSubPerSec[level].m_mineral = -std::abs(toInt(tokens[22 + level]));
             }
         }
 
@@ -331,7 +328,7 @@ void DataTableManager::ParseMineTable()
 void DataTableManager::ParseHouseTable()
 {
     std::cout << "데이터 파싱 진입 - House" << std::endl;
-    const std::string& csv = GetCSV("House_New"); // 변경된 파일명으로 수정
+    const std::string& csv = GetCSV("House");
     std::istringstream stream(csv);
     std::string dataLine;
 
@@ -364,8 +361,8 @@ void DataTableManager::ParseHouseTable()
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Food 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                m_houseTable.m_upgradeCost[level].m_food = toInt(tokens[11 + level]); // 인덱스 변경
-                m_houseTable.m_resourceSubPerSec[level].m_food = toInt(tokens[21 + level]); // 인덱스 변경
+                m_houseTable.m_upgradeCost[level].m_food = toInt(tokens[11 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_food = -std::abs(toInt(tokens[21 + level]));
             }
             linesParsed++;
         }
@@ -374,8 +371,8 @@ void DataTableManager::ParseHouseTable()
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Wood 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                m_houseTable.m_upgradeCost[level].m_wood = toInt(tokens[11 + level]); // 인덱스 변경
-                m_houseTable.m_resourceSubPerSec[level].m_wood = toInt(tokens[21 + level]); // 인덱스 변경
+                m_houseTable.m_upgradeCost[level].m_wood = toInt(tokens[11 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_wood = -std::abs(toInt(tokens[21 + level]));
             }
             linesParsed++;
         }
@@ -384,8 +381,8 @@ void DataTableManager::ParseHouseTable()
                 throw std::runtime_error("[ParseHouseTable] CSV 포맷 오류 : Mineral 열 개수 부족");
             }
             for (int level = 0; level < MAX_GAME_LEVEL; ++level) {
-                m_houseTable.m_upgradeCost[level].m_mineral = toInt(tokens[11 + level]); // 인덱스 변경
-                m_houseTable.m_resourceSubPerSec[level].m_mineral = toInt(tokens[21 + level]); // 인덱스 변경
+                m_houseTable.m_upgradeCost[level].m_mineral = toInt(tokens[11 + level]);
+                m_houseTable.m_resourceSubPerSec[level].m_mineral = -std::abs(toInt(tokens[21 + level]));
             }
             linesParsed++;
         }

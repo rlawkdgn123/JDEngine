@@ -25,7 +25,7 @@ namespace JDGameObject {
             virtual void Awake() override;                               // 최초 1회만 호출
             virtual void Start() override;                               // 최초 1회만 호출
             virtual void Update(float deltaTime) override;
-            void ChangeCat(CatType catType);
+            bool ChangeCat(CatType newCat);
             bool LevelUp();
             bool LevelDown();
 

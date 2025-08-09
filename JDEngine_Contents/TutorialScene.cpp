@@ -378,7 +378,7 @@ namespace JDScene {
 
     void TutorialScene::ShowGridCreateMenu()
     {
-
+        cout << "m_gridCreateButtons 켜짐" << endl;
         // 건설 UI 보이기
         m_defaultUI->SetActive(false);
         m_buildUI->SetActive(true);
@@ -397,6 +397,7 @@ namespace JDScene {
 
     void TutorialScene::CloseGridCreateMenu()
     {
+        cout << "m_gridCreateButtons 꺼짐" << endl;
         // 건설 UI 끄기
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
@@ -474,9 +475,9 @@ namespace JDScene {
     void TutorialScene::ShowGridSettingMenu() {
         m_Menu->SetActive(true);
         // 빈 메뉴 버튼들 끄고
-        for (auto* btn : m_emptyButtons)   btn->SetActive(false);
+        for (auto* btn : m_gridCreateButtons)   btn->SetActive(false);
         // 채운 메뉴 버튼들 켜기
-        for (auto* btn : m_filledButtons)  btn->SetActive(true);
+        for (auto* btn : m_gridSettingButtons)  btn->SetActive(true);
     }
 
     void TutorialScene::CreateGameMap()
@@ -537,7 +538,6 @@ namespace JDScene {
         // 그리드 배치 정보
         // =====================================================================
 
-        //cout << "혼난다 혼난다" << this << endl;
         m_buildSystem->CreateGrid(this);
         /*
         // 그리드를 배치할 전체 영역의 크기
@@ -986,10 +986,10 @@ namespace JDScene {
         // 주거지 버튼 클릭하면 실행될 이벤트
         m_buildHouse->AddOnClick("Clicked House", [this]()
             {
-                wcout << L"선택이되..................." << m_selectedCollider->GetOwner()->GetName() << endl;
-                wcout << L"선택이되..................." << endl;
-                wcout << L"선택이되..................." << endl;
-                wcout << L"선택이되..................." << endl;
+                wcout << L"주거지 선택이되..................." << m_selectedCollider->GetOwner()->GetName() << endl;
+                wcout << L"주거지 선택이되..................." << endl;
+                wcout << L"주거지 선택이되..................." << endl;
+                wcout << L"주거지 선택이되..................." << endl;
 
                 if (m_selectedCollider) {
                     auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
@@ -1263,7 +1263,7 @@ namespace JDScene {
                 auto* btn = CreateUIObject<Button>(info.first);
                 // 튜토리얼용 보관
                 //m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_emptyButtons.push_back(btn);
+                m_gridCreateButtons.push_back(btn);
 
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
@@ -1304,7 +1304,7 @@ namespace JDScene {
             for (auto& info : FilledButtons) {
                 auto* btn = CreateUIObject<Button>(info.first);
                 //m_TutorialUIObjects.push_back(m_uiObjects.back().get());
-                m_filledButtons.push_back(btn);
+                m_gridSettingButtons.push_back(btn);
 
                 btn->SetTextureName(info.second);
                 btn->SetText(L"");
@@ -1371,10 +1371,10 @@ namespace JDScene {
         }
 
         // 3) m_emptyButtons 상태 확인
-        std::cout << "[DEBUG] m_emptyButtons.size(): " << m_emptyButtons.size() << std::endl;
-        for (size_t i = 0; i < m_emptyButtons.size(); ++i)
+        std::cout << "[DEBUG] m_emptyButtons.size(): " << m_gridCreateButtons.size() << std::endl;
+        for (size_t i = 0; i < m_gridCreateButtons.size(); ++i)
         {
-            auto* btn = m_emptyButtons[i];
+            auto* btn = m_gridCreateButtons[i];
             bool foundInUIObjects = false;
             for (auto& uptr : m_uiObjects)
             {

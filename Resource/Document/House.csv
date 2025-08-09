@@ -1,31 +1,31 @@
-,,,,,,,,,
-ÀÚ¿ø,m_initPopulation_1,m_initPopulation_2,m_initPopulation_3,m_upgradeCost_1,m_upgradeCost_2,m_upgradeCost_3,m_resourceSubPerSec_1,m_resourceSubPerSec_2,m_resourceSubPerSec_3
-Food,0,0,0,0,0,0,0,0,0
-Wood,0,0,0,0,0,0,0,0,0
-Mineral,0,0,0,0,0,0,0,0,0
-Population,10,20,30,0,0,0,0,0,0
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
+ï»¿,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ìì›,m_initPopulation_1,m_initPopulation_2,m_initPopulation_3,m_initPopulation_4,m_initPopulation_5,m_initPopulation_6,m_initPopulation_7,m_initPopulation_8,m_initPopulation_9,m_initPopulation_10,m_upgradeCost_1,m_upgradeCost_2,m_upgradeCost_3,m_upgradeCost_4,m_upgradeCost_5,m_upgradeCost_6,m_upgradeCost_7,m_upgradeCost_8,m_upgradeCost_9,m_upgradeCost_10,m_resourceSubPerSec_1,m_resourceSubPerSec_2,m_resourceSubPerSec_3,m_resourceSubPerSec_4,m_resourceSubPerSec_5,m_resourceSubPerSec_6,m_resourceSubPerSec_7,m_resourceSubPerSec_8,m_resourceSubPerSec_9,m_resourceSubPerSec_10
+Food,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Wood,0,0,0,0,0,0,0,0,0,0,50,100,150,200,250,300,350,400,450,500,0,0,0,0,0,0,0,0,0,0
+Mineral,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Population,2,4,6,8,10,12,14,16,18,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 "struct HouseStats {
-	int m_initResource[MAX_GAME_LEVEL];              // °Ç¹° ¼³Ä¡ ½Ã ÀÏÈ¸¼º È¹µæ ÀÚ¿ø 
-// (int ÁÖÀÇ, ¹è¿­ÀÎ ÀÌÀ¯ : ·¹º§ ´ç ÀÎ±¸)
-	Resource m_upgradeCost[MAX_GAME_LEVEL];          // ¾÷±×·¹ÀÌµå ºñ¿ë * 3·¹º§ (1·¹º§Àº ºôµå ºñ¿ë)
-	Resource m_resourceSubPerSec[MAX_GAME_LEVEL];    // ÃÊ´ç ÀÚ¿ø À¯Áöºñ¿ë (¼Ò¸ğ)
-};",,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-"Resource : (int, int, int)",,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
-,,,,,,,,,
+	int m_initResource[MAX_GAME_LEVEL];              // ê±´ë¬¼ ì„¤ì¹˜ ì‹œ ì¼íšŒì„± íšë“ ìì› 
+// (int ì£¼ì˜, ë°°ì—´ì¸ ì´ìœ  : ë ˆë²¨ ë‹¹ ì¸êµ¬)
+	Resource m_upgradeCost[MAX_GAME_LEVEL];          // ì—…ê·¸ë ˆì´ë“œ ë¹„ìš© * 3ë ˆë²¨ (1ë ˆë²¨ì€ ë¹Œë“œ ë¹„ìš©)
+	Resource m_resourceSubPerSec[MAX_GAME_LEVEL];    // ì´ˆë‹¹ ìì› ìœ ì§€ë¹„ìš© (ì†Œëª¨)
+};",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Resource : (int, int, int)",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -148,8 +148,9 @@ namespace JDScene {
         int m_totalRows = 6;
         // std::vector<bool> m_isOpen;
 
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridCreateButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        bool m_GirdClicked;
 
         Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;

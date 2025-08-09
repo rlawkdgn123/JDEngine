@@ -110,8 +110,8 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_LEVEL = 3;	 // 업그레이드 최대치
 		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
 		constexpr int MAX_GAME_GRID_COL = 4;
-		constexpr int MAX_GAME_GRID_RAW = 6;
-		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_RAW;
+		constexpr int MAX_GAME_GRID_ROW = 6;
+		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_ROW;
 		constexpr int RESOURCE_COUNT = 3;
 		struct Resource {
 
@@ -130,7 +130,11 @@ namespace JDGlobal {
 			int m_mineral;
 
 			void ResourcePrint() const;
-
+			void Clear() {
+				m_food = 0;
+				m_wood = 0;
+				m_mineral = 0;
+			}
 			Resource& operator=(const Resource& other) {
 				m_food = other.m_food;
 				m_wood = other.m_wood;

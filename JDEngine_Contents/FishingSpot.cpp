@@ -23,6 +23,7 @@ namespace JDGameObject {
         }
         void FishingSpot::Update(float deltaTime)
         {
+            /*
             __super::Update(deltaTime);
             m_secondTimer += deltaTime;
 
@@ -33,8 +34,10 @@ namespace JDGameObject {
                 //초당 작업 입력
                 cout << "FishingSpot - 1초가 지났읍니다..." << endl;
 
-                m_resourceSystem->GetTotalResourcePerSec().ResourcePrint();
+                m_reso  urceSystem->GetTotalResourcePerSec().ResourcePrint();
             }
+            */
+            
         }
         void FishingSpot::LateUpdate(float deltaTime)
         {

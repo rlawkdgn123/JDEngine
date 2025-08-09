@@ -10,7 +10,7 @@ namespace JDGameObject {
         class Grid : public JDGameObject::GameObject
         {
         public:
-            Grid() : GameObject(L"Player") {}
+            Grid() : GameObject(L"Grid") {}
             Grid(const std::wstring& name) : GameObject(name) {}
             void Awake() override;
             void Start() override;                              // 최초 1회만 호출

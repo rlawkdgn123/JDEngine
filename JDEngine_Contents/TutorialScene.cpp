@@ -414,7 +414,7 @@ namespace JDScene {
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
         // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
         m_buildHouse->SetActive(false);
@@ -438,11 +438,12 @@ namespace JDScene {
     {
         // 건설 UI 보이기
         CloseUpgradeMenu();
+        CloseAWayMenu();
 
         m_defaultUI->SetActive(false);
         m_buildUI->SetActive(true);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
         // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
         m_buildHouse->SetActive(true);
@@ -460,7 +461,7 @@ namespace JDScene {
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
         // 건설 UI ( 주거지, 낚시터, 제재소, 광산, (연구실) )
         m_buildHouse->SetActive(false);
@@ -482,7 +483,7 @@ namespace JDScene {
 
     void TutorialScene::InitUpgradeMenu()
     {
-        // 업그레이드 UI 보이기
+        // 업그레이드 UI 안보이게
         m_upgradeUI->SetActive(false);
 
         // 고양이 배치 UI
@@ -519,11 +520,12 @@ namespace JDScene {
     {
         // 업그레이드 UI 보이기
         CloseBuildMenu();
+        CloseAWayMenu();
 
         m_defaultUI->SetActive(false);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(true);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
         // 고양이 배치 UI
         m_catTypeText->SetActive(true);
@@ -561,7 +563,7 @@ namespace JDScene {
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
         // 고양이 배치 UI
         m_catTypeText->SetActive(false);
@@ -664,6 +666,27 @@ namespace JDScene {
         default:
             break;
         }
+    }
+
+    void TutorialScene::InitAwayMenu()
+    {
+        // 업그레이드 UI 안보이게
+        m_awayUI->SetActive(false);
+    }
+
+    void TutorialScene::ShowAwayMenu()
+    {
+        // 업그레이드 UI 보이기
+        CloseBuildMenu();
+        CloseUpgradeMenu();
+
+        m_awayUI->SetActive(true);
+    }
+
+    void TutorialScene::CloseAWayMenu()
+    {
+        // 업그레이드 UI 안보이게
+        m_awayUI->SetActive(false);
     }
 
     void TutorialScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
@@ -1544,7 +1567,7 @@ namespace JDScene {
         m_downgradeButton->SetTextureName("ART_Downgrade01");
         m_downgradeButton->SetText(L"");
         m_downgradeButton->SetSize({ 56.f, 40.f });
-        m_downgradeButton->SetPosition({ 664, -384 });
+        m_downgradeButton->SetPosition({ 670, -390 });
 
         // 다운그레이드 버튼 클릭하면 실행될 이벤트
         m_downgradeButton->AddOnClick("Quit Game", [this]()
@@ -1570,7 +1593,7 @@ namespace JDScene {
         m_upgradeButton->SetTextureName("ART_Upgrade01");
         m_upgradeButton->SetText(L"");
         m_upgradeButton->SetSize({ 56.f, 40.f });
-        m_upgradeButton->SetPosition({ 853, -384 });
+        m_upgradeButton->SetPosition({ 858, -390 });
 
         // 업그레이드 버튼 클릭하면 실행될 이벤트
         m_upgradeButton->AddOnClick("Quit Game", [this]()
@@ -1592,20 +1615,383 @@ namespace JDScene {
 
 #pragma endregion
 
+#pragma region 3. Away
+
         // 3) 징병 및 원정 UI
-        m_expeditionUI = CreateUIObject<Image>(L"UI_Expedition");
-        m_expeditionUI->SetTextureName("ART_UIRecruit01");
+        m_awayUI = CreateUIObject<Image>(L"UI_Away");
+        m_awayUI->SetTextureName("ART_UIRecruit01");
         if (cam)
         {
             float screenWidth = static_cast<float>(cam->GetScreenWidth());
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
             // 화면 크기로 설정
-            m_expeditionUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_expeditionUI->SetPosition({ 0.0f, 0.0f });
-            m_expeditionUI->SetPivot({ 0.5f, 0.5f });
-            m_expeditionUI->SetAnchor({ 1.0f, 0.0f });
+            m_awayUI->SetSize({ 1206, 200 });
+            m_awayUI->SetPosition({ 362.8f, -440.0f });
+            m_awayUI->SetPivot({ 0.5f, 0.5f });
+            m_awayUI->SetAnchor({ 1.0f, 0.0f });
         }
+
+        //////////
+        // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
+        m_trainerCatImage = CreateUIObject<Image>(L"UI_TrainerCatImage");
+        m_trainerCatImage->SetTextureName("ART_RecruitCat03");
+        m_trainerCatImage->SetSize({ 256, 279 });
+        m_trainerCatImage->SetPosition({ -178, -340 });
+        m_trainerCatImage->SetAnchor({ 1.0f, 0.0f });
+        m_trainerCatImage->SetScale({ 0.5f, 0.5f });
+        
+        m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
+        m_trainerCatName->SetText(L"견습냥이");
+        m_trainerCatName->SetTextFormatName("Sebang_Bold_30");
+        m_trainerCatName->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatName->SetSize({ 300, 100 });
+        m_trainerCatName->SetPosition({ -100, -503 });
+
+        // 견습냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
+        m_trainerCatCostInfo = CreateUIObject<Text>(L"UI_TrainerCatCostInfoText");
+        m_trainerCatCostInfo->SetText(L"코스트 :");
+        m_trainerCatCostInfo->SetTextFormatName("Sebang_21");
+        m_trainerCatCostInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatCostInfo->SetSize({ 300, 100 });
+        m_trainerCatCostInfo->SetPosition({ 5, -380 });
+
+        m_trainerCatCostImage01 = CreateUIObject<Image>(L"UI_TrainerCatCostImage01");
+        m_trainerCatCostImage01->SetTextureName("ART_CostWood01");
+        m_trainerCatCostImage01->SetSizeToOriginal();
+        m_trainerCatCostImage01->SetScale({ 0.5f, 0.5f });
+        m_trainerCatCostImage01->SetPosition({ 48, -361 });
+        m_trainerCatCostImage01->SetAnchor({ 1.0f, 0.0f });
+
+        m_trainerCatCostText01 = CreateUIObject<Text>(L"UI_TrainerCatCostText01");
+        m_trainerCatCostText01->SetText(L"x50");
+        m_trainerCatCostText01->SetTextFormatName("Sebang_16");
+        m_trainerCatCostText01->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatCostText01->SetSize({ 300, 100 });
+        m_trainerCatCostText01->SetPosition({ 117, -376 });
+
+        // 견습냥이 코스트 _ 02 ( 이미지 & 텍스트 )
+        m_trainerCatCostImage02 = CreateUIObject<Image>(L"UI_TrainerCatCostImage02");
+        m_trainerCatCostImage02->SetTextureName("ART_CostWood01");
+        m_trainerCatCostImage02->SetSizeToOriginal();
+        m_trainerCatCostImage02->SetScale({ 0.5f, 0.5f });
+        m_trainerCatCostImage02->SetPosition({ 48, -404 });
+        m_trainerCatCostImage02->SetAnchor({ 1.0f, 0.0f });
+
+        m_trainerCatCostText02 = CreateUIObject<Text>(L"UI_TrainerCatCostText02");
+        m_trainerCatCostText02->SetText(L"x50");
+        m_trainerCatCostText02->SetTextFormatName("Sebang_16");
+        m_trainerCatCostText02->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatCostText02->SetSize({ 300, 100 });
+        m_trainerCatCostText02->SetPosition({ 117, -422 });
+
+        // 견습냥이 모집병력 Info & Text
+        m_trainerCatRecruitInfo = CreateUIObject<Text>(L"UI_TrainerCatRecruitInfoText");
+        m_trainerCatRecruitInfo->SetText(L"모집병력 :");
+        m_trainerCatRecruitInfo->SetTextFormatName("Sebang_21");
+        m_trainerCatRecruitInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatRecruitInfo->SetSize({ 300, 100 });
+        m_trainerCatRecruitInfo->SetPosition({ 14, -462 });
+
+        m_trainerCatRecruitText = CreateUIObject<Text>(L"UI_TrainerCatRecruitText");
+        m_trainerCatRecruitText->SetText(L"10");
+        m_trainerCatRecruitText->SetTextFormatName("Sebang_16");
+        m_trainerCatRecruitText->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatRecruitText->SetSize({ 300, 100 });
+        m_trainerCatRecruitText->SetPosition({ 96, -462 });
+
+        // 견습냥이 전투력 Info & Text
+        m_trainerCatPowerInfo = CreateUIObject<Text>(L"UI_TrainerCatPowerInfoText");
+        m_trainerCatPowerInfo->SetText(L"전투력 :");
+        m_trainerCatPowerInfo->SetTextFormatName("Sebang_21");
+        m_trainerCatPowerInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatPowerInfo->SetSize({ 300, 100 });
+        m_trainerCatPowerInfo->SetPosition({ 5, -500 });
+
+        m_trainerCatPowerText = CreateUIObject<Text>(L"UI_TrainerCatPowerText");
+        m_trainerCatPowerText->SetText(L"10");
+        m_trainerCatPowerText->SetTextFormatName("Sebang_16");
+        m_trainerCatPowerText->SetColor(D2D1::ColorF(0x69512C));
+        m_trainerCatPowerText->SetSize({ 300, 100 });
+        m_trainerCatPowerText->SetPosition({ 96, -500 });
+
+        //////////
+        // 징병 _ 숙련냥이 이미지
+        m_expertCatImage = CreateUIObject<Image>(L"UI_ExpertCatImage");
+        m_expertCatImage->SetTextureName("ART_RecruitCat03");
+        m_expertCatImage->SetSize({ 256, 279 });
+        m_expertCatImage->SetPosition({ 182, -340 });
+        m_expertCatImage->SetAnchor({ 1.0f, 0.0f });
+        m_expertCatImage->SetScale({ 0.5f, 0.5f });
+
+        m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
+        m_expertCatName->SetText(L"숙련냥이");
+        m_expertCatName->SetTextFormatName("Sebang_Bold_30");
+        m_expertCatName->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatName->SetSize({ 300, 100 });
+        m_expertCatName->SetPosition({ 258, -503 });
+
+        // 숙련냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
+        m_expertCatCostInfo = CreateUIObject<Text>(L"UI_ExpertCatCostInfoText");
+        m_expertCatCostInfo->SetText(L"코스트 :");
+        m_expertCatCostInfo->SetTextFormatName("Sebang_21");
+        m_expertCatCostInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatCostInfo->SetSize({ 300, 100 });
+        m_expertCatCostInfo->SetPosition({ 362, -380 });
+
+        m_expertCatCostImage01 = CreateUIObject<Image>(L"UI_ExpertCatCostImage01");
+        m_expertCatCostImage01->SetTextureName("ART_CostWood01");
+        m_expertCatCostImage01->SetSizeToOriginal();
+        m_expertCatCostImage01->SetScale({ 0.5f, 0.5f });
+        m_expertCatCostImage01->SetPosition({ 406, -361 });
+        m_expertCatCostImage01->SetAnchor({ 1.0f, 0.0f });
+
+        m_expertCatCostText01 = CreateUIObject<Text>(L"UI_ExpertCatCostText01");
+        m_expertCatCostText01->SetText(L"x50");
+        m_expertCatCostText01->SetTextFormatName("Sebang_16");
+        m_expertCatCostText01->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatCostText01->SetSize({ 300, 100 });
+        m_expertCatCostText01->SetPosition({ 476, -376 });
+
+        // 숙련냥이 코스트 _ 02 ( 이미지 & 텍스트 )
+        m_expertCatCostImage02 = CreateUIObject<Image>(L"UI_ExpertCatCostImage02");
+        m_expertCatCostImage02->SetTextureName("ART_CostWood01");
+        m_expertCatCostImage02->SetSizeToOriginal();
+        m_expertCatCostImage02->SetScale({ 0.5f, 0.5f });
+        m_expertCatCostImage02->SetPosition({ 406, -404 });
+        m_expertCatCostImage02->SetAnchor({ 1.0f, 0.0f });
+
+        m_expertCatCostText02 = CreateUIObject<Text>(L"UI_ExpertCatCostText02");
+        m_expertCatCostText02->SetText(L"x50");
+        m_expertCatCostText02->SetTextFormatName("Sebang_16");
+        m_expertCatCostText02->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatCostText02->SetSize({ 300, 100 });
+        m_expertCatCostText02->SetPosition({ 476, -422 });
+
+        // 숙련냥이 모집병력 Info & Text
+        m_expertCatRecruitInfo = CreateUIObject<Text>(L"UI_ExpertCatRecruitInfoText");
+        m_expertCatRecruitInfo->SetText(L"모집병력 :");
+        m_expertCatRecruitInfo->SetTextFormatName("Sebang_21");
+        m_expertCatRecruitInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatRecruitInfo->SetSize({ 300, 100 });
+        m_expertCatRecruitInfo->SetPosition({ 372, -462 });
+
+        m_expertCatRecruitText = CreateUIObject<Text>(L"UI_ExpertCatRecruitText");
+        m_expertCatRecruitText->SetText(L"10");
+        m_expertCatRecruitText->SetTextFormatName("Sebang_16");
+        m_expertCatRecruitText->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatRecruitText->SetSize({ 300, 100 });
+        m_expertCatRecruitText->SetPosition({ 455, -462 });
+
+        // 숙련냥이 전투력 Info & Text
+        m_expertCatPowerInfo = CreateUIObject<Text>(L"UI_ExpertCatPowerInfoText");
+        m_expertCatPowerInfo->SetText(L"전투력 :");
+        m_expertCatPowerInfo->SetTextFormatName("Sebang_21");
+        m_expertCatPowerInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatPowerInfo->SetSize({ 300, 100 });
+        m_expertCatPowerInfo->SetPosition({ 362, -500 });
+
+        m_expertCatPowerText = CreateUIObject<Text>(L"UI_ExpertCatPowerText");
+        m_expertCatPowerText->SetText(L"10");
+        m_expertCatPowerText->SetTextFormatName("Sebang_16");
+        m_expertCatPowerText->SetColor(D2D1::ColorF(0x69512C));
+        m_expertCatPowerText->SetSize({ 300, 100 });
+        m_expertCatPowerText->SetPosition({ 455, -500 });
+
+        //////////
+        // 원정 보내기 Info
+        m_awayInfo = CreateUIObject<Text>(L"UI_AwayInfoText");
+        m_awayInfo->SetText(L"원정 보내기");
+        m_awayInfo->SetTextFormatName("Sebang_Bold_24");
+        m_awayInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_awayInfo->SetSize({ 300, 100 });
+        m_awayInfo->SetPosition({ 760, -379 });
+
+        // 원정 초급 Button
+        m_awayBeginner = CreateUIObject<Button>(L"UI_AwayBeginnerButton");
+        m_awayBeginner->SetTextureName("초급 복사 2");
+        m_awayBeginner->SetText(L"");
+        m_awayBeginner->SetSize({ 174.8f, 33.0f });
+        m_awayBeginner->SetPosition({ 760, -425 });
+
+        // 원정 초급 버튼 클릭하면 실행될 이벤트
+        m_awayBeginner->AddOnClick("On Click", [this]()
+            {
+
+            });
+
+        // 원정 초급 버튼 마우스를 올리면 실행될 이벤트
+        m_awayBeginner->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 원정 초급 버튼 마우스가 벗어나면 실행될 이벤트
+        m_awayBeginner->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 중급 Button
+        // 원정 중급 Button
+        m_awayIntermediate = CreateUIObject<Button>(L"UI_AwayIntermediate");
+        m_awayIntermediate->SetTextureName("중급 복사 2");
+        m_awayIntermediate->SetText(L"");
+        m_awayIntermediate->SetSize({ 174.8f, 33.0f });
+        m_awayIntermediate->SetPosition({ 760, -463 });
+
+        // 원정 중급 버튼 클릭하면 실행될 이벤트
+        m_awayIntermediate->AddOnClick("On Click", [this]()
+            {
+
+            });
+
+        // 원정 중급 버튼 마우스를 올리면 실행될 이벤트
+        m_awayIntermediate->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 원정 중급 버튼 마우스가 벗어나면 실행될 이벤트
+        m_awayIntermediate->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 상급 Button
+        m_awayAdvanced = CreateUIObject<Button>(L"UI_AwayAdvanced");
+        m_awayAdvanced->SetTextureName("상급 복사 2");
+        m_awayAdvanced->SetText(L"");
+        m_awayAdvanced->SetSize({ 174.8f, 33.0f });
+        m_awayAdvanced->SetPosition({ 760, -500 });
+
+        // 원정 상급 버튼 클릭하면 실행될 이벤트
+        m_awayAdvanced->AddOnClick("On Click", [this]()
+            {
+
+            });
+
+        // 원정 상급 버튼 마우스를 올리면 실행될 이벤트
+        m_awayAdvanced->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 원정 상급 버튼 마우스가 벗어나면 실행될 이벤트
+        m_awayAdvanced->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        //////////
+        // 원정 정보 팝업 Image
+        m_awayPopupUI = CreateUIObject<Image>(L"UI_AwayPopupUI");
+        m_awayPopupUI->SetTextureName("ART_UIBuilding01_Sign");
+        m_awayPopupUI->SetSize({ 256, 279 });
+        m_awayPopupUI->SetPosition({ -178, -340 });
+        m_awayPopupUI->SetAnchor({ 1.0f, 0.0f });
+        m_awayPopupUI->SetScale({ 0.5f, 0.5f });
+
+        // 원정 정보 Info
+        m_awayPopupInfo = CreateUIObject<Text>(L"UI_AwayPopupInfoUI");
+        m_awayPopupInfo->SetText(L"초급 원정");
+        m_awayPopupInfo->SetTextFormatName("Sebang_Bold_30");
+        m_awayPopupInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_awayPopupInfo->SetSize({ 300, 100 });
+        m_awayPopupInfo->SetPosition({ -100, -503 });
+
+        // 원정 비용 Info
+        m_awayCostInfo = CreateUIObject<Text>(L"UI_AwayCostInfoUI");
+        m_awayCostInfo->SetText(L"초급 원정");
+        m_awayCostInfo->SetTextFormatName("Sebang_Bold_30");
+        m_awayCostInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_awayCostInfo->SetSize({ 300, 100 });
+        m_awayCostInfo->SetPosition({ -100, -503 });
+
+        // 원정 코스트 _ 01 ( 이미지 & 텍스트 )
+        m_awayCostImage01 = CreateUIObject<Image>(L"UI_AwayCostImage01");
+        m_awayCostImage01->SetTextureName("ART_CostWood01");
+        m_awayCostImage01->SetSizeToOriginal();
+        m_awayCostImage01->SetScale({ 0.5f, 0.5f });
+        m_awayCostImage01->SetPosition({ 406, -404 });
+        m_awayCostImage01->SetAnchor({ 1.0f, 0.0f });
+
+        m_awayCostText01 = CreateUIObject<Text>(L"UI_AwayCostText01");
+        m_awayCostText01->SetText(L"x50");
+        m_awayCostText01->SetTextFormatName("Sebang_16");
+        m_awayCostText01->SetColor(D2D1::ColorF(0x69512C));
+        m_awayCostText01->SetSize({ 300, 100 });
+        m_awayCostText01->SetPosition({ 476, -422 });
+
+        // 원정 코스트 _ 02 ( 이미지 & 텍스트 )
+        m_awayCostImage02 = CreateUIObject<Image>(L"UI_AwayCostImage02");
+        m_awayCostImage02->SetTextureName("ART_CostWood01");
+        m_awayCostImage02->SetSizeToOriginal();
+        m_awayCostImage02->SetScale({ 0.5f, 0.5f });
+        m_awayCostImage02->SetPosition({ 406, -404 });
+        m_awayCostImage02->SetAnchor({ 1.0f, 0.0f });
+
+        m_awayCostText02 = CreateUIObject<Text>(L"UI_AwayCostText02");
+        m_awayCostText02->SetText(L"x50");
+        m_awayCostText02->SetTextFormatName("Sebang_16");
+        m_awayCostText02->SetColor(D2D1::ColorF(0x69512C));
+        m_awayCostText02->SetSize({ 300, 100 });
+        m_awayCostText02->SetPosition({ 476, -422 });
+
+        /////
+        // 보상 정보 Info
+        m_awayAwardInfo = CreateUIObject<Text>(L"UI_AwayAwardInfo");
+        m_awayAwardInfo->SetText(L"보상");
+        m_awayAwardInfo->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardInfo->SetColor(D2D1::ColorF(0x69512C));
+        m_awayAwardInfo->SetSize({ 300, 100 });
+        m_awayAwardInfo->SetPosition({ -100, -503 });
+
+        // 보상 정보 Text
+        m_awayAwardText01 = CreateUIObject<Text>(L"UI_AwayAwardText01");
+        m_awayAwardText01->SetText(L"N 원정포인트");
+        m_awayAwardText01->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardText01->SetColor(D2D1::ColorF(0x69512C));
+        m_awayAwardText01->SetSize({ 300, 100 });
+        m_awayAwardText01->SetPosition({ -100, -503 });
+
+        // 추가 보상 정보 Text
+        m_awayAwardText02 = CreateUIObject<Text>(L"UI_AwayAwardText02");
+        m_awayAwardText02->SetText(L"N% 확률로 ㅇㅇㅇ 추가 보상");
+        m_awayAwardText02->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardText02->SetColor(D2D1::ColorF(0x69512C));
+        m_awayAwardText02->SetSize({ 300, 100 });
+        m_awayAwardText02->SetPosition({ -100, -503 });
+
+        /////
+        // 병력 보내기 Button
+        m_awayButton = CreateUIObject<Button>(L"UI_AwayButton");
+        m_awayButton->SetTextureName("상급 복사 2");
+        m_awayButton->SetText(L"");
+        m_awayButton->SetSize({ 174.8f, 33.0f });
+        m_awayButton->SetPosition({ 760, -500 });
+
+        // 병력 보내기 버튼 클릭하면 실행될 이벤트
+        m_awayButton->AddOnClick("On Click", [this]()
+            {
+
+            });
+
+        // 병력 보내기 버튼 마우스를 올리면 실행될 이벤트
+        m_awayButton->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 병력 보내기 버튼 마우스가 벗어나면 실행될 이벤트
+        m_awayButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+#pragma endregion
+
+       
 
         // 2) 필터
         m_fillter = CreateUIObject<Image>(L"Fillter_Image");
@@ -1757,9 +2143,11 @@ namespace JDScene {
         // 기본 UI 보이기
         InitBuildMenu();
         InitUpgradeMenu();
+        InitAwayMenu();
 
         // TODO: 테스트
         // ShowUpgradeMenu();
+        ShowAwayMenu();
     }
 
     ////////////////////////////////////////////////////////////////////////////////

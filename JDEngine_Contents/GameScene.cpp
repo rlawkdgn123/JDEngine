@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "SceneList.h"
 #include "BoxCollider.h"
@@ -28,7 +28,7 @@ namespace JDScene {
         m_elapsedTime = 0.0f;
         WaveManager::Instance().LoadStageWaves();
 
-        // ÀÚ¿ø ¼¼ÆÃ.
+        // ìì› ì„¸íŒ….
         auto& rs = ResourceSystem::Instance();
         rs.SetTotalResource(Resource(10000, 10000, 10000));
         rs.SetMaxPopulation(500);
@@ -36,7 +36,7 @@ namespace JDScene {
 
         m_playerArmy.OverrideUnitCounts({100, 100});
 
-        // Â¡º´ ¹öÆ°.
+        // ì§•ë³‘ ë²„íŠ¼.
         CreateUIButton( L"noviceBtn", { 0.0f, -300.0f }, "GAME_START_B", "Recruit Novice",
             [this]() { m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl; });
@@ -46,47 +46,47 @@ namespace JDScene {
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl; });
 
 
-        // º´¿µ.
+        // ë³‘ì˜.
         m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -500.0f, 100.0f }, "house");
 
-        // ¼ºº®.
+        // ì„±ë²½.
         m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -800.0f, 100.0f }, "house");
 
-        { // Å×½ºÆ®. UI¿¡ ÇÊ¿äÇÑ Á¤º¸¸¦ °ÔÀÓ¾À¿¡¼­ ¾î¶»°Ô °¡Á®¿À´ÂÁö.
+        { // í…ŒìŠ¤íŠ¸. UIì— í•„ìš”í•œ ì •ë³´ë¥¼ ê²Œì„ì”¬ì—ì„œ ì–´ë–»ê²Œ ê°€ì ¸ì˜¤ëŠ”ì§€.
 
-            // 1. °¢ º´Á¾º° ÀÚ¿ø, ÀüÅõ·Â Á¤º¸.
+            // 1. ê° ë³‘ì¢…ë³„ ìì›, ì „íˆ¬ë ¥ ì •ë³´.
             const JDGlobal::Contents::UnitTypeData& noviceData = m_playerArmy.GetUnitTypes()[0];
             const JDGlobal::Contents::UnitTypeData& expertData = m_playerArmy.GetUnitTypes()[1]; 
 
-            Resource noviceCost = noviceData.GetRecruitCost(); // novice ºñ¿ë.
-            int novicePower = noviceData.GetPower();           // novice ÀüÅõ·Â.
+            Resource noviceCost = noviceData.GetRecruitCost(); // novice ë¹„ìš©.
+            int novicePower = noviceData.GetPower();           // novice ì „íˆ¬ë ¥.
 
-            Resource expertCost = expertData.GetRecruitCost(); // expert ºñ¿ë.
-            int expertPower = expertData.GetPower();           // expert ÀüÅõ·Â.
+            Resource expertCost = expertData.GetRecruitCost(); // expert ë¹„ìš©.
+            int expertPower = expertData.GetPower();           // expert ì „íˆ¬ë ¥.
 
-            // 2. º´¿µ Å¬¸¯ ¿©ºÎ.
+            // 2. ë³‘ì˜ í´ë¦­ ì—¬ë¶€.
             if (m_isBarracksSelected) {
-                // ÀÌ·¸°Ô ¾²¸é µÉ µí.
+                // ì´ë ‡ê²Œ ì“°ë©´ ë  ë“¯.
             }
 
-            // 3. ³¯Â¥ Á¤º¸. 
-            int currDay = WaveManager::Instance().GetCurrDay(); // ÇöÀç ³¯Â¥.
+            // 3. ë‚ ì§œ ì •ë³´. 
+            int currDay = WaveManager::Instance().GetCurrDay(); // í˜„ì¬ ë‚ ì§œ.
 
-            // 4. ¿şÀÌºê Á¤º¸.
-            const WaveData* nextWave = WaveManager::Instance().GetWave(1); // ÀÌ·±½ÄÀ¸·Î ÇØ´ç ³¯Â¥ÀÇ Á¤º¸¸¦ °¡Á®¿Ã ¼ö ÀÖÀ½.
+            // 4. ì›¨ì´ë¸Œ ì •ë³´.
+            const WaveData* nextWave = WaveManager::Instance().GetWave(1); // ì´ëŸ°ì‹ìœ¼ë¡œ í•´ë‹¹ ë‚ ì§œì˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜¬ ìˆ˜ ìˆìŒ.
 
-            // 5. º´»çµé À§Ä¡¿¡ ÀüÅõ·Â Ç¥½Ã. 
+            // 5. ë³‘ì‚¬ë“¤ ìœ„ì¹˜ì— ì „íˆ¬ë ¥ í‘œì‹œ. 
             /*for (auto& objPtr : m_gameObjects)
             {
                 if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Player &&
                     objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy)
                     continue;
-                // ¾Æ±º°ú ÀûÀÇ À§Ä¡ °¡Á®¿À±â.
+                // ì•„êµ°ê³¼ ì ì˜ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°.
                 auto* transform = objPtr->GetComponent<Transform>();
                 if (!transform) continue;
                 Vector2F position = transform->GetPosition();
 
-                // ÀüÅõ·Â °¡Á®¿À±â.
+                // ì „íˆ¬ë ¥ ê°€ì ¸ì˜¤ê¸°.
                 auto* soldier = dynamic_cast<Soldier*>(objPtr.get());
                 if (soldier) {
                     int power = soldier->GetPower();
@@ -101,22 +101,22 @@ namespace JDScene {
     void GameScene::OnLeave() {
         //cout << "[GameScene] OnLeave()\n";
         if (bgmChannel) {
-            bgmChannel->stop(); // FMOD¿¡¼­ Ã¤³ÎÀ» ¸ØÃã
-            bgmChannel = nullptr; // Æ÷ÀÎÅÍµµ ÃÊ±âÈ­ (¾ÈÀü)
+            bgmChannel->stop(); // FMODì—ì„œ ì±„ë„ì„ ë©ˆì¶¤
+            bgmChannel = nullptr; // í¬ì¸í„°ë„ ì´ˆê¸°í™” (ì•ˆì „)
         }
     }
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
 
-        ProcessDayTimer(deltaTime); // ³¯Â¥ ¹× ¿şÀÌºê °ü¸®.
-        ProcessBattle(deltaTime); // ÀüÅõ Áö¼Ó½Ã°£ ¹× ÀüÅõ °á°ú °ü¸®. 
+        ProcessDayTimer(deltaTime); // ë‚ ì§œ ë° ì›¨ì´ë¸Œ ê´€ë¦¬.
+        ProcessBattle(deltaTime); // ì „íˆ¬ ì§€ì†ì‹œê°„ ë° ì „íˆ¬ ê²°ê³¼ ê´€ë¦¬. 
 
         ClickUpdate();
-        MoveEnemyObjects(deltaTime); // Àû ÀÌµ¿.
-        MovePlayerObjects(deltaTime); // ¾Æ±º ÀÌµ¿.
+        MoveEnemyObjects(deltaTime); // ì  ì´ë™.
+        MovePlayerObjects(deltaTime); // ì•„êµ° ì´ë™.
 
-        AttackWall(deltaTime); // ÀûÀÌ ¼º °ø°İÇÏ´Â °Í °ü¸®.
+        AttackWall(deltaTime); // ì ì´ ì„± ê³µê²©í•˜ëŠ” ê²ƒ ê´€ë¦¬.
 
         bool left = InputManager::Instance().GetMouseState().leftClicked;
         bool right = InputManager::Instance().GetMouseState().rightClicked;
@@ -136,7 +136,7 @@ namespace JDScene {
             }
             else if (right && collider->IsOpen()) {
                 std::cout << "[DEBUG] right ID: " << id << std::endl;
-                // ¿ìÅ¬¸¯: ¿­¸° Äİ¶óÀÌ´õ¸¸ µ¿ÀÛ
+                // ìš°í´ë¦­: ì—´ë¦° ì½œë¼ì´ë”ë§Œ ë™ì‘
             }
         }
     }
@@ -159,7 +159,7 @@ namespace JDScene {
         else
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
 
-        //°ÔÀÓ ¿ÀºêÁ§Æ® ·»´õ
+        //ê²Œì„ ì˜¤ë¸Œì íŠ¸ ë Œë”
 
         for (auto& obj : m_gameObjects) {
             D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
@@ -183,17 +183,17 @@ namespace JDScene {
 
             const int currDay = WaveManager::Instance().GetCurrDay();
             //const int warningDay = currDay + 2;
-            const int warningDay = currDay; // ´çÀÏ¿¡ È­¸é¿¡ ³ªÅ¸³ª°Ô.
+            const int warningDay = currDay; // ë‹¹ì¼ì— í™”ë©´ì— ë‚˜íƒ€ë‚˜ê²Œ.
 
-            std::cout << "[GameScene] ³¯Â¥ Áõ°¡: " << currDay << std::endl;
+            std::cout << "[GameScene] ë‚ ì§œ ì¦ê°€: " << currDay << std::endl;
 
-            // ¿şÀÌºê°¡ ÀÖ´Â °æ¿ì, ¾ÆÁ÷ È­¸é¿¡ ³ªÅ¸³ªÁö ¾Ê¾ÒÀ¸¸é »ı¼º.
+            // ì›¨ì´ë¸Œê°€ ìˆëŠ” ê²½ìš°, ì•„ì§ í™”ë©´ì— ë‚˜íƒ€ë‚˜ì§€ ì•Šì•˜ìœ¼ë©´ ìƒì„±.
             if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
                 float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
                 SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
                 AddEnemyDay(warningDay);
-                std::cout << "[GameScene] Àû ½ºÆùµÊ." << std::endl;
+                std::cout << "[GameScene] ì  ìŠ¤í°ë¨." << std::endl;
             }
         }
     }
@@ -232,7 +232,7 @@ namespace JDScene {
 
         m_btlElapsedTime = 0.0f;
         SafeDestroy(m_battleObject);
-        std::cout << "[GameScene] ÀüÅõ ³¡." << std::endl;
+        std::cout << "[GameScene] ì „íˆ¬ ë." << std::endl;
         
 
     }
@@ -272,8 +272,8 @@ namespace JDScene {
 
     void GameScene::MoveEnemyObjects(float deltaTime)
     {
-        const float speed = 100.0f; // ÇÈ¼¿/ÃÊ
-        Vector2F wallDir = { -1.0f, 0.0f }; // ±âº» ¹æÇâ. (¼ºº®ÀÌ ¾ø´Ù¸é)
+        const float speed = 100.0f; // í”½ì…€/ì´ˆ
+        Vector2F wallDir = { -1.0f, 0.0f }; // ê¸°ë³¸ ë°©í–¥. (ì„±ë²½ì´ ì—†ë‹¤ë©´)
 
         for (auto& objPtr : m_gameObjects)
         {
@@ -284,7 +284,7 @@ namespace JDScene {
             auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
             if (!transform) continue;
 
-            // ÀûÀÌ ÀüÅõ ¿ÀºêÁ§Æ®¿Í Ãæµ¹ÇÏ¸é ÀüÅõ ½Ã°£ ÃÊ±âÈ­ÇÏ°í Á¦°Å.
+            // ì ì´ ì „íˆ¬ ì˜¤ë¸Œì íŠ¸ì™€ ì¶©ëŒí•˜ë©´ ì „íˆ¬ ì‹œê°„ ì´ˆê¸°í™”í•˜ê³  ì œê±°.
             if (m_battleObject) {
                 auto* battleTm = m_battleObject->GetComponent<Transform>();
                 if (!battleTm)  continue;
@@ -295,7 +295,7 @@ namespace JDScene {
                     if (soldier) {
                         m_enemyBattleArmy += soldier->GetUnitCounts();
                         m_enemyTotalPower += soldier->GetPower();
-                        std::cout << "[GameScene] Àû º´·Â Ãß°¡." << std::endl;
+                        std::cout << "[GameScene] ì  ë³‘ë ¥ ì¶”ê°€." << std::endl;
                     }
                     SafeDestroy(objPtr.get());
                     m_btlElapsedTime = 0.0f;
@@ -303,7 +303,7 @@ namespace JDScene {
                 }
             }
 
-            // ¼ºº®ÀÌ¶û Ãæµ¹ÇÏ¸é ¸ØÃß°í ¼ºº®À» °ø°İÇÔ.
+            // ì„±ë²½ì´ë‘ ì¶©ëŒí•˜ë©´ ë©ˆì¶”ê³  ì„±ë²½ì„ ê³µê²©í•¨.
             if (m_wallObject) {
                 auto* wallTm = m_wallObject->GetComponent<Transform>();
                 if (!wallTm)  continue;
@@ -320,12 +320,12 @@ namespace JDScene {
                 wallDir = diffPos.Normalized();
             }
 
-            // ÀÌµ¿ Àû¿ë.
+            // ì´ë™ ì ìš©.
             Vector2F delta = wallDir * (speed * deltaTime);
             Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
 
-            if (sfx) sfx->Play();  // ÀÌµ¿ ½Ã È¿°úÀ½ Àç»ı
+            if (sfx) sfx->Play();  // ì´ë™ ì‹œ íš¨ê³¼ìŒ ì¬ìƒ
         }
     }
 
@@ -345,7 +345,7 @@ namespace JDScene {
             auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
             if (!transform) continue;
 
-            // ¾Æ±ºÀÌ ÀüÅõ ¿ÀºêÁ§Æ®¿Í Ãæµ¹ÇÏ¸é ÀüÅõ ½Ã°£ ÃÊ±âÈ­ÇÏ°í Á¦°Å.
+            // ì•„êµ°ì´ ì „íˆ¬ ì˜¤ë¸Œì íŠ¸ì™€ ì¶©ëŒí•˜ë©´ ì „íˆ¬ ì‹œê°„ ì´ˆê¸°í™”í•˜ê³  ì œê±°.
             if (m_battleObject) {
                 auto* battleTm = m_battleObject->GetComponent<Transform>();
                 if (!battleTm) continue;
@@ -356,7 +356,7 @@ namespace JDScene {
                     if (soldier) {
                         m_playerBattleArmy += soldier->GetUnitCounts();
                         m_playerTotalPower += soldier->GetPower();
-                        std::cout << "[GameScene] ¾Æ±º º´·Â Ãß°¡." << std::endl;
+                        std::cout << "[GameScene] ì•„êµ° ë³‘ë ¥ ì¶”ê°€." << std::endl;
                     }
                     SafeDestroy(objPtr.get());
                     m_btlElapsedTime = 0.0f;
@@ -364,7 +364,7 @@ namespace JDScene {
                 }
             }
 
-            // ÃÖÃÊ ¾Æ±ºÀÏ °æ¿ì, Å¸°Ù Àû°úÀÇ Ãæµ¹ Ã¼Å©. Ãæµ¹ÇÏ¸é Á¦°Å.
+            // ìµœì´ˆ ì•„êµ°ì¼ ê²½ìš°, íƒ€ê²Ÿ ì ê³¼ì˜ ì¶©ëŒ ì²´í¬. ì¶©ëŒí•˜ë©´ ì œê±°.
             if (objPtr.get() == m_playerObject && m_targetEnemy && m_playerObject) {
                 auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
                 if (!enemyTm) continue;
@@ -378,13 +378,13 @@ namespace JDScene {
                     if (player) {
                         m_playerBattleArmy += player->GetUnitCounts();
                         m_playerTotalPower += player->GetPower();
-                        std::cout << "[GameScene] ¾Æ±º º´·Â Ãß°¡." << std::endl;
+                        std::cout << "[GameScene] ì•„êµ° ë³‘ë ¥ ì¶”ê°€." << std::endl;
                     }
                     auto* enemy = dynamic_cast<JDGameObject::Content::Soldier*>(m_targetEnemy);
                     if (enemy) {
                         m_enemyBattleArmy += enemy->GetUnitCounts();
                         m_enemyTotalPower += enemy->GetPower();
-                        std::cout << "[GameScene] Àû º´·Â Ãß°¡." << std::endl;
+                        std::cout << "[GameScene] ì  ë³‘ë ¥ ì¶”ê°€." << std::endl;
                     }
 
                     SafeDestroy(m_playerObject);
@@ -395,12 +395,12 @@ namespace JDScene {
                 }
             }
 
-            // ÀüÅõ ¿ÀºêÁ§Æ®°¡ ¾ø°í, ÀÏ¹İ ¾Æ±ºÀÌ¸é ÈÄÅğ »óÅÂ·Î ÀüÈ¯
+            // ì „íˆ¬ ì˜¤ë¸Œì íŠ¸ê°€ ì—†ê³ , ì¼ë°˜ ì•„êµ°ì´ë©´ í›„í‡´ ìƒíƒœë¡œ ì „í™˜
             if (!m_battleObject && objPtr.get() != m_playerObject) {
                 if (!m_barracksObject) continue;
                 auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
                 if (texRenderer) {
-                    texRenderer->SetFlipX(true); // ÁÂ¿ì ¹İÀü!
+                    texRenderer->SetFlipX(true); // ì¢Œìš° ë°˜ì „!
                 }
                 auto* barracksTm = m_barracksObject->GetComponent<Transform>();
                 if (!barracksTm) continue;
@@ -412,7 +412,7 @@ namespace JDScene {
                         JDGameSystem::UnitCounts updated = soldier->GetUnitCounts();
                         updated += m_playerArmy.GetUnitCounts();
                         m_playerArmy.OverrideUnitCounts(updated);
-                        std::cout << "[GameScene] º´¿µ ÇÕ·ù." << std::endl;
+                        std::cout << "[GameScene] ë³‘ì˜ í•©ë¥˜." << std::endl;
                     }
                     SafeDestroy(objPtr.get());
                     continue;
@@ -421,11 +421,11 @@ namespace JDScene {
                 objPtr->SetState(JDGlobal::Contents::State::Back);
             }
 
-            Vector2F direction = { 1.0f, 0.0f }; // ±âº»°ª.
+            Vector2F direction = { 1.0f, 0.0f }; // ê¸°ë³¸ê°’.
             float moveSpeed = speed;
 
             if (objPtr->GetState() == JDGlobal::Contents::State::Back) {
-                // º´¿µ ¹æÇâÀ¸·Î ÈÄÅğ
+                // ë³‘ì˜ ë°©í–¥ìœ¼ë¡œ í›„í‡´
                 if (m_barracksObject) {
                     auto* barracksTm = m_barracksObject->GetComponent<Transform>();
                     if (barracksTm) {
@@ -436,7 +436,7 @@ namespace JDScene {
                 }
             }
             else if (objPtr.get() == m_playerObject && m_targetEnemy) {
-                // Àû À¯´Ö ¹æÇâÀ¸·Î ÀÌµ¿
+                // ì  ìœ ë‹› ë°©í–¥ìœ¼ë¡œ ì´ë™
                 auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
                 if (enemyTm) {
                     Vector2F diff = enemyTm->GetPosition() - transform->GetPosition();
@@ -444,7 +444,7 @@ namespace JDScene {
                 }
             }
             else if (m_battleObject) {
-                // ÀüÅõ ¿ÀºêÁ§Æ® ¹æÇâÀ¸·Î ÀÌµ¿
+                // ì „íˆ¬ ì˜¤ë¸Œì íŠ¸ ë°©í–¥ìœ¼ë¡œ ì´ë™
                 auto* battleTm = m_battleObject->GetComponent<Transform>();
                 if (battleTm) {
                     Vector2F diff = battleTm->GetPosition() - transform->GetPosition();
@@ -468,12 +468,12 @@ namespace JDScene {
                 if (soldier) {
                     int dmg = soldier->GetPower();
                     m_wallHealth = std::max(0, m_wallHealth - dmg);
-                    std::cout << "[GameScene] ¼ºº® ³²Àº Ã¼·Â: " << m_wallHealth << std::endl;
+                    std::cout << "[GameScene] ì„±ë²½ ë‚¨ì€ ì²´ë ¥: " << m_wallHealth << std::endl;
                     it->timer -= m_battleTime;
                 }
             }
 
-            // ºñÈ°¼ºÈ­µÈ ÀûÀº ¸ñ·Ï¿¡¼­ Á¦°Å
+            // ë¹„í™œì„±í™”ëœ ì ì€ ëª©ë¡ì—ì„œ ì œê±°
             if (!it->enemy || !it->enemy->IsActive()) {
                 it = m_attackers.erase(it);
             }
@@ -485,56 +485,56 @@ namespace JDScene {
 
     void GameScene::ClickUpdate()
     {
-        // ImGui°¡ ¸¶¿ì½º ÀÔ·ÂÀ» »ç¿ë ÁßÀÌ¸é °ÔÀÓ ³» Å¬¸¯À» ¹«½ÃÇÕ´Ï´Ù.
+        // ImGuiê°€ ë§ˆìš°ìŠ¤ ì…ë ¥ì„ ì‚¬ìš© ì¤‘ì´ë©´ ê²Œì„ ë‚´ í´ë¦­ì„ ë¬´ì‹œí•©ë‹ˆë‹¤.
         if (ImGui::GetIO().WantCaptureMouse)
             return;
 
         InputManager& input = InputManager::Instance();
         MouseState state = input.GetMouseState();
 
-        // state.leftClicked ¶Ç´Â state.leftPressed µî ÇÊ¿äÇÑ ÀÔ·Â »óÅÂ¸¦ »ç¿ëÇÕ´Ï´Ù.
+        // state.leftClicked ë˜ëŠ” state.leftPressed ë“± í•„ìš”í•œ ì…ë ¥ ìƒíƒœë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.
         if (state.leftClicked)
         {
-            // (1) ¸¶¿ì½º ÁÂÇ¥¸¦ ¸Ç À§¿¡¼­ ÇÑ ¹ø¸¸ °è»êÇØ¼­ Àç»ç¿ëÇÕ´Ï´Ù.
-            // UI Å¬¸¯ ÆÇÁ¤¿¡ »ç¿ëÇÒ ½ºÅ©¸° ÁÂÇ¥ (D2D ±âÁØ: Y ¾Æ·¡°¡ ¾ç¼ö)
+            // (1) ë§ˆìš°ìŠ¤ ì¢Œí‘œë¥¼ ë§¨ ìœ„ì—ì„œ í•œ ë²ˆë§Œ ê³„ì‚°í•´ì„œ ì¬ì‚¬ìš©í•©ë‹ˆë‹¤.
+            // UI í´ë¦­ íŒì •ì— ì‚¬ìš©í•  ìŠ¤í¬ë¦° ì¢Œí‘œ (D2D ê¸°ì¤€: Y ì•„ë˜ê°€ ì–‘ìˆ˜)
             Vector2F screenMousePos(
                 static_cast<float>(state.pos.x),
                 static_cast<float>(state.pos.y)
             );
-            // °ÔÀÓ ¿ÀºêÁ§Æ® Å¬¸¯ ÆÇÁ¤¿¡ »ç¿ëÇÒ ¿ùµå ÁÂÇ¥ (Unity ±âÁØ: Y À§°¡ ¾ç¼ö)
-            Vector2F worldMousePos = GetMouseWorldPos(); // ¿ì¸®°¡ ¸¸µç ÅëÀÏµÈ ÇÔ¼ö »ç¿ë!
+            // ê²Œì„ ì˜¤ë¸Œì íŠ¸ í´ë¦­ íŒì •ì— ì‚¬ìš©í•  ì›”ë“œ ì¢Œí‘œ (Unity ê¸°ì¤€: Y ìœ„ê°€ ì–‘ìˆ˜)
+            Vector2F worldMousePos = GetMouseWorldPos(); // ìš°ë¦¬ê°€ ë§Œë“  í†µì¼ëœ í•¨ìˆ˜ ì‚¬ìš©!
 
             bool clicked = false;
 
             ////////////////////////////////////////////////////////////////////////////////
-            // 1. UI Å¬¸¯ °Ë»ç (½ºÅ©¸° ÁÂÇ¥°è »ç¿ë)
+            // 1. UI í´ë¦­ ê²€ì‚¬ (ìŠ¤í¬ë¦° ì¢Œí‘œê³„ ì‚¬ìš©)
             ////////////////////////////////////////////////////////////////////////////////
-            // ÀÌ ·ÎÁ÷Àº ½ºÅ©¸° ÁÂÇ¥¸¦ »ç¿ëÇÏ¹Ç·Î ±âÁ¸°ú µ¿ÀÏÇÏ°Ô ¿Ã¹Ù¸£°Ô µ¿ÀÛÇÕ´Ï´Ù.
+            // ì´ ë¡œì§ì€ ìŠ¤í¬ë¦° ì¢Œí‘œë¥¼ ì‚¬ìš©í•˜ë¯€ë¡œ ê¸°ì¡´ê³¼ ë™ì¼í•˜ê²Œ ì˜¬ë°”ë¥´ê²Œ ë™ì‘í•©ë‹ˆë‹¤.
             for (int i = static_cast<int>(m_uiObjects.size()) - 1; i >= 0; --i)
             {
                 auto& uiObj = m_uiObjects[i];
                 if (!uiObj || !uiObj->IsActive()) continue;
 
                 auto clickable = uiObj->GetComponent<Editor_Clickable>();
-                // UIÀÇ IsHit ÇÔ¼ö¿¡´Â '½ºÅ©¸° ÁÂÇ¥'¸¦ ±×´ë·Î ³Ñ°ÜÁİ´Ï´Ù.
+                // UIì˜ IsHit í•¨ìˆ˜ì—ëŠ” 'ìŠ¤í¬ë¦° ì¢Œí‘œ'ë¥¼ ê·¸ëŒ€ë¡œ ë„˜ê²¨ì¤ë‹ˆë‹¤.
                 if (clickable && clickable->IsHit(screenMousePos))
                 {
                     SetSelectedObject(uiObj.get());
                     clicked = true;
-                    std::cout << " UI ¿ÀºêÁ§Æ® Å¬¸¯ ÇÔ!!!!! ";
-                    break; // UI¸¦ Å¬¸¯ÇßÀ¸¸é ´õ ÀÌ»ó ÁøÇà ¾È ÇÔ
+                    std::cout << " UI ì˜¤ë¸Œì íŠ¸ í´ë¦­ í•¨!!!!! ";
+                    break; // UIë¥¼ í´ë¦­í–ˆìœ¼ë©´ ë” ì´ìƒ ì§„í–‰ ì•ˆ í•¨
                 }
             }
 
             ////////////////////////////////////////////////////////////////////////////////
-            // 2. °ÔÀÓ¿ÀºêÁ§Æ® Å¬¸¯ °Ë»ç (¿ùµå ÁÂÇ¥°è »ç¿ë)
+            // 2. ê²Œì„ì˜¤ë¸Œì íŠ¸ í´ë¦­ ê²€ì‚¬ (ì›”ë“œ ì¢Œí‘œê³„ ì‚¬ìš©)
             ////////////////////////////////////////////////////////////////////////////////
             if (!clicked)
             {
-                // (2) ºÒÇÊ¿äÇÏ°í Àß¸øµÈ ÁÂÇ¥ º¯È¯ ·ÎÁ÷À» ¸ğµÎ Á¦°ÅÇÕ´Ï´Ù.
+                // (2) ë¶ˆí•„ìš”í•˜ê³  ì˜ëª»ëœ ì¢Œí‘œ ë³€í™˜ ë¡œì§ì„ ëª¨ë‘ ì œê±°í•©ë‹ˆë‹¤.
                 /* Vector2F unityMousePos(mousePos.x, screenHeight - mousePos.y);
                     Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
-                    -> ÀÌ ºÎºĞÀº GetMouseWorldPos()·Î ´ëÃ¼µÇ¾úÀ¸¹Ç·Î »èÁ¦!
+                    -> ì´ ë¶€ë¶„ì€ GetMouseWorldPos()ë¡œ ëŒ€ì²´ë˜ì—ˆìœ¼ë¯€ë¡œ ì‚­ì œ!
                 */
 
                 for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
@@ -543,14 +543,14 @@ namespace JDScene {
                     if (!obj || !obj->IsActive()) continue;
 
                     auto clickable = obj->GetComponent<Editor_Clickable>();
-                    // (3) °ÔÀÓ ¿ÀºêÁ§Æ®ÀÇ IsHit ÇÔ¼ö¿¡´Â À§¿¡¼­ °è»êÇÑ '¿ùµå ÁÂÇ¥'¸¦ ³Ñ°ÜÁİ´Ï´Ù.
+                    // (3) ê²Œì„ ì˜¤ë¸Œì íŠ¸ì˜ IsHit í•¨ìˆ˜ì—ëŠ” ìœ„ì—ì„œ ê³„ì‚°í•œ 'ì›”ë“œ ì¢Œí‘œ'ë¥¼ ë„˜ê²¨ì¤ë‹ˆë‹¤.
                     if (clickable && clickable->IsHit(worldMousePos))
                     {
                         SetSelectedObject(obj.get());
                         clicked = true;
-                        std::cout << " °ÔÀÓ ¿ÀºêÁ§Æ® Å¬¸¯ ÇÔ!!!!! ";
+                        std::cout << " ê²Œì„ ì˜¤ë¸Œì íŠ¸ í´ë¦­ í•¨!!!!! ";
 
-                        // ÅÂ±× ±â¹İ Ã³¸®
+                        // íƒœê·¸ ê¸°ë°˜ ì²˜ë¦¬
                         auto* gameObj = GetSelectedObject();
                         if (!gameObj) return;
 
@@ -559,29 +559,29 @@ namespace JDScene {
 
                         if (tag == JDGlobal::Base::GameTag::Barracks) {
                             m_isBarracksSelected = !m_isBarracksSelected;
-                            std::cout << "[GameScene] º´¿µ Å¬¸¯. ¼±ÅÃ »óÅÂ: " << m_isBarracksSelected << std::endl;
+                            std::cout << "[GameScene] ë³‘ì˜ í´ë¦­. ì„ íƒ ìƒíƒœ: " << m_isBarracksSelected << std::endl;
                         }
                         else if (m_isBarracksSelected && !m_battleObject && (isEnemyTag && !m_targetEnemy) && m_playerArmy.GetTotalUnits() > 0) {
                             m_targetEnemy = gameObj;
                             SpawnPlayerArmy({ -400.0f, 100.0f });
                             //m_isBarracksSelected = false;
-                            std::cout << "[GameScene] º´¿µ Å¬¸¯ -> Àû Å¬¸¯." << std::endl;
+                            std::cout << "[GameScene] ë³‘ì˜ í´ë¦­ -> ì  í´ë¦­." << std::endl;
                         }
                         else if (m_isBarracksSelected && tag == JDGlobal::Base::GameTag::BattleAnim && m_playerArmy.GetTotalUnits() > 0) {
                             SpawnPlayerArmy({ -400.0f, 100.0f });
                             //m_isBarracksSelected = false;
-                            std::cout << "[GameScene] º´¿µ Å¬¸¯ -> ÀüÅõÁß Å¬¸¯." << std::endl;
+                            std::cout << "[GameScene] ë³‘ì˜ í´ë¦­ -> ì „íˆ¬ì¤‘ í´ë¦­." << std::endl;
                         }
                         else {
                             //m_isBarracksSelected = false; 
-                            std::cout << "[GameScene] ÀÌ»óÇÑ °Å Å¬¸¯." << std::endl;
+                            std::cout << "[GameScene] ì´ìƒí•œ ê±° í´ë¦­." << std::endl;
                         }
                         break;
                     }
                 }
             }
 
-            // ¾Æ¹«°Íµµ Å¬¸¯µÇÁö ¾Ê¾Ò´Ù¸é ¼±ÅÃ ÇØÁ¦
+            // ì•„ë¬´ê²ƒë„ í´ë¦­ë˜ì§€ ì•Šì•˜ë‹¤ë©´ ì„ íƒ í•´ì œ
             if (!clicked)
             {
                 SetSelectedObject(nullptr);
@@ -609,7 +609,7 @@ namespace JDScene {
         SceneBase::DestroyObject(obj);
     }
 
-    // °øÅë º´»ç »ı¼º ÇÔ¼ö
+    // ê³µí†µ ë³‘ì‚¬ ìƒì„± í•¨ìˆ˜
     JDGameObject::GameObjectBase* GameScene::CreateSoldierUnit( const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
         JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName) {
         auto* obj = CreateGameObject<Soldier>((tag == JDGlobal::Base::GameTag::Player) ? L"playerObj" : L"enemyObj");
@@ -635,14 +635,14 @@ namespace JDScene {
             obj->AddComponent<Editor_Clickable>();
             auto* texRenderer = obj->GetComponent<TextureRenderer>();
             if (texRenderer) {
-                texRenderer->SetFlipX(true); // ÁÂ¿ì ¹İÀü!
+                texRenderer->SetFlipX(true); // ì¢Œìš° ë°˜ì „!
             }
         }
 
         return obj;
     }
 
-    // °øÅë ±¸Á¶¹° »ı¼º ÇÔ¼ö
+    // ê³µí†µ êµ¬ì¡°ë¬¼ ìƒì„± í•¨ìˆ˜
     JDGameObject::GameObjectBase* GameScene::CreateStructure( const std::wstring& name, JDGlobal::Base::GameTag tag, 
         const Vector2F& pos, const std::string& textureName) {
         auto* obj = CreateGameObject<GameObject>(name);
@@ -660,7 +660,7 @@ namespace JDScene {
         return obj;
     }
 
-    // °øÅë ¹öÆ° »ı¼º ÇÔ¼ö
+    // ê³µí†µ ë²„íŠ¼ ìƒì„± í•¨ìˆ˜
     JDGameObject::GameObjectBase* GameScene::CreateUIButton( const std::wstring& name, const Vector2F& pos,
         const std::string& textureName, const std::string& clickEventName, std::function<void()> callback) {
         auto* btn = CreateUIObject<Button>(name);
@@ -679,29 +679,29 @@ namespace JDScene {
         using JDScene::TutorialScene;
 
         // =====================================================================
-        // °ÔÀÓ ¿ÀºêÁ§Æ® »ı¼º (World Space)
+        // ê²Œì„ ì˜¤ë¸Œì íŠ¸ ìƒì„± (World Space)
         // =====================================================================
 
-        // ¹è°æ
+        // ë°°ê²½
         auto* map_backGround = CreateGameObject<GameObject>(L"Map_Background");
         map_backGround->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
         auto map_backGroundTexture = map_backGround->AddComponent<TextureRenderer>("BACK_GROUND_OPACITY", RenderLayerInfo{ SortingLayer::BackGround, 1 });
         map_backGroundTexture->SetSize({ 3840, 2160 });
 
-        // ¹è°æ Ç® ¹ç
+        // ë°°ê²½ í’€ ë°­
         auto* map_battle = CreateGameObject<GameObject>(L"Map_Field");
         map_battle->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
         auto map_battleTexture = map_battle->AddComponent<TextureRenderer>("ART_BattleMap01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
         // auto map_battleTexture = map_battle->AddComponent<TextureRenderer>("BATTLE_MAP(old)", RenderLayerInfo{ SortingLayer::BackGround, 1 });
         map_battleTexture->SetSize({ JDGlobal::Window::WindowSize::Instance().GetSize() });
 
-        // Ç® ¹ç _ ·¹ÀÌ¾î 1
+        // í’€ ë°­ _ ë ˆì´ì–´ 1
         auto* map_battleLayer01 = CreateGameObject<GameObject>(L"Map_FieldLayer01");
         map_battleLayer01->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
         auto map_battleLayer01Texture = map_battleLayer01->AddComponent<TextureRenderer>("ART_BattleMapLayer01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
         map_battleLayer01Texture->SetSize({ JDGlobal::Window::WindowSize::Instance().GetSize() });
 
-        // ¼ºº®
+        // ì„±ë²½
         auto* map_castle = CreateGameObject<GameObject>(L"Map_Castle");
         map_castle->AddComponent<Transform>();
         auto map_castleTexture = map_castle->AddComponent<TextureRenderer>("ART_Rampart01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
@@ -709,7 +709,7 @@ namespace JDScene {
         auto map_castleTR = map_castle->GetComponent<Transform>();
         map_castleTR->SetPosition(Vector2F{ -556.f, -13.f });
 
-        // ¹è·° 01
+        // ë°°ëŸ­ 01
         auto* map_barrack01 = CreateGameObject<GameObject>(L"Map_Barrack01");
         map_barrack01->AddComponent<Transform>();
         auto map_barrack01Texture = map_barrack01->AddComponent<TextureRenderer>("ART_Barracks01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
@@ -717,7 +717,7 @@ namespace JDScene {
         auto map_barrack01TR = map_barrack01->GetComponent<Transform>();
         map_barrack01TR->SetPosition(Vector2F{ -135.f, 190.f });
 
-        // ¹è·° 02
+        // ë°°ëŸ­ 02
         auto* map_barrack02 = CreateGameObject<GameObject>(L"Map_Barrack02");
         map_barrack02->AddComponent<Transform>();
         auto map_barrack02Texture = map_barrack02->AddComponent<TextureRenderer>("ART_Barracks02", RenderLayerInfo{ SortingLayer::BackGround, 1 });
@@ -725,47 +725,47 @@ namespace JDScene {
         auto map_barrack02TR = map_barrack02->GetComponent<Transform>();
         map_barrack02TR->SetPosition(Vector2F{ -195.f, 80.f });
 
-        //// ±×¸®µå
+        //// ê·¸ë¦¬ë“œ
         //// =====================================================================
-        //// ±×¸®µå ¹èÄ¡ Á¤º¸
+        //// ê·¸ë¦¬ë“œ ë°°ì¹˜ ì •ë³´
         //// =====================================================================
 
         //m_buildSystem->CreateGrid(this);
 
-        //// ±×¸®µå¸¦ ¹èÄ¡ÇÒ ÀüÃ¼ ¿µ¿ªÀÇ Å©±â
+        //// ê·¸ë¦¬ë“œë¥¼ ë°°ì¹˜í•  ì „ì²´ ì˜ì—­ì˜ í¬ê¸°
         //const float areaWidth = 515.0f;
         //const float areaHeight = 760.0f;
 
-        //// ±×¸®µå¸¦ ¹èÄ¡ÇÒ ¿µ¿ªÀÇ ÁÂÃø »ó´Ü ¿ùµå ÁÂÇ¥
+        //// ê·¸ë¦¬ë“œë¥¼ ë°°ì¹˜í•  ì˜ì—­ì˜ ì¢Œì¸¡ ìƒë‹¨ ì›”ë“œ ì¢Œí‘œ
         //const Vector2F areaTopLeft = { -850.0f, 350.0f };
 
-        //// ±×¸®µåÀÇ Çà°ú ¿­ °³¼ö
+        //// ê·¸ë¦¬ë“œì˜ í–‰ê³¼ ì—´ ê°œìˆ˜
         //m_totalCols = 4;
         //m_totalRows = 6;
 
-        //// ¼¿°ú ¼¿ »çÀÌÀÇ °£°İ (¿©¹é)
+        //// ì…€ê³¼ ì…€ ì‚¬ì´ì˜ ê°„ê²© (ì—¬ë°±)
         //const float padding = 10.0f;
 
         //// =====================================================================
-        //// ±×¸®µå »ı¼º ·ÎÁ÷
+        //// ê·¸ë¦¬ë“œ ìƒì„± ë¡œì§
         //// =====================================================================
 
-        //// 1. ½ÇÁ¦ ¼¿µéÀÌ ¹èÄ¡µÉ ¼ö ÀÖ´Â °ø°£ °è»ê (ÀüÃ¼ ¿µ¿ª - ÃÑ °£°İ)
+        //// 1. ì‹¤ì œ ì…€ë“¤ì´ ë°°ì¹˜ë  ìˆ˜ ìˆëŠ” ê³µê°„ ê³„ì‚° (ì „ì²´ ì˜ì—­ - ì´ ê°„ê²©)
         //float contentWidth = areaWidth - (padding * (m_totalCols - 1));
         //float contentHeight = areaHeight - (padding * (m_totalRows - 1));
 
-        //// 2. Á¤»ç°¢Çü ¼¿ÀÇ ÇÑ º¯ÀÇ ÃÖ´ë Å©±â °è»ê
+        //// 2. ì •ì‚¬ê°í˜• ì…€ì˜ í•œ ë³€ì˜ ìµœëŒ€ í¬ê¸° ê³„ì‚°
         //float cellWidthPossible = contentWidth / m_totalCols;
         //float cellHeightPossible = contentHeight / m_totalRows;
 
-        //// 3. Á¤»ç°¢Çü À¯Áö¸¦ À§ÇØ °¡´ÉÇÑ Å©±â Áß ´õ ÀÛÀº ÂÊÀ» ÃÖÁ¾ ¼¿ Å©±â·Î ¼±ÅÃ
+        //// 3. ì •ì‚¬ê°í˜• ìœ ì§€ë¥¼ ìœ„í•´ ê°€ëŠ¥í•œ í¬ê¸° ì¤‘ ë” ì‘ì€ ìª½ì„ ìµœì¢… ì…€ í¬ê¸°ë¡œ ì„ íƒ
         //const float squareCellSize = std::min(cellWidthPossible, cellHeightPossible);
 
-        //// 4. ÃÖÁ¾ ±×¸®µåÀÇ ÀüÃ¼ Å©±â °è»ê
+        //// 4. ìµœì¢… ê·¸ë¦¬ë“œì˜ ì „ì²´ í¬ê¸° ê³„ì‚°
         //float finalGridWidth = (squareCellSize * m_totalCols) + (padding * (m_totalCols - 1));
         //float finalGridHeight = (squareCellSize * m_totalRows) + (padding * (m_totalRows - 1));
 
-        //// 5. ÀüÃ¼ ±×¸®µå¸¦ ¿µ¿ª ³»¿¡¼­ Áß¾Ó¿¡ ¹èÄ¡ÇÏ±â À§ÇÑ ½ÃÀÛ ¿ÀÇÁ¼Â °è»ê
+        //// 5. ì „ì²´ ê·¸ë¦¬ë“œë¥¼ ì˜ì—­ ë‚´ì—ì„œ ì¤‘ì•™ì— ë°°ì¹˜í•˜ê¸° ìœ„í•œ ì‹œì‘ ì˜¤í”„ì…‹ ê³„ì‚°
         //float offsetX = (areaWidth - finalGridWidth) / 2.0f;
         //float offsetY = (areaHeight - finalGridHeight) / 2.0f;
 
@@ -776,32 +776,32 @@ namespace JDScene {
         //        std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
         //        auto* box = CreateGameObject<Grid>(name.c_str());
 
-        //        // 6. °¢ ¼¿ÀÇ ÃÖÁ¾ À§Ä¡ °è»ê
-        //        //    ½ÃÀÛÁ¡ + Áß¾Ó ¿ÀÇÁ¼Â + (¼¿ Å©±â + °£°İ) * ÀÎµ¦½º + ¼¿ Áß¾Ó º¸Á¤
+        //        // 6. ê° ì…€ì˜ ìµœì¢… ìœ„ì¹˜ ê³„ì‚°
+        //        //    ì‹œì‘ì  + ì¤‘ì•™ ì˜¤í”„ì…‹ + (ì…€ í¬ê¸° + ê°„ê²©) * ì¸ë±ìŠ¤ + ì…€ ì¤‘ì•™ ë³´ì •
         //        float x = areaTopLeft.x + offsetX + (col * (squareCellSize + padding)) + (squareCellSize / 2.0f);
         //        float y = areaTopLeft.y - offsetY - (row * (squareCellSize + padding)) - (squareCellSize / 2.0f);
 
         //        box->GetComponent<Transform>()->SetPosition({ x, y });
         //        box->AddComponent<Editor_Clickable>();
 
-        //        // TextureRenderer¸¦ ¸ÕÀú Ãß°¡ÇÕ´Ï´Ù. (ÀÌ¶§ ÅØ½ºÃ³ ÀÌ¸§Àº ºñ¿öµÓ´Ï´Ù)
+        //        // TextureRendererë¥¼ ë¨¼ì € ì¶”ê°€í•©ë‹ˆë‹¤. (ì´ë•Œ í…ìŠ¤ì²˜ ì´ë¦„ì€ ë¹„ì›Œë‘¡ë‹ˆë‹¤)
         //        auto* textureRenderer = box->AddComponent<TextureRenderer>("");
 
         //        // ==========================================================
-        //        // ¹Ú½º ÅØ½ºÃ³ ÀÌ¸§ µ¿Àû »ı¼º ¹× ¼³Á¤
+        //        // ë°•ìŠ¤ í…ìŠ¤ì²˜ ì´ë¦„ ë™ì  ìƒì„± ë° ì„¤ì •
         //        // ==========================================================
         //        int idx = col * m_totalRows + row; // 0 ~ 23
         //        int textureNumber = idx + 1;       // 1 ~ 24
 
-        //        // stringstreamÀ» »ç¿ëÇØ "ART_Tile" + "0" + "¼ıÀÚ" ÇüÅÂ·Î Á¶ÇÕ
+        //        // stringstreamì„ ì‚¬ìš©í•´ "ART_Tile" + "0" + "ìˆ«ì" í˜•íƒœë¡œ ì¡°í•©
         //        std::stringstream ss;
         //        ss << "ART_Tile" << std::setw(2) << std::setfill('0') << textureNumber;
 
-        //        // ¿Ï¼ºµÈ ÅØ½ºÃ³ Å°("ART_Tile01", "ART_Tile02" µî)¸¦ ¼³Á¤
+        //        // ì™„ì„±ëœ í…ìŠ¤ì²˜ í‚¤("ART_Tile01", "ART_Tile02" ë“±)ë¥¼ ì„¤ì •
         //        textureRenderer->SetTextureName(ss.str());
         //        // ==========================================================
 
-        //        // Å©±â ¼³Á¤ ¹× Äİ¶óÀÌ´õ Ãß°¡
+        //        // í¬ê¸° ì„¤ì • ë° ì½œë¼ì´ë” ì¶”ê°€
         //        textureRenderer->SetSize({ squareCellSize, squareCellSize });
 
         //        auto* collider = box->AddComponent<BoxCollider>(Vector2F{ squareCellSize / 2.0f, squareCellSize / 2.0f });
@@ -810,15 +810,15 @@ namespace JDScene {
         //}
 
         // =====================================================================
-        // UI ¿ÀºêÁ§Æ® »ı¼º (Screen Space)
+        // UI ì˜¤ë¸Œì íŠ¸ ìƒì„± (Screen Space)
         // =====================================================================
 
         auto cam = D2DRenderer::Instance().GetCamera();
 
-        // 1) [»ó´Ü] ÀÚ¿ø
+        // 1) [ìƒë‹¨] ìì›
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ÀÎ±¸
+        // ì¸êµ¬
         m_resPop = CreateUIObject<Button>(L"UI_ResPop");
         m_resPop->SetText(L"");
         m_resPop->SetTextureName("ART_RESPop01");
@@ -826,7 +826,7 @@ namespace JDScene {
         m_resPop->SetPosition({ -858.f, 492.f });
         m_resPop->SetAnchor({ 0.0f, 1.0f });
 
-        // ÀÎ±¸ ÅØ½ºÆ®
+        // ì¸êµ¬ í…ìŠ¤íŠ¸
         m_resPopText = CreateUIObject<Text>(L"UI_ResPopText");
         m_resPopText->SetText(L"1234");
         m_resPopText->SetTextFormatName("Sebang_24");
@@ -834,7 +834,7 @@ namespace JDScene {
         m_resPopText->SetSize({ 300, 100 });
         m_resPopText->SetPosition({ -835, 489 });
 
-        // ÀÎ±¸ º¸³Ê½º
+        // ì¸êµ¬ ë³´ë„ˆìŠ¤
         m_resPopBonusText = CreateUIObject<Text>(L"UI_ResPopBonusText");
         m_resPopBonusText->SetText(L"+1234");
         m_resPopBonusText->SetTextFormatName("Sebang_16");
@@ -844,7 +844,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ½Ä·®
+        // ì‹ëŸ‰
         m_resFood = CreateUIObject<Button>(L"UI_ResFood");
         m_resFood->SetText(L"");
         m_resFood->SetTextureName("ART_RESFood01");
@@ -852,7 +852,7 @@ namespace JDScene {
         m_resFood->SetPosition({ -660.f, 492.f });
         m_resFood->SetAnchor({ 0.0f, 1.0f });
 
-        // ½Ä·® ÅØ½ºÆ®
+        // ì‹ëŸ‰ í…ìŠ¤íŠ¸
         m_resFoodText = CreateUIObject<Text>(L"UI_ResFoodText");
         m_resFoodText->SetText(L"1234");
         m_resFoodText->SetTextFormatName("Sebang_24");
@@ -860,7 +860,7 @@ namespace JDScene {
         m_resFoodText->SetSize({ 300, 100 });
         m_resFoodText->SetPosition({ -630, 489 });
 
-        // ½Ä·® º¸³Ê½º
+        // ì‹ëŸ‰ ë³´ë„ˆìŠ¤
         m_resFoodBonusText = CreateUIObject<Text>(L"UI_ResFoodBonusText");
         m_resFoodBonusText->SetText(L"+1234");
         m_resFoodBonusText->SetTextFormatName("Sebang_16");
@@ -870,7 +870,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ¸ñÀç
+        // ëª©ì¬
         m_resWood = CreateUIObject<Button>(L"UI_ResWood");
         m_resWood->SetText(L"");
         m_resWood->SetTextureName("ART_RESWood01");
@@ -878,7 +878,7 @@ namespace JDScene {
         m_resWood->SetPosition({ -450.f, 492.f });
         m_resWood->SetAnchor({ 0.0f, 1.0f });
 
-        // ¸ñÀç ÅØ½ºÆ®
+        // ëª©ì¬ í…ìŠ¤íŠ¸
         m_resWoodText = CreateUIObject<Text>(L"UI_ResWoodText");
         m_resWoodText->SetText(L"1234");
         m_resWoodText->SetTextFormatName("Sebang_24");
@@ -886,7 +886,7 @@ namespace JDScene {
         m_resWoodText->SetSize({ 300, 100 });
         m_resWoodText->SetPosition({ -420, 489 });
 
-        // ¸ñÀç º¸³Ê½º
+        // ëª©ì¬ ë³´ë„ˆìŠ¤
         m_resWoodBonusText = CreateUIObject<Text>(L"UI_ResWoodBonusText");
         m_resWoodBonusText->SetText(L"+1234");
         m_resWoodBonusText->SetTextFormatName("Sebang_16");
@@ -896,7 +896,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ±¤¹°
+        // ê´‘ë¬¼
         m_resMineral = CreateUIObject<Button>(L"UI_ResMineral");
         m_resMineral->SetText(L"");
         m_resMineral->SetTextureName("ART_RESMineral01");
@@ -904,7 +904,7 @@ namespace JDScene {
         m_resMineral->SetPosition({ -252.f, 489.f });
         m_resMineral->SetAnchor({ 0.0f, 1.0f });
 
-        // ±¤¹° ÅØ½ºÆ®
+        // ê´‘ë¬¼ í…ìŠ¤íŠ¸
         m_resMineralText = CreateUIObject<Text>(L"UI_ResMineralText");
         m_resMineralText->SetText(L"1234");
         m_resMineralText->SetTextFormatName("Sebang_24");
@@ -912,7 +912,7 @@ namespace JDScene {
         m_resMineralText->SetSize({ 300, 100 });
         m_resMineralText->SetPosition({ -220, 489 });
 
-        // ±¤¹° º¸³Ê½º
+        // ê´‘ë¬¼ ë³´ë„ˆìŠ¤
         m_resMineralBonusText = CreateUIObject<Text>(L"UI_ResMineralBonusText");
         m_resMineralBonusText->SetText(L"+1234");
         m_resMineralBonusText->SetTextFormatName("Sebang_16");
@@ -922,7 +922,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 1) [»ó´Ü] ¸ó½ºÅÍ ¿şÀÌºê
+        // 1) [ìƒë‹¨] ëª¬ìŠ¤í„° ì›¨ì´ë¸Œ
         m_monsterWaveBackground = CreateUIObject<Image>(L"UI_MonWaveBackground");
         m_monsterWaveBackground->SetTextureName("ART_UIWaveGauge01");
         m_monsterWaveBackground->SetSize({ 500.0f, 74.f });
@@ -931,14 +931,14 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 1) [»ó´Ü] ³¯Â¥ ¹× ¿É¼Ç ÆĞ³Î ( ÀÏ½ÃÁ¤Áö, Àç»ı, ºü¸¥Àç»ı, ¿É¼Ç )
+        // 1) [ìƒë‹¨] ë‚ ì§œ ë° ì˜µì…˜ íŒ¨ë„ ( ì¼ì‹œì •ì§€, ì¬ìƒ, ë¹ ë¥¸ì¬ìƒ, ì˜µì…˜ )
         m_datePanel = CreateUIObject<Image>(L"UI_ART_UIDate01");
         m_datePanel->SetTextureName("ART_UIDate01");
         m_datePanel->SetSize({ 350.0f, 166.f });
         m_datePanel->SetPosition({ 785.f, 447.f });
         m_datePanel->SetAnchor({ 1.0f, 1.0f });
 
-        // ³â (Year) ÅØ½ºÆ®
+        // ë…„ (Year) í…ìŠ¤íŠ¸
         m_yearText = CreateUIObject<Text>(L"UI_YearText");
         m_yearText->SetText(L"1995");
         m_yearText->SetTextFormatName("Sebang_24");
@@ -946,7 +946,7 @@ namespace JDScene {
         m_yearText->SetSize({ 300, 100 });
         m_yearText->SetPosition({ 690, 390 });
 
-        // ¿ù (Month) ÅØ½ºÆ®
+        // ì›” (Month) í…ìŠ¤íŠ¸
         m_monthText = CreateUIObject<Text>(L"UI_MonthText");
         m_monthText->SetText(L"12");
         m_monthText->SetTextFormatName("Sebang_24");
@@ -954,7 +954,7 @@ namespace JDScene {
         m_monthText->SetSize({ 300, 100 });
         m_monthText->SetPosition({ 785, 390 });
 
-        // ÀÏ (Day) ÅØ½ºÆ®
+        // ì¼ (Day) í…ìŠ¤íŠ¸
         m_dayText = CreateUIObject<Text>(L"UI_DayText");
         m_dayText->SetText(L"18");
         m_dayText->SetTextFormatName("Sebang_24");
@@ -964,26 +964,26 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // Á¤Áö ¹öÆ°
+        // ì •ì§€ ë²„íŠ¼
         m_stopButton = CreateUIObject<Button>(L"UI_StopButton");
         m_stopButton->SetTextureName("ART_Pause01");
         m_stopButton->SetText(L"");
         m_stopButton->SetSize({ 40, 47 });
         m_stopButton->SetPosition({ 679.5f, 475.f });
 
-        // Á¤Áö ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì •ì§€ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_stopButton->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // Á¤Áö ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì •ì§€ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_stopButton->AddOnEnter("Highlight On", [this]()
             {
 
             });
 
-        // Á¤Áö ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì •ì§€ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_stopButton->AddOnExit("Highlight Off", [this]()
             {
 
@@ -991,26 +991,26 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // Àç»ı ¹öÆ°
+        // ì¬ìƒ ë²„íŠ¼
         m_playButton = CreateUIObject<Button>(L"UI_PlayButton");
         m_playButton->SetTextureName("ART_Play01");
         m_playButton->SetText(L"");
         m_playButton->SetSize({ 31.5f, 45.f });
         m_playButton->SetPosition({ 762.f, 475.f });
 
-        // Àç»ı ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì¬ìƒ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_playButton->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // Àç»ı ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì¬ìƒ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_playButton->AddOnEnter("Highlight On", [this]()
             {
 
             });
 
-        // Àç»ı ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì¬ìƒ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_playButton->AddOnExit("Highlight Off", [this]()
             {
 
@@ -1018,26 +1018,26 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ½ºÇÇµå ¹öÆ°
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼
         m_speedButton = CreateUIObject<Button>(L"UI_SpeedButton");
         m_speedButton->SetTextureName("ART_Fast01");
         m_speedButton->SetText(L"");
         m_speedButton->SetSize({ 45.f, 45.f });
         m_speedButton->SetPosition({ 842.f, 475.f });
 
-        // ½ºÇÇµå ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_speedButton->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // ½ºÇÇµå ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_speedButton->AddOnEnter("Highlight On", [this]()
             {
 
             });
 
-        // ½ºÇÇµå ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_speedButton->AddOnExit("Highlight Off", [this]()
             {
 
@@ -1045,7 +1045,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ¿É¼Ç ¹öÆ°
+        // ì˜µì…˜ ë²„íŠ¼
         m_optionButton = CreateUIObject<Button>(L"UI_OptionButton");
         m_optionButton->SetTextureName("ART_SettingIcon01");
         m_optionButton->SetText(L"");
@@ -1053,19 +1053,19 @@ namespace JDScene {
         m_optionButton->SetPosition({ 919, 483 });
         m_optionButton->SetScale({ 0.85f, 0.85f });
 
-        // ¿É¼Ç ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì˜µì…˜ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_optionButton->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // ½ºÇÇµå ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_optionButton->AddOnEnter("Highlight On", [this]()
             {
 
             });
 
-        // ½ºÇÇµå ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ìŠ¤í”¼ë“œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_optionButton->AddOnExit("Highlight Off", [this]()
             {
 
@@ -1073,8 +1073,8 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 0) ±âº» UI
-        // TODO : ¸®¼Ò½º°¡ ¾ÆÁ÷ ¾øÀ½.
+        // 0) ê¸°ë³¸ UI
+        // TODO : ë¦¬ì†ŒìŠ¤ê°€ ì•„ì§ ì—†ìŒ.
         m_defaultUI = CreateUIObject<Image>(L"UI_Default");
         m_defaultUI->SetTextureName("ART_UIBuilding01");
         if (cam)
@@ -1082,7 +1082,7 @@ namespace JDScene {
             float screenWidth = static_cast<float>(cam->GetScreenWidth());
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-            // È­¸é Å©±â·Î ¼³Á¤
+            // í™”ë©´ í¬ê¸°ë¡œ ì„¤ì •
             m_defaultUI->SetSize(Vector2F{ screenWidth, screenHeight });
             m_defaultUI->SetPosition({ 0.0f, 0.0f });
             m_defaultUI->SetPivot({ 0.5f, 0.5f });
@@ -1091,7 +1091,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 1) °Ç¼³ UI
+        // 1) ê±´ì„¤ UI
         m_buildUI = CreateUIObject<Image>(L"UI_Build");
         m_buildUI->SetTextureName("ART_UIBuilding01");
         if (cam)
@@ -1099,7 +1099,7 @@ namespace JDScene {
             float screenWidth = static_cast<float>(cam->GetScreenWidth());
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-            // È­¸é Å©±â·Î ¼³Á¤
+            // í™”ë©´ í¬ê¸°ë¡œ ì„¤ì •
             m_buildUI->SetSize(Vector2F{ screenWidth, screenHeight });
             m_buildUI->SetPosition({ 0.0f, 0.0f });
             m_buildUI->SetPivot({ 0.5f, 0.5f });
@@ -1107,20 +1107,20 @@ namespace JDScene {
         }
 
         ////////////////////////////////////////
-        // °Ç¼³ UI _ Info
+        // ê±´ì„¤ UI _ Info
         ////////////////////////////////////////
 
-        // °Ç¼³ Å¸ÀÔ ÅØ½ºÆ®
+        // ê±´ì„¤ íƒ€ì… í…ìŠ¤íŠ¸
         m_buildTypeText = CreateUIObject<Text>(L"UI_BuildTypeText");
-        m_buildTypeText->SetText(L"±¤»ê");
+        m_buildTypeText->SetText(L"ê´‘ì‚°");
         m_buildTypeText->SetTextFormatName("Sebang_Bold_24");
         m_buildTypeText->SetColor(D2D1::ColorF(0x69512C));
         m_buildTypeText->SetSize({ 300, 100 });
         m_buildTypeText->SetPosition({ -64, -390 });
 
-        // ÄÚ½ºÆ® ÅØ½ºÆ®
+        // ì½”ìŠ¤íŠ¸ í…ìŠ¤íŠ¸
         m_costInfoText = CreateUIObject<Text>(L"UI_BuildCostInfoText");
-        m_costInfoText->SetText(L"ÄÚ½ºÆ®");
+        m_costInfoText->SetText(L"ì½”ìŠ¤íŠ¸");
         m_costInfoText->SetTextFormatName("Sebang_16");
         m_costInfoText->SetColor(D2D1::ColorF(0x69512C));
         m_costInfoText->SetSize({ 300, 100 });
@@ -1133,29 +1133,29 @@ namespace JDScene {
         m_costText->SetSize({ 300, 100 });
         m_costText->SetPosition({ 0, -428 });
 
-        // ÄÚ½ºÆ® ÀÌ¹ÌÁö
+        // ì½”ìŠ¤íŠ¸ ì´ë¯¸ì§€
         m_costImage = CreateUIObject<Image>(L"UI_BuildCostImage");
         m_costImage->SetTextureName("ART_CostWood01");
         m_costImage->SetSize({ 40, 31 });
         m_costImage->SetPosition({ -46, -428 });
         m_costImage->SetAnchor({ 1.0f, 0.0f });
 
-        // È¿°ú ÅØ½ºÆ®
+        // íš¨ê³¼ í…ìŠ¤íŠ¸
         m_effectInfoText = CreateUIObject<Text>(L"UI_BuildEffectInfoText");
-        m_effectInfoText->SetText(L"È¿°ú");
+        m_effectInfoText->SetText(L"íš¨ê³¼");
         m_effectInfoText->SetTextFormatName("Sebang_16");
         m_effectInfoText->SetColor(D2D1::ColorF(0x69512C));
         m_effectInfoText->SetSize({ 300, 100 });
         m_effectInfoText->SetPosition({ -113, -470 });
 
         m_effectText = CreateUIObject<Text>(L"UI_BuildEffectText");
-        m_effectText->SetText(L"1/ÃÊ");
+        m_effectText->SetText(L"1/ì´ˆ");
         m_effectText->SetTextFormatName("Sebang_16");
         m_effectText->SetColor(D2D1::ColorF(0x69512C));
         m_effectText->SetSize({ 300, 100 });
         m_effectText->SetPosition({ 0, -470 });
 
-        // È¿°ú ÀÌ¹ÌÁö
+        // íš¨ê³¼ ì´ë¯¸ì§€
         m_effctImage = CreateUIObject<Image>(L"UI_BuildEffctImage");
         m_effctImage->SetTextureName("ART_CostFood01");
         m_effctImage->SetSize({ 40, 31 });
@@ -1163,7 +1163,7 @@ namespace JDScene {
         m_effctImage->SetAnchor({ 1.0f, 0.0f });
 
         ////////////////////////////////////////
-        // °Ç¼³ UI _ ÁÖ°ÅÁö
+        // ê±´ì„¤ UI _ ì£¼ê±°ì§€
         ////////////////////////////////////////
         m_buildHouse = CreateUIObject<Button>(L"UI_Build_House");
         m_buildHouse->SetTextureName("ART_BuildCabin01");
@@ -1171,19 +1171,19 @@ namespace JDScene {
         m_buildHouse->SetSize({ 166.f, 166.f });
         m_buildHouse->SetPosition({ 200.f, -430.f });
 
-        // ÁÖ°ÅÁö ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì£¼ê±°ì§€ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildHouse->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // ÁÖ°ÅÁö ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì£¼ê±°ì§€ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildHouse->AddOnEnter("Highlight On", [this]()
             {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::House, "50", "1/ÃÊ");
+                ShowBuildInfo(JDGlobal::Contents::BuildingType::House, "50", "1/ì´ˆ");
             });
 
-        // ÁÖ°ÅÁö ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì£¼ê±°ì§€ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildHouse->AddOnExit("Highlight Off", [this]()
             {
                 CloseBuildInfo();
@@ -1191,7 +1191,7 @@ namespace JDScene {
 
 
         ////////////////////////////////////////
-        // °Ç¼³ UI _ ³¬½ÃÅÍ
+        // ê±´ì„¤ UI _ ë‚šì‹œí„°
         ////////////////////////////////////////
         m_buildFishingspot = CreateUIObject<Button>(L"UI_Build_Fishing");
         m_buildFishingspot->SetTextureName("ART_BuildFishing01");
@@ -1199,19 +1199,19 @@ namespace JDScene {
         m_buildFishingspot->SetSize({ 166.f, 166.f });
         m_buildFishingspot->SetPosition({ 400.f, -430.f });
 
-        // ³¬½ÃÅÍ ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ë‚šì‹œí„° ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildFishingspot->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // ³¬½ÃÅÍ ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ë‚šì‹œí„° ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildFishingspot->AddOnEnter("Highlight On", [this]()
             {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::FishingSpot, "40", "2/ÃÊ");
+                ShowBuildInfo(JDGlobal::Contents::BuildingType::FishingSpot, "40", "2/ì´ˆ");
             });
 
-        // ³¬½ÃÅÍ ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ë‚šì‹œí„° ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildFishingspot->AddOnExit("Highlight Off", [this]()
             {
                 CloseBuildInfo();
@@ -1219,7 +1219,7 @@ namespace JDScene {
 
 
         ////////////////////////////////////////
-        // °Ç¼³ UI _ Á¦Àç¼Ò
+        // ê±´ì„¤ UI _ ì œì¬ì†Œ
         ////////////////////////////////////////
         m_buildRumbermill = CreateUIObject<Button>(L"UI_Build_Lumbermill");
         m_buildRumbermill->SetTextureName("ART_BuildLumbermill01");
@@ -1227,19 +1227,19 @@ namespace JDScene {
         m_buildRumbermill->SetSize({ 166.f, 166.f });
         m_buildRumbermill->SetPosition({ 600.f, -430.f });
 
-        // Á¦Àç¼Ò ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì œì¬ì†Œ ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildRumbermill->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // Á¦Àç¼Ò ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì œì¬ì†Œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildRumbermill->AddOnEnter("Highlight On", [this]()
             {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::LumberMill, "30", "3/ÃÊ");
+                ShowBuildInfo(JDGlobal::Contents::BuildingType::LumberMill, "30", "3/ì´ˆ");
             });
 
-        // Á¦Àç¼Ò ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ì œì¬ì†Œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildRumbermill->AddOnExit("Highlight Off", [this]()
             {
                 CloseBuildInfo();
@@ -1247,7 +1247,7 @@ namespace JDScene {
 
 
         ////////////////////////////////////////
-        // °Ç¼³ UI _ ±¤»ê
+        // ê±´ì„¤ UI _ ê´‘ì‚°
         ////////////////////////////////////////
         m_buildMine = CreateUIObject<Button>(L"UI_Build_Mine");
         m_buildMine->SetTextureName("ART_BuildMine01");
@@ -1255,19 +1255,19 @@ namespace JDScene {
         m_buildMine->SetSize({ 166.f, 166.f });
         m_buildMine->SetPosition({ 800.f, -430.f });
 
-        // ±¤»ê ¹öÆ° Å¬¸¯ÇÏ¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ê´‘ì‚° ë²„íŠ¼ í´ë¦­í•˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildMine->AddOnClick("Quit Game", [this]()
             {
 
             });
 
-        // ±¤»ê ¹öÆ° ¸¶¿ì½º¸¦ ¿Ã¸®¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ê´‘ì‚° ë²„íŠ¼ ë§ˆìš°ìŠ¤ë¥¼ ì˜¬ë¦¬ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildMine->AddOnEnter("Highlight On", [this]()
             {
-                ShowBuildInfo(JDGlobal::Contents::BuildingType::Mine, "20", "4/ÃÊ");
+                ShowBuildInfo(JDGlobal::Contents::BuildingType::Mine, "20", "4/ì´ˆ");
             });
 
-        // ±¤»ê ¹öÆ° ¸¶¿ì½º°¡ ¹ş¾î³ª¸é ½ÇÇàµÉ ÀÌº¥Æ®
+        // ê´‘ì‚° ë²„íŠ¼ ë§ˆìš°ìŠ¤ê°€ ë²—ì–´ë‚˜ë©´ ì‹¤í–‰ë  ì´ë²¤íŠ¸
         m_buildMine->AddOnExit("Highlight Off", [this]()
             {
                 CloseBuildInfo();
@@ -1275,7 +1275,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 2) °Ç¹° ¾÷±×·¹ÀÌÆ® ¹× °í¾çÀÌ ¹èÄ¡ UI
+        // 2) ê±´ë¬¼ ì—…ê·¸ë ˆì´íŠ¸ ë° ê³ ì–‘ì´ ë°°ì¹˜ UI
         m_upgradeUI = CreateUIObject<Image>(L"UI_Upgrade");
         m_upgradeUI->SetTextureName("ART_UICharSelect01");
         if (cam)
@@ -1283,29 +1283,29 @@ namespace JDScene {
             float screenWidth = static_cast<float>(cam->GetScreenWidth());
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-            // È­¸é Å©±â·Î ¼³Á¤
+            // í™”ë©´ í¬ê¸°ë¡œ ì„¤ì •
             m_upgradeUI->SetSize(Vector2F{ screenWidth, screenHeight });
             m_upgradeUI->SetPosition({ 0.0f, 0.0f });
             m_upgradeUI->SetPivot({ 0.5f, 0.5f });
             m_upgradeUI->SetAnchor({ 1.0f, 0.0f });
         }
 
-        // 3) Â¡º´ ¹× ¿øÁ¤ UI
-        m_expeditionUI = CreateUIObject<Image>(L"UI_Expedition");
-        m_expeditionUI->SetTextureName("ART_UIRecruit01");
+        // 3) ì§•ë³‘ ë° ì›ì • UI
+        m_awayUI = CreateUIObject<Image>(L"UI_Expedition");
+        m_awayUI->SetTextureName("ART_UIRecruit01");
         if (cam)
         {
             float screenWidth = static_cast<float>(cam->GetScreenWidth());
             float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-            // È­¸é Å©±â·Î ¼³Á¤
-            m_expeditionUI->SetSize(Vector2F{ screenWidth, screenHeight });
-            m_expeditionUI->SetPosition({ 0.0f, 0.0f });
-            m_expeditionUI->SetPivot({ 0.5f, 0.5f });
-            m_expeditionUI->SetAnchor({ 1.0f, 0.0f });
+            // í™”ë©´ í¬ê¸°ë¡œ ì„¤ì •
+            m_awayUI->SetSize(Vector2F{ screenWidth, screenHeight });
+            m_awayUI->SetPosition({ 0.0f, 0.0f });
+            m_awayUI->SetPivot({ 0.5f, 0.5f });
+            m_awayUI->SetAnchor({ 1.0f, 0.0f });
         }
 
-        //// 2) ÇÊÅÍ
+        //// 2) í•„í„°
         //m_fillter = CreateUIObject<Image>(L"Fillter_Image");
         //m_fillter->SetTextureName("BACK_GROUND_OPACITY");
         //m_fillter->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
@@ -1315,18 +1315,18 @@ namespace JDScene {
         //    float screenWidth = static_cast<float>(cam->GetScreenWidth());
         //    float screenHeight = static_cast<float>(cam->GetScreenHeight());
 
-        //    // È­¸é Å©±â·Î ¼³Á¤
+        //    // í™”ë©´ í¬ê¸°ë¡œ ì„¤ì •
         //    m_fillter->SetSize(Vector2F{ screenWidth, screenHeight });
         //    m_fillter->SetPosition({ 0.0f,0.0f });
         //    m_fillter->SetPivot({ 0.5f, 0.5f });
         //}
 
-        //// 3) ´ë»ç
+        //// 3) ëŒ€ì‚¬
         //m_narration = CreateUIObject<Text>(L"Narration_Text");
-        //// Æ©Åä¸®¾ó ÀÌº¥Æ®·Î ³Ñ°åÀ½.
+        //// íŠœí† ë¦¬ì–¼ ì´ë²¤íŠ¸ë¡œ ë„˜ê²¼ìŒ.
         ///*m_narration->SetText(
-        //    L"\"ÀÇ »õ·Î¿î Áı»ç·Î ÃëÀÓÇÑ °ÍÀ» È¯¿µÇÕ´Ï´Ù.\"\n"
-        //    L"´ç½ÅÀº °Ç¹°À» Áö¾î ¸¶À»À» Å°¿ì°í µµ½Ã¸¦ ÁöÄÑ³»¾ß ÇÕ´Ï´Ù.\n"
+        //    L"\"ì˜ ìƒˆë¡œìš´ ì§‘ì‚¬ë¡œ ì·¨ì„í•œ ê²ƒì„ í™˜ì˜í•©ë‹ˆë‹¤.\"\n"
+        //    L"ë‹¹ì‹ ì€ ê±´ë¬¼ì„ ì§€ì–´ ë§ˆì„ì„ í‚¤ìš°ê³  ë„ì‹œë¥¼ ì§€ì¼œë‚´ì•¼ í•©ë‹ˆë‹¤.\n"
         //);*/
         //m_narration->SetTextFormatName("Sebang_40");
         //m_narration->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
@@ -1334,7 +1334,7 @@ namespace JDScene {
         //m_narration->SetPosition({ 0, 320 });
 
 
-        //// 4) ±×¸®µå Å¬¸¯ÇÏ¸é ³ª¿À´Â ¸Ş´º
+        //// 4) ê·¸ë¦¬ë“œ í´ë¦­í•˜ë©´ ë‚˜ì˜¤ëŠ” ë©”ë‰´
         //m_Menu = CreateUIObject<Image>(L"MenuBackground");
 
         //auto& uptr = m_uiObjects.back();
@@ -1351,31 +1351,31 @@ namespace JDScene {
         //bgRect->SetAnchor({ 0.f,0.f });
         //bgRect->SetPosition({ 50, 50 });
 
-        ////°¢¹öÆ° Å° ¸ñ·Ï
+        ////ê°ë²„íŠ¼ í‚¤ ëª©ë¡
         //std::vector<std::pair<std::wstring, std::string>> EmptyButtons = {
         //{ L"FishingSpot", "fishing" },
         //{ L"LumberMill", "lumbermill" },
         //{ L"Mine", "mine" },
         //{ L"House", "cabin" },
-        //// ÇÊ¿äÇÏ´Ù¸é ´õ Ãß°¡¡¦
+        //// í•„ìš”í•˜ë‹¤ë©´ ë” ì¶”ê°€â€¦
         //};
         //std::vector<std::pair<std::wstring, std::string>> FilledButtons = {
         //{ L"CAT", "CAT" },
-        //// ÇÊ¿äÇÏ´Ù¸é ´õ Ãß°¡¡¦
+        //// í•„ìš”í•˜ë‹¤ë©´ ë” ì¶”ê°€â€¦
         //};
 
-        //// °øÅë ÃÊ±â ¿ÀÇÁ¼Â
+        //// ê³µí†µ ì´ˆê¸° ì˜¤í”„ì…‹
         //float xOffset = 0.f;
         //float yOffset = -150.f;
         //float gap = 100.f;
 
-        //// 2-1) ºó ¸Ş´º¿ë ¹öÆ° »ı¼º
+        //// 2-1) ë¹ˆ ë©”ë‰´ìš© ë²„íŠ¼ ìƒì„±
         //{
         //    float x = xOffset;
         //    float y = yOffset;
         //    for (auto& info : EmptyButtons) {
         //        auto* btn = CreateUIObject<Button>(info.first);
-        //        // Æ©Åä¸®¾ó¿ë º¸°ü
+        //        // íŠœí† ë¦¬ì–¼ìš© ë³´ê´€
         //        m_TutorialUIObjects.push_back(m_uiObjects.back().get());
         //        m_emptyButtons.push_back(btn);
 
@@ -1383,19 +1383,19 @@ namespace JDScene {
         //        btn->SetText(L"");
         //        auto* rt = btn->GetComponent<RectTransform>();
 
-        //        // [¼öÁ¤] RectTransformÀÇ SetParent·Î¸¸ ºÎ¸ğ-ÀÚ½Ä °ü°è¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+        //        // [ìˆ˜ì •] RectTransformì˜ SetParentë¡œë§Œ ë¶€ëª¨-ìì‹ ê´€ê³„ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
         //        rt->SetParent(bgRect);
 
-        //        // [¼öÁ¤] ÇÇ¹şÀ» Áß¾ÓÀ¸·Î ¼³Á¤ÇÏ¿© À§Ä¡¸¦ Àâ±â ½±°Ô ÇÕ´Ï´Ù.
+        //        // [ìˆ˜ì •] í”¼ë²—ì„ ì¤‘ì•™ìœ¼ë¡œ ì„¤ì •í•˜ì—¬ ìœ„ì¹˜ë¥¼ ì¡ê¸° ì‰½ê²Œ í•©ë‹ˆë‹¤.
         //        rt->SetPivot({ 0.0f, 0.0f });
         //        rt->SetAnchor({ 0.0f, 0.0f });
         //        rt->SetSize({ 50, 50 });
 
-        //        // ÀÌÁ¦ ÀÌ PositionÀº ¹öÆ°ÀÇ 'Áß¾Ó'À» ºÎ¸ğÀÇ (x, yOffset)À¸·Î ÀÌµ¿½ÃÅµ´Ï´Ù.
+        //        // ì´ì œ ì´ Positionì€ ë²„íŠ¼ì˜ 'ì¤‘ì•™'ì„ ë¶€ëª¨ì˜ (x, yOffset)ìœ¼ë¡œ ì´ë™ì‹œí‚µë‹ˆë‹¤.
         //        rt->SetPosition({ x, y });
 
 
-        //        // LEGACY : °ú°Å ÄÚµå
+        //        // LEGACY : ê³¼ê±° ì½”ë“œ
         //        /*
         //        //rt->SetPivot({ 0,0 });
         //        //rt->SetAnchor({ 0,0 });
@@ -1412,7 +1412,7 @@ namespace JDScene {
         //    }
         //}
 
-        //// 2-2) Ã¤¿î ¸Ş´º¿ë ¹öÆ° »ı¼º
+        //// 2-2) ì±„ìš´ ë©”ë‰´ìš© ë²„íŠ¼ ìƒì„±
         //{
         //    float x = xOffset;
         //    for (auto& info : FilledButtons) {
@@ -1424,18 +1424,18 @@ namespace JDScene {
         //        btn->SetText(L"");
         //        auto* rt = btn->GetComponent<RectTransform>();
 
-        //        // [¼öÁ¤] RectTransformÀÇ SetParent·Î¸¸ ºÎ¸ğ-ÀÚ½Ä °ü°è¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+        //        // [ìˆ˜ì •] RectTransformì˜ SetParentë¡œë§Œ ë¶€ëª¨-ìì‹ ê´€ê³„ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
         //        rt->SetParent(bgRect);
 
-        //        // [¼öÁ¤] ÇÇ¹şÀ» Áß¾ÓÀ¸·Î ¼³Á¤ÇÏ¿© À§Ä¡¸¦ Àâ±â ½±°Ô ÇÕ´Ï´Ù.
+        //        // [ìˆ˜ì •] í”¼ë²—ì„ ì¤‘ì•™ìœ¼ë¡œ ì„¤ì •í•˜ì—¬ ìœ„ì¹˜ë¥¼ ì¡ê¸° ì‰½ê²Œ í•©ë‹ˆë‹¤.
         //        rt->SetPivot({ 0.5f, 0.5f });
         //        rt->SetAnchor({ 0.0f, 0.0f });
         //        rt->SetSize({ 50, 50 });
 
-        //        // ÀÌÁ¦ ÀÌ PositionÀº ¹öÆ°ÀÇ 'Áß¾Ó'À» ºÎ¸ğÀÇ (x, yOffset)À¸·Î ÀÌµ¿½ÃÅµ´Ï´Ù.
+        //        // ì´ì œ ì´ Positionì€ ë²„íŠ¼ì˜ 'ì¤‘ì•™'ì„ ë¶€ëª¨ì˜ (x, yOffset)ìœ¼ë¡œ ì´ë™ì‹œí‚µë‹ˆë‹¤.
         //        rt->SetPosition({ x, yOffset });
 
-        //        // LEGACY : °ú°Å ÄÚµå
+        //        // LEGACY : ê³¼ê±° ì½”ë“œ
         //        /*
         //        //rt->SetPivot({ 0,0 });
         //        //rt->SetAnchor({ 0,0 });
@@ -1452,25 +1452,25 @@ namespace JDScene {
         //    }
         //}
 
-        // ±âº» UI º¸ÀÌ±â
+        // ê¸°ë³¸ UI ë³´ì´ê¸°
         InitBuildMenu();
     }
 
     void GameScene::InitBuildMenu()
     {
-        // ±âº» UI º¸ÀÌ±â
+        // ê¸°ë³¸ UI ë³´ì´ê¸°
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
-        // °Ç¼³ UI ( ÁÖ°ÅÁö, ³¬½ÃÅÍ, Á¦Àç¼Ò, ±¤»ê, (¿¬±¸½Ç) )
+        // ê±´ì„¤ UI ( ì£¼ê±°ì§€, ë‚šì‹œí„°, ì œì¬ì†Œ, ê´‘ì‚°, (ì—°êµ¬ì‹¤) )
         m_buildHouse->SetActive(false);
         m_buildFishingspot->SetActive(false);
         m_buildRumbermill->SetActive(false);
         m_buildMine->SetActive(false);
 
-        // °Ç¼³ Info
+        // ê±´ì„¤ Info
         m_buildTypeText->SetActive(false);
 
         m_costInfoText->SetActive(false);
@@ -1484,37 +1484,37 @@ namespace JDScene {
 
     void GameScene::ShowBuildMenu()
     {
-        // °Ç¼³ UI º¸ÀÌ±â
+        // ê±´ì„¤ UI ë³´ì´ê¸°
         m_defaultUI->SetActive(false);
         m_buildUI->SetActive(true);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
-        // °Ç¼³ UI ( ÁÖ°ÅÁö, ³¬½ÃÅÍ, Á¦Àç¼Ò, ±¤»ê, (¿¬±¸½Ç) )
+        // ê±´ì„¤ UI ( ì£¼ê±°ì§€, ë‚šì‹œí„°, ì œì¬ì†Œ, ê´‘ì‚°, (ì—°êµ¬ì‹¤) )
         m_buildHouse->SetActive(true);
         m_buildFishingspot->SetActive(true);
         m_buildRumbermill->SetActive(true);
         m_buildMine->SetActive(true);
 
-        // °Ç¼³ Info
+        // ê±´ì„¤ Info
         CloseBuildInfo();
     }
 
     void GameScene::CloseBuildMenu()
     {
-        // °Ç¼³ UI ²ô±â
+        // ê±´ì„¤ UI ë„ê¸°
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
         m_upgradeUI->SetActive(false);
-        m_expeditionUI->SetActive(false);
+        m_awayUI->SetActive(false);
 
-        // °Ç¼³ UI ( ÁÖ°ÅÁö, ³¬½ÃÅÍ, Á¦Àç¼Ò, ±¤»ê, (¿¬±¸½Ç) )
+        // ê±´ì„¤ UI ( ì£¼ê±°ì§€, ë‚šì‹œí„°, ì œì¬ì†Œ, ê´‘ì‚°, (ì—°êµ¬ì‹¤) )
         m_buildHouse->SetActive(false);
         m_buildFishingspot->SetActive(false);
         m_buildRumbermill->SetActive(false);
         m_buildMine->SetActive(false);
 
-        // °Ç¼³ Info
+        // ê±´ì„¤ Info
         m_buildTypeText->SetActive(false);
 
         m_costInfoText->SetActive(false);
@@ -1541,9 +1541,9 @@ namespace JDScene {
 
     void GameScene::CloseBuildInfo()
     {
-        // °Ç¼³ Info
+        // ê±´ì„¤ Info
         m_buildTypeText->SetActive(true);
-        m_buildTypeText->SetText(L"°Ç¹° Á¤º¸");
+        m_buildTypeText->SetText(L"ê±´ë¬¼ ì •ë³´");
 
         m_costInfoText->SetActive(false);
         m_costText->SetActive(false);
@@ -1559,28 +1559,28 @@ namespace JDScene {
         switch (buildType)
         {
         case JDGlobal::Contents::BuildingType::House:
-            m_buildTypeText->SetText(L"ÁÖ°ÅÁö");
+            m_buildTypeText->SetText(L"ì£¼ê±°ì§€");
             break;
         case JDGlobal::Contents::BuildingType::FishingSpot:
-            m_buildTypeText->SetText(L"³¬½ÃÅÍ");
+            m_buildTypeText->SetText(L"ë‚šì‹œí„°");
             break;
         case JDGlobal::Contents::BuildingType::LumberMill:
-            m_buildTypeText->SetText(L"Á¦Àç¼Ò");
+            m_buildTypeText->SetText(L"ì œì¬ì†Œ");
             break;
         case JDGlobal::Contents::BuildingType::Mine:
-            m_buildTypeText->SetText(L"±¤»ê");
+            m_buildTypeText->SetText(L"ê´‘ì‚°");
             break;
         case JDGlobal::Contents::BuildingType::Lab:
-            m_buildTypeText->SetText(L"¿¬±¸¼Ò");
+            m_buildTypeText->SetText(L"ì—°êµ¬ì†Œ");
             break;
         }
     }
 
     void GameScene::ShowFilledMenu() {
         m_Menu->SetActive(true);
-        // ºó ¸Ş´º ¹öÆ°µé ²ô°í
+        // ë¹ˆ ë©”ë‰´ ë²„íŠ¼ë“¤ ë„ê³ 
         for (auto* btn : m_emptyButtons)   btn->SetActive(false);
-        // Ã¤¿î ¸Ş´º ¹öÆ°µé ÄÑ±â
+        // ì±„ìš´ ë©”ë‰´ ë²„íŠ¼ë“¤ ì¼œê¸°
         for (auto* btn : m_filledButtons)  btn->SetActive(true);
     }
 }

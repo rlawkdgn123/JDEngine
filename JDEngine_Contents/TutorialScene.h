@@ -136,6 +136,14 @@ namespace JDScene {
         void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
 
 
+        // 3. 징병 UI
+        void InitAwayMenu();
+        void ShowAwayMenu();
+        void CloseAWayMenu();
+
+        // 징병 UI
+
+
         void ShowFilledMenu();
 
         // 게임 맵을 생성합니다.
@@ -229,7 +237,7 @@ namespace JDScene {
         Image* m_defaultUI = nullptr;           // 0. 기본 UI
         Image* m_buildUI = nullptr;             // 1. 건설 UI
         Image* m_upgradeUI = nullptr;           // 2. 업그레이드 및 고양이 배치 UI
-        Image* m_expeditionUI = nullptr;        // 3. 징병 및 원정 UI
+        Image* m_awayUI = nullptr;              // 3. 징병 및 원정 UI
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -285,6 +293,70 @@ namespace JDScene {
 
         Button* m_downgradeButton = nullptr;
         Button* m_upgradeButton = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // 3. 징병 & 원정 Info
+
+        /////
+        // 견습 냥이
+        Image* m_trainerCatImage = nullptr;
+        Text* m_trainerCatName = nullptr;
+
+        Text* m_trainerCatCostInfo = nullptr;
+        Image* m_trainerCatCostImage01 = nullptr;
+        Text* m_trainerCatCostText01 = nullptr;
+        Image* m_trainerCatCostImage02 = nullptr;
+        Text* m_trainerCatCostText02 = nullptr;
+
+        Text* m_trainerCatRecruitInfo = nullptr;
+        Text* m_trainerCatRecruitText = nullptr;
+
+        Text* m_trainerCatPowerInfo = nullptr;
+        Text* m_trainerCatPowerText = nullptr;
+
+        /////
+        // 숙련 냥이
+        Image* m_expertCatImage = nullptr;
+        Text* m_expertCatName = nullptr;
+
+        Text* m_expertCatCostInfo = nullptr;
+        Image* m_expertCatCostImage01 = nullptr;
+        Text* m_expertCatCostText01 = nullptr;
+        Image* m_expertCatCostImage02 = nullptr;
+        Text* m_expertCatCostText02 = nullptr;
+
+        Text* m_expertCatRecruitInfo = nullptr;
+        Text* m_expertCatRecruitText = nullptr;
+
+        Text* m_expertCatPowerInfo = nullptr;
+        Text* m_expertCatPowerText = nullptr;
+        
+        /////
+        // 원정 보내기
+        Text* m_awayInfo = nullptr;
+
+        Button* m_awayBeginner = nullptr;           // 초급
+        Button* m_awayIntermediate = nullptr;       // 중급
+        Button* m_awayAdvanced = nullptr;           // 상급
+
+        /////
+        // 원정 팝업
+        Image* m_awayPopupUI = nullptr;
+        Text* m_awayPopupInfo = nullptr;
+
+        Text* m_awayCostInfo = nullptr;
+        Image* m_awayCostImage01 = nullptr;
+        Text* m_awayCostText01 = nullptr;
+        Image* m_awayCostImage02 = nullptr;
+        Text* m_awayCostText02 = nullptr;
+
+        Text* m_awayAwardInfo = nullptr;
+        Text* m_awayAwardText01 = nullptr;
+        Text* m_awayAwardText02 = nullptr;
+
+        Button* m_awayButton = nullptr;
+        
 
         ////////////////////////////////////////////////////////////////////////////////
 

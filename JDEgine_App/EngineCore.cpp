@@ -2099,6 +2099,38 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }
+
+    // TODO : 이름 변경해줘야함.
+    if (!AssetManager::Instance().LoadTexture("초급 복사 2", L"../Resource/BATTLE/초급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 초급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("중급 복사 2", L"../Resource/BATTLE/중급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 중급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("상급 복사 2", L"../Resource/BATTLE/상급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 상급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png"))
+    {
+        std::cout << "[ERROR] 원정 포인트 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 2", L"../Resource/BATTLE/병력 보내기  복사 2.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 4", L"../Resource/BATTLE/병력 보내기  복사 4.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 4 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 6", L"../Resource/BATTLE/병력 보내기  복사 6.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 6 텍스처 로드 실패" << std::endl;
+    }
+
+
     // Patikle Resource
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))

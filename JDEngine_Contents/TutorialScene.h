@@ -114,45 +114,82 @@ namespace JDScene {
 
         void ClickUpdate();
 
-        void InitBuildMenu();
-        void ShowBuildMenu();
-        void CloseBuildMenu();
+        // 1. 건설 UI
+        // void InitBuildMenu();
+        // void ShowBuildMenu();
+        // void CloseBuildMenu();
 
-        void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
-        void CloseBuildInfo();
+        // 건설 UI
+        //void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        //void CloseBuildInfo();
+        //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
-        void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 1. 건설 UI
+        void InitGridCreateMenu();
+        void ShowGridCreateMenu();
+        void CloseGridCreateMenu();
+
+        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void CloseGridCreateInfo();
+
+        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 2. 업그레이드 UI
+        void InitGridSettingMenu();
+        void ShowGridSettingMenu();
+        // void ShowUpgradeMenu();
+        void CloseGridSettingMenu();
+
+        // 업그레이드 UI 
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void CloseCatInfo();
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 3. 징병 UI
+        void InitAwayMenu();
+        void ShowAwayMenu();
+        void CloseAwayMenu();
+
+        // 징병 UI
+        void ShowAwayPopup();
+        void CloseAwayPopup();
 
         void ShowFilledMenu();
+
 
         // 게임 맵을 생성합니다.
         void CreateGameMap();
 
     private:
+        FMOD::Channel* bgmChannel = nullptr;
+        FMOD::Channel* sfxChannel = nullptr;
+
         std::unique_ptr<ParticleSystem> m_lightParticles;
         Vector2F                        m_emitterPos;
 
         CameraFader  m_fader;
 
         std::shared_ptr<Camera> m_camera;
-        std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
-        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
-        std::vector<GameObject*> m_TutorialObjects;
 
 
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
 
-        std::vector<UIObject*> m_TutorialUIObjects;
         std::unique_ptr <BuildSystem> m_buildSystem;
+
 
         // 그리드
         int m_totalCols = 4;
         int m_totalRows = 6;
         // std::vector<bool> m_isOpen;
 
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridCreateButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        bool m_GirdClicked;
 
         Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;
@@ -198,16 +235,22 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        // 원정 이미지
+        Image* m_away = nullptr;
+        Image* m_awayGauge = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
-        bool isbuild = false;
-        bool isupgrade = false;
-        bool isexpedition = false;
+        bool isGridBuild = false;
+        bool isGridSetting = false;
+        bool isAway = false;
 
         // [하단] 건물 상호작용 UI
         Image* m_defaultUI = nullptr;           // 0. 기본 UI
         Image* m_buildUI = nullptr;             // 1. 건설 UI
         Image* m_upgradeUI = nullptr;           // 2. 업그레이드 및 고양이 배치 UI
-        Image* m_expeditionUI = nullptr;        // 3. 징병 및 원정 UI
+        Image* m_awayUI = nullptr;              // 3. 징병 및 원정 UI
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -230,6 +273,103 @@ namespace JDScene {
         Text* m_effectInfoText = nullptr;
         Text* m_effectText = nullptr;
         Image* m_effctImage = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // 2. 업그레이드 Info
+        // 고양이 배치
+        Text* m_catTypeText = nullptr;
+
+        Text*  m_catCostInfoText = nullptr;
+        Text*  m_catCostText = nullptr;
+        Image* m_catCostImage = nullptr;
+
+        Text*  m_catEffectInfoText = nullptr;
+        Text*  m_catEffectText = nullptr;
+        Image* m_catEffctImage = nullptr;
+        
+        // 고양이 선택 버튼
+        Button* m_naviSetButton = nullptr;
+        Button* m_felisSetButton = nullptr;
+        Button* m_koneSetButton = nullptr;
+
+        // 업그레이드 건물 정보
+        Text*  m_builtTypeText = nullptr;
+
+        Text*  m_upgradeCostInfoText = nullptr;
+        Text*  m_upgradeCostText = nullptr;
+        Image* m_upgradeCostImage = nullptr;
+
+        Text*  m_upgradeEffectInfoText = nullptr;
+        Text*  m_upgradeEffectText = nullptr;
+        Image* m_upgradeEffctImage = nullptr;
+
+        Button* m_downgradeButton = nullptr;
+        Button* m_upgradeButton = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // 3. 징병 & 원정 Info
+
+        /////
+        // 견습 냥이
+        Image* m_trainerCatImage = nullptr;
+        Text* m_trainerCatName = nullptr;
+
+        Text* m_trainerCatCostInfo = nullptr;
+        Image* m_trainerCatCostImage01 = nullptr;
+        Text* m_trainerCatCostText01 = nullptr;
+        Image* m_trainerCatCostImage02 = nullptr;
+        Text* m_trainerCatCostText02 = nullptr;
+
+        Text* m_trainerCatRecruitInfo = nullptr;
+        Text* m_trainerCatRecruitText = nullptr;
+
+        Text* m_trainerCatPowerInfo = nullptr;
+        Text* m_trainerCatPowerText = nullptr;
+
+        /////
+        // 숙련 냥이
+        Image* m_expertCatImage = nullptr;
+        Text* m_expertCatName = nullptr;
+
+        Text* m_expertCatCostInfo = nullptr;
+        Image* m_expertCatCostImage01 = nullptr;
+        Text* m_expertCatCostText01 = nullptr;
+        Image* m_expertCatCostImage02 = nullptr;
+        Text* m_expertCatCostText02 = nullptr;
+
+        Text* m_expertCatRecruitInfo = nullptr;
+        Text* m_expertCatRecruitText = nullptr;
+
+        Text* m_expertCatPowerInfo = nullptr;
+        Text* m_expertCatPowerText = nullptr;
+        
+        /////
+        // 원정 보내기
+        Text* m_awayInfo = nullptr;
+
+        Button* m_awayBeginner = nullptr;           // 초급
+        Button* m_awayIntermediate = nullptr;       // 중급
+        Button* m_awayAdvanced = nullptr;           // 상급
+
+        /////
+        // 원정 팝업
+        Image* m_awayPopupUI = nullptr;
+        Text* m_awayPopupInfo = nullptr;
+
+        Text* m_awayCostInfo = nullptr;
+        Image* m_awayCostImage01 = nullptr;
+        Text* m_awayCostText01 = nullptr;
+        Image* m_awayCostImage02 = nullptr;
+        Text* m_awayCostText02 = nullptr;
+
+        Text* m_awayAwardInfo = nullptr;
+        Text* m_awayAwardText01 = nullptr;
+        Text* m_awayAwardText02 = nullptr;
+
+        Button* m_awayButton = nullptr;
+        
 
         ////////////////////////////////////////////////////////////////////////////////
 

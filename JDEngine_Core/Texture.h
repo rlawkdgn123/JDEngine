@@ -32,6 +32,9 @@ namespace JDComponent {
         D2D1_SIZE_F GetSize() const { return m_size; }
         void        SetSize(const D2D1_SIZE_F& newSize) { m_size = newSize; }
 
+        void SetFlipX(bool flip) { m_flipX = flip; }
+        bool GetFlipX() const { return m_flipX; }
+
         D2D1_SIZE_F GetOriginalTextureSize() const;
 
         void Update(float dt) override {}
@@ -45,5 +48,7 @@ namespace JDComponent {
 
         // 사용자 정의 크기
         D2D1_SIZE_F m_size{ 100.0f, 100.0f };
+
+        bool m_flipX = false;
     };
 }

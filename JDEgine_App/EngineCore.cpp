@@ -83,6 +83,7 @@ std::wstring UTF8ToWString(const std::string& utf8Str)
 
 bool EngineCore::Initialize()
 {
+    
     // 유니코드 기반의 윈도우 클래스 이름과 윈도우 이름 설정
     const wchar_t* className = L"JDEngine";
     const wchar_t* windowName = L"JDEngine";
@@ -100,11 +101,22 @@ bool EngineCore::Initialize()
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
-    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
-    AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
-    AudioManager::Instance().SetMusicVolume(1.0f);
-    FMOD::Channel* bgmChannel = nullptr;
-    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    AudioManager::Instance().LoadAudio("BGM_Battle", "../Resource/Audio/BGM/Battle.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Fiield", "../Resource/Audio/BGM/Fiield.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Title", "../Resource/Audio/BGM/Title.mp3", true);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Defeat", "../Resource/Audio/SFX/SFX_Battle_Defeat.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Expedition", "../Resource/Audio/SFX/SFX_Battle_Expedition.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Unit", "../Resource/Audio/SFX/SFX_Battle_Unit.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_War", "../Resource/Audio/SFX/SFX_Battle_War.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Win", "../Resource/Audio/SFX/SFX_Battle_Win.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Build", "../Resource/Audio/SFX/SFX_Building_Build.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Upgrade", "../Resource/Audio/SFX/SFX_Building_Upgrade.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Click", "../Resource/Audio/SFX/SFX_Button_Click.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Close", "../Resource/Audio/SFX/SFX_Button_Close.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Hover", "../Resource/Audio/SFX/SFX_Button_Hover.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Cat_Put", "../Resource/Audio/SFX/SFX_Cat_Put.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Change", "../Resource/Audio/SFX/SFX_Change.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_GroundAdd", "../Resource/Audio/SFX/SFX_GroundAdd.mp3", false);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -1668,6 +1680,18 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_1_Exam", L"../Resource/BATTLE_MAP_1_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_1_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_2_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_3_Exam", L"../Resource/BATTLE_MAP_3_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_3_Exam 텍스처 로드 실패" << std::endl;
+    }
     if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/UI_Exam.png"))
     {
         std::cout << "[ERROR] UI_Exam 텍스처 로드 실패" << std::endl;
@@ -1992,6 +2016,8 @@ void EngineCore::LoadResources()
     if (!AssetManager::Instance().LoadTexture("ART_TileMine01", L"../Resource/BATTLE/ART_TileMine01.png"))
     { std::cout << "[ERROR] ART_TileMine01 텍스처 로드 실패" << std::endl; }
 
+    if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01_Board", L"../Resource/BATTLE/ART_UIBuilding01_Board.png"))
+    { std::cout << "[ERROR] ART_UIBuilding01_Board 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01", L"../Resource/BATTLE/ART_UIBuilding01.png"))
     { std::cout << "[ERROR] ART_UIBuilding01 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_UICharSelect01", L"../Resource/BATTLE/ART_UICharSelect01.png"))
@@ -2073,6 +2099,38 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }
+
+    // TODO : 이름 변경해줘야함.
+    if (!AssetManager::Instance().LoadTexture("초급 복사 2", L"../Resource/BATTLE/초급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 초급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("중급 복사 2", L"../Resource/BATTLE/중급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 중급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("상급 복사 2", L"../Resource/BATTLE/상급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 상급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png"))
+    {
+        std::cout << "[ERROR] 원정 포인트 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 2", L"../Resource/BATTLE/병력 보내기  복사 2.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 4", L"../Resource/BATTLE/병력 보내기  복사 4.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 4 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 6", L"../Resource/BATTLE/병력 보내기  복사 6.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 6 텍스처 로드 실패" << std::endl;
+    }
+
+
     // Patikle Resource
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))

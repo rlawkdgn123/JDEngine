@@ -37,6 +37,9 @@ namespace JDComponent
         void            SetSpeed(float speed) { m_speed = speed; }
         float           GetSpeed() const { return m_speed; }
 
+        void SetFlipX(bool flip) { m_flipX = flip; }
+        bool GetFlipX() const { return m_flipX; }
+
         const RenderLayerInfo&  GetLayerInfo() const { return m_layerInfo; }
         void                    SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
 
@@ -46,5 +49,7 @@ namespace JDComponent
         size_t      m_currentFrame;
         float       m_elapsed;       // 누적 시간 (초)
         RenderLayerInfo m_layerInfo;
+
+        bool m_flipX = false;
     };
 }

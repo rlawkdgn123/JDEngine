@@ -25,15 +25,17 @@ namespace JDGameObject {
             virtual void Awake() override;                               // 최초 1회만 호출
             virtual void Start() override;                               // 최초 1회만 호출
             virtual void Update(float deltaTime) override;
-            void ChangeCat(CatType catType) { m_cat = catType; };
+            virtual void OnDestroy() override;              // 삭제 직전
+
+            bool ChangeCat(CatType newCat);
+            bool LevelUp();
+            bool LevelDown();
 
         protected:
 
-            JDGlobal::Contents::BuildingStats stats;
-            int m_nowLevel = 0;
-            int m_catCount = 0;
+            JDGlobal::Contents::BuildingStats m_stats;
+            int m_curLevel = 0;
             CatType m_cat = CatType::None;
-            float m_secondTimer = 0.f;
             ResourceSystem* m_resourceSystem;
         };
     }

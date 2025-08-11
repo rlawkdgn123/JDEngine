@@ -105,14 +105,15 @@ namespace JDGlobal {
 		};
 	}
 	namespace Contents {
-		constexpr int MAX_GAME_RESOURCE = 9999;  // 자원 최대치
-		constexpr int MAX_GAME_POPULATION = 999; // 인구 최대치
-		constexpr int MAX_GAME_LEVEL = 3;	 // 업그레이드 최대치
+		constexpr int MAX_GAME_RESOURCE = 10000;  // 자원 최대치
+		constexpr int MAX_GAME_POPULATION = 1000; // 인구 최대치
+		constexpr int MAX_GAME_LEVEL = 10;	 // 업그레이드 최대치
 		constexpr int MAX_GAME_RESOURCE_BONUS = 500;	 //보너스 최대치	
 		constexpr int MAX_GAME_GRID_COL = 4;
-		constexpr int MAX_GAME_GRID_RAW = 6;
-		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_RAW;
+		constexpr int MAX_GAME_GRID_ROW = 6;
+		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_ROW;
 		constexpr int RESOURCE_COUNT = 3;
+
 		struct Resource {
 
 			Resource() = default;
@@ -130,7 +131,11 @@ namespace JDGlobal {
 			int m_mineral;
 
 			void ResourcePrint() const;
-
+			void Clear() {
+				m_food = 0;
+				m_wood = 0;
+				m_mineral = 0;
+			}
 			Resource& operator=(const Resource& other) {
 				m_food = other.m_food;
 				m_wood = other.m_wood;
@@ -210,11 +215,24 @@ namespace JDGlobal {
 			Lab
 		};
 		
+		
+
 		struct Cats {
 			int Felis;
 			int Navi;
 			int Kone;
 			inline int GetAllCats() {return (Felis + Navi + Kone);}
+		};
+
+		struct CatResourceBonus {
+			CatResourceBonus()
+				: FelisBonus( 10,0,0 ),
+				NaviBonus( 0, 10, 0),
+				KoneBonus(0, 0, 10) {}
+
+			Resource FelisBonus;
+			Resource NaviBonus;
+			Resource KoneBonus;
 		};
 
 		enum class State { // 상태.
@@ -245,7 +263,8 @@ namespace JDGlobal {
 			Resource m_recruitCost;
 			int m_power;
 		};
-
+		
+		// 사용안함
 		struct WorkerStats {
 			int m_populationCost;            // 인구 비용
 			Resource m_resourceBonus[3];     // 자원 보너스 (고양이 타입 * 3)
@@ -268,9 +287,13 @@ namespace JDGlobal {
 			void PrintStats();
 		};
 
-		//struct UnitTypeStats {      // ArmySystem에 
-		//	Resource m_recruitCos;  // 필요 코스트.
-		//	int m_power;            // 전투력.
-		//};
+		struct StartResources {
+			int m_food;
+			int m_wood;
+			int m_mineral;
+			int m_population;
+			void PrintResources();
+		};
+
 	}
 }

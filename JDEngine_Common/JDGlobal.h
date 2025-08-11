@@ -294,5 +294,6 @@ namespace JDGlobal {
 			int m_population;
 			void PrintResources();
 		};
+
 	}
 }

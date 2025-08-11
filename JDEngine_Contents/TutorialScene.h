@@ -142,7 +142,8 @@ namespace JDScene {
         void CloseAWayMenu();
 
         // 징병 UI
-
+        void ShowAwayPopup();
+        void CloseAwayPopup();
 
         void ShowFilledMenu();
 

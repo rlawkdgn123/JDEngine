@@ -670,23 +670,210 @@ namespace JDScene {
 
     void TutorialScene::InitAwayMenu()
     {
-        // 업그레이드 UI 안보이게
+        // 병영 UI 안보이게
         m_awayUI->SetActive(false);
+
+        /////
+        // 견습 냥이
+        m_trainerCatImage->SetActive(false);
+        m_trainerCatName->SetActive(false);
+
+        m_trainerCatCostInfo->SetActive(false);
+        m_trainerCatCostImage01->SetActive(false);
+        m_trainerCatCostText01->SetActive(false);
+        m_trainerCatCostImage02->SetActive(false);
+        m_trainerCatCostText02->SetActive(false);
+
+        m_trainerCatRecruitInfo->SetActive(false);
+        m_trainerCatRecruitText->SetActive(false);
+
+        m_trainerCatPowerInfo->SetActive(false);
+        m_trainerCatPowerText->SetActive(false);
+
+        /////
+        // 숙련 냥이
+        m_expertCatImage->SetActive(false);
+        m_expertCatName->SetActive(false);
+
+        m_expertCatCostInfo->SetActive(false);
+        m_expertCatCostImage01->SetActive(false);
+        m_expertCatCostText01->SetActive(false);
+        m_expertCatCostImage02->SetActive(false);
+        m_expertCatCostText02->SetActive(false);
+
+        m_expertCatRecruitInfo->SetActive(false);
+        m_expertCatRecruitText->SetActive(false);
+
+        m_expertCatPowerInfo->SetActive(false);
+        m_expertCatPowerText->SetActive(false);
+
+        /////
+        // 원정 보내기
+        m_awayInfo->SetActive(false);
+
+        m_awayBeginner->SetActive(false);           // 초급
+        m_awayIntermediate->SetActive(false);       // 중급
+        m_awayAdvanced->SetActive(false);           // 상급
+
+        /////
+        // 원정 팝업
+        m_awayPopupUI->SetActive(false);
+        m_awayPopupInfo->SetActive(false);
+
+        m_awayCostInfo->SetActive(false);
+        m_awayCostImage01->SetActive(false);
+        m_awayCostText01->SetActive(false);
+        m_awayCostImage02->SetActive(false);
+        m_awayCostText02->SetActive(false);
+
+        m_awayAwardInfo->SetActive(false);
+        m_awayAwardText01->SetActive(false);
+        m_awayAwardText02->SetActive(false);
+
+        m_awayButton->SetActive(false);
     }
 
     void TutorialScene::ShowAwayMenu()
     {
-        // 업그레이드 UI 보이기
+        // 병영 UI 보이기
         CloseBuildMenu();
         CloseUpgradeMenu();
 
+        m_defaultUI->SetActive(false);
+        m_buildUI->SetActive(false);
+        m_upgradeUI->SetActive(false);
         m_awayUI->SetActive(true);
+
+        /////
+        // 견습 냥이
+        m_trainerCatImage->SetActive(true);
+        m_trainerCatName->SetActive(true);
+
+        m_trainerCatCostInfo->SetActive(true);
+        m_trainerCatCostImage01->SetActive(true);
+        m_trainerCatCostText01->SetActive(true);
+        m_trainerCatCostImage02->SetActive(true);
+        m_trainerCatCostText02->SetActive(true);
+
+        m_trainerCatRecruitInfo->SetActive(true);
+        m_trainerCatRecruitText->SetActive(true);
+
+        m_trainerCatPowerInfo->SetActive(true);
+        m_trainerCatPowerText->SetActive(true);
+
+        /////
+        // 숙련 냥이
+        m_expertCatImage->SetActive(true);
+        m_expertCatName->SetActive(true);
+
+        m_expertCatCostInfo->SetActive(true);
+        m_expertCatCostImage01->SetActive(true);
+        m_expertCatCostText01->SetActive(true);
+        m_expertCatCostImage02->SetActive(true);
+        m_expertCatCostText02->SetActive(true);
+
+        m_expertCatRecruitInfo->SetActive(true);
+        m_expertCatRecruitText->SetActive(true);
+
+        m_expertCatPowerInfo->SetActive(true);
+        m_expertCatPowerText->SetActive(true);
+
+        /////
+        // 원정 보내기
+        m_awayInfo->SetActive(true);
+
+        m_awayBeginner->SetActive(true);           // 초급
+        m_awayIntermediate->SetActive(true);       // 중급
+        m_awayAdvanced->SetActive(true);           // 상급
+
+        /////
+        // 원정 팝업
+        // Comment : 원정 팝업은 버튼을 눌러야 나와야 함.
+        /*
+        m_awayPopupUI->SetActive(false);
+        m_awayPopupInfo->SetActive(false);
+
+        m_awayCostInfo->SetActive(false);
+        m_awayCostImage01->SetActive(false);
+        m_awayCostText01->SetActive(false);
+        m_awayCostImage02->SetActive(false);
+        m_awayCostText02->SetActive(false);
+
+        m_awayAwardInfo->SetActive(false);
+        m_awayAwardText01->SetActive(false);
+        m_awayAwardText02->SetActive(false);
+
+        m_awayButton->SetActive(false);
+        */
     }
 
     void TutorialScene::CloseAWayMenu()
     {
-        // 업그레이드 UI 안보이게
+        // 병영 UI 끄기
+        m_defaultUI->SetActive(true);
+        m_buildUI->SetActive(false);
+        m_upgradeUI->SetActive(false);
         m_awayUI->SetActive(false);
+
+        /////
+        // 견습 냥이
+        m_trainerCatImage->SetActive(true);
+        m_trainerCatName->SetActive(true);
+
+        m_trainerCatCostInfo->SetActive(true);
+        m_trainerCatCostImage01->SetActive(true);
+        m_trainerCatCostText01->SetActive(true);
+        m_trainerCatCostImage02->SetActive(true);
+        m_trainerCatCostText02->SetActive(true);
+
+        m_trainerCatRecruitInfo->SetActive(true);
+        m_trainerCatRecruitText->SetActive(true);
+
+        m_trainerCatPowerInfo->SetActive(true);
+        m_trainerCatPowerText->SetActive(true);
+
+        /////
+        // 숙련 냥이
+        m_expertCatImage->SetActive(true);
+        m_expertCatName->SetActive(true);
+
+        m_expertCatCostInfo->SetActive(true);
+        m_expertCatCostImage01->SetActive(true);
+        m_expertCatCostText01->SetActive(true);
+        m_expertCatCostImage02->SetActive(true);
+        m_expertCatCostText02->SetActive(true);
+
+        m_expertCatRecruitInfo->SetActive(true);
+        m_expertCatRecruitText->SetActive(true);
+
+        m_expertCatPowerInfo->SetActive(true);
+        m_expertCatPowerText->SetActive(true);
+
+        /////
+        // 원정 보내기
+        m_awayInfo->SetActive(true);
+
+        m_awayBeginner->SetActive(true);           // 초급
+        m_awayIntermediate->SetActive(true);       // 중급
+        m_awayAdvanced->SetActive(true);           // 상급
+
+        /////
+        // 원정 팝업
+        m_awayPopupUI->SetActive(false);
+        m_awayPopupInfo->SetActive(false);
+
+        m_awayCostInfo->SetActive(false);
+        m_awayCostImage01->SetActive(false);
+        m_awayCostText01->SetActive(false);
+        m_awayCostImage02->SetActive(false);
+        m_awayCostText02->SetActive(false);
+
+        m_awayAwardInfo->SetActive(false);
+        m_awayAwardText01->SetActive(false);
+        m_awayAwardText02->SetActive(false);
+
+        m_awayButton->SetActive(false);
+        
     }
 
     void TutorialScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
@@ -1887,37 +2074,36 @@ namespace JDScene {
         // 원정 정보 팝업 Image
         m_awayPopupUI = CreateUIObject<Image>(L"UI_AwayPopupUI");
         m_awayPopupUI->SetTextureName("ART_UIBuilding01_Sign");
-        m_awayPopupUI->SetSize({ 256, 279 });
-        m_awayPopupUI->SetPosition({ -178, -340 });
+        m_awayPopupUI->SetSize({ 386, 297 });
+        m_awayPopupUI->SetPosition({ 770, -113 });
         m_awayPopupUI->SetAnchor({ 1.0f, 0.0f });
-        m_awayPopupUI->SetScale({ 0.5f, 0.5f });
 
         // 원정 정보 Info
-        m_awayPopupInfo = CreateUIObject<Text>(L"UI_AwayPopupInfoUI");
+        m_awayPopupInfo = CreateUIObject<Text>(L"UI_AwayPopupInfoText");
         m_awayPopupInfo->SetText(L"초급 원정");
         m_awayPopupInfo->SetTextFormatName("Sebang_Bold_30");
         m_awayPopupInfo->SetColor(D2D1::ColorF(0x69512C));
         m_awayPopupInfo->SetSize({ 300, 100 });
-        m_awayPopupInfo->SetPosition({ -100, -503 });
+        m_awayPopupInfo->SetPosition({ 766, -6 });
 
         // 원정 비용 Info
-        m_awayCostInfo = CreateUIObject<Text>(L"UI_AwayCostInfoUI");
-        m_awayCostInfo->SetText(L"초급 원정");
-        m_awayCostInfo->SetTextFormatName("Sebang_Bold_30");
+        m_awayCostInfo = CreateUIObject<Text>(L"UI_AwayCostInfoText");
+        m_awayCostInfo->SetText(L"비용");
+        m_awayCostInfo->SetTextFormatName("Sebang_Bold_22");
         m_awayCostInfo->SetColor(D2D1::ColorF(0x69512C));
         m_awayCostInfo->SetSize({ 300, 100 });
-        m_awayCostInfo->SetPosition({ -100, -503 });
+        m_awayCostInfo->SetPosition({ 622.5f, -65.0f });
 
         // 원정 코스트 _ 01 ( 이미지 & 텍스트 )
         m_awayCostImage01 = CreateUIObject<Image>(L"UI_AwayCostImage01");
         m_awayCostImage01->SetTextureName("ART_CostWood01");
         m_awayCostImage01->SetSizeToOriginal();
         m_awayCostImage01->SetScale({ 0.5f, 0.5f });
-        m_awayCostImage01->SetPosition({ 406, -404 });
+        m_awayCostImage01->SetPosition({ 666, -48 });
         m_awayCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_awayCostText01 = CreateUIObject<Text>(L"UI_AwayCostText01");
-        m_awayCostText01->SetText(L"x50");
+        m_awayCostText01->SetText(L"50");
         m_awayCostText01->SetTextFormatName("Sebang_16");
         m_awayCostText01->SetColor(D2D1::ColorF(0x69512C));
         m_awayCostText01->SetSize({ 300, 100 });
@@ -1928,7 +2114,7 @@ namespace JDScene {
         m_awayCostImage02->SetTextureName("ART_CostWood01");
         m_awayCostImage02->SetSizeToOriginal();
         m_awayCostImage02->SetScale({ 0.5f, 0.5f });
-        m_awayCostImage02->SetPosition({ 406, -404 });
+        m_awayCostImage02->SetPosition({ 762, -48 });
         m_awayCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_awayCostText02 = CreateUIObject<Text>(L"UI_AwayCostText02");
@@ -1936,24 +2122,24 @@ namespace JDScene {
         m_awayCostText02->SetTextFormatName("Sebang_16");
         m_awayCostText02->SetColor(D2D1::ColorF(0x69512C));
         m_awayCostText02->SetSize({ 300, 100 });
-        m_awayCostText02->SetPosition({ 476, -422 });
+        m_awayCostText02->SetPosition({ 831, -70 });
 
         /////
         // 보상 정보 Info
         m_awayAwardInfo = CreateUIObject<Text>(L"UI_AwayAwardInfo");
         m_awayAwardInfo->SetText(L"보상");
-        m_awayAwardInfo->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardInfo->SetTextFormatName("Sebang_Bold_22");
         m_awayAwardInfo->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardInfo->SetSize({ 300, 100 });
-        m_awayAwardInfo->SetPosition({ -100, -503 });
+        m_awayAwardInfo->SetPosition({ 622.5f, -140.0f });
 
         // 보상 정보 Text
         m_awayAwardText01 = CreateUIObject<Text>(L"UI_AwayAwardText01");
         m_awayAwardText01->SetText(L"N 원정포인트");
-        m_awayAwardText01->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardText01->SetTextFormatName("Sebang_Bold_22");
         m_awayAwardText01->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardText01->SetSize({ 300, 100 });
-        m_awayAwardText01->SetPosition({ -100, -503 });
+        m_awayAwardText01->SetPosition({ 729, -125 });
 
         // 추가 보상 정보 Text
         m_awayAwardText02 = CreateUIObject<Text>(L"UI_AwayAwardText02");
@@ -1961,15 +2147,15 @@ namespace JDScene {
         m_awayAwardText02->SetTextFormatName("Sebang_Bold_30");
         m_awayAwardText02->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardText02->SetSize({ 300, 100 });
-        m_awayAwardText02->SetPosition({ -100, -503 });
+        m_awayAwardText02->SetPosition({ 795, -162 });
 
         /////
         // 병력 보내기 Button
         m_awayButton = CreateUIObject<Button>(L"UI_AwayButton");
-        m_awayButton->SetTextureName("상급 복사 2");
+        m_awayButton->SetTextureName("병력 보내기  복사 2");
         m_awayButton->SetText(L"");
-        m_awayButton->SetSize({ 174.8f, 33.0f });
-        m_awayButton->SetPosition({ 760, -500 });
+        m_awayButton->SetSize({ 125.f, 35.0f });
+        m_awayButton->SetPosition({ 768, -216 });
 
         // 병력 보내기 버튼 클릭하면 실행될 이벤트
         m_awayButton->AddOnClick("On Click", [this]()
@@ -1990,8 +2176,6 @@ namespace JDScene {
             });
 
 #pragma endregion
-
-       
 
         // 2) 필터
         m_fillter = CreateUIObject<Image>(L"Fillter_Image");

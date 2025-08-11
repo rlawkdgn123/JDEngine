@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "framework.h"
 #include "SceneBase.h"
@@ -14,8 +14,8 @@
 #include "ArmySystem.h"
 namespace JDScene {
     struct Attacker {
-        JDGameObject::GameObjectBase* enemy;  // °ø°İ ´ë»ó Àû
-        float timer;                          // °ø°İ Å¸ÀÌ¸Ó ´©Àû
+        JDGameObject::GameObjectBase* enemy;  // ê³µê²© ëŒ€ìƒ ì 
+        float timer;                          // ê³µê²© íƒ€ì´ë¨¸ ëˆ„ì 
     };
 
 
@@ -58,15 +58,15 @@ namespace JDScene {
 
         void SafeDestroy(GameObjectBase* obj);
 
-        // °øÅë »ı¼º ÇÔ¼ö.
+        // ê³µí†µ ìƒì„± í•¨ìˆ˜.
         GameObjectBase* CreateSoldierUnit( const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
-            JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName); // º´»ç.
+            JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName); // ë³‘ì‚¬.
 
         GameObjectBase* CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag, 
-            const Vector2F& pos, const std::string& textureName); // ±¸Á¶¹°.
+            const Vector2F& pos, const std::string& textureName); // êµ¬ì¡°ë¬¼.
 
         GameObjectBase* CreateUIButton( const std::wstring& name, const Vector2F& pos,
-            const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // ¹öÆ°.
+            const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // ë²„íŠ¼.
 
 
         bool IsEnemySpawned(int day) const {
@@ -78,7 +78,7 @@ namespace JDScene {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // ¸Ê »ı¼º ÇÔ¼ö
+        // ë§µ ìƒì„± í•¨ìˆ˜
         ////////////////////////////////////////////////////////////////////////////////
         void CreateMap();
 
@@ -94,13 +94,16 @@ namespace JDScene {
         void ShowFilledMenu();
 
     private:
+        FMOD::Channel* bgmChannel = nullptr;
+        FMOD::Channel* sfxChannel = nullptr;
+
         std::vector<bool> m_isOpen;
         std::vector<int> m_showedDays;
 
         std::shared_ptr<Camera> m_camera;
 
-        JDGameSystem::ArmySystem m_playerArmy; // º´¿µ.
-        JDGameSystem::ArmySystem m_enemyArmy; // ÇØ´ç ³¯Â¥¿¡ µîÀåÇÏ´Â Àû.
+        JDGameSystem::ArmySystem m_playerArmy; // ë³‘ì˜.
+        JDGameSystem::ArmySystem m_enemyArmy; // í•´ë‹¹ ë‚ ì§œì— ë“±ì¥í•˜ëŠ” ì .
 
         JDGameSystem::UnitCounts m_playerBattleArmy;
         JDGameSystem::UnitCounts m_enemyBattleArmy;
@@ -112,27 +115,27 @@ namespace JDScene {
         const float m_battleTime = 5.0f;
         float m_btlElapsedTime = 0.0f;
 
-        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;    // Ã³À½ ¼±ÅÃµÈ Àû.
-        JDGameObject::GameObjectBase* m_playerObject = nullptr;   // Ã³À½ ¾Æ±º.
-        JDGameObject::GameObjectBase* m_barracksObject = nullptr; // ¾Æ±º º´¿µ.
-        JDGameObject::GameObjectBase* m_battleObject = nullptr;   // ½Î¿ì´Â ¾Ö´Ï¸ŞÀÌ¼Ç º¸¿©ÁÙ ¿ÀºêÁ§Æ®.
-        JDGameObject::GameObjectBase* m_wallObject = nullptr;     // ¾Æ±º ¼ºº®.
+        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;    // ì²˜ìŒ ì„ íƒëœ ì .
+        JDGameObject::GameObjectBase* m_playerObject = nullptr;   // ì²˜ìŒ ì•„êµ°.
+        JDGameObject::GameObjectBase* m_barracksObject = nullptr; // ì•„êµ° ë³‘ì˜.
+        JDGameObject::GameObjectBase* m_battleObject = nullptr;   // ì‹¸ìš°ëŠ” ì• ë‹ˆë©”ì´ì…˜ ë³´ì—¬ì¤„ ì˜¤ë¸Œì íŠ¸.
+        JDGameObject::GameObjectBase* m_wallObject = nullptr;     // ì•„êµ° ì„±ë²½.
 
-        std::vector<Attacker> m_attackers;       // ÇöÀç ¼ºº®À» °ø°İ ÁßÀÎ Àûµé
-        int   m_wallHealth = 1000;            // ¼ºº® Ã¼·Â ÃÊ±â°ª
+        std::vector<Attacker> m_attackers;       // í˜„ì¬ ì„±ë²½ì„ ê³µê²© ì¤‘ì¸ ì ë“¤
+        int   m_wallHealth = 1000;            // ì„±ë²½ ì²´ë ¥ ì´ˆê¸°ê°’
 
-        bool m_isBarracksSelected = false; // º´¿µ ¼±ÅÃ ¿©ºÎ.
+        bool m_isBarracksSelected = false; // ë³‘ì˜ ì„ íƒ ì—¬ë¶€.
 
 
 
         ////////////////////////////////////////////////////////////////////////////////
-        // ¸Ê »ı¼º º¯¼ö
+        // ë§µ ìƒì„± ë³€ìˆ˜
         ////////////////////////////////////////////////////////////////////////////////
 
         std::unique_ptr <BuildSystem> m_buildSystem;
         std::vector<UIObject*> m_TutorialUIObjects;
 
-        // ±×¸®µå
+        // ê·¸ë¦¬ë“œ
         int m_totalCols = 4;
         int m_totalRows = 6;
         // std::vector<bool> m_isOpen;
@@ -147,66 +150,66 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // [»ó´Ü] ÀÚ¿ø
-        Button* m_resPop = nullptr;             // ÀÎ±¸ UI
-        Text* m_resPopText = nullptr;           // ÀÎ±¸ ÅØ½ºÆ®
-        Text* m_resPopBonusText = nullptr;      // ÀÎ±¸ º¸³Ê½º ÅØ½ºÆ®
+        // [ìƒë‹¨] ìì›
+        Button* m_resPop = nullptr;             // ì¸êµ¬ UI
+        Text* m_resPopText = nullptr;           // ì¸êµ¬ í…ìŠ¤íŠ¸
+        Text* m_resPopBonusText = nullptr;      // ì¸êµ¬ ë³´ë„ˆìŠ¤ í…ìŠ¤íŠ¸
 
-        Button* m_resFood = nullptr;            // À½½Ä UI
-        Text* m_resFoodText = nullptr;          // À½½Ä ÅØ½ºÆ®
-        Text* m_resFoodBonusText = nullptr;     // À½½Ä º¸³Ê½º ÅØ½ºÆ®
+        Button* m_resFood = nullptr;            // ìŒì‹ UI
+        Text* m_resFoodText = nullptr;          // ìŒì‹ í…ìŠ¤íŠ¸
+        Text* m_resFoodBonusText = nullptr;     // ìŒì‹ ë³´ë„ˆìŠ¤ í…ìŠ¤íŠ¸
 
-        Button* m_resWood = nullptr;            // ¸ñÀç UI
-        Text* m_resWoodText = nullptr;          // ¸ñÀç ÅØ½ºÆ®
-        Text* m_resWoodBonusText = nullptr;     // ¸ñÀç º¸³Ê½º ÅØ½ºÆ®
+        Button* m_resWood = nullptr;            // ëª©ì¬ UI
+        Text* m_resWoodText = nullptr;          // ëª©ì¬ í…ìŠ¤íŠ¸
+        Text* m_resWoodBonusText = nullptr;     // ëª©ì¬ ë³´ë„ˆìŠ¤ í…ìŠ¤íŠ¸
 
-        Button* m_resMineral = nullptr;         // ±¤¹° UI
-        Text* m_resMineralText = nullptr;       // ±¤¹° ÅØ½ºÆ®
-        Text* m_resMineralBonusText = nullptr;  // ±¤¹° º¸³Ê½º ÅØ½ºÆ®
+        Button* m_resMineral = nullptr;         // ê´‘ë¬¼ UI
+        Text* m_resMineralText = nullptr;       // ê´‘ë¬¼ í…ìŠ¤íŠ¸
+        Text* m_resMineralBonusText = nullptr;  // ê´‘ë¬¼ ë³´ë„ˆìŠ¤ í…ìŠ¤íŠ¸
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // [»ó´Ü] ¸ó½ºÅÍ ¿şÀÌºê
+        // [ìƒë‹¨] ëª¬ìŠ¤í„° ì›¨ì´ë¸Œ
         Image* m_monsterWaveBackground = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // [»ó´Ü] ³¯Â¥ ÆĞ³Î
+        // [ìƒë‹¨] ë‚ ì§œ íŒ¨ë„
         Image* m_datePanel = nullptr;
         Text* m_yearText = nullptr;
         Text* m_monthText = nullptr;
         Text* m_dayText = nullptr;
 
-        Button* m_stopButton = nullptr;         // ÀÏ½ÃÁ¤Áö ¹öÆ°
-        Button* m_playButton = nullptr;         // Àç»ı ¹öÆ°
-        Button* m_speedButton = nullptr;        // ¹è¼Ó ¹öÆ°
-        Button* m_optionButton = nullptr;       // ¿É¼Ç ¹öÆ°
+        Button* m_stopButton = nullptr;         // ì¼ì‹œì •ì§€ ë²„íŠ¼
+        Button* m_playButton = nullptr;         // ì¬ìƒ ë²„íŠ¼
+        Button* m_speedButton = nullptr;        // ë°°ì† ë²„íŠ¼
+        Button* m_optionButton = nullptr;       // ì˜µì…˜ ë²„íŠ¼
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ±×¸®µå¿Í »óÈ£ÀÛ¿ë Áß ÀÎÁö È®ÀÎÇÏ±â À§ÇÑ ÇÃ·¡±×
+        // ê·¸ë¦¬ë“œì™€ ìƒí˜¸ì‘ìš© ì¤‘ ì¸ì§€ í™•ì¸í•˜ê¸° ìœ„í•œ í”Œë˜ê·¸
         bool isbuild = false;
         bool isupgrade = false;
         bool isexpedition = false;
 
-        // [ÇÏ´Ü] °Ç¹° »óÈ£ÀÛ¿ë UI
-        Image* m_defaultUI = nullptr;           // 0. ±âº» UI
-        Image* m_buildUI = nullptr;             // 1. °Ç¼³ UI
-        Image* m_upgradeUI = nullptr;           // 2. ¾÷±×·¹ÀÌµå ¹× °í¾çÀÌ ¹èÄ¡ UI
-        Image* m_expeditionUI = nullptr;        // 3. Â¡º´ ¹× ¿øÁ¤ UI
+        // [í•˜ë‹¨] ê±´ë¬¼ ìƒí˜¸ì‘ìš© UI
+        Image* m_defaultUI = nullptr;           // 0. ê¸°ë³¸ UI
+        Image* m_buildUI = nullptr;             // 1. ê±´ì„¤ UI
+        Image* m_upgradeUI = nullptr;           // 2. ì—…ê·¸ë ˆì´ë“œ ë° ê³ ì–‘ì´ ë°°ì¹˜ UI
+        Image* m_awayUI = nullptr;        // 3. ì§•ë³‘ ë° ì›ì • UI
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 0. ±âº» UI
+        // 0. ê¸°ë³¸ UI
 
-        // 1. °Ç¼³ UI ( ÁÖ°ÅÁö, ³¬½ÃÅÍ, Á¦Àç¼Ò, ±¤»ê, (¿¬±¸½Ç) )
+        // 1. ê±´ì„¤ UI ( ì£¼ê±°ì§€, ë‚šì‹œí„°, ì œì¬ì†Œ, ê´‘ì‚°, (ì—°êµ¬ì‹¤) )
         Button* m_buildHouse = nullptr;
         Button* m_buildFishingspot = nullptr;
         Button* m_buildRumbermill = nullptr;
         Button* m_buildMine = nullptr;
         // Button* m_buildLab = nullptr;
 
-        // 1. °Ç¼³ Info
+        // 1. ê±´ì„¤ Info
         Text* m_buildTypeText = nullptr;
 
         Text* m_costInfoText = nullptr;
@@ -219,7 +222,7 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // ÇÊÅÍ, ³ª·¡ÀÌ¼Ç
+        // í•„í„°, ë‚˜ë˜ì´ì…˜
         Image* m_fillter = nullptr;
         Text* m_narration = nullptr;
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "framework.h"
 #include "ColliderBase.h"
 #include "BoxCollider.h"
@@ -13,25 +13,25 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
 
 
     // =====================================================================
-    // ±×¸®µå »ı¼º ·ÎÁ÷
+    // ê·¸ë¦¬ë“œ ìƒì„± ë¡œì§
     // =====================================================================
 
-    // 1. ½ÇÁ¦ ¼¿µéÀÌ ¹èÄ¡µÉ ¼ö ÀÖ´Â °ø°£ °è»ê (ÀüÃ¼ ¿µ¿ª - ÃÑ °£°İ)
+    // 1. ì‹¤ì œ ì…€ë“¤ì´ ë°°ì¹˜ë  ìˆ˜ ìˆëŠ” ê³µê°„ ê³„ì‚° (ì „ì²´ ì˜ì—­ - ì´ ê°„ê²©)
     float m_contentWidth = m_areaWidth - (m_padding * (m_totalCols - 1));
     float m_contentHeight = m_areaHeight - (m_padding * (m_totalRows - 1));
 
-    // 2. Á¤»ç°¢Çü ¼¿ÀÇ ÇÑ º¯ÀÇ ÃÖ´ë Å©±â °è»ê
+    // 2. ì •ì‚¬ê°í˜• ì…€ì˜ í•œ ë³€ì˜ ìµœëŒ€ í¬ê¸° ê³„ì‚°
     float cellWidthPossible = m_contentWidth / m_totalCols;
     float cellHeightPossible = m_contentHeight / m_totalRows;
 
-    // 3. Á¤»ç°¢Çü À¯Áö¸¦ À§ÇØ °¡´ÉÇÑ Å©±â Áß ´õ ÀÛÀº ÂÊÀ» ÃÖÁ¾ ¼¿ Å©±â·Î ¼±ÅÃ
+    // 3. ì •ì‚¬ê°í˜• ìœ ì§€ë¥¼ ìœ„í•´ ê°€ëŠ¥í•œ í¬ê¸° ì¤‘ ë” ì‘ì€ ìª½ì„ ìµœì¢… ì…€ í¬ê¸°ë¡œ ì„ íƒ
     const float squareCellSize = std::min(cellWidthPossible, cellHeightPossible);
 
-    // 4. ÃÖÁ¾ ±×¸®µåÀÇ ÀüÃ¼ Å©±â °è»ê
+    // 4. ìµœì¢… ê·¸ë¦¬ë“œì˜ ì „ì²´ í¬ê¸° ê³„ì‚°
     float finalGridWidth = (squareCellSize * m_totalCols) + (m_padding * (m_totalCols - 1));
     float finalGridHeight = (squareCellSize * m_totalRows) + (m_padding * (m_totalRows - 1));
 
-    // 5. ÀüÃ¼ ±×¸®µå¸¦ ¿µ¿ª ³»¿¡¼­ Áß¾Ó¿¡ ¹èÄ¡ÇÏ±â À§ÇÑ ½ÃÀÛ ¿ÀÇÁ¼Â °è»ê
+    // 5. ì „ì²´ ê·¸ë¦¬ë“œë¥¼ ì˜ì—­ ë‚´ì—ì„œ ì¤‘ì•™ì— ë°°ì¹˜í•˜ê¸° ìœ„í•œ ì‹œì‘ ì˜¤í”„ì…‹ ê³„ì‚°
     float offsetX = (m_areaWidth - finalGridWidth) / 2.0f;
     float offsetY = (m_areaHeight - finalGridHeight) / 2.0f;
 
@@ -42,8 +42,8 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             std::wstring name = L"Box_" + std::to_wstring(row) + L"_" + std::to_wstring(col);
             auto* box = curScene->CreateGameObject<Grid>(name.c_str());
 
-            // 6. °¢ ¼¿ÀÇ ÃÖÁ¾ À§Ä¡ °è»ê
-            //    ½ÃÀÛÁ¡ + Áß¾Ó ¿ÀÇÁ¼Â + (¼¿ Å©±â + °£°İ) * ÀÎµ¦½º + ¼¿ Áß¾Ó º¸Á¤
+            // 6. ê° ì…€ì˜ ìµœì¢… ìœ„ì¹˜ ê³„ì‚°
+            //    ì‹œì‘ì  + ì¤‘ì•™ ì˜¤í”„ì…‹ + (ì…€ í¬ê¸° + ê°„ê²©) * ì¸ë±ìŠ¤ + ì…€ ì¤‘ì•™ ë³´ì •
             float x = m_areaTopLeft.x + offsetX + (col * (squareCellSize + m_padding)) + (squareCellSize / 2.0f);
             float y = m_areaTopLeft.y - offsetY - (row * (squareCellSize + m_padding)) - (squareCellSize / 2.0f);
 
@@ -51,9 +51,9 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             box->AddComponent<Editor_Clickable>();
 
            // ==========================================================
-           // Å¸ÀÏ Á¡À¯ / È®Àå ¿µ¿ª ÁöÁ¤
+           // íƒ€ì¼ ì ìœ  / í™•ì¥ ì˜ì—­ ì§€ì •
            // ==========================================================
-            //Occupied ¼³Á¤ : 2~4Çà, 2~4¿­¸¸ true
+            //Occupied ì„¤ì • : 2~4í–‰, 2~4ì—´ë§Œ true
             if (row >= m_startRows && row <= m_endRows &&
                 col >= m_startCols && col <= m_endCols) {
                 box->SetOccupied(true);
@@ -62,10 +62,11 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
                 box->SetOccupied(false);
             }
 
-            // ¸ğµç Å¸ÀÏ HasBuilding ÃÊ±âÈ­
+            // ëª¨ë“  íƒ€ì¼ HasBuilding ì´ˆê¸°í™”
+            
             box->SetHasBuilding(false);
 
-            //Expanded ¼³Á¤: 3x3 ¿µ¿ª ÁÖº¯ 1Ä­
+            //Expanded ì„¤ì •: 3x3 ì˜ì—­ ì£¼ë³€ 1ì¹¸
             if (row >= m_startRows - 1 && row <= m_endRows + 1 &&
                 col >= m_startCols - 1 && col <= m_endCols + 1 && !box->IsOccupied()) {
                 box->SetExpanded(true);
@@ -76,13 +77,13 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
 
             // ==========================================================
   
-            // TextureRenderer¸¦ ¸ÕÀú Ãß°¡ÇÕ´Ï´Ù. (ÀÌ¶§ ÅØ½ºÃ³ ÀÌ¸§Àº ºñ¿öµÓ´Ï´Ù)
+            // TextureRendererë¥¼ ë¨¼ì € ì¶”ê°€í•©ë‹ˆë‹¤. (ì´ë•Œ í…ìŠ¤ì²˜ ì´ë¦„ì€ ë¹„ì›Œë‘¡ë‹ˆë‹¤)
             auto* textureRenderer = box->AddComponent<TextureRenderer>("");
 
             // ==========================================================
-            // ¹Ú½º ÅØ½ºÃ³ ÀÌ¸§ µ¿Àû »ı¼º ¹× ¼³Á¤
+            // ë°•ìŠ¤ í…ìŠ¤ì²˜ ì´ë¦„ ë™ì  ìƒì„± ë° ì„¤ì •
             // ==========================================================
-            int idx = row * m_totalCols + col; // ¡ç row ¿ì¼± ÀÎµ¦½º·Î º¯°æ
+            int idx = row * m_totalCols + col; // â† row ìš°ì„  ì¸ë±ìŠ¤ë¡œ ë³€ê²½
             int textureNumber = idx + 1;       // 1 ~ N
 
             std::stringstream ss;
@@ -105,19 +106,19 @@ const float spacingY = -100.0f;
 
 for (int row = 0; row < MAX_GAME_GRID_RAW; ++row) {
     for (int col = 0; col < MAX_GAME_GRID_COL; ++col) {
-        // 1) ÀÌ¸§ »ı¼º
+        // 1) ì´ë¦„ ìƒì„±
         std::wstring name = L"Box_" + std::to_wstring(row) + L"_" + std::to_wstring(col);
 
-        // 2) »ı¼º
+        // 2) ìƒì„±
         auto* box = curScene->CreateGameObject<Grid>(name.c_str());
 
-        // 3) À§Ä¡ ¼¼ÆÃ
+        // 3) ìœ„ì¹˜ ì„¸íŒ…
         float x = startX + spacingX * col;
         float y = startY + spacingY * row;
         box->GetComponent<Transform>()->SetPosition({ x, y });
         box->AddComponent<Editor_Clickable>();
 
-        // 4) Occupied ¼³Á¤: 2~4Çà, 2~4¿­¸¸ true
+        // 4) Occupied ì„¤ì •: 2~4í–‰, 2~4ì—´ë§Œ true
         if (row >= m_startRows && row <= m_endRows &&
             col >= m_startCols && col <= m_endCols) {
             box->SetOccupied(true);
@@ -126,10 +127,10 @@ for (int row = 0; row < MAX_GAME_GRID_RAW; ++row) {
             box->SetOccupied(false);
         }
 
-        // 5) ¸ğµç Å¸ÀÏ HasBuilding ÃÊ±âÈ­
+        // 5) ëª¨ë“  íƒ€ì¼ HasBuilding ì´ˆê¸°í™”
         box->SetHasBuilding(false);
 
-        // 6) Expanded ¼³Á¤: 3x3 ¿µ¿ª ÁÖº¯ 1Ä­
+        // 6) Expanded ì„¤ì •: 3x3 ì˜ì—­ ì£¼ë³€ 1ì¹¸
         if (row >= m_startRows - 1 && row <= m_endRows + 1 &&
             col >= m_startCols - 1 && col <= m_endCols + 1 && !box->IsOccupied()) {
             box->SetExpanded(true);
@@ -138,7 +139,7 @@ for (int row = 0; row < MAX_GAME_GRID_RAW; ++row) {
             box->SetExpanded(false);
         }
 
-        // 7) Äİ¶óÀÌ´õ Ãß°¡ ¹× ÀÎµ¦½º ¼³Á¤
+        // 7) ì½œë¼ì´ë” ì¶”ê°€ ë° ì¸ë±ìŠ¤ ì„¤ì •
         int idx = row * MAX_GAME_GRID_COL + col;
         auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
         collider->SetIndex(idx);
@@ -148,15 +149,15 @@ for (int row = 0; row < MAX_GAME_GRID_RAW; ++row) {
 
 void BuildSystem::ExpandTile(Grid* tile)
 {
-    // ´ÙÀ½ ¼±ÅÃÀÌ ÃÖ´ë ±×¸®µå¾çÀ» ÃÊ°úÇÏ¸é
-    if (m_expandedCount + 1 == MAX_GAME_GRID_MAT) { cout << "ÀÀ ¾ÈµÅ~ ²Ë²Ë Ã¤¿ö³õ°í ¿å½ÉÀÌ ¸¹¾Æ~" << endl; return; }
-    if (m_choiceCount <= 0) { cout << "Å¸ÀÏ ¼±ÅÃ±Ç °¡Á®¿À°Å¶ó ¾ÆÀÌ¾ß" << endl; return; }
+    // ë‹¤ìŒ ì„ íƒì´ ìµœëŒ€ ê·¸ë¦¬ë“œì–‘ì„ ì´ˆê³¼í•˜ë©´
+    if (m_expandedCount + 1 == MAX_GAME_GRID_MAT) { cout << "ì‘ ì•ˆë¼~ ê½‰ê½‰ ì±„ì›Œë†“ê³  ìš•ì‹¬ì´ ë§ì•„~" << endl; return; }
+    if (m_choiceCount <= 0) { cout << "íƒ€ì¼ ì„ íƒê¶Œ ê°€ì ¸ì˜¤ê±°ë¼ ì•„ì´ì•¼" << endl; return; }
 
     if (tile->IsExpanded()) {
         --m_choiceCount;
         tile->SetExpanded(false);
         tile->SetOccupied(true);
-        cout << "¶¥À» »ò´Ù. ³ªµµ »ç°í½Í´Ù." << endl;
-        cout << "³²Àº Ä«¿îÆ® : " << m_choiceCount << endl;
+        cout << "ë•…ì„ ìƒ€ë‹¤. ë‚˜ë„ ì‚¬ê³ ì‹¶ë‹¤." << endl;
+        cout << "ë‚¨ì€ ì¹´ìš´íŠ¸ : " << m_choiceCount << endl;
     }
 }

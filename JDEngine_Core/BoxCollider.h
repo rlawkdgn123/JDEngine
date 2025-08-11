@@ -14,15 +14,8 @@ namespace JDComponent {
 
 		bool Intersect(ColliderBase* other) override;
 		bool IsMouseOver(Vec2 mousePos) override;
-
-		void SetHasBuilding(bool value) { isBuilding = value; }
-		bool HasBuilding() {
-			return isBuilding;
-		;}
 		
 	private:
-		bool isBuilding = false;
-
 		Vec2 m_halfSize;
 	};
 }

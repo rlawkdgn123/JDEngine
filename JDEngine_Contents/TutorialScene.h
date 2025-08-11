@@ -125,29 +125,7 @@ namespace JDScene {
         //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
 
-        // 2. 업그레이드 UI
-        void InitUpgradeMenu();
-        // void ShowUpgradeMenu();
-        void CloseUpgradeMenu();
-
-        // 업그레이드 UI 
-        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
-        void CloseCatInfo();
-        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
-
-
-        // 3. 징병 UI
-        void InitAwayMenu();
-        void ShowAwayMenu();
-        void CloseAWayMenu();
-
-        // 징병 UI
-        void ShowAwayPopup();
-        void CloseAwayPopup();
-
-        void ShowFilledMenu();
-
-
+        ////////////////////////////////////////////////////////////////////////////////
         // 1. 건설 UI
         void InitGridCreateMenu();
         void ShowGridCreateMenu();
@@ -158,7 +136,29 @@ namespace JDScene {
 
         void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // 2. 업그레이드 UI
+        void InitGridSettingMenu();
         void ShowGridSettingMenu();
+        // void ShowUpgradeMenu();
+        void CloseGridSettingMenu();
+
+        // 업그레이드 UI 
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void CloseCatInfo();
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 3. 징병 UI
+        void InitAwayMenu();
+        void ShowAwayMenu();
+        void CloseAwayMenu();
+
+        // 징병 UI
+        void ShowAwayPopup();
+        void CloseAwayPopup();
+
+        void ShowFilledMenu();
 
 
         // 게임 맵을 생성합니다.
@@ -242,9 +242,9 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
-        bool isbuild = false;
-        bool isupgrade = false;
-        bool isexpedition = false;
+        bool isGridBuild = false;
+        bool isGridSetting = false;
+        bool isAway = false;
 
         // [하단] 건물 상호작용 UI
         Image* m_defaultUI = nullptr;           // 0. 기본 UI

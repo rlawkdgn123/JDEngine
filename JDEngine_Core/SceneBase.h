@@ -76,6 +76,8 @@ namespace JDScene {
 
         virtual void Render(float deltaTime) {};
         
+        virtual void OnResize(int width, int height) {}
+
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);
         

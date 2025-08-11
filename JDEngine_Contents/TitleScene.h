@@ -33,6 +33,7 @@ namespace JDScene {
 
         void Render(float deltaTime) override;
 
+        void OnResize(int width, int height) override;
         ////////////////////////////////////////////////////////////////////////////////
 
         void CreateTitleScene();                // 타이틀 씬 생성 ( 게임오브젝트 & UI )
@@ -74,14 +75,23 @@ namespace JDScene {
         float m_sakuraEmitAccumulator = 0.0f;
 
         ////////////////////////////////////////////////////////////////////////////////
-        // 옵션창
+        // 타이틀 UI
+
+        const float kBaseW = 1920.f; // 기준 해상도 너비
+        const float kBaseH = 1080.f; // 기준 해상도 높이
 
         bool isOpenOption = false;
+
+        Image* m_titleUI = nullptr;
 
         Image* m_optionUI = nullptr;
         Image* m_optionVolume = nullptr;
         Image* m_optionControl = nullptr;
         Image* m_optionCredit = nullptr;
+
+        Button* gameStart = nullptr;
+        Button* setting = nullptr;
+        Button* quitGame = nullptr;
 
         Button* m_closeOption = nullptr;
 
@@ -105,8 +115,42 @@ namespace JDScene {
         Text* m_playKeyText = nullptr;
         Text* m_speedKeyText = nullptr;
         
+        // ---- 베이스(디자인) 레이아웃 ----
+        struct Rect { JDGlobal::Math::Vector2F pos, size; };
+        struct SliderLayout {
+            Rect track;                    // 트랙(= 슬라이더 본체) size/pos
+            JDGlobal::Math::Vector2F rootSize;     // 루트 클릭영역(있으면)
+            JDGlobal::Math::Vector2F fillOffset;   // Fill 이미지의 로컬 오프셋
+            JDGlobal::Math::Vector2F handleSize;   // 핸들 아이콘 크기
+        };
+
+        Rect base_titleUI;
+        Rect base_optionUI;
+        Rect base_optionVolume;
+        Rect base_optionControl;
+        Rect base_optionCredit;
+
+        Rect base_gameStartBtn;
+        Rect base_settingBtn;
+        Rect base_quitBtn;
+
+        Rect base_closeOption;
+
+        Rect base_selectVolumeBtn, base_selectControlBtn, base_selectCreditBtn;
+        Rect base_selectVolumeDummy, base_selectControlDummy, base_selectCreditDummy;
+
+        SliderLayout base_masterSlider;
+        SliderLayout base_bgmSlider;
+        SliderLayout base_sfxSlider;
+
+        struct TextLayout { JDGlobal::Math::Vector2F pos; float fontSize; };
+        TextLayout base_stopText, base_playText, base_speedText;
         ////////////////////////////////////////////////////////////////////////////////
-	};
+        std::shared_ptr<Camera> cam = std::make_shared<Camera>();
+    private:
+        void CaptureBaseUILayout(); // 생성 직후 1회 기준값 저장
+        void ApplyUILayout(int w, int h);  // 리사이즈 때 적용
+    };
 }
 
 

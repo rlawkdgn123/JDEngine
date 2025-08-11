@@ -50,7 +50,6 @@ private:
 	//wstring    m_selectedFile;
 
 private:
-
 	D2D1_POINT_2F  m_cameraPosition = { 0.0f, 0.0f };      // 기본 카메라 위치
 	float m_cameraRotationDeg = 0.0f;               // 기본 회전 각도 (도 단위)
 	float m_cameraZoom = 1.0f;                      // 기본 줌 배율 (1.0 = 100%)

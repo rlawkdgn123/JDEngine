@@ -24,7 +24,7 @@ private:
     SceneManager& operator=(const SceneManager&) = delete;
 
 public:
-    
+    void BroadcastResize(int w, int h);
 
     void RegisterScene(std::unique_ptr<SceneBase> scene); // 씬 생성
 
@@ -47,6 +47,7 @@ public:
     void ToggleDrawColider();
 
 private:
+    int m_viewW = 0, m_viewH = 0;
 
     struct SceneEntry
     {
@@ -61,7 +62,8 @@ private:
 
     std::vector<SceneEntry> m_SceneTable;
 
-    SceneBase* m_CurrentScene;      // 활성화된 씬에 대한 RawPtr
+    SceneBase* m_CurrentScene = nullptr;    // 활성화된 씬에 대한 RawPtr
+    //std::unique_ptr<JDScene::SceneBase> m_NextScene;
     std::string m_NextSceneId = ""; // 다음에 전환할 씬의 ID를 저장할 변수
 };
 

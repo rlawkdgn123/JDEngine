@@ -23,10 +23,12 @@ namespace JDScene {
 
     // TitleScene
     void TitleScene::OnEnter() {
-
+        this->cam = D2DRenderer::Instance().GetCamera(); 
         CreateTitleScene();     // 타이틀 씬 생성
         InitSound();            // 사운드 초기화
         InitParticle();         // 파티클 초기화
+
+        CaptureBaseUILayout(); // 기준 해상도의 좌표/크기 스냅샷
     }
 
     void TitleScene::OnLeave() {
@@ -58,6 +60,16 @@ namespace JDScene {
         RenderParticle();               // 파티클 렌더
     }
 
+    void TitleScene::OnResize(int width, int height)
+    {
+        
+        if (cam) cam->SetScreenSize((float)width, (float)height);
+        if (auto rc = D2DRenderer::Instance().GetCamera())
+            rc->SetScreenSize((float)width, (float)height);
+
+        ApplyUILayout(width, height);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -71,25 +83,25 @@ namespace JDScene {
 
         //타이틀 배경
         //auto image = CreateUIObject<Image>(L"Title_Image");
-        auto image = CreateUIObject<Image>(L"Title");
-        image->SetTextureName("Title");
+        m_titleUI = CreateUIObject<Image>(L"Title");
+        m_titleUI->SetTextureName("Title");
 
-        auto cam = D2DRenderer::Instance().GetCamera();
-        if (cam)
+        this->cam = D2DRenderer::Instance().GetCamera();
+        if (this->cam)
         {
-            float screenWidth = static_cast<float>(cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+            float screenWidth = static_cast<float>(this->cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(this->cam->GetScreenHeight());
 
             // 화면 크기로 설정
-            image->SetSize(Vector2F{ screenWidth, screenHeight });
-            image->SetPosition({ 0.0f,0.0f });
-            image->SetPivot({ 0.5f, 0.5f });
+            m_titleUI->SetSize(Vector2F{ screenWidth, screenHeight });
+            m_titleUI->SetPosition({ 0.0f,0.0f });
+            m_titleUI->SetPivot({ 0.5f, 0.5f });
         }
 
         ////////////////////////////////////////////////////////////////////////////////
 
         // GameStart 버튼
-        auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
+        this->gameStart = CreateUIObject<Button>(L"GameStart_Button");
         gameStart->SetTextureName("GAME_START_B");
         gameStart->SetText(L"");
         gameStart->SetSize({ 360, 58 });
@@ -107,7 +119,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        gameStart->AddOnEnter("Highlight On", [this, gameStart]()
+        gameStart->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) return;
 
@@ -120,7 +132,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        gameStart->AddOnExit("Highlight Off", [this, gameStart]()
+        gameStart->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) return;
 
@@ -135,14 +147,14 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // Setting 버튼
-        auto setting = CreateUIObject<Button>(L"Setting_Button");
+        this->setting = CreateUIObject<Button>(L"Setting_Button");
         setting->SetTextureName("SETTING_B");
         setting->SetText(L"");
         setting->SetSize({ 360, 58 });
         setting->SetPosition({ -522, -115 });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        setting->AddOnClick("OpenSettingUI", [this, setting]()
+        setting->AddOnClick("OpenSettingUI", [this]()
             {
                 if (isOpenOption) return;
 
@@ -173,7 +185,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        setting->AddOnEnter("Highlight On", [this, setting]()
+        setting->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) return;
 
@@ -186,7 +198,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        setting->AddOnExit("Highlight Off", [this, setting]()
+        setting->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) return;
 
@@ -200,7 +212,7 @@ namespace JDScene {
         //////////////////////////////////////////////////////////////////////////////////
 
         // Quit Game 버튼
-        auto quitGame = CreateUIObject<Button>(L"QuitGame_Button");
+        this->quitGame = CreateUIObject<Button>(L"QuitGame_Button");
         quitGame->SetTextureName("QUIT_GAME_B");
         quitGame->SetText(L"");
         quitGame->SetSize({ 360, 58 });
@@ -222,7 +234,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        quitGame->AddOnEnter("Highlight On", [this, quitGame]()
+        quitGame->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) return;
 
@@ -235,7 +247,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        quitGame->AddOnExit("Highlight Off", [this, quitGame]()
+        quitGame->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) return;
 
@@ -538,6 +550,130 @@ namespace JDScene {
         //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
         //bgmSlider->SetFillImage("VOLUME_LINE_2");
         //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+    }
+
+    void TitleScene::CaptureBaseUILayout()
+    {
+        using V2 = JDGlobal::Math::Vector2F;
+
+        // ── 풀스크린 이미지들(생성 시 1920x1080 기준으로 맞춰놨다고 가정) ──
+        base_titleUI = { V2{ 0,0 }, V2{ 1920,1080 } };
+        base_optionUI = { V2{ 0,0 }, V2{ 1920,1080 } };
+        base_optionVolume = { V2{ 0,0 }, V2{ 1920,1080 } };
+        base_optionControl = { V2{ 0,0 }, V2{ 1920,1080 } };
+        base_optionCredit = { V2{ 0,0 }, V2{ 1920,1080 } };
+
+        // ── 버튼들 ──
+        // ── 메인 메뉴 버튼 3종 ── 
+        base_gameStartBtn = { V2{ -522.f,  -32.f }, V2{ 360.f, 58.f } };
+        base_settingBtn = { V2{ -522.f, -115.f }, V2{ 360.f, 58.f } };
+        base_quitBtn = { V2{ -522.f, -198.f }, V2{ 360.f, 58.f } };
+        
+        base_closeOption = { V2{ -550, 340 },  V2{ 66, 60 } };
+
+        base_selectVolumeBtn = { V2{ -497.4f, 244.1f }, V2{ 180, 70 } };
+        base_selectControlBtn = { V2{ -497.4f, 172.7f }, V2{ 180, 70 } };
+        base_selectCreditBtn = { V2{ -497.4f, 101.6f }, V2{ 180, 70 } };
+
+        base_selectVolumeDummy = { V2{ -497.4f, 244.1f }, V2{ 115.5f, 23.f } };
+        base_selectControlDummy = { V2{ -497.4f, 172.7f }, V2{ 115.5f, 23.f } };
+        base_selectCreditDummy = { V2{ -497.4f, 101.6f }, V2{ 115.5f, 23.f } };
+
+        // ── 슬라이더들 ──
+        base_masterSlider.track.size = V2{ 600, 8 };
+        base_masterSlider.track.pos = V2{ 150, 170 };
+        base_masterSlider.rootSize = V2{ 600, 60 };
+        base_masterSlider.fillOffset = V2{ -300, 0 };
+        base_masterSlider.handleSize = V2{ 57.f, 52.f };
+
+        base_bgmSlider.track.size = V2{ 600, 8 };
+        base_bgmSlider.track.pos = V2{ 150, 28 };
+        base_bgmSlider.rootSize = V2{ 600, 60 };
+        base_bgmSlider.fillOffset = V2{ -300, 0 };
+        base_bgmSlider.handleSize = V2{ 39.5f, 35.f };
+
+        base_sfxSlider.track.size = V2{ 600, 8 };
+        base_sfxSlider.track.pos = V2{ 150, -42 };
+        base_sfxSlider.rootSize = V2{ 600, 60 };
+        base_sfxSlider.fillOffset = V2{ -300, 0 };
+        base_sfxSlider.handleSize = V2{ 39.5f, 35.f };
+
+        // ── 텍스트(폰트 크기 포함) ──
+        base_stopText = { V2{ /*예시*/ -400, -300 }, /*fontSize*/ 24.f };
+        base_playText = { V2{ /*예시*/ -400, -260 }, /*fontSize*/ 24.f };
+        base_speedText = { V2{ /*예시*/ -400, -220 }, /*fontSize*/ 24.f };
+        // 
+    }
+
+    void TitleScene::ApplyUILayout(int w, int h)
+    {
+        using V2 = JDGlobal::Math::Vector2F;
+        const float sx = w / kBaseW;
+        const float sy = h / kBaseH;
+
+        auto SPos = [&](const V2& p)->V2 { return V2{ p.x * sx, p.y * sy }; };
+        auto SSize = [&](const V2& s)->V2 { return V2{ s.x * sx, s.y * sy }; };
+
+        auto FillScreen = [&](Image* img) {
+            if (!img) return;
+            img->SetSize({ (float)w, (float)h });
+            img->SetPosition({ 0.f, 0.f });
+            img->SetPivot({ 0.5f, 0.5f });
+            };
+
+        auto ApplyRect = [&](auto* ui, const Rect& r) {
+            if (!ui) return;
+            ui->SetSize(SSize(r.size));
+            ui->SetPosition(SPos(r.pos));
+            ui->SetPivot({ 0.5f, 0.5f });
+            };
+
+        // 1) 풀스크린 이미지
+        FillScreen(m_titleUI);
+        FillScreen(m_optionUI);
+        FillScreen(m_optionVolume);
+        FillScreen(m_optionControl);
+        FillScreen(m_optionCredit);
+
+        // 2) 메인 메뉴 버튼 3종
+        ApplyRect(gameStart, base_gameStartBtn);
+        ApplyRect(setting, base_settingBtn);
+        ApplyRect(quitGame, base_quitBtn);
+
+        // 3) 버튼/더미(고정 스케일 적용)
+        ApplyRect(m_closeOption, base_closeOption);
+
+        ApplyRect(m_selectVolume, base_selectVolumeBtn);
+        ApplyRect(m_selectControl, base_selectControlBtn);
+        ApplyRect(m_selectCredit, base_selectCreditBtn);
+
+        ApplyRect(m_selectVolumeDummy, base_selectVolumeDummy);
+        ApplyRect(m_selectControlDummy, base_selectControlDummy);
+        ApplyRect(m_selectCreditDummy, base_selectCreditDummy);
+
+        // 4) 슬라이더(트랙/루트/필/핸들 모두 스케일)
+        auto ApplySlider = [&](Slider* s, const SliderLayout& b) {
+            if (!s) return;
+            s->SetSize(SSize(b.track.size));                // 트랙
+            s->SetRootSize(SSize(b.rootSize));              // 루트
+            s->SetPosition(SPos(b.track.pos));              // 위치(트랙 기준)
+            s->SetFillImagePosition(SPos(b.fillOffset));    // Fill 오프셋
+            s->SetHandleImageSize(SSize(b.handleSize));     // 핸들 크기
+            };
+        ApplySlider(m_masterSlider, base_masterSlider);
+        ApplySlider(m_bgmSlider, base_bgmSlider);
+        ApplySlider(m_sfxSlider, base_sfxSlider);
+
+        // 5) 텍스트(위치 + 폰트 크기 스케일)
+        auto ApplyText = [&](Text* t, const TextLayout& b) {
+            if (!t) return;
+            t->SetPosition(SPos(b.pos));
+            float scaled = b.fontSize * (std::min)(sx, sy);
+            t->SetSize({ scaled, scaled }); // 균일 스케일 권장
+            };
+        ApplyText(m_stopKeyText, base_stopText);
+        ApplyText(m_playKeyText, base_playText);
+        ApplyText(m_speedKeyText, base_speedText);
     }
 
     void TitleScene::FinalizeTitleScene()

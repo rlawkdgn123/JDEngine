@@ -158,9 +158,9 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    // SceneManager::Instance().ChangeScene("TitleScene");
+     SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
-    SceneManager::Instance().ChangeScene("GameScene");
+    // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
     // SceneManager::Instance().ChangeScene("SelectNationScene");
 
@@ -1643,6 +1643,8 @@ void EngineCore::OnResize(int width, int height) // 창 크기 재조정
     __super::OnResize(width, height);
 
     D2DRenderer::Instance().Resize(width, height);
+
+    SceneManager::Instance().BroadcastResize(width, height);
 
     cam->SetScreenSize(static_cast<float>(width), static_cast<float>(height));
 }

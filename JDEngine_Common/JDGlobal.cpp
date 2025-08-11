@@ -13,8 +13,22 @@ namespace JDGlobal {
 
 		void Resource::ResourcePrint() const{
 			std::cout << "m_food : " << m_food << std::endl;
-			std::cout << "m_wood : " << m_food << std::endl;
-			std::cout << "m_mineral : " << m_food << std::endl;
+			std::cout << "m_wood : " << m_wood << std::endl;
+			std::cout << "m_mineral : " << m_mineral << std::endl;
+		}
+
+		void NationBonus::PrintBonus() {
+			std::cout << "FelisBonus - Food: " << FelisBonus.m_food
+				<< ", Wood: " << FelisBonus.m_wood
+				<< ", Mineral: " << FelisBonus.m_mineral << std::endl;
+
+			std::cout << "NaviBonus - Food: " << NaviBonus.m_food
+				<< ", Wood: " << NaviBonus.m_wood
+				<< ", Mineral: " << NaviBonus.m_mineral << std::endl;
+
+			std::cout << "KoneBonus - Food: " << KoneBonus.m_food
+				<< ", Wood: " << KoneBonus.m_wood
+				<< ", Mineral: " << KoneBonus.m_mineral << std::endl;
 		}
 
 		void BuildingStats::PrintStats() {

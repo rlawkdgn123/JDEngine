@@ -150,9 +150,6 @@
     <ClInclude Include="WaveManager.h">
       <Filter>GameSystem\Combat</Filter>
     </ClInclude>
-    <ClInclude Include="BuildSystem.h">
-      <Filter>GameSystem\BuildSystem</Filter>
-    </ClInclude>
     <ClInclude Include="TestGameScene.h">
       <Filter>Scene\Test</Filter>
     </ClInclude>
@@ -161,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="Soldier.h">
       <Filter>Object\GameObject\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildSystem.h">
+      <Filter>GameSystem\BuildSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

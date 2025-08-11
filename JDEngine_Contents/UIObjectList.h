@@ -112,6 +112,8 @@ namespace JDGameObject {
 			////////////////////////////////////////////////////////////////////////////////
 
 			void SetText(const std::wstring& text) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetText(text); }
+			
+			
 			void SetColor(const D2D1_COLOR_F& color) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetColor(color); }
 			void SetTextFormatName(const std::string& formatName) { if (auto comp = GetComponent<UI_TextComponent>()) comp->SetTextFormatName(formatName); }
 			// Getter

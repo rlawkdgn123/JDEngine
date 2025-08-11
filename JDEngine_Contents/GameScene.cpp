@@ -1670,109 +1670,84 @@ namespace JDScene {
         // 1) [상단] 자원
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 인구
-        m_resPop = CreateUIObject<Button>(L"UI_Pop");
-        m_resPop->SetText(L"");
-        m_resPop->SetTextureName("ART_RESPop01");
-        m_resPop->SetSize({ 150.0f, 66.f });
-        m_resPop->SetPosition({ -858.f, 493.f });
-        m_resPop->SetAnchor({ 0.0f, 1.0f });
-
-        // 인구 텍스트
-        m_resPopText = CreateUIObject<Text>(L"UI_CurPopText");
-        m_resPopText->SetText(std::to_wstring(ResourceSystem::Instance().GetCurPopulation()));
-        m_resPopText->SetTextFormatName("Sebang_22");
-        m_resPopText->SetColor(D2D1::ColorF(0x69512C));
-        m_resPopText->SetSize({ 300, 100 });
-        m_resPopText->SetPosition({ -832, 489 });
-
-        // 인구 최대치 텍스트
-        m_resPopBonusText = CreateUIObject<Text>(L"UI_MaxPopText");
-        m_resPopBonusText->SetText(std::to_wstring(ResourceSystem::Instance().GetMaxPopulation()));
-        m_resPopBonusText->SetTextFormatName("Sebang_16");
-        m_resPopBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resPopBonusText->SetSize({ 300, 100 });
-        m_resPopBonusText->SetPosition({ -775, 510 });
-
-        ////////////////////////////////////////////////////////////////////////////////
-
         // 식량
-        m_resFood = CreateUIObject<Button>(L"UI_Food");
-        m_resFood->SetText(L"");
-        m_resFood->SetTextureName("ART_RESFood01");
-        m_resFood->SetSize({ 165.0f, 65.f });
-        m_resFood->SetPosition({ -660.f, 492.f });
-        m_resFood->SetAnchor({ 0.0f, 1.0f });
+        m_buttonFood = CreateUIObject<Button>(L"UI_Food");
+        m_buttonFood->SetText(L"");
+        m_buttonFood->SetTextureName("ART_RESFood01");
+        m_buttonFood->SetSize({ 165.0f, 65.f });
+        m_buttonFood->SetPosition({ -660.f, 492.f });
+        m_buttonFood->SetAnchor({ 0.0f, 1.0f });
 
         // 식량 텍스트
-        m_resFoodText = CreateUIObject<Text>(L"UI_CurFoodText");
-        m_resFoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_food));
-        m_resFoodText->SetTextFormatName("Sebang_22");
-        m_resFoodText->SetColor(D2D1::ColorF(0x69512C));
-        m_resFoodText->SetSize({ 300, 100 });
-        m_resFoodText->SetPosition({ -628, 489 });
+        m_curFoodText = CreateUIObject<Text>(L"UI_CurFoodText");
+        m_curFoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_food));
+        m_curFoodText->SetTextFormatName("Sebang_22");
+        m_curFoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curFoodText->SetSize({ 300, 100 });
+        m_curFoodText->SetPosition({ -628, 489 });
 
         // 식량 초당 재생 총량 텍스트
-        m_resFoodBonusText = CreateUIObject<Text>(L"UI_ResFoodText");
-        m_resFoodBonusText->SetText(L'+' + to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_food));
-        m_resFoodBonusText->SetTextFormatName("Sebang_16");
-        m_resFoodBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resFoodBonusText->SetSize({ 300, 100 });
-        m_resFoodBonusText->SetPosition({ -568, 510 });
+        m_resFoodText = CreateUIObject<Text>(L"UI_ResFoodText");
+        m_resFoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_food));
+        m_resFoodText->SetTextFormatName("Sebang_16");
+        m_resFoodText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
+        m_resFoodText->SetSize({ 300, 100 });
+        m_resFoodText->SetPosition({ -568, 510 });
 
         ////////////////////////////////////////////////////////////////////////////////
 
         // 목재
-        m_resWood = CreateUIObject<Button>(L"UI_Wood");
-        m_resWood->SetText(L"");
-        m_resWood->SetTextureName("ART_RESWood01");
-        m_resWood->SetSize({ 165.0f, 68.f });
-        m_resWood->SetPosition({ -450.f, 492.f });
-        m_resWood->SetAnchor({ 0.0f, 1.0f });
+        m_buttonWood = CreateUIObject<Button>(L"UI_Wood");
+        m_buttonWood->SetText(L"");
+        m_buttonWood->SetTextureName("ART_RESWood01");
+        m_buttonWood->SetSize({ 165.0f, 68.f });
+        m_buttonWood->SetPosition({ -450.f, 492.f });
+        m_buttonWood->SetAnchor({ 0.0f, 1.0f });
 
         // 목재 텍스트
-        m_resWoodText = CreateUIObject<Text>(L"UI_CurWoodText");
-        m_resWoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_wood));
-        m_resWoodText->SetTextFormatName("Sebang_22");
-        m_resWoodText->SetColor(D2D1::ColorF(0x69512C));
-        m_resWoodText->SetSize({ 300, 100 });
-        m_resWoodText->SetPosition({ -420, 489 });
+        m_curWoodText = CreateUIObject<Text>(L"UI_CurWoodText");
+        m_curWoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_wood));
+        m_curWoodText->SetTextFormatName("Sebang_22");
+        m_curWoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curWoodText->SetSize({ 300, 100 });
+        m_curWoodText->SetPosition({ -420, 489 });
 
         // 목재 초당 재생 총량 텍스트
-        m_resWoodBonusText = CreateUIObject<Text>(L"UI_ResWoodText");
-        m_resWoodBonusText->SetText(L'+' + to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_wood));
-        m_resWoodBonusText->SetTextFormatName("Sebang_16");
-        m_resWoodBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resWoodBonusText->SetSize({ 300, 100 });
-        m_resWoodBonusText->SetPosition({ -362, 510 });
+        m_resWoodText = CreateUIObject<Text>(L"UI_ResWoodText");
+        m_resWoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_wood));
+        m_resWoodText->SetTextFormatName("Sebang_16");
+        m_resWoodText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
+        m_resWoodText->SetSize({ 300, 100 });
+        m_resWoodText->SetPosition({ -362, 510 });
 
         ////////////////////////////////////////////////////////////////////////////////
 
         // 광물
-        m_resMineral = CreateUIObject<Button>(L"UI_Mineral");
-        m_resMineral->SetText(L"");
-        m_resMineral->SetTextureName("ART_RESMineral01");
-        m_resMineral->SetSize({ 165.0f, 64.f });
-        m_resMineral->SetPosition({ -252.f, 489.f });
-        m_resMineral->SetAnchor({ 0.0f, 1.0f });
+        m_buttonMineral = CreateUIObject<Button>(L"UI_Mineral");
+        m_buttonMineral->SetText(L"");
+        m_buttonMineral->SetTextureName("ART_RESMineral01");
+        m_buttonMineral->SetSize({ 165.0f, 64.f });
+        m_buttonMineral->SetPosition({ -252.f, 489.f });
+        m_buttonMineral->SetAnchor({ 0.0f, 1.0f });
 
         // 광물 텍스트
-        m_resMineralText = CreateUIObject<Text>(L"UI_CurMineralText");
-        m_resMineralText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_mineral));
-        m_resMineralText->SetTextFormatName("Sebang_22");
-        m_resMineralText->SetColor(D2D1::ColorF(0x69512C));
-        m_resMineralText->SetSize({ 300, 100 });
-        m_resMineralText->SetPosition({ -222.5f, 489.0f });
+        m_curMineralText = CreateUIObject<Text>(L"UI_CurMineralText");
+        m_curMineralText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_mineral));
+        m_curMineralText->SetTextFormatName("Sebang_22");
+        m_curMineralText->SetColor(D2D1::ColorF(0x69512C));
+        m_curMineralText->SetSize({ 300, 100 });
+        m_curMineralText->SetPosition({ -222.5f, 489.0f });
 
         // 광물 초당 재생 총량 텍스트
-        m_resMineralBonusText = CreateUIObject<Text>(L"UI_ResMineralText");
-        m_resMineralBonusText->SetText(L'+' + to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_mineral));
-        m_resMineralBonusText->SetTextFormatName("Sebang_16");
-        m_resMineralBonusText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
-        m_resMineralBonusText->SetSize({ 300, 100 });
-        m_resMineralBonusText->SetPosition({ -161, 510 });
+        m_resMineralText = CreateUIObject<Text>(L"UI_ResMineralText");
+        m_resMineralText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResourcePerSec().m_mineral));
+        m_resMineralText->SetTextFormatName("Sebang_16");
+        m_resMineralText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
+        m_resMineralText->SetSize({ 300, 100 });
+        m_resMineralText->SetPosition({ -161, 510 });
 
         ////////////////////////////////////////////////////////////////////////////////
+
 
         // 1) [상단] 몬스터 웨이브
         m_monsterWaveBackground = CreateUIObject<Image>(L"UI_MonWaveBackground");

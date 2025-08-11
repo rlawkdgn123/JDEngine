@@ -137,5 +137,15 @@ namespace JDGameObject {
 
             return true;
         }
+        void Building::PrintCat()
+        {
+            switch (m_cat) {
+            case CatType::Felis: cout << "Felis" << endl; break;
+            case CatType::Navi:   cout << "Navi" << endl; break;
+            case CatType::Kone:   cout << "Kone" << endl; break;
+            case CatType::None:   cout << "None" << endl; break;
+            default:           cout << "Default" << endl; break;
+            }
+        }
     }
 }

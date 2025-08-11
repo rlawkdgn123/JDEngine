@@ -203,21 +203,21 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // [상단] 자원
-        Button* m_resPop = nullptr;             // 인구 UI
-        Text* m_resPopText = nullptr;           // 인구 텍스트
-        Text* m_resPopBonusText = nullptr;      // 인구 보너스 텍스트
+        Button* m_buttonPop = nullptr;           // 인구 UI
+        Text* m_curPopText = nullptr;           // 인구 보유량
+        Text* m_maxPopText = nullptr;           // 인구 최대치
 
-        Button* m_resFood = nullptr;            // 음식 UI
-        Text* m_resFoodText = nullptr;          // 음식 텍스트
-        Text* m_resFoodBonusText = nullptr;     // 음식 보너스 텍스트
+        Button* m_buttonFood = nullptr;         // 음식 UI
+        Text* m_curFoodText = nullptr;          // 음식 보유량
+        Text* m_resFoodText = nullptr;          // 음식 재생량
 
-        Button* m_resWood = nullptr;            // 목재 UI
-        Text* m_resWoodText = nullptr;          // 목재 텍스트
-        Text* m_resWoodBonusText = nullptr;     // 목재 보너스 텍스트
+        Button* m_buttonWood = nullptr;         // 목재 UI
+        Text* m_curWoodText = nullptr;          // 목재 보유량
+        Text* m_resWoodText = nullptr;          // 목재 재생량
 
-        Button* m_resMineral = nullptr;         // 광물 UI
-        Text* m_resMineralText = nullptr;       // 광물 텍스트
-        Text* m_resMineralBonusText = nullptr;  // 광물 보너스 텍스트
+        Button* m_buttonMineral = nullptr;      // 광물 UI
+        Text* m_curMineralText = nullptr;       // 광물 보유량
+        Text* m_resMineralText = nullptr;       // 광물 재생량
 
         ////////////////////////////////////////////////////////////////////////////////
 

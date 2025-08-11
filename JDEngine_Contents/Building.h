@@ -30,6 +30,7 @@ namespace JDGameObject {
             bool ChangeCat(CatType newCat);
             bool LevelUp();
             bool LevelDown();
+            void PrintCat();
 
         protected:
 

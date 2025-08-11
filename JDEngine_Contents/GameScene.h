@@ -188,9 +188,9 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
-        bool isbuild = false;
-        bool isupgrade = false;
-        bool isexpedition = false;
+        bool isGridBuild = false;
+        bool isGridSetting = false;
+        bool isAway = false;
 
         // [하단] 건물 상호작용 UI
         Image* m_defaultUI = nullptr;           // 0. 기본 UI

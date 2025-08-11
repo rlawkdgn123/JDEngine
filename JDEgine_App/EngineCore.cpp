@@ -155,8 +155,7 @@ bool EngineCore::Initialize()
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TutorialScene>(JDGlobal::Core::SceneType::SCENE_TUTORIAL, "TutorialScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::SelectNationScene>(JDGlobal::Core::SceneType::SCENE_SELECTNATION, "SelectNationScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::GameScene>(JDGlobal::Core::SceneType::SCENE_TEST, "GameScene"));
-
-    // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
+    SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
      SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
@@ -207,7 +206,7 @@ void EngineCore::Run()
         // 큐에 있는 다음 메시지를 처리합니다.
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            // ★★ 키 입력이 안먹어서 직접 InputManager::OnHandleMessage에서 ImGui 입력을 우선시 하고 있음.
+            //  키 입력이 안먹어서 직접 InputManager::OnHandleMessage에서 ImGui 입력을 우선시 하고 있음.
             if (ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam))
             {
                 continue; // ImGui가 처리했으면 여기서 끝냅니다.

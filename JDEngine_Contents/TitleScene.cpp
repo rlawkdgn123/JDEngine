@@ -80,18 +80,24 @@ namespace JDScene {
         ShowCursor(FALSE);
         // UI
         ////////////////////////////////////////////////////////////////////////////////
+        this->cam = D2DRenderer::Instance().GetCamera();
+
+        float screenWidth = static_cast<float>(this->cam->GetScreenWidth());
+        float screenHeight = static_cast<float>(this->cam->GetScreenHeight());
+
+        // 숨은 배경
+        hidden_Cat = CreateUIObject<Image>(L"Hidden_Cat");
+        hidden_Cat->SetTextureName("Hidden_Cat");
+        hidden_Cat->SetSize(Vector2F{ 500, screenHeight });
+        hidden_Cat->SetPosition({ 0.0f,0.0f });
 
         //타이틀 배경
-        //auto image = CreateUIObject<Image>(L"Title_Image");
         m_titleUI = CreateUIObject<Image>(L"Title");
         m_titleUI->SetTextureName("Title");
 
-        this->cam = D2DRenderer::Instance().GetCamera();
+        
         if (this->cam)
         {
-            float screenWidth = static_cast<float>(this->cam->GetScreenWidth());
-            float screenHeight = static_cast<float>(this->cam->GetScreenHeight());
-
             // 화면 크기로 설정
             m_titleUI->SetSize(Vector2F{ screenWidth, screenHeight });
             m_titleUI->SetPosition({ 0.0f,0.0f });
@@ -99,7 +105,6 @@ namespace JDScene {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-
         // GameStart 버튼
         this->gameStart = CreateUIObject<Button>(L"GameStart_Button");
         gameStart->SetTextureName("GAME_START_B");
@@ -556,6 +561,9 @@ namespace JDScene {
     {
         using V2 = JDGlobal::Math::Vector2F;
 
+        //숨은배경
+        base_hiddenCat = { V2{ 1800,0 }, V2{ 1080,1080 } };
+
         // ── 풀스크린 이미지들(생성 시 1920x1080 기준으로 맞춰놨다고 가정) ──
         base_titleUI = { V2{ 0,0 }, V2{ 1920,1080 } };
         base_optionUI = { V2{ 0,0 }, V2{ 1920,1080 } };
@@ -608,73 +616,107 @@ namespace JDScene {
     void TitleScene::ApplyUILayout(int w, int h)
     {
         using V2 = JDGlobal::Math::Vector2F;
+
         const float sx = w / kBaseW;
         const float sy = h / kBaseH;
+        const float s = (std::min)(sx, sy);   //  균일 스케일 (비율 고정)
 
-        auto SPos = [&](const V2& p)->V2 { return V2{ p.x * sx, p.y * sy }; };
-        auto SSize = [&](const V2& s)->V2 { return V2{ s.x * sx, s.y * sy }; };
+        auto SPos = [&](const V2& p)->V2 { return V2{ p.x * s, p.y * s }; };     //  s만
+        auto SSize = [&](const V2& sz)->V2 { return V2{ sz.x * s, sz.y * s }; };  //  s만
 
-        auto FillScreen = [&](Image* img) {
+        // 비율 유지로 맞추는 Fit(여백 발생 가능)
+        auto FitScreen = [&](Image* img) {
             if (!img) return;
-            img->SetSize({ (float)w, (float)h });
-            img->SetPosition({ 0.f, 0.f });
+            img->SetSize({ kBaseW * s, kBaseH * s });  //  w,h로 늘리지 않음 (왜곡 방지)
+            img->SetPosition({ 0.f, 0.f });            // 중앙정렬 안 원한다 했으니 (0,0)
             img->SetPivot({ 0.5f, 0.5f });
             };
 
         auto ApplyRect = [&](auto* ui, const Rect& r) {
             if (!ui) return;
-            ui->SetSize(SSize(r.size));
-            ui->SetPosition(SPos(r.pos));
+            ui->SetSize(SSize(r.size));       // s만 적용
+            ui->SetPosition(SPos(r.pos));     // s만 적용
             ui->SetPivot({ 0.5f, 0.5f });
             };
 
-        // 1) 풀스크린 이미지
-        FillScreen(m_titleUI);
-        FillScreen(m_optionUI);
-        FillScreen(m_optionVolume);
-        FillScreen(m_optionControl);
-        FillScreen(m_optionCredit);
+        // --- 콘텐츠/바 크기 계산 ---
+        const float contentW = kBaseW * s;
+        const float contentH = kBaseH * s;
+        const float barRight = w - contentW;   // >0이면 오른쪽에 여백(필러박스)
+        const float barLeft = 0.0f;
+
+        // --- 숨은 배경: 오른쪽 필러박스 영역을 채움 ---
+        if (hidden_Cat)
+        {
+            // 필러박스가 있을 때만 보이도록
+            float fillW = (std::max)(0.0f, barRight);
+            float fillH = contentH;            // 콘텐츠 높이만큼
+
+            // 이미지 원본(기준값)에 s만 적용 – 크기는 '고정'
+            const float imgW = base_hiddenCat.size.x * s;
+            const float imgH = base_hiddenCat.size.y * s;
+            // 중심 좌표계(0,0이 화면 중앙) 기준:
+            // 콘텐츠의 오른쪽 끝은 +contentW/2
+            // 바 영역의 가운데는 +contentW/2 + fillW/2
+            const float posX = contentW * 0.5f + imgW * 0.5f; // 피벗 0.5 가정
+            const float posY = 0.0f;               // 수직 중앙 정렬
+
+            hidden_Cat->SetSize({ imgW, imgH  });   // 바 영역을 그대로 채움(늘림)
+            hidden_Cat->SetPosition({ posX, posY });
+            hidden_Cat->SetPivot({ 0.5f, 0.5f });
+        }
+
+        // 1) 풀스크린 이미지(비율 유지)
+        FitScreen(m_titleUI);
+        FitScreen(m_optionUI);
+        FitScreen(m_optionVolume);
+        FitScreen(m_optionControl);
+        FitScreen(m_optionCredit);
 
         // 2) 메인 메뉴 버튼 3종
         ApplyRect(gameStart, base_gameStartBtn);
         ApplyRect(setting, base_settingBtn);
         ApplyRect(quitGame, base_quitBtn);
 
-        // 3) 버튼/더미(고정 스케일 적용)
+        // 3) 옵션창 버튼/더미
         ApplyRect(m_closeOption, base_closeOption);
-
         ApplyRect(m_selectVolume, base_selectVolumeBtn);
         ApplyRect(m_selectControl, base_selectControlBtn);
         ApplyRect(m_selectCredit, base_selectCreditBtn);
-
         ApplyRect(m_selectVolumeDummy, base_selectVolumeDummy);
         ApplyRect(m_selectControlDummy, base_selectControlDummy);
         ApplyRect(m_selectCreditDummy, base_selectCreditDummy);
 
-        // 4) 슬라이더(트랙/루트/필/핸들 모두 스케일)
-        auto ApplySlider = [&](Slider* s, const SliderLayout& b) {
-            if (!s) return;
-            s->SetSize(SSize(b.track.size));                // 트랙
-            s->SetRootSize(SSize(b.rootSize));              // 루트
-            s->SetPosition(SPos(b.track.pos));              // 위치(트랙 기준)
-            s->SetFillImagePosition(SPos(b.fillOffset));    // Fill 오프셋
-            s->SetHandleImageSize(SSize(b.handleSize));     // 핸들 크기
+        // 4) 슬라이더: offset은 "로컬 오프셋"이면 위치 변환이 아닌 '스케일만' 적용하는 게 안전
+        auto SOnly = [&](const V2& v)->V2 { return V2{ v.x * s, v.y * s }; };
+        auto ApplySlider = [&](Slider* sl, const SliderLayout& b) {
+            if (!sl) return;
+            sl->SetSize(SSize(b.track.size));
+            sl->SetRootSize(SSize(b.rootSize));
+            sl->SetPosition(SPos(b.track.pos));
+            sl->SetFillImagePosition(SOnly(b.fillOffset));   // 위치가 아니라 로컬 오프셋이므로 s만
+            sl->SetHandleImageSize(SSize(b.handleSize));
             };
         ApplySlider(m_masterSlider, base_masterSlider);
         ApplySlider(m_bgmSlider, base_bgmSlider);
         ApplySlider(m_sfxSlider, base_sfxSlider);
 
-        // 5) 텍스트(위치 + 폰트 크기 스케일)
+        // 5) 텍스트
         auto ApplyText = [&](Text* t, const TextLayout& b) {
             if (!t) return;
-            t->SetPosition(SPos(b.pos));
-            float scaled = b.fontSize * (std::min)(sx, sy);
-            t->SetSize({ scaled, scaled }); // 균일 스케일 권장
+            t->SetPosition(SPos(b.pos));          // 위치는 s만
+            float fs = b.fontSize * s;            // 폰트도 균일 스케일
+            t->SetSize({ fs, fs });               // SetFontSize(fs)가 있으면 그걸 쓰는 게 더 좋음
             };
         ApplyText(m_stopKeyText, base_stopText);
         ApplyText(m_playKeyText, base_playText);
         ApplyText(m_speedKeyText, base_speedText);
+
+        //파티클 생성위치 변경
+        sakuraMin = SPos(base_sakuraMin);   // = base * s
+        sakuraMax = SPos(base_sakuraMax);   // = base * s
     }
+
 
     void TitleScene::FinalizeTitleScene()
     {

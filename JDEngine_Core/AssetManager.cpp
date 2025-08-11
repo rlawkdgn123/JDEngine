@@ -64,6 +64,17 @@ void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json")) {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
+
+    if (!AssetManager::Instance().LoadTexture("Torch", L"../Resource/ART_BG_TorchSprite01.png")) {
+        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("Torch", L"../Resource/ART_BG_TorchSprite01.json")) {
+        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("Hidden_Cat", L"../Resource/testcat.png")) {
+        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
+    }
 }
 
 bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filePath)

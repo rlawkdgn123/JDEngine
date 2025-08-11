@@ -3,10 +3,10 @@
 #include "framework.h"
 #include "GameObjectBase.h"
 #include "UIObject.h"
-#include <memory>
+#include "Animation.h"
+#include "Texture.h"
 
 //GameObjectBase; // 전방 선언
-
 namespace JDScene {
     using Transform = JDComponent::D2DTM::Transform;
     using ShapeType = JDGlobal::Core::SceneType;
@@ -74,7 +74,34 @@ namespace JDScene {
         }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
 
-        virtual void Render(float deltaTime) {};
+        virtual void Render(float deltaTime)
+        {
+            using JDGlobal::Base::RenderLayerInfo;
+            using JDGlobal::Base::SortingLayer;
+
+            // 오브젝트 → 정렬 키 추출 (컴포넌트가 여러 개면 더 뒤에 그려질 쪽을 채택)
+            auto layerKey = [](const JDScene::GameObject* obj) -> RenderLayerInfo
+                {
+                    RenderLayerInfo key{ SortingLayer::None, 0 };
+
+                    if (auto ar = obj->GetComponent<JDComponent::AnimationRender>()) {
+                        key = ar->GetLayerInfo();
+                    }
+                    if (auto tr = obj->GetComponent<JDComponent::TextureRenderer>()) {
+                        const auto trInfo = tr->GetLayerInfo();
+                        if (key < trInfo) key = trInfo; // 더 큰(뒤에 그려질) 키로 교체
+                    }
+                    return key;
+                };
+
+            //정렬
+            std::stable_sort(m_gameObjects.begin(), m_gameObjects.end(),
+                [&](const std::unique_ptr<JDScene::GameObject>& a,
+                    const std::unique_ptr<JDScene::GameObject>& b)
+                {
+                    return layerKey(a.get()) < layerKey(b.get());
+                });
+        }
         
         virtual void OnResize(int width, int height) {}
 

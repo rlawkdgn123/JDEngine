@@ -151,6 +151,7 @@
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraFader.h" />
     <ClInclude Include="CircleCollider.h" />
     <ClInclude Include="ColliderBase.h" />
     <ClInclude Include="Component.h" />

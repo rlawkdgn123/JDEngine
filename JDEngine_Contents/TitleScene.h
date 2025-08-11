@@ -67,6 +67,9 @@ namespace JDScene {
         Vector2F sakuraMin{ 900.0f, 0.0f };
         Vector2F sakuraMax{ 1920.0f, 500.0f };
 
+        Vector2F base_sakuraMin{ 900.0f, 0.0f };
+        Vector2F base_sakuraMax{ 1920.0f, 500.0f };
+
         float m_sakuraTimer = 0.f;
         const float kSakuraIntervalMin = 0.5f;  // 최소 0.5초
         const float kSakuraIntervalMax = 1.5f;  // 최대 1.5초
@@ -81,6 +84,8 @@ namespace JDScene {
         const float kBaseH = 1080.f; // 기준 해상도 높이
 
         bool isOpenOption = false;
+
+        Image* hidden_Cat = nullptr;
 
         Image* m_titleUI = nullptr;
 
@@ -123,6 +128,7 @@ namespace JDScene {
             JDGlobal::Math::Vector2F fillOffset;   // Fill 이미지의 로컬 오프셋
             JDGlobal::Math::Vector2F handleSize;   // 핸들 아이콘 크기
         };
+        Rect base_hiddenCat;
 
         Rect base_titleUI;
         Rect base_optionUI;

@@ -70,10 +70,10 @@ namespace JDScene {
             auto* boxObj3 = CreateGameObject<Player>(L"BoxObject3");
             boxObj3->GetComponent<Transform>()->SetPosition({ 100.0f, 100.0f });
             boxObj3->AddComponent<Editor_Clickable>();
-            boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-            boxObj3->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
-
-            auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+            //boxObj3->AddComponent<TextureRenderer>("Norway", RenderLayerInfo{ SortingLayer::BackGround, 3 });
+            boxObj3->AddComponent<AnimationRender>("Torch", 1, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            
+            auto frames = AssetManager::Instance().GetAnimationRender("Torch");
             if (frames && !frames->frames.empty()) {
                 auto first = frames->frames[0].srcRect;
                 float width = first.right - first.left;
@@ -82,6 +82,11 @@ namespace JDScene {
                 birdObj->AddComponent<BoxCollider>(halfSize);
                 birdObj->AddComponent<Editor_Clickable>();
             }
+
+            /*auto* anim = boxObj3->GetComponent<AnimationRender>();
+            anim->PlayOnceFromStart();*/
+            auto* anim = boxObj3->GetComponent<AnimationRender>();
+            anim->PlayOnceThenLoopRange(/*start=*/1, /*end=*/UINT_MAX);
         }
 
         int startCol = 1, startRow = 2;
@@ -124,22 +129,22 @@ namespace JDScene {
             if (objPtr->GetTag() != JDGlobal::Base::GameTag::Mover)
                 continue;
 
-            Vector2F oldPos = tm->GetPosition();
+            /*Vector2F oldPos = tm->GetPosition();
             Vector2F newPos{ oldPos.x + delta.x, oldPos.y + delta.y };
-            tm->SetPosition(newPos);
+            tm->SetPosition(newPos);*/
 
             // 5) 디버그: SFX 가진 녀석인지, 이동 로그 출력
-            if (newPos.x != oldPos.x || newPos.y != oldPos.y)
-            {
-                sfx->Play();
+            //if (newPos.x != oldPos.x || newPos.y != oldPos.y)
+            //{
+            //    sfx->Play();
 
-                // 디버그: 소리 재생 로그
-                /*std::wcout
-                    << L"[DEBUG] SFX Play at mover: key="
-                    << L", from (" << oldPos.x << L"," << oldPos.y
-                    << L") to (" << newPos.x << L"," << newPos.y
-                    << L")\n";*/
-            }
+            //    // 디버그: 소리 재생 로그
+            //    /*std::wcout
+            //        << L"[DEBUG] SFX Play at mover: key="
+            //        << L", from (" << oldPos.x << L"," << oldPos.y
+            //        << L") to (" << newPos.x << L"," << newPos.y
+            //        << L")\n";*/
+            //}
         }
 
         bool left = InputManager::Instance().GetMouseState().leftClicked;

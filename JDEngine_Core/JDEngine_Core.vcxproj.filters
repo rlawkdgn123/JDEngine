@@ -172,6 +172,9 @@
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="CameraFader.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">

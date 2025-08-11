@@ -1,0 +1,26 @@
+,
+자원,StartResource
+Food,100
+Wood,200
+Mineral,100
+Population,0
+,
+,
+,
+,
+시작 자원 파싱,
+,
+,
+,
+,
+,
+,
+,
+,
+"Resource : (int, int, int)",
+,
+,
+,
+,
+,
+,

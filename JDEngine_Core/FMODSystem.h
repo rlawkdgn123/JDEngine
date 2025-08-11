@@ -27,7 +27,7 @@ public:
     /// 매 프레임 한 번씩 호출해야 합니다.
     void Update();
 
-    void PlayOneShot(const std::string& filepath, float volume = 1.0f, FMOD::Channel** outChannel = nullptr);
+    void PlayOneShot(const std::string& filepath, FMOD::ChannelGroup* group, FMOD::Channel** outChannel = nullptr);
 
     void PlayLooped(const std::string& filepath, FMOD::ChannelGroup* group, FMOD::Channel** outChannel = nullptr);
 

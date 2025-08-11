@@ -28,23 +28,21 @@ namespace JDScene {
         const float spacingY = -100.0f;
 
 
-        for (int col = 0; col < m_totalCols; ++col) {
-            for (int row = 0; row < m_totalRows; ++row) {
+        for (int row = 0; row < m_totalRows; ++row) {
+            for (int col = 0; col < m_totalCols; ++col) {
                 // 1) 이름 생성
-                std::wstring name = L"Box_" + std::to_wstring(col) + L"_" + std::to_wstring(row);
+                std::wstring name = L"Box_" + std::to_wstring(row) + L"_" + std::to_wstring(col);
 
                 // 2) 생성
                 auto* box = CreateGameObject<Grid>(name.c_str());
 
-                // 3) 위치 세팅
                 float x = startX + spacingX * col;
                 float y = startY + spacingY * row;
                 box->GetComponent<Transform>()->SetPosition({ x, y });
                 box->AddComponent<Editor_Clickable>();
-                
-                // 4) 콜라이더 추가 및 인덱스 부여
+
+                int idx = row * m_totalCols + col;
                 auto* collider = box->AddComponent<BoxCollider>(Vector2F{ 47,47 });
-                int idx = col * m_totalRows + row;         // 0부터 (5*7-1) = 34 까지
                 collider->SetIndex(idx);
             }
         }

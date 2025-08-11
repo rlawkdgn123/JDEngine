@@ -23,9 +23,44 @@ namespace JDScene {
     // SelectNationScene
     void SelectNationScene::OnEnter() {
 
-        // Init
-        // 초기화 코드 필요 ( 오브젝트가 계속 생성되는 문제 있음. )
+        CreateSelectNationScene();            // 국가 선택 씬 생성
+        InitSound();                          // 사운드 초기화
+        InitParticle();                       // 파티클 초기화
+    }
 
+    void SelectNationScene::OnLeave() {
+
+        FinalizeSelectNationScene();          // 국가 선택 씬 정리
+    }
+
+    void SelectNationScene::Update(float deltaTime) {
+        SceneBase::Update(deltaTime);
+
+        LogicUpdate();                        // 씬 로직 업데이트
+        ClickUpdate();                        // 클릭 업데이트
+    }
+
+    void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
+
+        SceneBase::FixedUpdate(fixedDeltaTime);
+    }
+
+    void SelectNationScene::LateUpdate(float deltaTime) {
+
+        SceneBase::LateUpdate(deltaTime);
+    }
+
+    void SelectNationScene::Render(float deltaTime) {
+
+        RenderSelectNationScene(deltaTime);    // 씬 렌더
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+
+    void SelectNationScene::CreateSelectNationScene()
+    {
         // UI
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -149,6 +184,7 @@ namespace JDScene {
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_experiencedCatParentButton->AddOnClick("Load GameScene", []() {
             // TODO : 게임 씬으로 이동
+            SceneManager::Instance().ChangeScene("GameScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -182,7 +218,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        m_naviImageButton->AddOnEnter("Highlight On", [this]() 
+        m_naviImageButton->AddOnEnter("Highlight On", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -192,7 +228,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        m_naviImageButton->AddOnExit("Highlight Off", [this]() 
+        m_naviImageButton->AddOnExit("Highlight Off", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -223,7 +259,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        m_felisImageButton->AddOnEnter("Highlight On", [this]() 
+        m_felisImageButton->AddOnEnter("Highlight On", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -233,7 +269,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        m_felisImageButton->AddOnExit("Highlight Off", [this]() 
+        m_felisImageButton->AddOnExit("Highlight Off", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -264,7 +300,7 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        m_koneImageButton->AddOnEnter("Highlight On", [this]() 
+        m_koneImageButton->AddOnEnter("Highlight On", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -274,7 +310,7 @@ namespace JDScene {
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
-        m_koneImageButton->AddOnExit("Highlight Off", [this]() 
+        m_koneImageButton->AddOnExit("Highlight Off", [this]()
             {
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
@@ -292,11 +328,11 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
     }
 
-    void SelectNationScene::OnLeave() {
+    void SelectNationScene::FinalizeSelectNationScene()
+    {
         // 효과음 재생 중이면 정지
         if (m_hoverSfxChannel)
         {
-            m_hoverSfxChannel->stop();        // 사운드 정지
             m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
         }
 
@@ -313,30 +349,42 @@ namespace JDScene {
             DestroyObject(uiObject.get());
         }
 
-        //delete m_nationDescImage;
-        //delete m_nationDescText;
-        //delete m_nationEffectText;
-        //delete m_titleTextImage;
-        //delete m_naviImageButton;
-        //delete m_felisImageButton;
-        //delete m_koneImageButton;
-        //delete m_newCatParentButton;
-        //delete m_experiencedCatParentButton;
+        // 나비, 펠리스, 코네
+        bool m_hoveredCharacter[static_cast<int>(CatType::CatTypeMAX)] = { false, false, false };
 
-        m_nationDescText = nullptr;
-        m_nationDescImage = nullptr;
-        m_nationEffectText = nullptr;
-        m_titleTextImage = nullptr;
-        m_naviImageButton = nullptr;
-        m_felisImageButton = nullptr;
-        m_koneImageButton = nullptr;
-        m_newCatParentButton = nullptr;
-        m_experiencedCatParentButton = nullptr;
+        // 국가 설명 이미지, 텍스트
+        Image* m_nationDescImage = nullptr;
+        Text* m_nationDescText = nullptr;
+        Text* m_nationEffectText = nullptr;
+
+        // 선택된 국가 타이틀 텍스트를 담은 이미지
+        Image* m_titleTextImage = nullptr;
+
+
+        Button* m_naviImageButton = nullptr;        // 나비 이미지 버튼
+        Button* m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
+        Button* m_koneImageButton = nullptr;        // 코네 이미지 버튼
+
+        // 클릭한 고양이 국가 ( 기본값 )
+        CatType m_selectedNation = CatType::CatTypeMAX;
+
+        // 초임 집사, 경험있는 집사 선택 버튼
+        Button* m_newCatParentButton = nullptr;
+        Button* m_experiencedCatParentButton = nullptr;
     }
 
-    void SelectNationScene::Update(float deltaTime) {
-        SceneBase::Update(deltaTime);
+    void SelectNationScene::InitSound()
+    {
 
+    }
+
+    void SelectNationScene::InitParticle()
+    {
+
+    }
+
+    void SelectNationScene::LogicUpdate()
+    {
         switch (m_selectedNation)
         {
         case CatType::Navi:
@@ -435,39 +483,6 @@ namespace JDScene {
             }
 
             break;
-        }
-
-        ClickUpdate();
-    }
-
-    void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
-        SceneBase::FixedUpdate(fixedDeltaTime);
-    }
-
-    void SelectNationScene::LateUpdate(float deltaTime) {
-        SceneBase::LateUpdate(deltaTime);
-    }
-
-    void SelectNationScene::Render(float dt) {
-        auto camera = D2DRenderer::Instance().GetCamera();
-
-        if (camera)
-        {
-            D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
-        }
-        else
-        {
-            D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
-        }
-
-        for (auto& obj : m_gameObjects)
-        {
-            D2DRenderer::Instance().RenderGameObject(*obj, dt);
-        }
-
-        for (auto& uiObj : m_uiObjects)
-        {
-            D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
     }
 
@@ -666,6 +681,38 @@ namespace JDScene {
                 SetSelectedObject(nullptr);
             }
         }
+    }
+
+    void SelectNationScene::ParticleUpdate(float deltaTime)
+    {
+    }
+
+    void SelectNationScene::RenderSelectNationScene(float deltaTime)
+    {
+        auto camera = D2DRenderer::Instance().GetCamera();
+
+        if (camera)
+        {
+            D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
+        }
+        else
+        {
+            D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
+        }
+
+        for (auto& obj : m_gameObjects)
+        {
+            D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
+        }
+
+        for (auto& uiObj : m_uiObjects)
+        {
+            D2DRenderer::Instance().RenderUIObject(*uiObj);
+        }
+    }
+
+    void SelectNationScene::RenderParticle()
+    {
     }
 
     void SelectNationScene::ClearHoveredCharacter()

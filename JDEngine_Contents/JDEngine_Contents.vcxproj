@@ -145,11 +145,13 @@
   <ItemGroup>
     <ClInclude Include="ArmySystem.h" />
     <ClInclude Include="Building.h" />
+    <ClInclude Include="BuildSystem.h" />
     <ClInclude Include="Cat.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CombatSystem.h" />
+    <ClInclude Include="ExpeditionSystem.h" />
     <ClInclude Include="FishingSpot.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -176,6 +178,8 @@
     <ClInclude Include="ResourceSystem.h" />
     <ClInclude Include="DefaultScene.h" />
     <ClInclude Include="SelectNationScene.h" />
+    <ClInclude Include="Soldier.h" />
+    <ClInclude Include="TestGameScene.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="TutorialScene.h" />
@@ -186,12 +190,14 @@
   <ItemGroup>
     <ClCompile Include="ArmySystem.cpp" />
     <ClCompile Include="Building.cpp" />
+    <ClCompile Include="BuildSystem.cpp" />
     <ClCompile Include="Cat.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="CombatSystem.cpp" />
     <ClCompile Include="DefaultGameObject.cpp" />
+    <ClCompile Include="ExpeditionSystem.cpp" />
     <ClCompile Include="FishingSpot.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -220,6 +226,8 @@
     <ClCompile Include="ResourceSystem.cpp" />
     <ClCompile Include="DefaultScene.cpp" />
     <ClCompile Include="SelectNationScene.cpp" />
+    <ClCompile Include="Soldier.cpp" />
+    <ClCompile Include="TestGameScene.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />

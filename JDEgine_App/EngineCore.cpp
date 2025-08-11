@@ -83,6 +83,7 @@ std::wstring UTF8ToWString(const std::string& utf8Str)
 
 bool EngineCore::Initialize()
 {
+    
     // 유니코드 기반의 윈도우 클래스 이름과 윈도우 이름 설정
     const wchar_t* className = L"JDEngine";
     const wchar_t* windowName = L"JDEngine";
@@ -100,11 +101,22 @@ bool EngineCore::Initialize()
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
-    AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/Golden.mp3", true);
-    AudioManager::Instance().LoadAudio("Step", "../Resource/Audio/Step.mp3", false);
-    AudioManager::Instance().SetMusicVolume(1.0f);
-    FMOD::Channel* bgmChannel = nullptr;
-    AudioManager::Instance().PlayBGM("MainTheme", &bgmChannel);
+    AudioManager::Instance().LoadAudio("BGM_Battle", "../Resource/Audio/BGM/Battle.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Fiield", "../Resource/Audio/BGM/Fiield.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Title", "../Resource/Audio/BGM/Title.mp3", true);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Defeat", "../Resource/Audio/SFX/SFX_Battle_Defeat.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Expedition", "../Resource/Audio/SFX/SFX_Battle_Expedition.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Unit", "../Resource/Audio/SFX/SFX_Battle_Unit.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_War", "../Resource/Audio/SFX/SFX_Battle_War.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Battle_Win", "../Resource/Audio/SFX/SFX_Battle_Win.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Build", "../Resource/Audio/SFX/SFX_Building_Build.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Building_Upgrade", "../Resource/Audio/SFX/SFX_Building_Upgrade.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Click", "../Resource/Audio/SFX/SFX_Button_Click.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Close", "../Resource/Audio/SFX/SFX_Button_Close.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Button_Hover", "../Resource/Audio/SFX/SFX_Button_Hover.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Cat_Put", "../Resource/Audio/SFX/SFX_Cat_Put.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_Change", "../Resource/Audio/SFX/SFX_Change.mp3", false);
+    AudioManager::Instance().LoadAudio("SFX_GroundAdd", "../Resource/Audio/SFX/SFX_GroundAdd.mp3", false);
 
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
@@ -130,7 +142,7 @@ bool EngineCore::Initialize()
     }
 
     DataTableManager::Instance().Initalize();
-
+    DataTableManager::Instance().PrintAllTable();
     //파일 위치 확인용(디버그용)
     /*if (!std::experimental::filesystem::exists("../Resource/Test.png"))
         std::cout << "[ERROR] 파일이 존재하지 않음!" << std::endl;*/
@@ -146,9 +158,9 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    //SceneManager::Instance().ChangeScene("TitleScene");
+    // SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
-     SceneManager::Instance().ChangeScene("GameScene");
+    SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
     // SceneManager::Instance().ChangeScene("SelectNationScene");
 
@@ -593,6 +605,29 @@ void EngineCore::RenderImGui()
         }
         ImGui::PopItemWidth();
 
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        if (auto* grid = dynamic_cast<Grid*>(selectObject)) {
+            ImGui::Text("isOccupied - 확장 완료했는지"); ImGui::SameLine();
+            bool isOccupied = grid->IsOccupied();
+            ImGui::Checkbox("##isOccupied", &isOccupied);
+            grid->SetOccupied(isOccupied);
+
+            ImGui::Text("isExpanded - 레벨업 시 확장 선택 가능한지"); ImGui::SameLine();
+            bool isExpanded = grid->IsExpanded();
+            ImGui::Checkbox("##isExpanded", &isExpanded);
+            grid->SetExpanded(isExpanded);
+
+            ImGui::Text("hasBuilding - 건물 소유중인지"); ImGui::SameLine();
+            bool hasBuilding = grid->HasBuilding();
+            ImGui::Checkbox("##hasBuilding", &hasBuilding);
+            grid->SetHasBuilding(hasBuilding);
+        }
+        //////////////////////////////////////////////////////////////////////////
+        ////테스트용//////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+
         ////////////////////////////////////////////////////////////////////////////////
         // Transform
         ////////////////////////////////////////////////////////////////////////////////
@@ -802,6 +837,35 @@ void EngineCore::RenderImGui()
                 ImGui::EndCombo();
             }
             ImGui::PopItemWidth();
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // 텍스쳐 크기 (Size)
+
+            ImGui::Text("Texture Size");
+            ImGui::SameLine(labelWidth);
+            ImGui::PushItemWidth(-100.0f); // 버튼 공간을 남기기 위해 너비 조정
+
+            // 2. 컴포넌트에서 현재 크기 값을 가져와 로컬 변수 'size'에 저장합니다.
+            D2D1_SIZE_F size = textureRenderer->GetSize();
+
+            // 3. ImGui 위젯에 로컬 변수 'size'의 주소를 넘겨줍니다.
+            //    ImGui는 size.width와 size.height가 메모리에서 연속적임을 이용해
+            //    마치 float[2] 배열처럼 처리합니다.
+            if (ImGui::DragFloat2("##TextureSize", &size.width, 0.1f))
+            {
+                // 4. 만약 사용자가 ImGui 위젯 값을 변경했다면,
+                //    컴포넌트의 SetSize 함수를 호출하여 변경된 값을 적용합니다.
+                textureRenderer->SetSize(size);
+            }
+
+            ImGui::PopItemWidth();
+
+            // [추가 기능] 원본 크기로 되돌리는 'Reset' 버튼
+            ImGui::SameLine();
+            if (ImGui::Button("Reset", { 90.0f, 0.0f }))
+            {
+                textureRenderer->GetOriginalTextureSize(); // 이 함수는 이전에 만들었던 유연한 방식에 필요합니다.
+            }
 
             ////////////////////////////////////////////////////////////////////////////////
             // 텍스처 레이어 변경
@@ -1591,7 +1655,7 @@ void EngineCore::OnClose()
 void EngineCore::LoadResources()
 {
     // 예시 파일 Exam
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("TITLE_Exam", L"../Resource/TITLE_Exam.jpg"))
     {
         std::cout << "[ERROR] TITLE_Exam 텍스처 로드 실패" << std::endl;
@@ -1615,6 +1679,18 @@ void EngineCore::LoadResources()
     if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_Exam", L"../Resource/BATTLE_MAP_Exam.png"))
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_1_Exam", L"../Resource/BATTLE_MAP_1_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_1_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_2_Exam 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_3_Exam", L"../Resource/BATTLE_MAP_3_Exam.png"))
+    {
+        std::cout << "[ERROR] BATTLE_MAP_3_Exam 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/UI_Exam.png"))
     {
@@ -1807,9 +1883,10 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] Norway 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadAnimationRender("Norway", L"../Resource/Animation/character_norway_sprite_01.json"))
-    {
-        std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl;
-    }
+    { std::cout << "[ERROR] Norway 애니메이션 로드 실패!" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("f1", L"../Resource/character/Norway/f1.png"))
+    { std::cout << "[ERROR] f1 텍스처 로드 실패!" << std::endl; }
 
     if (!AssetManager::Instance().LoadTexture("Russ", L"../Resource/Animation/character_russ_sprite_01.png"))
     {
@@ -1822,56 +1899,195 @@ void EngineCore::LoadResources()
 
     // BATTLE
     ////////////////////////////////////////////////////////////////////////////////
-    if (!AssetManager::Instance().LoadTexture("CAT", L"../Resource/BATTLE/CAT.png"))
-    {
-        std::cout << "[ERROR] CAT 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP", L"../Resource/BATTLE/BATTLE_MAP.png"))
-    {
-        std::cout << "[ERROR] BATTLE_MAP 텍스처 로드 실패" << std::endl;
-    }
+    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP(old)", L"../Resource/BATTLE/BATTLE_MAP(old).png"))
+    { std::cout << "[ERROR] BATTLE_MAP(old) 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01", L"../Resource/BATTLE/ART_BattleMap01.png"))
+    { std::cout << "[ERROR] ART_BattleMap01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMapLayer01", L"../Resource/BATTLE/ART_BattleMapLayer01.png"))
+    { std::cout << "[ERROR] ART_BattleMapLayer01 텍스처 로드 실패" << std::endl; }
 
-    if (!AssetManager::Instance().LoadTexture("cabin", L"../Resource/BATTLE/cabin.png"))
-    {
-        std::cout << "[ERROR] cabin 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("fishing", L"../Resource/BATTLE/fishing.png"))
-    {
-        std::cout << "[ERROR] fishing 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/lab.png"))
-    {
-        std::cout << "[ERROR] lab 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/lumbermill.png"))
-    {
-        std::cout << "[ERROR] lumbermill 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("lab", L"../Resource/BATTLE/mine.png"))
-    {
-        std::cout << "[ERROR] mine 텍스처 로드 실패" << std::endl;
-    }
 
-    if (!AssetManager::Instance().LoadTexture("MON_1", L"../Resource/BATTLE/MON_1.png"))
-    {
-        std::cout << "[ERROR] MON_1 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("MON_2", L"../Resource/BATTLE/MON_2.png"))
-    {
-        std::cout << "[ERROR] MON_2 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("MON_3", L"../Resource/BATTLE/MON_3.png"))
-    {
-        std::cout << "[ERROR] MON_3 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("MON_4", L"../Resource/BATTLE/MON_4.png"))
-    {
-        std::cout << "[ERROR] MON_4 텍스처 로드 실패" << std::endl;
-    }
-    if (!AssetManager::Instance().LoadTexture("MON_5", L"../Resource/BATTLE/MON_5.png"))
-    {
-        std::cout << "[ERROR] MON_5 텍스처 로드 실패" << std::endl;
-    }
+    if (!AssetManager::Instance().LoadTexture("ART_Away01", L"../Resource/BATTLE/ART_Away01.png"))
+    { std::cout << "[ERROR] ART_Away01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_AwayGauge01", L"../Resource/BATTLE/ART_AwayGauge01.png"))
+    { std::cout << "[ERROR] ART_AwayGauge01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks01", L"../Resource/BATTLE/ART_Barracks01.png"))
+    { std::cout << "[ERROR] ART_Barracks01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks02", L"../Resource/BATTLE/ART_Barracks02.png"))
+    { std::cout << "[ERROR] ART_Barracks02 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_BuffFelis", L"../Resource/BATTLE/ART_BuffFelis.png"))
+    { std::cout << "[ERROR] ART_BuffFelis 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuffKone01", L"../Resource/BATTLE/ART_BuffKone01.png"))
+    { std::cout << "[ERROR] ART_BuffKone01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuffNavi01", L"../Resource/BATTLE/ART_BuffNavi01.png"))
+    { std::cout << "[ERROR] ART_BuffNavi01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_BuildCabin01", L"../Resource/BATTLE/ART_BuildCabin01.png"))
+    { std::cout << "[ERROR] ART_BuildCabin01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuildFishing01", L"../Resource/BATTLE/ART_BuildFishing01.png"))
+    { std::cout << "[ERROR] ART_BuildFishing01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuildLab01", L"../Resource/BATTLE/ART_BuildLab01.png"))
+    { std::cout << "[ERROR] ART_BuildLab01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuildMine01", L"../Resource/BATTLE/ART_BuildMine01.png"))
+    { std::cout << "[ERROR] ART_BuildMine01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_BuildLumbermill01", L"../Resource/BATTLE/ART_BuildLumbermill01.png"))
+    { std::cout << "[ERROR] ART_BuildLumbermill01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_CatFelis01", L"../Resource/BATTLE/ART_CatFelis01.png"))
+    { std::cout << "[ERROR] ART_CatFelis01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CatKone01", L"../Resource/BATTLE/ART_CatKone01.png"))
+    { std::cout << "[ERROR] ART_CatKone01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CatNavi01", L"../Resource/BATTLE/ART_CatNavi01.png"))
+    { std::cout << "[ERROR] ART_CatNavi01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_CostFood01", L"../Resource/BATTLE/ART_CostFood01.png"))
+    { std::cout << "[ERROR] ART_CostFood01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CostMineral01", L"../Resource/BATTLE/ART_CostMineral01.png"))
+    { std::cout << "[ERROR] ART_CostMineral01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CostPop01", L"../Resource/BATTLE/ART_CostPop01.png"))
+    { std::cout << "[ERROR] ART_CostPop01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_CostWood01", L"../Resource/BATTLE/ART_CostWood01.png"))
+    { std::cout << "[ERROR] ART_CostWood01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_Downgrade01", L"../Resource/BATTLE/ART_Downgrade01.png"))
+    { std::cout << "[ERROR] ART_Downgrade01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_Fast01", L"../Resource/BATTLE/ART_Fast01.png"))
+    { std::cout << "[ERROR] ART_Fast01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Fast01_ing", L"../Resource/BATTLE/ART_Fast01_ing.png"))
+    { std::cout << "[ERROR] ART_Fast01_ing 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Pause01", L"../Resource/BATTLE/ART_Pause01.png"))
+    { std::cout << "[ERROR] ART_Pause01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Pause01_ing", L"../Resource/BATTLE/ART_Pause01_ing.png"))
+    { std::cout << "[ERROR] ART_Pause01_ing 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Play01", L"../Resource/BATTLE/ART_Play01.png"))
+    { std::cout << "[ERROR] ART_Play01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Play01_ing", L"../Resource/BATTLE/ART_Play01_ing.png"))
+    { std::cout << "[ERROR] ART_Play01_ing 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_SettingIcon01", L"../Resource/BATTLE/ART_SettingIcon01.png"))
+    { std::cout << "[ERROR] ART_SettingIcon01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_Monster01", L"../Resource/BATTLE/ART_Monster01.png"))
+    { std::cout << "[ERROR] ART_Monster01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Monster02", L"../Resource/BATTLE/ART_Monster02.png"))
+    { std::cout << "[ERROR] ART_Monster02 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Monster03", L"../Resource/BATTLE/ART_Monster03.png"))
+    { std::cout << "[ERROR] ART_Monster03 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Monster04", L"../Resource/BATTLE/ART_Monster04.png"))
+    { std::cout << "[ERROR] ART_Monster04 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Monster05", L"../Resource/BATTLE/ART_Monster05.png"))
+    { std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_RESFood01", L"../Resource/BATTLE/ART_RESFood01.png"))
+    { std::cout << "[ERROR] ART_RESFood01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_RESMineral01", L"../Resource/BATTLE/ART_RESMineral01.png"))
+    { std::cout << "[ERROR] ART_RESMineral01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_RESPop01", L"../Resource/BATTLE/ART_RESPop01.png"))
+    { std::cout << "[ERROR] ART_RESPop01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_RESWood01", L"../Resource/BATTLE/ART_RESWood01.png"))
+    { std::cout << "[ERROR] ART_RESWood01 텍스처 로드 실패" << std::endl; }
+
+
+    if (!AssetManager::Instance().LoadTexture("ART_Stiker01", L"../Resource/BATTLE/ART_Stiker01.png"))
+    { std::cout << "[ERROR] ART_Stiker01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Stiker02", L"../Resource/BATTLE/ART_Stiker02.png"))
+    { std::cout << "[ERROR] ART_Stiker02 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Stiker03", L"../Resource/BATTLE/ART_Stiker03.png"))
+    { std::cout << "[ERROR] ART_Stiker03 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("ART_Rampart01", L"../Resource/BATTLE/ART_Rampart01.png"))
+    { std::cout << "[ERROR] ART_Rampart01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_RecruitCat03", L"../Resource/BATTLE/ART_RecruitCat03.png"))
+    { std::cout << "[ERROR] ART_RecruitCat03 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Select01", L"../Resource/BATTLE/ART_Select01.png"))
+    { std::cout << "[ERROR] ART_Select01 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("ART_TileCabin01", L"../Resource/BATTLE/ART_TileCabin01.png"))
+    { std::cout << "[ERROR] ART_TileCabin01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_TileFishing01", L"../Resource/BATTLE/ART_TileFishing01.png"))
+    { std::cout << "[ERROR] ART_TileFishing01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_TileLab01", L"../Resource/BATTLE/ART_TileLab01.png"))
+    { std::cout << "[ERROR] ART_TileLab01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_TileLumbermill01", L"../Resource/BATTLE/ART_TileLumbermill01.png"))
+    { std::cout << "[ERROR] ART_TileLumbermill01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_TileMine01", L"../Resource/BATTLE/ART_TileMine01.png"))
+    { std::cout << "[ERROR] ART_TileMine01 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01_Board", L"../Resource/BATTLE/ART_UIBuilding01_Board.png"))
+    { std::cout << "[ERROR] ART_UIBuilding01_Board 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_UIBuilding01", L"../Resource/BATTLE/ART_UIBuilding01.png"))
+    { std::cout << "[ERROR] ART_UIBuilding01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_UICharSelect01", L"../Resource/BATTLE/ART_UICharSelect01.png"))
+    { std::cout << "[ERROR] ART_UICharSelect01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_UIRecruit01", L"../Resource/BATTLE/ART_UIRecruit01.png"))
+    { std::cout << "[ERROR] ART_UIRecruit01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_UIWaveGauge01", L"../Resource/BATTLE/ART_UIWaveGauge01.png"))
+    { std::cout << "[ERROR] ART_UIWaveGauge01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_UIDate01", L"../Resource/BATTLE/ART_UIDate01.png"))
+    { std::cout << "[ERROR] ART_UIDate01 텍스처 로드 실패" << std::endl; }
+
+    if (!AssetManager::Instance().LoadTexture("ART_Upgrade01", L"../Resource/BATTLE/ART_Upgrade01.png"))
+    { std::cout << "[ERROR] ART_Upgrade01 텍스처 로드 실패" << std::endl; }
+
+    // 타일 1x1
+    if (!AssetManager::Instance().LoadTexture("ART_Tile01", L"../Resource/BATTLE/ART_Tile01.png"))
+    { std::cout << "[ERROR] ART_Tile01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile02", L"../Resource/BATTLE/ART_Tile02.png"))
+    { std::cout << "[ERROR] ART_Tile02 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile03", L"../Resource/BATTLE/ART_Tile03.png"))
+    { std::cout << "[ERROR] ART_Tile03 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile04", L"../Resource/BATTLE/ART_Tile04.png"))
+    { std::cout << "[ERROR] ART_Tile04 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile05", L"../Resource/BATTLE/ART_Tile05.png"))
+    { std::cout << "[ERROR] ART_Tile05 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile06", L"../Resource/BATTLE/ART_Tile06.png"))
+    { std::cout << "[ERROR] ART_Tile06 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile07", L"../Resource/BATTLE/ART_Tile07.png"))
+    { std::cout << "[ERROR] ART_Tile07 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile08", L"../Resource/BATTLE/ART_Tile08.png"))
+    { std::cout << "[ERROR] ART_Tile08 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile09", L"../Resource/BATTLE/ART_Tile09.png"))
+    { std::cout << "[ERROR] ART_Tile09 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile10", L"../Resource/BATTLE/ART_Tile10.png"))
+    { std::cout << "[ERROR] ART_Tile10 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile11", L"../Resource/BATTLE/ART_Tile11.png"))
+    { std::cout << "[ERROR] ART_Tile11 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile12", L"../Resource/BATTLE/ART_Tile12.png"))
+    { std::cout << "[ERROR] ART_Tile12 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile13", L"../Resource/BATTLE/ART_Tile13.png"))
+    { std::cout << "[ERROR] ART_Tile13 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile14", L"../Resource/BATTLE/ART_Tile14.png"))
+    { std::cout << "[ERROR] ART_Tile14 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile15", L"../Resource/BATTLE/ART_Tile15.png"))
+    { std::cout << "[ERROR] ART_Tile15 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile16", L"../Resource/BATTLE/ART_Tile16.png"))
+    { std::cout << "[ERROR] ART_Tile16 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile17", L"../Resource/BATTLE/ART_Tile17.png"))
+    { std::cout << "[ERROR] ART_Tile17 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile18", L"../Resource/BATTLE/ART_Tile18.png"))
+    { std::cout << "[ERROR] ART_Tile18 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile19", L"../Resource/BATTLE/ART_Tile19.png"))
+    { std::cout << "[ERROR] ART_Tile19 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile20", L"../Resource/BATTLE/ART_Tile20.png"))
+    { std::cout << "[ERROR] ART_Tile20 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile21", L"../Resource/BATTLE/ART_Tile21.png"))
+    { std::cout << "[ERROR] ART_Tile21 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile22", L"../Resource/BATTLE/ART_Tile22.png"))
+    { std::cout << "[ERROR] ART_Tile22 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile23", L"../Resource/BATTLE/ART_Tile23.png"))
+    { std::cout << "[ERROR] ART_Tile23 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Tile24", L"../Resource/BATTLE/ART_Tile24.png"))
+    { std::cout << "[ERROR] ART_Tile24 텍스처 로드 실패" << std::endl; }
+
 
     if (!AssetManager::Instance().LoadTexture("PLAY", L"../Resource/BATTLE/PLAY.png"))
     {
@@ -1886,6 +2102,60 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] STOP 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("SETTING_ICON", L"../Resource/BATTLE/SETTING_ICON.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+
+    // TODO : 이름 변경해줘야함.
+    if (!AssetManager::Instance().LoadTexture("초급 복사 2", L"../Resource/BATTLE/초급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 초급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("중급 복사 2", L"../Resource/BATTLE/중급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 중급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("상급 복사 2", L"../Resource/BATTLE/상급 복사 2.png"))
+    {
+        std::cout << "[ERROR] 상급 복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png"))
+    {
+        std::cout << "[ERROR] 원정 포인트 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 2", L"../Resource/BATTLE/병력 보내기  복사 2.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 4", L"../Resource/BATTLE/병력 보내기  복사 4.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 4 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 6", L"../Resource/BATTLE/병력 보내기  복사 6.png"))
+    {
+        std::cout << "[ERROR] 병력 보내기  복사 6 텍스처 로드 실패" << std::endl;
+    }
+
+
+    // Patikle Resource
+    ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust2", L"../Resource/Dust2.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }

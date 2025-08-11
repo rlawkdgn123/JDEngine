@@ -50,7 +50,7 @@ void FMODSystem::PlayLooped(
 }
 
 
-void FMODSystem::PlayOneShot(const std::string& filepath, float volume, FMOD::Channel** outChannel)
+void FMODSystem::PlayOneShot(const std::string& filepath, FMOD::ChannelGroup* group, FMOD::Channel** outChannel)
 {
     if (!coreSys_) return;
 
@@ -58,7 +58,7 @@ void FMODSystem::PlayOneShot(const std::string& filepath, float volume, FMOD::Ch
     FMOD::Sound* sound = nullptr;
     coreSys_->createSound(
         filepath.c_str(),
-        FMOD_DEFAULT | FMOD_2D | FMOD_CREATESTREAM,
+        FMOD_DEFAULT | FMOD_2D | FMOD_CREATESAMPLE,
         nullptr,
         &sound
     );
@@ -66,14 +66,16 @@ void FMODSystem::PlayOneShot(const std::string& filepath, float volume, FMOD::Ch
 
     // 2) 재생
     FMOD::Channel* channel = nullptr;
-    coreSys_->playSound(sound, nullptr, true, &channel);
+    coreSys_->playSound(sound, group, true, &channel);
     if (channel) {
-        channel->setVolume(volume);
         channel->setPaused(false);
     }
     if (outChannel) {
         *outChannel = channel;
     }
+    std::cout << "장후";
+    //if (sound) sound->release();
+
     // NOTE: sound 포인터는 이후 해제하거나
     //       어플리케이션 종료 시 일괄 관리하세요.
 }

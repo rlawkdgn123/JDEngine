@@ -13,5 +13,7 @@ namespace JDUtil {
         size_t last = str.find_last_not_of(whitespace);
         return str.substr(first, (last - first + 1));
     }
+
+    JDGlobal::Contents::Resource GetCatBonus(JDGlobal::Contents::CatType cat);
 }
 

@@ -1,5 +1,9 @@
 #include "pch.h"
+#include "framework.h"
+#include "House.h"
+#include "Building.h"
 #include "Grid.h"
+#
 
 using namespace std;
 
@@ -20,10 +24,12 @@ namespace JDGameObject {
             }
             else { return; }
         }
-        void Grid::Update(float deltaTime) {
-
-        }
+        void Grid::Update(float deltaTime) {}
         void Grid::LateUpdate(float deltaTime) {}
         void Grid::FixedUpdate(float fixedDeltaTime) {}
+        void Grid::SetBuilding(const JDGameObject::GameObject* building)
+        {
+            BuildingRaw = const_cast<JDGameObject::GameObject*>(building);
+        }
     }
 }

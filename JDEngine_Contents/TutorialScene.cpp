@@ -7,6 +7,9 @@
 #include "Texture.h"
 #include "BuildSystem.h"
 #include "TutorialScene.h"
+#include "CombatSystem.h"
+#include "WaveManager.h"
+#include "ExpeditionSystem.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -49,11 +52,32 @@ namespace JDScene {
         //    battleMap->SetPivot({ 0.5f, 0.5f });
         //}
 
+        m_showedDays.clear();
+        m_elapsedTime = 0.0f;
+        WaveManager::Instance().LoadStageWaves();
+
+        // 자원 세팅.
+        auto& rs = ResourceSystem::Instance();
+        rs.SetTotalResource(Resource(1000, 1000, 1000));
+        rs.SetMaxPopulation(500);
+        rs.SetCurPopulation(100);
+
+        m_playerArmy.OverrideUnitCounts({ 100, 100 });
+
+        // 병영.
+        m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -210.0f, 75.0f }, "house");
+
+        // 성벽.
+        // m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -300.0f, 75.0f }, "house");
+
+        /////////////////////////////////////////////////////////////////////////////\
+        
         // [추가] 튜토리얼 시작
         m_currentStep = TutorialStep::STEP_1_NOTICE_A;
         EnterStep1_NoticeA(); // 첫 번째 튜토리얼 단계 시작
 
         /////////////////////////////////////////////////////////////////////////////
+        //AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
         AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
     }
 
@@ -74,39 +98,41 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        float speed = 100.f;  // 픽셀/초
-        Vector2F delta{ speed * deltaTime, 0.f };
+        // 무슨 코드임???
+        //float speed = 100.f;  // 픽셀/초
+        //Vector2F delta{ speed * deltaTime, 0.f };
 
-        for (auto& objPtr : m_gameObjects) {
+        //for (auto& objPtr : m_gameObjects) {
 
-            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
-            if (!sfx)
-                continue;
+        //    auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
+        //    if (!sfx)
+        //        continue;
 
-            auto* tm = objPtr->GetComponent<Transform>();
-            if (!tm)
-                continue;
+        //    auto* tm = objPtr->GetComponent<Transform>();
+        //    if (!tm)
+        //        continue;
 
-            if (objPtr->GetTag() != JDGlobal::Base::GameTag::Mover)
-                continue;
+        //    if (objPtr->GetTag() != JDGlobal::Base::GameTag::Mover)
+        //        continue;
 
-            Vector2F oldPos = tm->GetPosition();
-            Vector2F newPos{ oldPos.x + delta.x, oldPos.y + delta.y };
-            tm->SetPosition(newPos);
+        //    Vector2F oldPos = tm->GetPosition();
+        //    Vector2F newPos{ oldPos.x + delta.x, oldPos.y + delta.y };
+        //    tm->SetPosition(newPos);
 
-            // 5) 디버그: SFX 가진 녀석인지, 이동 로그 출력
-            if (newPos.x != oldPos.x || newPos.y != oldPos.y)
-            {
-                //sfx->Play();
+        //    // 5) 디버그: SFX 가진 녀석인지, 이동 로그 출력
+        //    if (newPos.x != oldPos.x || newPos.y != oldPos.y)
+        //    {
+        //        //sfx->Play();
 
-                // 디버그: 소리 재생 로그
-                /*std::wcout
-                    << L"[DEBUG] SFX Play at mover: key="
-                    << L", from (" << oldPos.x << L"," << oldPos.y
-                    << L") to (" << newPos.x << L"," << newPos.y
-                    << L")\n";*/
-            }
-        }
+        //        // 디버그: 소리 재생 로그
+        //        /*std::wcout
+        //            << L"[DEBUG] SFX Play at mover: key="
+        //            << L", from (" << oldPos.x << L"," << oldPos.y
+        //            << L") to (" << newPos.x << L"," << newPos.y
+        //            << L")\n";*/
+        //    }
+        //}
+
 
         /*bool left = InputManager::Instance().GetMouseState().leftClicked;
         bool right = InputManager::Instance().GetMouseState().rightClicked;
@@ -152,11 +178,23 @@ namespace JDScene {
             m_lightParticles->Emit(Vector2F{ mouseX, mouseY }, 30, D2D1::ColorF(0.0f, 0.0f, 1.0f), 2.5f);
         }
 
+        ProcessDayTimer(deltaTime); // 날짜 및 웨이브 관리.
+        ProcessBattle(deltaTime); // 전투 지속시간 및 전투 결과 관리. 
+
         // 클릭 업데이트
         ClickUpdate();
 
+        MoveEnemyObjects(deltaTime); // 적 이동.
+        MovePlayerObjects(deltaTime); // 아군 이동.
+        MoveExpedition(deltaTime); // 원정대 이동,
+
+        AttackWall(deltaTime); // 적이 성 공격하는 것 관리.
+
         // 자원 시스템 업데이트
         ResourceSystem::Instance().Update(deltaTime);
+
+        // 배속 버튼 관리
+        GameSpeedButtonUpdate();
     }
 
     void TutorialScene::FixedUpdate(float fixedDeltaTime) {
@@ -234,6 +272,376 @@ namespace JDScene {
 
             ctx->SetTransform(old);
         }
+    }
+    void TutorialScene::ProcessDayTimer(float deltaTime)
+    {
+        m_elapsedTime += deltaTime;
+        if (m_battleObject) m_btlElapsedTime += deltaTime;
+
+        if (m_elapsedTime >= m_dayTime) {
+            m_elapsedTime = 0.0f;
+            WaveManager::Instance().AdvanceDay();
+
+            const int currDay = WaveManager::Instance().GetCurrDay();
+            //const int warningDay = currDay + 2;
+            const int warningDay = currDay; // 당일에 화면에 나타나게.
+
+            std::cout << "[GameScene] 날짜 증가: " << currDay << std::endl;
+
+            // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
+            if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
+                m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
+                //float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
+                //SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
+                SpawnWaveEnemy({ 1010.0f, 245.0f });
+                AddEnemyDay(warningDay);
+                std::cout << "[GameScene] 적 스폰됨." << std::endl;
+            }
+        }
+    }
+    void TutorialScene::ProcessBattle(float deltaTime)
+    {
+        if (m_btlElapsedTime < m_battleTime) return;
+
+        JDGameSystem::CombatSystem combat;
+        JDGameSystem::UnitCounts playerResult;
+        JDGameSystem::UnitCounts enemyResult;
+
+        combat.ResolveBattle(
+            m_playerBattleArmy,
+            m_playerTotalPower,
+            m_enemyBattleArmy,
+            m_enemyTotalPower,
+            playerResult,
+            enemyResult
+        );
+
+        m_playerBattleArmy = { 0 , 0 };
+        m_playerTotalPower = 0;
+        m_enemyBattleArmy = { 0 , 0 };
+        m_enemyTotalPower = 0;
+
+        if (playerResult.Total() > 0) {
+            auto* playerObj = CreateSoldierUnit(playerResult, JDGlobal::Base::GameTag::Player,
+                JDGlobal::Contents::State::Back, m_battleObject->GetComponent<Transform>()->GetPosition(), "f1");
+        }
+        if (enemyResult.Total() > 0) {
+            auto* enemyObj = CreateSoldierUnit(enemyResult, JDGlobal::Base::GameTag::Enemy,
+                JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "f1");
+
+        }
+
+        m_btlElapsedTime = 0.0f;
+        SafeDestroy(m_battleObject);
+        std::cout << "[GameScene] 전투 끝." << std::endl;
+    }
+    void TutorialScene::SpawnWaveEnemy(const Vector2F& pos)
+    {
+        auto* enemyObj = CreateSoldierUnit(m_enemyArmy.GetUnitCounts(), JDGlobal::Base::GameTag::Enemy,
+            JDGlobal::Contents::State::Move, pos, "f1");
+
+        m_enemyArmy.OverrideUnitCounts({ 0, 0 });
+    }
+    void TutorialScene::SpawnPlayerArmy(const Vector2F& pos)
+    {
+        auto* playerObj = CreateSoldierUnit(m_playerArmy.GetUnitCounts(), JDGlobal::Base::GameTag::Player,
+            JDGlobal::Contents::State::Move, pos, "f1");
+        m_playerArmy.OverrideUnitCounts({ 0, 0 });
+        if (!m_playerObject && !m_battleObject) m_playerObject = playerObj;
+    }
+    void TutorialScene::SpawnBattleObject(const Vector2F& pos)
+    {
+        auto* battleObj = CreateGameObject<Player>(L"battleObj");
+        battleObj->SetTag(JDGlobal::Base::GameTag::BattleAnim);
+        battleObj->AddComponent<Editor_Clickable>();
+        battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+
+        auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
+        auto size = bitmap->GetSize();
+
+        battleObj->AddComponent<JDComponent::BoxCollider>(Vector2F{ size.width / 2.0f, size.height / 2.0f });
+        battleObj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+        battleObj->GetComponent<Transform>()->SetPosition(pos);
+
+        if (!m_battleObject) {
+            m_battleObject = battleObj;
+        }
+    }
+    void TutorialScene::MoveEnemyObjects(float deltaTime)
+    {
+        const float speed = 100.0f; // 픽셀/초
+        Vector2F wallDir = { -1.0f, 0.0f }; // 기본 방향. (성벽이 없다면)
+
+        for (auto& objPtr : m_gameObjects)
+        {
+            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy ||
+                objPtr->GetState() != JDGlobal::Contents::State::Move) continue;
+
+            auto* transform = objPtr->GetComponent<Transform>();
+            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
+            if (!transform) continue;
+
+            // 적이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
+            if (m_battleObject) {
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (!battleTm)  continue;
+                Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    if (soldier) {
+                        m_enemyBattleArmy += soldier->GetUnitCounts();
+                        m_enemyTotalPower += soldier->GetPower();
+                        std::cout << "[GameScene] 적 병력 추가." << std::endl;
+                    }
+                    SafeDestroy(objPtr.get());
+                    m_btlElapsedTime = 0.0f;
+                    continue;
+                }
+            }
+
+            // 성벽이랑 충돌하면 멈추고 성벽을 공격함.
+            /*if (m_wallObject) {
+                auto* wallTm = m_wallObject->GetComponent<Transform>();
+                if (!wallTm)  continue;
+                Vector2F diffPos = wallTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    objPtr->SetState(JDGlobal::Contents::State::Idle);
+
+                    auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
+                       [&](auto& a) { return a.enemy == objPtr.get(); });
+                    if (it == m_attackers.end()) { m_attackers.push_back({ objPtr.get(), 0.0f }); }
+                    continue;
+                }
+                wallDir = diffPos.Normalized();
+            }*/
+
+            Vector2F diffPos = m_wallPos - transform->GetPosition();
+
+            if (diffPos.Length() <= 10.0f) {
+                objPtr->SetState(JDGlobal::Contents::State::Idle);
+
+                auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
+                    [&](auto& a) { return a.enemy == objPtr.get(); });
+                if (it == m_attackers.end()) { m_attackers.push_back({ objPtr.get(), 0.0f }); }
+                continue;
+            }
+            wallDir = diffPos.Normalized();
+
+            // 이동 적용.
+            Vector2F delta = wallDir * (speed * deltaTime);
+            Vector2F newPos = transform->GetPosition() + delta;
+            transform->SetPosition(newPos);
+
+            if (sfx) sfx->Play();  // 이동 시 효과음 재생
+        }
+    }
+    void TutorialScene::MovePlayerObjects(float deltaTime)
+    {
+        const float speed = 100.0f;
+        const float backSpeed = 100.0f;
+        Vector2F delta;
+
+        for (auto& objPtr : m_gameObjects)
+        {
+            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Player ||
+                (objPtr->GetState() != JDGlobal::Contents::State::Move &&
+                    objPtr->GetState() != JDGlobal::Contents::State::Back))
+                continue;
+
+            auto* transform = objPtr->GetComponent<Transform>();
+            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
+            if (!transform) continue;
+
+            // 아군이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
+            if (m_battleObject) {
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (!battleTm) continue;
+                Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    if (soldier) {
+                        m_playerBattleArmy += soldier->GetUnitCounts();
+                        m_playerTotalPower += soldier->GetPower();
+                        std::cout << "[GameScene] 아군 병력 추가." << std::endl;
+                    }
+                    SafeDestroy(objPtr.get());
+                    m_btlElapsedTime = 0.0f;
+                    continue;
+                }
+            }
+
+            // 최초 아군일 경우, 타겟 적과의 충돌 체크. 충돌하면 제거.
+            if (objPtr.get() == m_playerObject && m_targetEnemy && m_playerObject) {
+                auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
+                if (!enemyTm) continue;
+                Vector2F diffPos = enemyTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    Vector2F pPos = transform->GetPosition();
+                    Vector2F ePos = enemyTm->GetPosition();
+                    Vector2F mid = { (pPos.x + ePos.x) * 0.5f, (pPos.y + ePos.y) * 0.5f };
+                    auto* player = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    if (player) {
+                        m_playerBattleArmy += player->GetUnitCounts();
+                        m_playerTotalPower += player->GetPower();
+                        std::cout << "[GameScene] 아군 병력 추가." << std::endl;
+                    }
+                    auto* enemy = dynamic_cast<JDGameObject::Content::Soldier*>(m_targetEnemy);
+                    if (enemy) {
+                        m_enemyBattleArmy += enemy->GetUnitCounts();
+                        m_enemyTotalPower += enemy->GetPower();
+                        std::cout << "[GameScene] 적 병력 추가." << std::endl;
+                    }
+
+                    SafeDestroy(m_playerObject);
+                    SafeDestroy(m_targetEnemy);
+
+                    SpawnBattleObject(mid);
+                    return;
+                }
+            }
+
+            // 전투 오브젝트가 없고, 일반 아군이면 후퇴 상태로 전환
+            if (!m_battleObject && objPtr.get() != m_playerObject) {
+                if (!m_barracksObject) continue;
+                auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
+                if (texRenderer) {
+                    texRenderer->SetFlipX(true); // 좌우 반전!
+                }
+                auto* barracksTm = m_barracksObject->GetComponent<Transform>();
+                if (!barracksTm) continue;
+                Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();
+
+                if (diffPos.Length() <= 10.0f) {
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    if (soldier) {
+                        JDGameSystem::UnitCounts updated = soldier->GetUnitCounts();
+                        updated += m_playerArmy.GetUnitCounts();
+                        m_playerArmy.OverrideUnitCounts(updated);
+                        std::cout << "[GameScene] 병영 합류." << std::endl;
+                    }
+                    SafeDestroy(objPtr.get());
+                    continue;
+                }
+
+                objPtr->SetState(JDGlobal::Contents::State::Back);
+            }
+
+            Vector2F direction = { 1.0f, 0.0f }; // 기본값.
+            float moveSpeed = speed;
+
+            if (objPtr->GetState() == JDGlobal::Contents::State::Back) {
+                // 병영 방향으로 후퇴
+                if (m_barracksObject) {
+                    auto* barracksTm = m_barracksObject->GetComponent<Transform>();
+                    if (barracksTm) {
+                        Vector2F diff = barracksTm->GetPosition() - transform->GetPosition();
+                        direction = diff.Normalized();
+                        moveSpeed = backSpeed;
+                    }
+                }
+            }
+            else if (objPtr.get() == m_playerObject && m_targetEnemy) {
+                // 적 유닛 방향으로 이동
+                auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
+                if (enemyTm) {
+                    Vector2F diff = enemyTm->GetPosition() - transform->GetPosition();
+                    direction = diff.Normalized();
+                }
+            }
+            else if (m_battleObject) {
+                // 전투 오브젝트 방향으로 이동
+                auto* battleTm = m_battleObject->GetComponent<Transform>();
+                if (battleTm) {
+                    Vector2F diff = battleTm->GetPosition() - transform->GetPosition();
+                    direction = diff.Normalized();
+                }
+            }
+
+            delta = direction * (moveSpeed * deltaTime);
+            Vector2F newPos = transform->GetPosition() + delta;
+            transform->SetPosition(newPos);
+
+            if (sfx) sfx->Play();
+        }
+    }
+    void TutorialScene::MoveExpedition(float deltaTime)
+    {
+        const float speed = 100.0f;
+
+        if (!m_expeditionObject) return;
+
+        auto* transform = m_expeditionObject->GetComponent<Transform>();
+        auto* sfx = m_expeditionObject->GetComponent<JDComponent::SFX>();
+
+        if (!transform) return;
+
+        Vector2F target = m_waypoints[m_currentWaypointIndex];
+        Vector2F current = transform->GetPosition();
+
+        Vector2F diff = target - current;
+        float dist = diff.Length();
+
+        if (dist < 10.0f) { // �� �߰� ������ �����ϸ� ��ǥ ������ ���� ������ �ٲ۴�.
+            m_currentWaypointIndex = (m_currentWaypointIndex + 1) % m_waypoints.size();
+
+            if (m_currentWaypointIndex == 0) { // ���� ������ ������ ���������� ���� ����� �����ϰ�, �����븦 �����Ѵ�. 
+                JDGameSystem::ExpeditionSystem::Instance().ResolveExpedition();
+                SafeDestroy(m_expeditionObject);
+                std::cout << "[GameScene] ���� ��." << std::endl;
+            }
+        }
+        else {
+            Vector2F direction = diff.Normalized();
+            current += direction * speed * deltaTime;
+            transform->SetPosition(current);
+        }
+    }
+    void TutorialScene::AttackWall(float deltaTime)
+    {
+        for (auto it = m_attackers.begin(); it != m_attackers.end();) {
+            it->timer += deltaTime;
+            if (it->enemy && it->timer >= m_battleTime) {
+                auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(it->enemy);
+                if (soldier) {
+                    int dmg = soldier->GetPower();
+                    m_wallHealth = std::max(0, m_wallHealth - dmg);
+                    std::cout << "[GameScene] 성벽 남은 체력: " << m_wallHealth << std::endl;
+                    it->timer -= m_battleTime;
+                }
+            }
+
+            // 비활성화된 적은 목록에서 제거
+            if (!it->enemy || !it->enemy->IsActive()) {
+                it = m_attackers.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+    void TutorialScene::SafeDestroy(GameObjectBase* obj)
+    {
+        if (!obj) return;
+
+        if (m_targetEnemy == obj) m_targetEnemy = nullptr;
+        if (m_playerObject == obj) m_playerObject = nullptr;
+        if (m_barracksObject == obj) m_barracksObject = nullptr;
+        if (m_battleObject == obj) m_battleObject = nullptr;
+        // if (m_wallObject == obj) m_wallObject = nullptr;
+        if (m_expeditionObject == obj) m_expeditionObject = nullptr;
+        if (GetSelectedObject() == obj) SetSelectedObject(nullptr);
+
+        m_attackers.erase(
+            std::remove_if(m_attackers.begin(), m_attackers.end(),
+                [&](auto& a) { return a.enemy == obj; }),
+            m_attackers.end()
+        );
+
+        SceneBase::DestroyObject(obj);
     }
     void TutorialScene::ClickUpdate()
     {
@@ -321,6 +729,7 @@ namespace JDScene {
                         clicked = true;
                         std::cout << " 게임 오브젝트 클릭 함!!!!! ";
 
+                        // 그리드 클릭
                         for (auto& objPtr : m_gameObjects) {
                             auto* collider = objPtr->GetComponent<JDComponent::ColliderBase>();
                             if (!collider) continue;
@@ -356,6 +765,47 @@ namespace JDScene {
                             collider->SetOpen(true);
                             std::cout << "[DEBUG] left ID: " << id << std::endl;
                         }
+
+                        // 태그 기반 처리
+                        auto* gameObj = GetSelectedObject();
+                        if (!gameObj) return;
+
+                        auto tag = gameObj->GetTag();
+                        bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy);
+
+                        if (tag == JDGlobal::Base::GameTag::Barracks) {
+                            m_isBarracksSelected = !m_isBarracksSelected;
+                            std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
+
+                            // UI 로직
+                            if (m_isBarracksSelected)
+                            {
+                                isAway = true;
+                                ShowAwayMenu();
+                            }
+                            else
+                            {
+                                isAway = false;
+                                CloseAwayMenu();
+                            }
+                        }
+                        else if (m_isBarracksSelected && !m_battleObject && (isEnemyTag && !m_targetEnemy) && m_playerArmy.GetTotalUnits() > 0) {
+                            m_targetEnemy = gameObj;
+                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(pos);
+                            //m_isBarracksSelected = false;
+                            std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
+                        }
+                        else if (m_isBarracksSelected && tag == JDGlobal::Base::GameTag::BattleAnim && m_playerArmy.GetTotalUnits() > 0) {
+                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(pos);
+                            //m_isBarracksSelected = false;
+                            std::cout << "[GameScene] 병영 클릭 -> 전투중 클릭." << std::endl;
+                        }
+                        else {
+                            //m_isBarracksSelected = false; 
+                            std::cout << "[GameScene] 이상한 거 클릭." << std::endl;
+                        }
                         break;
                     }
                 }
@@ -385,6 +835,8 @@ namespace JDScene {
                     CloseGridCreateMenu();
                     CloseGridSettingMenu();
                     CloseAwayMenu();
+
+                    m_isBarracksSelected = false;
                 }
             }
         }
@@ -421,6 +873,88 @@ namespace JDScene {
                 }
             }
         }*/
+    }
+
+    JDGameObject::GameObjectBase* TutorialScene::CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag, JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName)
+    {
+        auto* obj = CreateGameObject<Soldier>((tag == JDGlobal::Base::GameTag::Player) ? L"playerObj" : L"enemyObj");
+        obj->SetUnitCounts(units);
+
+        JDGameSystem::ArmySystem army;
+        army.OverrideUnitCounts(units);
+        obj->SetPower(army.CalculateTotalPower());
+
+        obj->SetTag(tag);
+        obj->SetState(state);
+        obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::Cat, 1 });
+
+        auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
+        Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+
+        obj->AddComponent<JDComponent::BoxCollider>(size);
+        obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+        obj->GetComponent<Transform>()->SetPosition(pos);
+        obj->AddComponent<JDComponent::SFX>("Step");
+
+        if (tag == JDGlobal::Base::GameTag::Enemy) {
+            obj->AddComponent<Editor_Clickable>();
+            auto* texRenderer = obj->GetComponent<TextureRenderer>();
+            if (texRenderer) {
+                texRenderer->SetFlipX(true); // 좌우 반전!
+            }
+        }
+
+        return obj;
+    }
+
+    JDGameObject::GameObjectBase* TutorialScene::CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag, const Vector2F& pos, const std::string& textureName)
+    {
+        auto* obj = CreateGameObject<GameObject>(name);
+        obj->SetTag(tag);
+        obj->AddComponent<Editor_Clickable>();
+        obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+
+        auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
+        Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+
+        obj->AddComponent<JDComponent::BoxCollider>(size);
+        obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+        obj->GetComponent<Transform>()->SetPosition(pos);
+
+        return obj;
+    }
+
+    JDGameObject::GameObjectBase* TutorialScene::CreateUIButton(const std::wstring& name, const Vector2F& pos, const std::string& textureName, const std::string& clickEventName, std::function<void()> callback)
+    {
+        auto* btn = CreateUIObject<Button>(name);
+        btn->SetTextureName(textureName);
+        btn->SetSizeToOriginal();
+        btn->SetPosition(pos);
+        btn->AddOnClick(clickEventName, callback);
+
+        return btn;
+    }
+
+    void TutorialScene::CreateExpedition()
+    {
+        auto* obj = CreateGameObject<Soldier>(L"playerObj");
+
+        obj->SetTag(JDGlobal::Base::GameTag::Player);
+        obj->SetState(JDGlobal::Contents::State::Idle);
+        obj->AddComponent<JDComponent::TextureRenderer>("f1", RenderLayerInfo{ SortingLayer::Cat, 1 });
+
+        // auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture("f1"));
+        // Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+        // obj->AddComponent<JDComponent::BoxCollider>(size);
+        // obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+
+        Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+        obj->GetComponent<Transform>()->SetPosition(pos);
+        obj->AddComponent<JDComponent::SFX>("Step");
+
+        m_expeditionObject = obj;
+
+        std::cout << "[tutoScene] 원정대 생성." << std::endl;
     }
 
     void TutorialScene::InitGridCreateMenu()
@@ -693,7 +1227,7 @@ namespace JDScene {
 
         /////
         // 견습 냥이
-        m_trainerCatImage->SetActive(false);
+        m_trainerCatButton->SetActive(false);
         m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
@@ -710,7 +1244,7 @@ namespace JDScene {
 
         /////
         // 숙련 냥이
-        m_expertCatImage->SetActive(false);
+        m_expertCatButton->SetActive(false);
         m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
@@ -764,7 +1298,7 @@ namespace JDScene {
 
         /////
         // 견습 냥이
-        m_trainerCatImage->SetActive(true);
+        m_trainerCatButton->SetActive(true);
         m_trainerCatName->SetActive(true);
 
         m_trainerCatCostInfo->SetActive(true);
@@ -781,7 +1315,7 @@ namespace JDScene {
 
         /////
         // 숙련 냥이
-        m_expertCatImage->SetActive(true);
+        m_expertCatButton->SetActive(true);
         m_expertCatName->SetActive(true);
 
         m_expertCatCostInfo->SetActive(true);
@@ -827,6 +1361,9 @@ namespace JDScene {
 
     void TutorialScene::CloseAwayMenu()
     {
+        // 팝업 끄기
+        CloseAwayPopup();
+
         // 병영 UI 끄기
         m_defaultUI->SetActive(true);
         m_buildUI->SetActive(false);
@@ -835,7 +1372,7 @@ namespace JDScene {
 
         /////
         // 견습 냥이
-        m_trainerCatImage->SetActive(false);
+        m_trainerCatButton->SetActive(false);
         m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
@@ -852,7 +1389,7 @@ namespace JDScene {
 
         /////
         // 숙련 냥이
-        m_expertCatImage->SetActive(false);
+        m_expertCatButton->SetActive(false);
         m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
@@ -892,6 +1429,46 @@ namespace JDScene {
 
         m_awayButton->SetActive(false);
         
+    }
+
+    void TutorialScene::ShowAwayPopup()
+    {
+        /////
+        // 원정 팝업
+        m_awayPopupUI->SetActive(true);
+        m_awayPopupInfo->SetActive(true);
+
+        m_awayCostInfo->SetActive(true);
+        m_awayCostImage01->SetActive(true);
+        m_awayCostText01->SetActive(true);
+        m_awayCostImage02->SetActive(true);
+        m_awayCostText02->SetActive(true);
+
+        m_awayAwardInfo->SetActive(true);
+        m_awayAwardText01->SetActive(true);
+        m_awayAwardText02->SetActive(true);
+
+        m_awayButton->SetActive(true);
+    }
+
+    void TutorialScene::CloseAwayPopup()
+    {
+        /////
+        // 원정 팝업
+        m_awayPopupUI->SetActive(false);
+        m_awayPopupInfo->SetActive(false);
+
+        m_awayCostInfo->SetActive(false);
+        m_awayCostImage01->SetActive(false);
+        m_awayCostText01->SetActive(false);
+        m_awayCostImage02->SetActive(false);
+        m_awayCostText02->SetActive(false);
+
+        m_awayAwardInfo->SetActive(false);
+        m_awayAwardText01->SetActive(false);
+        m_awayAwardText02->SetActive(false);
+
+        m_awayButton->SetActive(false);
     }
 
     // void TutorialScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
@@ -1259,7 +1836,7 @@ namespace JDScene {
         // 정지 버튼 클릭하면 실행될 이벤트
         m_stopButton->AddOnClick("Quit Game", [this]()
             {
-
+                SetTimeScale(0.0f);
             });
 
         // 정지 버튼 마우스를 올리면 실행될 이벤트
@@ -1286,7 +1863,7 @@ namespace JDScene {
         // 재생 버튼 클릭하면 실행될 이벤트
         m_playButton->AddOnClick("Quit Game", [this]()
             {
-
+                SetTimeScale(1.0f);
             });
 
         // 재생 버튼 마우스를 올리면 실행될 이벤트
@@ -1313,7 +1890,7 @@ namespace JDScene {
         // 스피드 버튼 클릭하면 실행될 이벤트
         m_speedButton->AddOnClick("Quit Game", [this]()
             {
-
+                SetTimeScale(2.0f);
             });
 
         // 스피드 버튼 마우스를 올리면 실행될 이벤트
@@ -1932,12 +2509,31 @@ namespace JDScene {
 
         //////////
         // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
-        m_trainerCatImage = CreateUIObject<Image>(L"UI_TrainerCatImage");
-        m_trainerCatImage->SetTextureName("ART_RecruitCat03");
-        m_trainerCatImage->SetSize({ 256, 279 });
-        m_trainerCatImage->SetPosition({ -178, -340 });
-        m_trainerCatImage->SetAnchor({ 1.0f, 0.0f });
-        m_trainerCatImage->SetScale({ 0.5f, 0.5f });
+        m_trainerCatButton = CreateUIObject<Button>(L"UI_TrainerCatButton");
+        m_trainerCatButton->SetTextureName("ART_RecruitCat03");
+        m_trainerCatButton->SetSize({ 256, 279 });
+        m_trainerCatButton->SetPosition({ -178, -340 });
+        m_trainerCatButton->SetAnchor({ 1.0f, 0.0f });
+        m_trainerCatButton->SetScale({ 0.5f, 0.5f });
+
+        // 견습냥이 버튼 클릭 시 실행될 이벤트
+        m_trainerCatButton->AddOnClick("On Click", [this]()
+            {
+                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
+                std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
+            });
+
+        // 견습냥이 버튼 마우스를 올리면 실행될 이벤트
+        m_trainerCatButton->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 견습냥이 버튼 마우스가 벗어나면 실행될 이벤트
+        m_trainerCatButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
         
         m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
         m_trainerCatName->SetText(L"견습냥이");
@@ -2015,12 +2611,31 @@ namespace JDScene {
 
         //////////
         // 징병 _ 숙련냥이 이미지
-        m_expertCatImage = CreateUIObject<Image>(L"UI_ExpertCatImage");
-        m_expertCatImage->SetTextureName("ART_RecruitCat03");
-        m_expertCatImage->SetSize({ 256, 279 });
-        m_expertCatImage->SetPosition({ 182, -340 });
-        m_expertCatImage->SetAnchor({ 1.0f, 0.0f });
-        m_expertCatImage->SetScale({ 0.5f, 0.5f });
+        m_expertCatButton = CreateUIObject<Button>(L"UI_ExpertCatButton");
+        m_expertCatButton->SetTextureName("ART_RecruitCat03");
+        m_expertCatButton->SetSize({ 256, 279 });
+        m_expertCatButton->SetPosition({ 182, -340 });
+        m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
+        m_expertCatButton->SetScale({ 0.5f, 0.5f });
+
+        // 견습냥이 버튼 클릭 시 실행될 이벤트
+        m_expertCatButton->AddOnClick("On Click", [this]()
+            {
+                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Expert);
+                std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
+            });
+
+        // 견습냥이 버튼 마우스를 올리면 실행될 이벤트
+        m_expertCatButton->AddOnEnter("Highlight On", [this]()
+            {
+
+            });
+
+        // 견습냥이 버튼 마우스가 벗어나면 실행될 이벤트
+        m_expertCatButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
 
         m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
         m_expertCatName->SetText(L"숙련냥이");
@@ -2115,7 +2730,9 @@ namespace JDScene {
         // 원정 초급 버튼 클릭하면 실행될 이벤트
         m_awayBeginner->AddOnClick("On Click", [this]()
             {
-
+                ShowAwayPopup();
+                m_awayPopupInfo->SetText(L"초급 원정");
+                m_awayButton->SetTextureName("병력 보내기  복사 2");
             });
 
         // 원정 초급 버튼 마우스를 올리면 실행될 이벤트
@@ -2141,7 +2758,9 @@ namespace JDScene {
         // 원정 중급 버튼 클릭하면 실행될 이벤트
         m_awayIntermediate->AddOnClick("On Click", [this]()
             {
-
+                ShowAwayPopup();
+                m_awayPopupInfo->SetText(L"중급 원정");
+                m_awayButton->SetTextureName("병력 보내기  복사 4");
             });
 
         // 원정 중급 버튼 마우스를 올리면 실행될 이벤트
@@ -2166,7 +2785,9 @@ namespace JDScene {
         // 원정 상급 버튼 클릭하면 실행될 이벤트
         m_awayAdvanced->AddOnClick("On Click", [this]()
             {
-
+                ShowAwayPopup();
+                m_awayPopupInfo->SetText(L"상급 원정");
+                m_awayButton->SetTextureName("병력 보내기  복사 6");
             });
 
         // 원정 상급 버튼 마우스를 올리면 실행될 이벤트
@@ -2184,7 +2805,7 @@ namespace JDScene {
         //////////
         // 원정 정보 팝업 Image
         m_awayPopupUI = CreateUIObject<Image>(L"UI_AwayPopupUI");
-        m_awayPopupUI->SetTextureName("ART_UIBuilding01_Sign");
+        m_awayPopupUI->SetTextureName("ART_CHAT");      // TODO : 실제 리소스로 바꿔야함.
         m_awayPopupUI->SetSize({ 386, 297 });
         m_awayPopupUI->SetPosition({ 770, -113 });
         m_awayPopupUI->SetAnchor({ 1.0f, 0.0f });
@@ -2218,7 +2839,7 @@ namespace JDScene {
         m_awayCostText01->SetTextFormatName("Sebang_16");
         m_awayCostText01->SetColor(D2D1::ColorF(0x69512C));
         m_awayCostText01->SetSize({ 300, 100 });
-        m_awayCostText01->SetPosition({ 476, -422 });
+        m_awayCostText01->SetPosition({ 737, -70 });
 
         // 원정 코스트 _ 02 ( 이미지 & 텍스트 )
         m_awayCostImage02 = CreateUIObject<Image>(L"UI_AwayCostImage02");
@@ -2247,7 +2868,7 @@ namespace JDScene {
         // 보상 정보 Text
         m_awayAwardText01 = CreateUIObject<Text>(L"UI_AwayAwardText01");
         m_awayAwardText01->SetText(L"N 원정포인트");
-        m_awayAwardText01->SetTextFormatName("Sebang_Bold_22");
+        m_awayAwardText01->SetTextFormatName("Sebang_20");
         m_awayAwardText01->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardText01->SetSize({ 300, 100 });
         m_awayAwardText01->SetPosition({ 729, -125 });
@@ -2255,10 +2876,10 @@ namespace JDScene {
         // 추가 보상 정보 Text
         m_awayAwardText02 = CreateUIObject<Text>(L"UI_AwayAwardText02");
         m_awayAwardText02->SetText(L"N% 확률로 ㅇㅇㅇ 추가 보상");
-        m_awayAwardText02->SetTextFormatName("Sebang_Bold_30");
+        m_awayAwardText02->SetTextFormatName("Sebang_20");
         m_awayAwardText02->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardText02->SetSize({ 300, 100 });
-        m_awayAwardText02->SetPosition({ 795, -162 });
+        m_awayAwardText02->SetPosition({ 791, -162 });
 
         /////
         // 병력 보내기 Button
@@ -2271,7 +2892,24 @@ namespace JDScene {
         // 병력 보내기 버튼 클릭하면 실행될 이벤트
         m_awayButton->AddOnClick("On Click", [this]()
             {
+                // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
+                if (m_awayButton->GetTextureName() == "병력 보내기  복사 2")
+                {
+                    auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                    if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Beginner)) CreateExpedition();
+                }
+                
+                else if (m_awayButton->GetTextureName() == "병력 보내기  복사 4")
+                {
+                    auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                    if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Intermediate)) CreateExpedition();
+                }
 
+                else if (m_awayButton->GetTextureName() == "병력 보내기  복사 6")
+                {
+                    auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                    if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Higher)) CreateExpedition();
+                }
             });
 
         // 병력 보내기 버튼 마우스를 올리면 실행될 이벤트
@@ -2494,6 +3132,31 @@ namespace JDScene {
                 << L" | In m_uiObjects: " << (foundInUIObjects ? "YES" : "NO")
                 << L" | Active: " << (btn->IsActive() ? "true" : "false")
                 << std::endl;
+        }
+    }
+
+    void TutorialScene::GameSpeedButtonUpdate()
+    {
+        // 0 배속일 떄
+        if (GetTimeScale() == 0.0f)
+        {
+            m_stopButton->SetTextureName("ART_Pause01_ing");
+            m_playButton->SetTextureName("ART_Play01");
+            m_speedButton->SetTextureName("ART_Fast01");
+        }
+
+        else if (GetTimeScale() == 1.0f)
+        {
+            m_stopButton->SetTextureName("ART_Pause01");
+            m_playButton->SetTextureName("ART_Play01_ing");
+            m_speedButton->SetTextureName("ART_Fast01");
+        }
+
+        else
+        {
+            m_stopButton->SetTextureName("ART_Pause01");
+            m_playButton->SetTextureName("ART_Play01");
+            m_speedButton->SetTextureName("ART_Fast01_ing");
         }
     }
 

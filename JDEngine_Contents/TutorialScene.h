@@ -10,7 +10,7 @@
 #include "CameraFader.h"
 #include "ParticleSystem.h"
 #include "BuildSystem.h"
-
+#include "ArmySystem.h"
 using namespace JDGameObject::Content;
 class GameTimer;
 
@@ -112,7 +112,43 @@ namespace JDScene {
 
         void Render(float deltaTime) override;
 
+        void ProcessDayTimer(float deltaTime);
+        void ProcessBattle(float deltaTime);
+
+        void SpawnWaveEnemy(const Vector2F& pos);
+        void SpawnPlayerArmy(const Vector2F& pos);
+        void SpawnBattleObject(const Vector2F& pos);
+
+        void MoveEnemyObjects(float deltaTime);
+        void MovePlayerObjects(float deltaTime);
+        void MoveExpedition(float deltaTime);
+
+        void AttackWall(float deltaTime);
+
+        void SafeDestroy(GameObjectBase* obj);
+
         void ClickUpdate();
+
+        // 공통 생성 함수.
+        GameObjectBase* CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
+            JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName); // 병사.
+
+        GameObjectBase* CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag,
+            const Vector2F& pos, const std::string& textureName); // 구조물.
+
+        GameObjectBase* CreateUIButton(const std::wstring& name, const Vector2F& pos,
+            const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // 버튼.
+
+        // 원정대 생성.
+        void CreateExpedition();
+
+        bool IsEnemySpawned(int day) const {
+            return std::find(m_showedDays.begin(), m_showedDays.end(), day) != m_showedDays.end();
+        }
+
+        void AddEnemyDay(int day) {
+            if (!IsEnemySpawned(day)) m_showedDays.push_back(day);
+        }
 
         // 1. 건설 UI
         // void InitBuildMenu();
@@ -158,11 +194,11 @@ namespace JDScene {
         void ShowAwayPopup();
         void CloseAwayPopup();
 
-        void ShowFilledMenu();
-
-
         // 게임 맵을 생성합니다.
         void CreateGameMap();
+
+        // 배속 버튼 관리
+        void GameSpeedButtonUpdate();
 
     private:
         FMOD::Channel* bgmChannel = nullptr;
@@ -173,8 +209,44 @@ namespace JDScene {
 
         CameraFader  m_fader;
 
+        // 전투 관련 변수.
+        std::vector<bool> m_isOpen;
+        std::vector<int> m_showedDays;
+
         std::shared_ptr<Camera> m_camera;
 
+        JDGameSystem::ArmySystem m_playerArmy; // 병영.
+        JDGameSystem::ArmySystem m_enemyArmy; // 해당 날짜에 등장하는 적.
+
+        JDGameSystem::UnitCounts m_playerBattleArmy;
+        JDGameSystem::UnitCounts m_enemyBattleArmy;
+        int m_playerTotalPower = 0;
+        int m_enemyTotalPower = 0;
+
+        const float m_dayTime = 10.0f;
+        float m_elapsedTime = 0.0f;
+        const float m_battleTime = 2.0f;
+        float m_btlElapsedTime = 0.0f;
+
+
+        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;       // 처음 선택된 적.
+        JDGameObject::GameObjectBase* m_playerObject = nullptr;      // 처음 아군.
+        JDGameObject::GameObjectBase* m_barracksObject = nullptr;    // 아군 병영.
+        JDGameObject::GameObjectBase* m_battleObject = nullptr;      // 싸우는 애니메이션 보여줄 오브젝트.
+        //JDGameObject::GameObjectBase* m_wallObject = nullptr;      // 아군 성벽.
+        JDGameObject::GameObjectBase* m_expeditionObject = nullptr;  // 원정대.
+
+        Vector2F m_wallPos = { -300.0f, 75.0f }; // 성벽위치.
+
+        int m_currentWaypointIndex = 0;
+        std::array<Vector2F, 3> m_waypoints = { Vector2F{ 255.0f, -135.0f },
+                                                Vector2F{ 755.0f, -115.0f },
+                                                Vector2F{ 1010.0f, -175.0f } }; // 원정대 경로.
+
+        std::vector<Attacker> m_attackers;    // 현재 성벽을 공격 중인 적들
+        int   m_wallHealth = 1000;            // 성벽 체력 초기값
+
+        bool m_isBarracksSelected = false; // 병영 선택 여부.
 
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
@@ -313,7 +385,7 @@ namespace JDScene {
 
         /////
         // 견습 냥이
-        Image* m_trainerCatImage = nullptr;
+        Button* m_trainerCatButton = nullptr;
         Text* m_trainerCatName = nullptr;
 
         Text* m_trainerCatCostInfo = nullptr;
@@ -330,7 +402,7 @@ namespace JDScene {
 
         /////
         // 숙련 냥이
-        Image* m_expertCatImage = nullptr;
+        Button* m_expertCatButton = nullptr;
         Text* m_expertCatName = nullptr;
 
         Text* m_expertCatCostInfo = nullptr;

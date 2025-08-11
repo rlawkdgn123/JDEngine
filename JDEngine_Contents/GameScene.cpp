@@ -5,6 +5,7 @@
 #include "CircleCollider.h"
 #include "CombatSystem.h"
 #include "WaveManager.h"
+#include "ExpeditionSystem.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -46,11 +47,28 @@ namespace JDScene {
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl; });
 
 
+        // 원정 버튼.
+        CreateUIButton(L"BeginnerBtn", { 400.0f, -200.0f }, "GAME_START_B", "Beginner Expedition", // 초급.
+            [this]() {
+                auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Beginner)) CreateExpedition(); });
+        
+        CreateUIButton(L"IntermediateBtn", { 400.0f, -300.0f }, "GAME_START_B", "Intermediate Expedition", // 중급.
+            [this]() {
+                auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Intermediate)) CreateExpedition(); });
+
+        CreateUIButton(L"HigherBtn", { 400.0f, -400.0f }, "GAME_START_B", "Higher Expedition", // 상급.
+            [this]() {
+                auto& sys = JDGameSystem::ExpeditionSystem::Instance();
+                if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Higher)) CreateExpedition(); });
+
+
         // 병영.
-        m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -500.0f, 100.0f }, "house");
+        m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -210.0f, 75.0f }, "house");
 
         // 성벽.
-        m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -800.0f, 100.0f }, "house");
+        // m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -300.0f, 75.0f }, "house");
 
         { // 테스트. UI에 필요한 정보를 게임씬에서 어떻게 가져오는지.
 
@@ -109,6 +127,7 @@ namespace JDScene {
         ClickUpdate();
         MoveEnemyObjects(deltaTime); // 적 이동.
         MovePlayerObjects(deltaTime); // 아군 이동.
+        MoveExpedition(deltaTime); // 원정대 이동.
 
         AttackWall(deltaTime); // 적이 성 공격하는 것 관리.
 
@@ -184,8 +203,9 @@ namespace JDScene {
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
             if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
-                float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
-                SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
+                //float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
+                //SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
+                SpawnWaveEnemy({ 1010.0f, 245.0f });
                 AddEnemyDay(warningDay);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
             }
@@ -297,7 +317,7 @@ namespace JDScene {
             }
 
             // 성벽이랑 충돌하면 멈추고 성벽을 공격함.
-            if (m_wallObject) {
+            /*if (m_wallObject) {
                 auto* wallTm = m_wallObject->GetComponent<Transform>();
                 if (!wallTm)  continue;
                 Vector2F diffPos = wallTm->GetPosition() - transform->GetPosition();
@@ -311,9 +331,21 @@ namespace JDScene {
                     continue;
                 }
                 wallDir = diffPos.Normalized();
-            }
+            }*/
 
-            // 이동 적용.
+            Vector2F diffPos = m_wallPos - transform->GetPosition();
+
+            if (diffPos.Length() <= 10.0f) {
+                objPtr->SetState(JDGlobal::Contents::State::Idle);
+
+                auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
+                    [&](auto& a) { return a.enemy == objPtr.get(); });
+                if (it == m_attackers.end()) { m_attackers.push_back({ objPtr.get(), 0.0f }); }
+                continue;
+            }
+            wallDir = diffPos.Normalized();
+
+            // 이동 적용.             
             Vector2F delta = wallDir * (speed * deltaTime);
             Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
@@ -449,6 +481,38 @@ namespace JDScene {
         }
     }
 
+    void GameScene::MoveExpedition(float deltaTime) {
+        const float speed = 100.0f;
+
+        if (!m_expeditionObject) return;
+
+        auto* transform = m_expeditionObject->GetComponent<Transform>();
+        auto* sfx = m_expeditionObject->GetComponent<JDComponent::SFX>();
+
+        if (!transform) return;
+
+        Vector2F target = m_waypoints[m_currentWaypointIndex];
+        Vector2F current = transform->GetPosition();
+        
+        Vector2F diff = target - current;
+        float dist = diff.Length();
+
+        if (dist < 10.0f) { // 각 중간 지점에 도달하면 목표 지점을 다음 것으로 바꾼다.
+            m_currentWaypointIndex = (m_currentWaypointIndex + 1) % m_waypoints.size();
+
+            if (m_currentWaypointIndex == 0) { // 만약 마지막 지점에 도착했으면 원정 결과를 적용하고, 원정대를 삭제한다. 
+                JDGameSystem::ExpeditionSystem::Instance().ResolveExpedition();
+                SafeDestroy(m_expeditionObject);
+                std::cout << "[GameScene] 원정 끝." << std::endl;
+            }
+        }
+        else {
+            Vector2F direction = diff.Normalized();
+            current += direction * speed * deltaTime;
+            transform->SetPosition(current);
+        }
+    }
+
     void GameScene::AttackWall(float deltaTime) {
         for (auto it = m_attackers.begin(); it != m_attackers.end();) {
             it->timer += deltaTime;
@@ -552,12 +616,14 @@ namespace JDScene {
                         }
                         else if (m_isBarracksSelected && !m_battleObject && (isEnemyTag && !m_targetEnemy) && m_playerArmy.GetTotalUnits() > 0) {
                             m_targetEnemy = gameObj;
-                            SpawnPlayerArmy({ -400.0f, 100.0f });
+                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(pos);
                             //m_isBarracksSelected = false;
                             std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
                         }
                         else if (m_isBarracksSelected && tag == JDGlobal::Base::GameTag::BattleAnim && m_playerArmy.GetTotalUnits() > 0) {
-                            SpawnPlayerArmy({ -400.0f, 100.0f });
+                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(pos);
                             //m_isBarracksSelected = false;
                             std::cout << "[GameScene] 병영 클릭 -> 전투중 클릭." << std::endl;
                         }
@@ -586,7 +652,8 @@ namespace JDScene {
         if (m_playerObject == obj) m_playerObject = nullptr;
         if (m_barracksObject == obj) m_barracksObject = nullptr;
         if (m_battleObject == obj) m_battleObject = nullptr;
-        if (m_wallObject == obj) m_wallObject = nullptr;
+        // if (m_wallObject == obj) m_wallObject = nullptr;
+        if (m_expeditionObject == obj) m_expeditionObject = nullptr;
         if (GetSelectedObject() == obj) SetSelectedObject(nullptr);
 
         m_attackers.erase(
@@ -610,7 +677,7 @@ namespace JDScene {
 
         obj->SetTag(tag);
         obj->SetState(state);
-        obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::Cat, 1 });
 
         auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
         Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
@@ -655,6 +722,28 @@ namespace JDScene {
         btn->AddOnClick(clickEventName, callback);
 
         return btn;
+    }
+
+    // 원정대 생성 함수
+    void GameScene::CreateExpedition() {
+        auto* obj = CreateGameObject<Soldier>(L"playerObj");
+
+        obj->SetTag(JDGlobal::Base::GameTag::Player);
+        obj->SetState(JDGlobal::Contents::State::Idle);
+        obj->AddComponent<JDComponent::TextureRenderer>("f1", RenderLayerInfo{ SortingLayer::Cat, 1 });
+
+        // auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture("f1"));
+        // Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+        // obj->AddComponent<JDComponent::BoxCollider>(size);
+        // obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
+
+        Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+        obj->GetComponent<Transform>()->SetPosition(pos);
+        obj->AddComponent<JDComponent::SFX>("Step");
+
+        m_expeditionObject = obj;
+
+        std::cout << "[GameScene] 원정대 생성." << std::endl;
     }
 
     void GameScene::CreateMap()

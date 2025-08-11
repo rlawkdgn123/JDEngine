@@ -29,6 +29,7 @@ public:
     int GetCurrDay() const { return m_currDay; }
     int GetCurrStage() const { return m_currStage; }
     const WaveData* GetWave(int day) const;
+    std::vector<int> GetRemainingDays() const;
 
     void SetCurrDay(int day) { m_currDay = day; }
     void SetCurrStage(int stage) { m_currStage = stage;  m_currDay = 1; }

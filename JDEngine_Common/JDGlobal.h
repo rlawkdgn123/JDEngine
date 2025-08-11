@@ -267,5 +267,10 @@ namespace JDGlobal {
 			Resource m_resourceSubPerSec[MAX_GAME_LEVEL];    // 초당 자원 유지비용 (소모)
 			void PrintStats();
 		};
+
+		//struct UnitTypeStats {      // ArmySystem에 
+		//	Resource m_recruitCos;  // 필요 코스트.
+		//	int m_power;            // 전투력.
+		//};
 	}
 }

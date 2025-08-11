@@ -51,6 +51,7 @@ namespace JDScene {
 
         void MoveEnemyObjects(float deltaTime);
         void MovePlayerObjects(float deltaTime);
+        void MoveExpedition(float deltaTime);
 
         void AttackWall(float deltaTime);
 
@@ -68,6 +69,8 @@ namespace JDScene {
         GameObjectBase* CreateUIButton( const std::wstring& name, const Vector2F& pos,
             const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // 버튼.
 
+        // 원정대.
+        void CreateExpedition();
 
         bool IsEnemySpawned(int day) const {
             return std::find(m_showedDays.begin(), m_showedDays.end(), day) != m_showedDays.end();
@@ -109,17 +112,25 @@ namespace JDScene {
 
         const float m_dayTime = 10.0f;
         float m_elapsedTime = 0.0f;
-        const float m_battleTime = 5.0f;
+        const float m_battleTime = 2.0f;
         float m_btlElapsedTime = 0.0f;
 
-        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;    // 처음 선택된 적.
-        JDGameObject::GameObjectBase* m_playerObject = nullptr;   // 처음 아군.
-        JDGameObject::GameObjectBase* m_barracksObject = nullptr; // 아군 병영.
-        JDGameObject::GameObjectBase* m_battleObject = nullptr;   // 싸우는 애니메이션 보여줄 오브젝트.
-        JDGameObject::GameObjectBase* m_wallObject = nullptr;     // 아군 성벽.
+        JDGameObject::GameObjectBase* m_targetEnemy = nullptr;       // 처음 선택된 적.
+        JDGameObject::GameObjectBase* m_playerObject = nullptr;      // 처음 아군.
+        JDGameObject::GameObjectBase* m_barracksObject = nullptr;    // 아군 병영.
+        JDGameObject::GameObjectBase* m_battleObject = nullptr;      // 싸우는 애니메이션 보여줄 오브젝트.
+        //JDGameObject::GameObjectBase* m_wallObject = nullptr;        // 아군 성벽.
+        JDGameObject::GameObjectBase* m_expeditionObject = nullptr;  // 원정대. 
 
-        std::vector<Attacker> m_attackers;       // 현재 성벽을 공격 중인 적들
-        int   m_wallHealth = 1000;            // 성벽 체력 초기값
+        Vector2F m_wallPos = { -300.0f, 75.0f }; // 성벽 위치.
+
+        int m_currentWaypointIndex = 0;
+        std::array<Vector2F, 3> m_waypoints = { Vector2F{ 255.0f, -135.0f },
+                                                Vector2F{ 755.0f, -115.0f },
+                                                Vector2F{ 1010.0f, -175.0f }}; // 원정대가 갈 곳.
+
+        std::vector<Attacker> m_attackers;    // 현재 성벽을 공격 중인 적들.
+        int   m_wallHealth = 1000;            // 성벽 체력 초기값.
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
 

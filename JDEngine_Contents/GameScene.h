@@ -10,21 +10,23 @@
 #include "CameraFader.h"
 #include "ParticleSystem.h"
 #include "BuildSystem.h"
-
 #include "ArmySystem.h"
+
+using namespace JDGameObject::Content;
+class GameTimer;
+
 namespace JDScene {
     struct Attacker {
         JDGameObject::GameObjectBase* enemy;  // 공격 대상 적
         float timer;                          // 공격 타이머 누적
     };
 
+    using Image = JDGameObject::Content::Image;
+    using Text = JDGameObject::Content::Text;
+    using Button = JDGameObject::Content::Button;
 
     class GameScene : public SceneBase
     {
-        using Image = JDGameObject::Content::Image;
-        using Text = JDGameObject::Content::Text;
-        using Button = JDGameObject::Content::Button;
-
     public:
         GameScene(SceneType type, std::string id) : SceneBase(type, id) {}
 
@@ -55,21 +57,21 @@ namespace JDScene {
 
         void AttackWall(float deltaTime);
 
-        void ClickUpdate();
-
         void SafeDestroy(GameObjectBase* obj);
 
+        void ClickUpdate();
+
         // 공통 생성 함수.
-        GameObjectBase* CreateSoldierUnit( const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
+        GameObjectBase* CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
             JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName); // 병사.
 
-        GameObjectBase* CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag, 
+        GameObjectBase* CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag,
             const Vector2F& pos, const std::string& textureName); // 구조물.
 
-        GameObjectBase* CreateUIButton( const std::wstring& name, const Vector2F& pos,
+        GameObjectBase* CreateUIButton(const std::wstring& name, const Vector2F& pos,
             const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // 버튼.
 
-        // ������.
+        // 원정대 생성.
         void CreateExpedition();
 
         bool IsEnemySpawned(int day) const {
@@ -80,26 +82,66 @@ namespace JDScene {
             if (!IsEnemySpawned(day)) m_showedDays.push_back(day);
         }
 
+        // 1. 건설 UI
+        // void InitBuildMenu();
+        // void ShowBuildMenu();
+        // void CloseBuildMenu();
+
+        // 건설 UI
+        //void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        //void CloseBuildInfo();
+        //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
+
         ////////////////////////////////////////////////////////////////////////////////
-        // 맵 생성 함수
+        // 1. 건설 UI
+        void InitGridCreateMenu();
+        void ShowGridCreateMenu();
+        void CloseGridCreateMenu();
+
+        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void CloseGridCreateInfo();
+
+        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
         ////////////////////////////////////////////////////////////////////////////////
-        void CreateMap();
+        // 2. 업그레이드 UI
+        void InitGridSettingMenu();
+        void ShowGridSettingMenu();
+        // void ShowUpgradeMenu();
+        void CloseGridSettingMenu();
 
-        void InitBuildMenu();
-        void ShowBuildMenu();
-        void CloseBuildMenu();
+        // 업그레이드 UI 
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void CloseCatInfo();
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
 
-        void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
-        void CloseBuildInfo();
+        ////////////////////////////////////////////////////////////////////////////////
+        // 3. 징병 UI
+        void InitAwayMenu();
+        void ShowAwayMenu();
+        void CloseAwayMenu();
 
-        void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        // 징병 UI
+        void ShowAwayPopup();
+        void CloseAwayPopup();
 
-        void ShowFilledMenu();
+        // 게임 맵을 생성합니다.
+        void CreateGameMap();
+
+        // 배속 버튼 관리
+        void GameSpeedButtonUpdate();
 
     private:
         FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
 
+        std::unique_ptr<ParticleSystem> m_lightParticles;
+        Vector2F                        m_emitterPos;
+
+        CameraFader  m_fader;
+
+        // 전투 관련 변수.
         std::vector<bool> m_isOpen;
         std::vector<int> m_showedDays;
 
@@ -131,29 +173,27 @@ namespace JDScene {
         int m_currentWaypointIndex = 0;
         std::array<Vector2F, 3> m_waypoints = { Vector2F{ 255.0f, -135.0f },
                                                 Vector2F{ 755.0f, -115.0f },
-                                                Vector2F{ 1010.0f, -175.0f }}; // 원정대 경로.
-                                                
+                                                Vector2F{ 1010.0f, -175.0f } }; // 원정대 경로.
+
         std::vector<Attacker> m_attackers;    // 현재 성벽을 공격 중인 적들
         int   m_wallHealth = 1000;            // 성벽 체력 초기값
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
 
-
-
-        ////////////////////////////////////////////////////////////////////////////////
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
 
         std::unique_ptr <BuildSystem> m_buildSystem;
-        std::vector<UIObject*> m_TutorialUIObjects;
+
 
         // 그리드
         int m_totalCols = 4;
         int m_totalRows = 6;
         // std::vector<bool> m_isOpen;
 
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridCreateButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        bool m_GirdClicked;
 
         Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;
@@ -199,6 +239,12 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        // 원정 이미지
+        Image* m_away = nullptr;
+        Image* m_awayGauge = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
         bool isGridBuild = false;
         bool isGridSetting = false;
@@ -208,7 +254,7 @@ namespace JDScene {
         Image* m_defaultUI = nullptr;           // 0. 기본 UI
         Image* m_buildUI = nullptr;             // 1. 건설 UI
         Image* m_upgradeUI = nullptr;           // 2. 업그레이드 및 고양이 배치 UI
-        Image* m_awayUI = nullptr;        // 3. 징병 및 원정 UI
+        Image* m_awayUI = nullptr;              // 3. 징병 및 원정 UI
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -234,10 +280,98 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 필터, 나래이션
-        Image* m_fillter = nullptr;
-        Text* m_narration = nullptr;
+        // 2. 업그레이드 Info
+        // 고양이 배치
+        Text* m_catTypeText = nullptr;
+
+        Text* m_catCostInfoText = nullptr;
+        Text* m_catCostText = nullptr;
+        Image* m_catCostImage = nullptr;
+
+        Text* m_catEffectInfoText = nullptr;
+        Text* m_catEffectText = nullptr;
+        Image* m_catEffctImage = nullptr;
+
+        // 고양이 선택 버튼
+        Button* m_naviSetButton = nullptr;
+        Button* m_felisSetButton = nullptr;
+        Button* m_koneSetButton = nullptr;
+
+        // 업그레이드 건물 정보
+        Text* m_builtTypeText = nullptr;
+
+        Text* m_upgradeCostInfoText = nullptr;
+        Text* m_upgradeCostText = nullptr;
+        Image* m_upgradeCostImage = nullptr;
+
+        Text* m_upgradeEffectInfoText = nullptr;
+        Text* m_upgradeEffectText = nullptr;
+        Image* m_upgradeEffctImage = nullptr;
+
+        Button* m_downgradeButton = nullptr;
+        Button* m_upgradeButton = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
+
+        // 3. 징병 & 원정 Info
+
+        /////
+        // 견습 냥이
+        Button* m_trainerCatButton = nullptr;
+        Text* m_trainerCatName = nullptr;
+
+        Text* m_trainerCatCostInfo = nullptr;
+        Image* m_trainerCatCostImage01 = nullptr;
+        Text* m_trainerCatCostText01 = nullptr;
+        Image* m_trainerCatCostImage02 = nullptr;
+        Text* m_trainerCatCostText02 = nullptr;
+
+        Text* m_trainerCatRecruitInfo = nullptr;
+        Text* m_trainerCatRecruitText = nullptr;
+
+        Text* m_trainerCatPowerInfo = nullptr;
+        Text* m_trainerCatPowerText = nullptr;
+
+        /////
+        // 숙련 냥이
+        Button* m_expertCatButton = nullptr;
+        Text* m_expertCatName = nullptr;
+
+        Text* m_expertCatCostInfo = nullptr;
+        Image* m_expertCatCostImage01 = nullptr;
+        Text* m_expertCatCostText01 = nullptr;
+        Image* m_expertCatCostImage02 = nullptr;
+        Text* m_expertCatCostText02 = nullptr;
+
+        Text* m_expertCatRecruitInfo = nullptr;
+        Text* m_expertCatRecruitText = nullptr;
+
+        Text* m_expertCatPowerInfo = nullptr;
+        Text* m_expertCatPowerText = nullptr;
+
+        /////
+        // 원정 보내기
+        Text* m_awayInfo = nullptr;
+
+        Button* m_awayBeginner = nullptr;           // 초급
+        Button* m_awayIntermediate = nullptr;       // 중급
+        Button* m_awayAdvanced = nullptr;           // 상급
+
+        /////
+        // 원정 팝업
+        Image* m_awayPopupUI = nullptr;
+        Text* m_awayPopupInfo = nullptr;
+
+        Text* m_awayCostInfo = nullptr;
+        Image* m_awayCostImage01 = nullptr;
+        Text* m_awayCostText01 = nullptr;
+        Image* m_awayCostImage02 = nullptr;
+        Text* m_awayCostText02 = nullptr;
+
+        Text* m_awayAwardInfo = nullptr;
+        Text* m_awayAwardText01 = nullptr;
+        Text* m_awayAwardText02 = nullptr;
+
+        Button* m_awayButton = nullptr;
     };
 }

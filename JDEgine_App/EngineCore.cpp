@@ -1961,10 +1961,16 @@ void EngineCore::LoadResources()
 
     if (!AssetManager::Instance().LoadTexture("ART_Fast01", L"../Resource/BATTLE/ART_Fast01.png"))
     { std::cout << "[ERROR] ART_Fast01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Fast01_ing", L"../Resource/BATTLE/ART_Fast01_ing.png"))
+    { std::cout << "[ERROR] ART_Fast01_ing 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_Pause01", L"../Resource/BATTLE/ART_Pause01.png"))
     { std::cout << "[ERROR] ART_Pause01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Pause01_ing", L"../Resource/BATTLE/ART_Pause01_ing.png"))
+    { std::cout << "[ERROR] ART_Pause01_ing 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_Play01", L"../Resource/BATTLE/ART_Play01.png"))
     { std::cout << "[ERROR] ART_Play01 텍스처 로드 실패" << std::endl; }
+    if (!AssetManager::Instance().LoadTexture("ART_Play01_ing", L"../Resource/BATTLE/ART_Play01_ing.png"))
+    { std::cout << "[ERROR] ART_Play01_ing 텍스처 로드 실패" << std::endl; }
     if (!AssetManager::Instance().LoadTexture("ART_SettingIcon01", L"../Resource/BATTLE/ART_SettingIcon01.png"))
     { std::cout << "[ERROR] ART_SettingIcon01 텍스처 로드 실패" << std::endl; }
 

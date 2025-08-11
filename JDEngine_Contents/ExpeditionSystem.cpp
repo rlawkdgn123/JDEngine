@@ -41,8 +41,7 @@ namespace JDGameSystem {
 		} 
 
 		m_nowExpeditionGrade = grade; // 현재 진행중인 원정.
-		m_expeditionActive = false; // 원정 못가게 막기.
-
+		
 		auto& rs = ResourceSystem::Instance();
 
 		const Resource haveResource = rs.GetTotalResource(); // 현재 자원.
@@ -55,6 +54,8 @@ namespace JDGameSystem {
 			std::cout << "[ExpeditionSystem] lack of resources" << std::endl;
 			return false;
 		}
+
+		m_expeditionActive = false; // 원정 못가게 막기.
 
 		// 자원 감소.
 		rs.SetTotalResource(haveResource - needResource);

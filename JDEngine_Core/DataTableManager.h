@@ -6,6 +6,7 @@ class DataTableManager
 public:
     using BuildingStats = JDGlobal::Contents::BuildingStats;
     using HouseStats = JDGlobal::Contents::HouseStats;
+    using Resource = JDGlobal::Contents::Resource;
 public:
     static DataTableManager& Instance()
     {
@@ -15,6 +16,12 @@ public:
 
 public:
     void Initalize();
+    void GetStartResourcesTable(Resource& resource, int& population) {
+        resource.m_food = m_startResourceTable.m_food;
+        resource.m_wood = m_startResourceTable.m_wood;
+        resource.m_mineral = m_startResourceTable.m_mineral;
+        population = m_startResourceTable.m_population;
+    }
     void GetFishingSpotTable(BuildingStats& table) { table = m_fishingSpotTable; }
     void GetLumberMillTable(BuildingStats& table) { table = m_lumberMillTable; }
     void GetMineTable(BuildingStats& table) { table = m_mineTable; }
@@ -47,6 +54,8 @@ private:
     BuildingStats m_lumberMillTable;
     BuildingStats m_mineTable;
     HouseStats m_houseTable;
+
+    JDGlobal::Contents::StartResources m_startResourceTable;
 
     DataTableManager() = default;
     ~DataTableManager() = default;

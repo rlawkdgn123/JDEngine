@@ -18,11 +18,24 @@ namespace JDGlobal {
 		}
 
 		void BuildingStats::PrintStats() {
-			// 헤더 출력
-			std::cout << "자원,초기자원,"
-				<< "업그레이드비용_1,업그레이드비용_2,업그레이드비용_3,"
-				<< "자원획득_1,자원획득_2,자원획득_3,"
-				<< "자원소모_1,자원소모_2,자원소모_3\n";
+			// 늘어난 레벨에 맞춰 헤더를 동적으로 생성
+			std::cout << "자원,초기자원,";
+			std::cout << "업그레이드비용";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << ",자원획득";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << ",자원소모";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << "\n";
 
 			// Food 행 출력
 			std::cout << "Food : " << m_initResource.m_food << ",";
@@ -65,20 +78,33 @@ namespace JDGlobal {
 		}
 
 		void HouseStats::PrintStats() {
-			// 헤더 출력
-			std::cout << "데이터,"
-				<< "레벨_1,레벨_2,레벨_3,"
-				<< "업그레이드비용_1,업그레이드비용_2,업그레이드비용_3,"
-				<< "자원소모_1,자원소모_2,자원소모_3\n";
+			// 늘어난 레벨에 맞춰 헤더를 동적으로 생성
+			std::cout << "데이터,";
+			std::cout << "레벨";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << ",업그레이드비용";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << ",자원소모";
+			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
+				std::cout << "_" << (i + 1);
+				if (i < MAX_GAME_LEVEL - 1) std::cout << ",";
+			}
+			std::cout << "\n";
 
 			// Population 행 출력 (레벨당 인구)
 			std::cout << "Population : ";
 			for (int i = 0; i < MAX_GAME_LEVEL; ++i) {
 				std::cout << m_initPopulation[i] << ",";
 			}
-			// 인구 행은 다른 데이터가 없으므로 공백으로 채웁니다.
+			// 인구 행은 다른 데이터가 없으므로 빈 공간으로 채웁니다.
 			for (int i = 0; i < MAX_GAME_LEVEL * 2; ++i) {
-				std::cout << ",";
+				std::cout << " ,";
 			}
 			std::cout << "\n";
 
@@ -121,6 +147,15 @@ namespace JDGlobal {
 			}
 			std::cout << "\n";
 		}
-
+		
+		void StartResources::PrintResources() {
+			std::cout << "==================================" << std::endl;
+			std::cout << "Start Resources Info" << std::endl;
+			std::cout << "Food		 : " << this->m_food << std::endl;
+			std::cout << "Wood		 : " << this->m_wood << std::endl;
+			std::cout << "Mineral	 : " << this->m_mineral << std::endl;
+			std::cout << "Population : " << this->m_population << std::endl;
+			std::cout << "==================================" << std::endl;
+		}
 	}
 }

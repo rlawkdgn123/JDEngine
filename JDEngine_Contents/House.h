@@ -32,8 +32,11 @@ namespace JDGameObject {
             //void OnTriggerStay(GameObjectBase* other) override;
             //void OnTriggerExit(GameObjectBase* other) override;
 
+            bool LevelUp();
+            bool LevelDown();
         protected:
-            JDGlobal::Contents::HouseStats stats;
+            JDGlobal::Contents::HouseStats m_stats;
+            int m_curLevel = 0;
             ResourceSystem* m_resourceSystem;
         };
     }

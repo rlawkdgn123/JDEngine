@@ -115,19 +115,19 @@ namespace JDScene {
         void ClickUpdate();
 
         // 1. 건설 UI
-        void InitBuildMenu();
-        void ShowBuildMenu();
-        void CloseBuildMenu();
+        // void InitBuildMenu();
+        // void ShowBuildMenu();
+        // void CloseBuildMenu();
 
         // 건설 UI
-        void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
-        void CloseBuildInfo();
-        void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        //void ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        //void CloseBuildInfo();
+        //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
 
         // 2. 업그레이드 UI
         void InitUpgradeMenu();
-        void ShowUpgradeMenu();
+        // void ShowUpgradeMenu();
         void CloseUpgradeMenu();
 
         // 업그레이드 UI 
@@ -147,6 +147,20 @@ namespace JDScene {
 
         void ShowFilledMenu();
 
+
+        // 1. 건설 UI
+        void InitGridCreateMenu();
+        void ShowGridCreateMenu();
+        void CloseGridCreateMenu();
+
+        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void CloseGridCreateInfo();
+
+        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+
+        void ShowGridSettingMenu();
+
+
         // 게임 맵을 생성합니다.
         void CreateGameMap();
 
@@ -160,24 +174,22 @@ namespace JDScene {
         CameraFader  m_fader;
 
         std::shared_ptr<Camera> m_camera;
-        std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
-        std::vector<std::shared_ptr<UIObject>> m_UIObjects;
-        std::vector<GameObject*> m_TutorialObjects;
 
 
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
 
-        std::vector<UIObject*> m_TutorialUIObjects;
         std::unique_ptr <BuildSystem> m_buildSystem;
+
 
         // 그리드
         int m_totalCols = 4;
         int m_totalRows = 6;
         // std::vector<bool> m_isOpen;
 
-        std::vector<Button*> m_emptyButtons;
-        std::vector<Button*> m_filledButtons;
+        std::vector<Button*> m_gridCreateButtons;
+        std::vector<Button*> m_gridSettingButtons;
+        bool m_GirdClicked;
 
         Image* m_Menu = nullptr;
         std::vector<Button*> m_menuButtons;

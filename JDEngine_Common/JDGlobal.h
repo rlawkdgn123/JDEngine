@@ -3,7 +3,7 @@
 #include "framework.h"
 
 namespace JDMath = JDGlobal::Math;
-namespace JDGlobal {	
+namespace JDGlobal {
 	namespace Base {
 
 		// 인게임 식별용 태그 (현재는 태그 임의)
@@ -32,7 +32,7 @@ namespace JDGlobal {
 			Cat,
 			Front,
 		};
-		
+
 		struct RenderLayerInfo {
 			SortingLayer sortingLayer;
 			int orderInLayer = 0;
@@ -215,26 +215,61 @@ namespace JDGlobal {
 			Mine,
 			Lab
 		};
-		
-		
+
+
 
 		struct Cats {
 			int Felis;
 			int Navi;
 			int Kone;
-			inline int GetAllCats() {return (Felis + Navi + Kone);}
+			inline int GetAllCats() { return (Felis + Navi + Kone); }
+		};
+
+		struct CatSynergyBonus {
+			CatSynergyBonus()
+				: FelisBonus{ 0,10,0 },
+				NaviBonus{ 10,0,0 },
+				KoneBonus{ 0,0,10 },
+				FelisPenalty{ 0,-10,0 },
+				NaviPenalty{ -10,0,0 },
+				KonePenalty{ 0,0,-10 }
+			{}
+
+			Resource FelisBonus;
+			Resource FelisPenalty;
+
+			Resource NaviBonus;
+			Resource NaviPenalty;
+
+			Resource KoneBonus;
+			Resource KonePenalty;
 		};
 
 		struct CatResourceBonus {
 			CatResourceBonus()
-				: FelisBonus( 10,0,0 ),
-				NaviBonus( 0, 10, 0),
-				KoneBonus(0, 0, 10) {}
-
+				: FelisBonus(0, 10, 0),
+				NaviBonus(10, 0, 0),
+				KoneBonus(0, 0, 10) {
+			}
 			Resource FelisBonus;
 			Resource NaviBonus;
 			Resource KoneBonus;
 		};
+
+		struct NationBonus {
+			NationBonus()
+				: FelisBonus(0, 10, 0),
+				NaviBonus(10, 0, 0),
+				KoneBonus(0, 0, 10) {
+			}
+
+			Resource FelisBonus;
+			Resource NaviBonus;
+			Resource KoneBonus;
+			void PrintBonus();
+		};
+
+
 
 		enum class State { // 상태.
 			Idle,
@@ -247,6 +282,15 @@ namespace JDGlobal {
 			Novice = 0, // 견습냥이.
 			Expert, // 숙련냥이
 			Count
+		};
+
+		// 방향 (0:상,1:하,2:좌,3:우)
+		enum class Direction : int
+		{
+			North = 0,
+			South,
+			East,
+			West
 		};
 
 		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
@@ -295,6 +339,8 @@ namespace JDGlobal {
 			int m_population;
 			void PrintResources();
 		};
+
+		
 
 	}
 }

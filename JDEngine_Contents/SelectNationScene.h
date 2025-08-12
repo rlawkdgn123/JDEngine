@@ -72,7 +72,7 @@ namespace JDScene {
         Button* m_koneImageButton = nullptr;        // 코네 이미지 버튼
 
         // 클릭한 고양이 국가 ( 기본값 )
-        CatType m_selectedNation = CatType::CatTypeMAX;
+        CatType m_selectedNation = CatType::None;
 
         // 초임 집사, 경험있는 집사 선택 버튼
         // Button* m_newCatParentButton = nullptr;      // (튜토리얼 로직 변경에 따라서 사용하지 않게되었음.)

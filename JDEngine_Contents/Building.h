@@ -21,7 +21,7 @@ namespace JDGameObject {
             }
 
         public:
-
+            
             virtual void Awake() override;                               // 최초 1회만 호출
             virtual void Start() override;                               // 최초 1회만 호출
             virtual void Update(float deltaTime) override;
@@ -30,7 +30,9 @@ namespace JDGameObject {
             bool ChangeCat(CatType newCat);
             bool LevelUp();
             bool LevelDown();
-
+            void PrintCat();
+            CatType GetCatType() { return m_cat; }
+            int GetLevel() { return m_curLevel; }
         protected:
 
             JDGlobal::Contents::BuildingStats m_stats;

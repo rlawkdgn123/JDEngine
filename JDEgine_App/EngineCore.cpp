@@ -158,7 +158,7 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    SceneManager::Instance().ChangeScene("TitleScene");
+     SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
@@ -617,29 +617,6 @@ void EngineCore::RenderImGui()
             selectObject->SetTag(static_cast<JDGlobal::Base::GameTag>(currentTag));
         }
         ImGui::PopItemWidth();
-
-        //////////////////////////////////////////////////////////////////////////
-        ////테스트용//////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////
-        if (auto* grid = dynamic_cast<Grid*>(selectObject)) {
-            ImGui::Text("isOccupied - 확장 완료했는지"); ImGui::SameLine();
-            bool isOccupied = grid->IsOccupied();
-            ImGui::Checkbox("##isOccupied", &isOccupied);
-            grid->SetOccupied(isOccupied);
-
-            ImGui::Text("isExpanded - 레벨업 시 확장 선택 가능한지"); ImGui::SameLine();
-            bool isExpanded = grid->IsExpanded();
-            ImGui::Checkbox("##isExpanded", &isExpanded);
-            grid->SetExpanded(isExpanded);
-
-            ImGui::Text("hasBuilding - 건물 소유중인지"); ImGui::SameLine();
-            bool hasBuilding = grid->HasBuilding();
-            ImGui::Checkbox("##hasBuilding", &hasBuilding);
-            grid->SetHasBuilding(hasBuilding);
-        }
-        //////////////////////////////////////////////////////////////////////////
-        ////테스트용//////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////
 
         ////////////////////////////////////////////////////////////////////////////////
         // Transform
@@ -1810,6 +1787,115 @@ void EngineCore::RenderImGui()
     {
         ImGui::Text("No object selected");
     }
+
+    //////////////////////////////////////////////////////////////////////////
+       ////테스트용//////////////////////////////////////////////////////////////
+       //////////////////////////////////////////////////////////////////////////
+       if (auto* grid = dynamic_cast<Grid*>(selectObject)) {
+
+           ImGui::Separator();
+           ImGui::Spacing();
+           ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 105, 180, 255)); // 핑크색 (분홍색)
+           ImGui::Text("Grid");
+           ImGui::PopStyleColor();
+           ImGui::Spacing();
+
+
+           ImGui::Text("isOccupied"); ImGui::SameLine();
+           bool isOccupied = grid->IsOccupied();
+           ImGui::Checkbox("##isOccupied", &isOccupied);
+           grid->SetOccupied(isOccupied);
+
+           ImGui::Text("isExpanded"); ImGui::SameLine();
+           bool isExpanded = grid->IsExpanded();
+           ImGui::Checkbox("##isExpanded", &isExpanded);
+           grid->SetExpanded(isExpanded);
+
+           ImGui::Text("hasBuilding "); ImGui::SameLine();
+           bool hasBuilding = grid->HasBuilding();
+           ImGui::Checkbox("##hasBuilding", &hasBuilding);
+           grid->SetHasBuilding(hasBuilding);
+
+           if (grid->HasBuilding()) {
+               ImGui::Text("NowBuilding"); ImGui::SameLine();
+               wstring buildingTextW = grid->GetBuilding()->GetName();
+               std::string buildingTextS;
+               buildingTextS.assign(buildingTextW.begin(), buildingTextW.end());
+               ImGui::Text(buildingTextS.c_str());
+
+               ImGui::Text("Level :"); ImGui::SameLine();
+               if (auto* building = dynamic_cast<Building*>(grid->GetBuilding())) {
+                   ImGui::Text(to_string(building->GetLevel()).c_str());
+               }
+               else if (auto* house = dynamic_cast<House*>(grid->GetBuilding())) {
+                   ImGui::Text(to_string(house->GetLevel()).c_str());
+               }
+               
+           }
+
+          
+           wstring buildingTextW;
+           std::string buildingTextS;
+
+            ImGui::Text("North"); ImGui::SameLine();
+            if (grid->GetOtherGrid(JDGlobal::Contents::Direction::North)) {
+                buildingTextW = grid->GetOtherGrid(JDGlobal::Contents::Direction::North)->GetName();
+                buildingTextS.assign(buildingTextW.begin(), buildingTextW.end());
+            }
+            else {
+                buildingTextS = "NULL";
+            }
+            ImGui::Text(buildingTextS.c_str());
+
+
+            ImGui::Text("South"); ImGui::SameLine();
+            if (grid->GetOtherGrid(JDGlobal::Contents::Direction::South)) {
+                buildingTextW = grid->GetOtherGrid(JDGlobal::Contents::Direction::South)->GetName();
+                buildingTextS.assign(buildingTextW.begin(), buildingTextW.end());
+            }
+            else {
+                buildingTextS = "NULL";
+            }
+            ImGui::Text(buildingTextS.c_str());
+    
+
+            ImGui::Text("West"); ImGui::SameLine();
+            if (grid->GetOtherGrid(JDGlobal::Contents::Direction::West)) {
+                buildingTextW = grid->GetOtherGrid(JDGlobal::Contents::Direction::West)->GetName();
+                buildingTextS.assign(buildingTextW.begin(), buildingTextW.end());
+            }
+            else {
+                buildingTextS = "NULL";
+            }
+            ImGui::Text(buildingTextS.c_str());
+
+            ImGui::Text("East"); ImGui::SameLine();
+            if (grid->GetOtherGrid(JDGlobal::Contents::Direction::East)) {
+                buildingTextW = grid->GetOtherGrid(JDGlobal::Contents::Direction::East)->GetName();
+                buildingTextS.assign(buildingTextW.begin(), buildingTextW.end());
+            }
+            else {
+                buildingTextS = "NULL";
+            }
+            ImGui::Text(buildingTextS.c_str());
+
+            ImGui::Text("CurCat"); ImGui::SameLine();
+            switch(grid->GetCatType()) {
+            case CatType::Felis: ImGui::Text("Felis"); ImGui::SameLine(); break;
+            case CatType::Navi: ImGui::Text("Navi"); ImGui::SameLine(); break;
+            case CatType::Kone: ImGui::Text("Kone"); ImGui::SameLine(); break;
+            case CatType::None: ImGui::Text("None"); ImGui::SameLine(); break;
+            default: ImGui::Text("Default"); ImGui::SameLine(); break;
+            }
+       }
+
+
+       //////////////////////////////////////////////////////////////////////////
+       ////테스트용//////////////////////////////////////////////////////////////
+       //////////////////////////////////////////////////////////////////////////
+
+
+
     ImGui::End();
 
     context->OMSetRenderTargets(1, &rtv, nullptr);

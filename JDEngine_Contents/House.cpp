@@ -17,8 +17,11 @@ namespace JDGameObject {
         }
         void House::Start()
         {
+            cout << "하우스 쓰따뜨" << endl;
             m_resourceSystem->AddTotalResource(-m_stats.m_upgradeCost[m_curLevel]); // 건축 시 초기 비용을 차감
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[0]); // 초기 인구수 증가량 (레벨 0의 인구수)을 적용
+            cout << m_stats.m_initPopulation[0] << endl;
+            cout << m_resourceSystem->GetMaxPopulation() << endl;
             m_resourceSystem->AddResourcePerSec(m_stats.m_resourceSubPerSec[0]); // 초당 자원 소모량(유지비)을 적용합니다.
         }
         void House::Update(float deltaTime)
@@ -71,6 +74,7 @@ namespace JDGameObject {
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[m_curLevel + 1] - m_stats.m_initPopulation[m_curLevel]);
 
             ++m_curLevel;
+
             return true;
         }
         bool House::LevelDown()

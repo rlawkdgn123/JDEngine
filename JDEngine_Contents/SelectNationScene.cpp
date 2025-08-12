@@ -153,7 +153,9 @@ namespace JDScene {
         m_newCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_newCatParentButton->AddOnClick("Load GameScene", []() {
+        m_newCatParentButton->AddOnClick("Load GameScene", [this]() {
+            // TODO : 게임 씬으로 이동
+            ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("TutorialScene");
             });
 
@@ -187,8 +189,9 @@ namespace JDScene {
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_experiencedCatParentButton->AddOnClick("Load GameScene", []() {
+        m_experiencedCatParentButton->AddOnClick("Load GameScene", [this]() {
             // TODO : 게임 씬으로 이동
+            ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("GameScene");
             });
 

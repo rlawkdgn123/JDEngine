@@ -83,6 +83,7 @@ namespace JDScene {
         Image* m_optionControl = nullptr;
         Image* m_optionCredit = nullptr;
 
+        // 옵션 닫기 버튼
         Button* m_closeOption = nullptr;
 
         // 옵션 선택 실제 버튼
@@ -90,10 +91,10 @@ namespace JDScene {
         Button* m_selectControl = nullptr;
         Button* m_selectCredit = nullptr;
 
-        // 옵션 선택 더미 이미지
-        Image* m_selectVolumeDummy = nullptr;
-        Image* m_selectControlDummy = nullptr;
-        Image* m_selectCreditDummy = nullptr;
+        // 옵션 선택 더미 텍스트
+        Text* m_selectVolumeDummyText = nullptr;
+        Text* m_selectControlDummyText = nullptr;
+        Text* m_selectCreditDummyText = nullptr;
 
         // 볼륨 선택 슬라이더
         Slider* m_masterSlider = nullptr;

@@ -9,6 +9,7 @@
 #include "GameScene.h"
 #include "CombatSystem.h"
 #include "ExpeditionSystem.h"
+#include "TextRenderer.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -34,6 +35,9 @@ namespace JDScene {
 
         // 게임 맵 생성
         CreateGameMap();
+        CreateBarrackUI();
+        CreateOptionUI();
+        CreateFillter();
 
         //// 1) 배경
         //auto battleMap = CreateUIObject<Image>(L"BATTLE_MAP");
@@ -1850,7 +1854,7 @@ namespace JDScene {
         m_stopButton = CreateUIObject<Button>(L"UI_StopButton");
         m_stopButton->SetTextureName("ART_Pause01");
         m_stopButton->SetText(L"");
-        m_stopButton->SetSize({ 40, 47 });
+        m_stopButton->SetSize({ 60, 68 });
         m_stopButton->SetPosition({ 675.f, 475.f });
 
         // 정지 버튼 클릭하면 실행될 이벤트
@@ -1877,7 +1881,7 @@ namespace JDScene {
         m_playButton = CreateUIObject<Button>(L"UI_PlayButton");
         m_playButton->SetTextureName("ART_Play01");
         m_playButton->SetText(L"");
-        m_playButton->SetSize({ 31.5f, 45.f });
+        m_playButton->SetSize({ 51, 65 });
         m_playButton->SetPosition({ 760.f, 475.f });
 
         // 재생 버튼 클릭하면 실행될 이벤트
@@ -1904,7 +1908,7 @@ namespace JDScene {
         m_speedButton = CreateUIObject<Button>(L"UI_SpeedButton");
         m_speedButton->SetTextureName("ART_Fast01");
         m_speedButton->SetText(L"");
-        m_speedButton->SetSize({ 45.f, 45.f });
+        m_speedButton->SetSize({ 68, 68 });
         m_speedButton->SetPosition({ 842.f, 475.f });
 
         // 스피드 버튼 클릭하면 실행될 이벤트
@@ -1943,18 +1947,19 @@ namespace JDScene {
         m_optionButton->SetPosition({ 923, 482 });
 
         // 옵션 버튼 클릭하면 실행될 이벤트
-        m_optionButton->AddOnClick("Quit Game", [this]()
+        m_optionButton->AddOnClick("Show Option", [this]()
             {
-
+                std::cout << "클릭함?";
+                ShowOptionUI();
             });
 
-        // 스피드 버튼 마우스를 올리면 실행될 이벤트
+        // 옵션 버튼 마우스를 올리면 실행될 이벤트
         m_optionButton->AddOnEnter("Highlight On", [this]()
             {
 
             });
 
-        // 스피드 버튼 마우스가 벗어나면 실행될 이벤트
+        // 옵션 버튼 마우스가 벗어나면 실행될 이벤트
         m_optionButton->AddOnExit("Highlight Off", [this]()
             {
 
@@ -1965,15 +1970,36 @@ namespace JDScene {
         // 원정 이미지
         m_away = CreateUIObject<Image>(L"UI_Away");
         m_away->SetTextureName("ART_Away01");
-        m_away->SetSize({ 339.5f, 71.5f });
-        m_away->SetPosition({ 778.7f, -313.3f });
-        m_away->SetAnchor({ 1.0f, 1.0f });
+        m_away->SetSize({ 322, 65 });
+        m_away->SetPosition({ 800, -300 });
+        m_away->SetAnchor({ 1.0f, 0.0f });
 
-        m_awayGauge = CreateUIObject<Image>(L"UI_AwayGauge");
-        m_awayGauge->SetTextureName("ART_AwayGauge01");
-        m_awayGauge->SetSize({ 316.f, 20.f });
-        m_awayGauge->SetPosition({ 778.7f, -327.0f });
-        m_awayGauge->SetAnchor({ 1.0f, 1.0f });
+        // 원정 현재 값
+        m_awayCurValue = CreateUIObject<Text>(L"UI_AwayCurValue");
+        m_awayCurValue->SetText(L"200");
+        m_awayCurValue->SetTextFormatName("Sebang_Bold_22");
+        m_awayCurValue->SetColor(D2D1::ColorF(0xD6BD94));
+        m_awayCurValue->SetSize({ 100, 50 });
+        m_awayCurValue->SetPosition({ 704, -300 });
+        m_awayCurValue->SetAnchor({ 1.0f, 0.0f });
+
+        // 원정 구분 선
+        m_awayDivText = CreateUIObject<Text>(L"UI_AwayDivText");
+        m_awayDivText->SetText(L"/");
+        m_awayDivText->SetTextFormatName("Sebang_Bold_22");
+        m_awayDivText->SetColor(D2D1::ColorF(0xD6BD94));
+        m_awayDivText->SetSize({ 100, 50 });
+        m_awayDivText->SetPosition({ 732, -300 });
+        m_awayDivText->SetAnchor({ 1.0f, 0.0f });
+
+        // 원정 최대 값
+        m_awayMaxValue = CreateUIObject<Text>(L"UI_AwayMaxValue");
+        m_awayMaxValue->SetText(L"200");
+        m_awayMaxValue->SetTextFormatName("Sebang_Bold_22");
+        m_awayMaxValue->SetColor(D2D1::ColorF(0xD6BD94));
+        m_awayMaxValue->SetSize({ 100, 50 });
+        m_awayMaxValue->SetPosition({ 760, -300 });
+        m_awayMaxValue->SetAnchor({ 1.0f, 0.0f });
 
         ////////////////////////////////////////////////////////////////////////////////
         // 0) 기본 UI
@@ -3161,12 +3187,14 @@ namespace JDScene {
             m_speedButton->SetTextureName("ART_Fast01_ing");
         }
     }
+
     void GameScene::DateUIUpdate()
     {
         m_yearText->SetText(std::to_wstring(m_date.year));
         m_monthText->SetText(std::to_wstring(m_date.month));
         m_dayText->SetText(std::to_wstring(m_date.day));
     }
+  
     void GameScene::SpawnNextWaveIndicator(int wavePower)
     {
         const Vector2F startPosIcon{ 570.0f, 440.0f };
@@ -3195,6 +3223,7 @@ namespace JDScene {
 
         m_nextWaveIndicators.push_back(ind);
     }
+  
     void GameScene::AdvanceNextWaveIndicators()
     {
         constexpr float kPerDay = -5.76f; // 하루 이동량
@@ -3234,5 +3263,421 @@ namespace JDScene {
             });
 
         m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
+    }
+  
+    void GameScene::CreateBarrackUI()
+    {
+        //////////
+        // (게임오브젝트로 UI 만들어야함)
+        // 
+        // 병영 텍스쳐
+        m_barrackUI = CreateGameObject<GameObject>(L"GameUI_BarrackHP");
+        m_barrackUI->SetTag(JDGameObject::GameObject::Tag::UI);
+        m_barrackUI->AddComponent<Editor_Clickable>();
+        m_barrackUI->AddComponent<JDComponent::TextureRenderer>("ART_Barracks_HP", RenderLayerInfo{SortingLayer::BackGround, 5});
+
+        m_barrackUI->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
+        m_barrackUI->GetComponent<JDComponent::TextureRenderer>()->SetSize({166, 80});
+
+        //////////
+        // 병영 체력 Cur / Div / Max 텍스트
+        // 현재 체력 Cur
+        m_barrackCurText = CreateGameObject<GameObject>(L"GameUI_BarrackCurHP");
+        m_barrackCurText->AddComponent<Editor_Clickable>();
+        m_barrackCurText->AddComponent<JDComponent::TextRenderer>();
+        
+        m_barrackCurText->GetComponent<JDComponent::Transform>()->SetPosition({ -200, 273 });
+
+        auto barrackCurTextRender = m_barrackCurText->GetComponent<JDComponent::TextRenderer>();
+        barrackCurTextRender->SetText(L"200");
+        barrackCurTextRender->SetTextFormatName("Sebang_12");
+        barrackCurTextRender->SetColor(D2D1::ColorF(0xD6BD94));
+
+        // 구분선 Div
+        m_barrackDivText = CreateGameObject<GameObject>(L"GameUI_BarrackDivHP");
+        m_barrackDivText->AddComponent<Editor_Clickable>();
+        m_barrackDivText->AddComponent<JDComponent::TextRenderer>();
+        
+        m_barrackDivText->GetComponent<JDComponent::Transform>()->SetPosition({ -185, 273 });
+
+        auto barrackDivTextRender = m_barrackDivText->GetComponent<JDComponent::TextRenderer>();
+        barrackDivTextRender->SetText(L"/");
+        barrackDivTextRender->SetTextFormatName("Sebang_12");
+        barrackDivTextRender->SetColor(D2D1::ColorF(0xD6BD94));
+
+        // 최대체력 Max
+        m_barrackMaxText = CreateGameObject<GameObject>(L"GameUI_BarrackMaxHP");
+        m_barrackMaxText->AddComponent<Editor_Clickable>();
+        m_barrackMaxText->AddComponent<JDComponent::TextRenderer>();
+        
+        m_barrackMaxText->GetComponent<JDComponent::Transform>()->SetPosition({ -170, 273 });
+
+        auto barrackMaxTextRender = m_barrackMaxText->GetComponent<JDComponent::TextRenderer>();
+        barrackMaxTextRender->SetText(L"200");
+        barrackMaxTextRender->SetTextFormatName("Sebang_12");
+        barrackMaxTextRender->SetColor(D2D1::ColorF(0xD6BD94));
+
+        //////////
+        // 전투력 Text
+        m_attackPowerText = CreateGameObject<GameObject>(L"GameUI_AttackPower");
+        m_attackPowerText->SetTag(JDGameObject::GameObject::Tag::UI);
+        m_attackPowerText->AddComponent<Editor_Clickable>();
+        m_attackPowerText->AddComponent<JDComponent::TextRenderer>();
+
+        m_attackPowerText->GetComponent<JDComponent::Transform>()->SetPosition({ -184, 253 });
+
+        auto attackPowerTextRender = m_attackPowerText->GetComponent<JDComponent::TextRenderer>();
+        attackPowerTextRender->SetText(L"2731245");
+        attackPowerTextRender->SetTextFormatName("Sebang_12");
+        attackPowerTextRender->SetColor(D2D1::ColorF(0xD6BD94));
+    }
+
+    void GameScene::CreateOptionUI()
+    {
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 옵션창
+        m_optionUI = CreateUIObject<Image>(L"Option_Popup");
+        m_optionUI->SetTextureName("ART_BG01_OPACITY");
+        m_optionUI->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
+        m_optionUI->SetActive(false);
+
+        auto cam = D2DRenderer::Instance().GetCamera();
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+
+            // 화면 크기로 설정
+            m_optionUI->SetSize(Vector2F{ screenWidth, screenHeight });
+            m_optionUI->SetPosition({ 0.0f,0.0f });
+            m_optionUI->SetPivot({ 0.5f, 0.5f });
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        //////////////////////////////////////////////////////////////////////////////////
+        // 볼륨 조절 창
+        //////////////////////////////////////////////////////////////////////////////////
+        m_optionVolume = CreateUIObject<Image>(L"Option_Volume");
+        m_optionVolume->SetTextureName("ART_Volume01_mousedown");
+        m_optionVolume->SetActive(false);
+        m_optionVolume->SetSize({ 1920, 1080 });
+        m_optionVolume->SetPosition({ 0.0f,0.0f });
+        m_optionVolume->SetPivot({ 0.5f, 0.5f });
+
+        //////////////////////////////////////////////////////////////////////////////////
+        // BGM 볼륨 조절 슬라이더
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 마스터 사운드
+        m_masterSlider = CreateUIObject<Slider>(L"Slider_MasterVolume");
+        m_masterSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        m_masterSlider->SetBackgroundImage("ART_VolumeSlider01");
+        m_masterSlider->SetFillImage("ART_VolumeSlider01");
+        m_masterSlider->SetHandleImage("ART_VolumeCat01");
+
+        m_masterSlider->SetSize({ 600, 8 });
+        m_masterSlider->SetRootSize({ 600, 60 });
+        m_masterSlider->SetPosition({ 150, 170 });
+        m_masterSlider->SetFillImagePosition({ -300, 0 });
+
+        m_masterSlider->SetHandleImageSize({ 57.f, 52.f });
+
+        // TODO : 마스터 볼륨으로 받아야함
+        //m_masterSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        //m_masterSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+        //    AudioManager::Instance().SetMusicVolume(newValue);
+        //    });
+
+        m_masterSlider->SetActiveSlider(false);
+
+        // 배경음
+        m_bgmSlider = CreateUIObject<Slider>(L"Slider_BGM");
+        m_bgmSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        m_bgmSlider->SetBackgroundImage("ART_VolumeSlider02");
+        m_bgmSlider->SetFillImage("ART_VolumeSlider02");
+        m_bgmSlider->SetHandleImage("ART_VolumeCat02");
+
+        m_bgmSlider->SetSize({ 600, 8 });
+        m_bgmSlider->SetRootSize({ 600, 60 });
+        m_bgmSlider->SetPosition({ 150, 28 });
+        m_bgmSlider->SetFillImagePosition({ -300, 0 });
+
+        m_bgmSlider->SetHandleImageSize({ 39.5f, 35.f });
+
+        m_bgmSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        m_bgmSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
+            AudioManager::Instance().SetMusicVolume(newValue);
+            });
+
+        m_bgmSlider->SetActiveSlider(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 효과음
+        m_sfxSlider = CreateUIObject<Slider>(L"Slider_SFX");
+        m_sfxSlider->Assemble(this); // 씬의 도움을 받아 슬라이더 자식들을 조립합니다.
+
+        m_sfxSlider->SetBackgroundImage("ART_VolumeSlider02");
+        m_sfxSlider->SetFillImage("ART_VolumeSlider02");
+        m_sfxSlider->SetHandleImage("ART_VolumeCat02");
+
+        m_sfxSlider->SetSize({ 600, 8 });
+        m_sfxSlider->SetRootSize({ 600, 60 });
+        m_sfxSlider->SetPosition({ 150, -42 });
+        m_sfxSlider->SetFillImagePosition({ -300, 0 });
+
+        m_sfxSlider->SetHandleImageSize({ 39.5f, 35.f });
+
+        m_sfxSlider->SetValue(AudioManager::Instance().GetSFXVolume());
+        m_sfxSlider->AddOnValueChanged("Set SFX Volume", [](float newValue) {
+            AudioManager::Instance().SetSFXVolume(newValue);
+            });
+
+        m_sfxSlider->SetActiveSlider(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 컨트롤 조절 창
+        m_optionControl = CreateUIObject<Image>(L"Option_Control");
+        m_optionControl->SetTextureName("ART_Control01_mousedown");
+        m_optionControl->SetSize({ 1920, 1080 });
+        m_optionControl->SetPosition({ 0.0f, 0.0f });
+        m_optionControl->SetPivot({ 0.5f, 0.5f });
+        m_optionControl->SetActive(false);
+
+        m_stopKeyText = CreateUIObject<Text>(L"StopKey_Text");
+        m_stopKeyText->SetText(L"1");
+        m_stopKeyText->SetSize({ 115.5f, 23.f });
+        m_stopKeyText->SetPosition({ 113, 184 });
+        m_stopKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_stopKeyText->SetActive(false);
+
+        m_playKeyText = CreateUIObject<Text>(L"PlayKey_Text");
+        m_playKeyText->SetText(L"2");
+        m_playKeyText->SetSize({ 115.5f, 23.f });
+        m_playKeyText->SetPosition({ 113, 100 });
+        m_playKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_playKeyText->SetActive(false);
+
+        m_speedKeyText = CreateUIObject<Text>(L"SpeedKey_Text");
+        m_speedKeyText->SetText(L"3");
+        m_speedKeyText->SetSize({ 115.5f, 23.f });
+        m_speedKeyText->SetPosition({ 113, 16 });
+        m_speedKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_speedKeyText->SetActive(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 크레딧 보기 창
+        m_optionCredit = CreateUIObject<Image>(L"Option_Credit");
+        m_optionCredit->SetTextureName("ART_Credit01_mousedown");
+        m_optionCredit->SetSize({ 1920, 1080 });
+        m_optionCredit->SetPosition({ 0.0f,0.0f });
+        m_optionCredit->SetPivot({ 0.5f, 0.5f });
+        m_optionCredit->SetActive(false);
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 옵션 선택 버튼 ( 볼륨 )
+        m_selectVolumeDummyText = CreateUIObject<Text>(L"VolumeDummy_Text");
+        m_selectVolumeDummyText->SetText(L"VOLUME");
+        m_selectVolumeDummyText->SetSize({ 115.5f, 23.f });
+        m_selectVolumeDummyText->SetPosition({ -497.f, 244.f });
+        m_selectVolumeDummyText->SetTextFormatName("Sebang_Bold_24");
+        m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+        m_selectVolumeDummyText->SetActive(false);
+
+        m_selectVolume = CreateUIObject<Button>(L"SelectVolume_Button");
+        m_selectVolume->SetTextureName("Test");
+        m_selectVolume->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+        m_selectVolume->SetText(L"");
+        m_selectVolume->SetSize({ 180, 70 });
+        m_selectVolume->SetPosition({ -497.4f, 244.1f });
+        m_selectVolume->SetActive(false);
+
+        m_selectVolume->AddOnClick("OpenVolumeUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            m_optionVolume->SetActive(true);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(false);
+
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+
+            m_bgmSlider->SetActiveSlider(true);
+            m_sfxSlider->SetActiveSlider(true);
+
+            m_stopKeyText->SetActive(false);
+            m_playKeyText->SetActive(false);
+            m_speedKeyText->SetActive(false);
+            });
+
+        // 옵션 선택 버튼 ( 컨트롤 )
+        m_selectControlDummyText = CreateUIObject<Text>(L"ControlDummy_Text");
+        m_selectControlDummyText->SetText(L"CONTROL");
+        m_selectControlDummyText->SetSize({ 115.5f, 23.f });
+        m_selectControlDummyText->SetPosition({ -497.f, 172.f });
+        m_selectControlDummyText->SetTextFormatName("Sebang_Bold_24");
+        m_selectControlDummyText->SetActive(false);
+
+        m_selectControl = CreateUIObject<Button>(L"SelectControl_Button");
+        m_selectControl->SetTextureName("Test");
+        m_selectControl->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+        m_selectControl->SetText(L"");
+        m_selectControl->SetSize({ 180, 70 });
+        m_selectControl->SetPosition({ -497.4f, 172.7f });
+        m_selectControl->SetActive(false);
+
+        m_selectControl->AddOnClick("OpenControlUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(true);
+            m_optionCredit->SetActive(false);
+
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
+
+            m_stopKeyText->SetActive(true);
+            m_playKeyText->SetActive(true);
+            m_speedKeyText->SetActive(true);
+            });
+
+        // 옵션 선택 버튼 ( 크레딧 )
+        m_selectCreditDummyText = CreateUIObject<Text>(L"CreditDummy_Text");
+        m_selectCreditDummyText->SetText(L"CREDITS");
+        m_selectCreditDummyText->SetSize({ 115.5f, 23.f });
+        m_selectCreditDummyText->SetPosition({ -497.f, 101.f });
+        m_selectCreditDummyText->SetTextFormatName("Sebang_Bold_24");
+        m_selectCreditDummyText->SetActive(false);
+
+        m_selectCredit = CreateUIObject<Button>(L"SelectCredit_Button");
+        m_selectCredit->SetTextureName("Test");
+        m_selectCredit->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+        m_selectCredit->SetText(L"");
+        m_selectCredit->SetSize({ 180, 70 });
+        m_selectCredit->SetPosition({ -497.4f, 101.6f });
+        m_selectCredit->SetActive(false);
+
+        m_selectCredit->AddOnClick("OpenCreditUI", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(true);
+
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
+
+            m_stopKeyText->SetActive(false);
+            m_playKeyText->SetActive(false);
+            m_speedKeyText->SetActive(false);
+            });
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        // 옵션 닫기 버튼 ( Close )
+        m_closeOption = CreateUIObject<Button>(L"CloseSetting_Button");
+        m_closeOption->SetTextureName("ART_Back01_mouseout");
+        m_closeOption->SetText(L"");
+        m_closeOption->SetSize({ 66, 60 });
+        m_closeOption->SetPosition({ -550, 340 });
+        m_closeOption->SetActive(false);
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        m_closeOption->AddOnClick("CloseOption", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            CloseOptionUI();
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        m_closeOption->AddOnEnter("Highlight On", [this]() {
+            // 텍스트 변경
+            m_closeOption->SetTextureName("ART_Back01_mouseover");
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        m_closeOption->AddOnExit("Highlight Off", [this]() {
+            // 텍스트 변경
+            m_closeOption->SetTextureName("ART_Back01_mouseout");
+            });
+
+        //////////////////////////////////////////////////////////////////////////////////
+    }
+    void GameScene::ShowOptionUI()
+    {
+        isOpenOption = true;
+
+        if (m_optionUI) {
+            m_optionUI->SetActive(true);
+            m_optionVolume->SetActive(true);
+
+            m_selectVolume->SetActive(true);
+            m_selectControl->SetActive(true);
+            m_selectCredit->SetActive(true);
+
+            m_closeOption->SetActive(true);
+
+            m_selectVolumeDummyText->SetActive(true);
+            m_selectControlDummyText->SetActive(true);
+            m_selectCreditDummyText->SetActive(true);
+
+            m_masterSlider->SetActiveSlider(true);
+            m_bgmSlider->SetActiveSlider(true);
+            m_sfxSlider->SetActiveSlider(true);
+        }
+    }
+    void GameScene::CloseOptionUI()
+    {
+        isOpenOption = false;
+
+        if (m_optionUI) {
+            m_optionUI->SetActive(false);
+            m_optionVolume->SetActive(false);
+
+            m_selectVolume->SetActive(false);
+            m_selectControl->SetActive(false);
+            m_selectCredit->SetActive(false);
+
+            m_closeOption->SetActive(false);
+
+            m_selectVolumeDummyText->SetActive(false);
+            m_selectControlDummyText->SetActive(false);
+            m_selectCreditDummyText->SetActive(false);
+
+            m_masterSlider->SetActiveSlider(false);
+            m_bgmSlider->SetActiveSlider(false);
+            m_sfxSlider->SetActiveSlider(false);
+        }
+    }
+    void GameScene::CreateFillter()
+    {
+        // 2) 필터
+        m_fillter = CreateUIObject<Image>(L"Fillter_Image");
+        m_fillter->SetTextureName("BATTLE_MAP_3_Exam");
+        m_fillter->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
+
+        auto cam = D2DRenderer::Instance().GetCamera();
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+
+            // 화면 크기로 설정
+            m_fillter->SetSize(Vector2F{ screenWidth, screenHeight });
+            m_fillter->SetPosition({ 0.0f,0.0f });
+            m_fillter->SetPivot({ 0.5f, 0.5f });
+        }
     }
 }

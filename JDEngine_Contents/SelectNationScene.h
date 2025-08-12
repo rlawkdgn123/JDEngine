@@ -66,7 +66,6 @@ namespace JDScene {
 
         // 선택된 국가 타이틀 텍스트를 담은 이미지
         Image* m_titleTextImage = nullptr;
-
         
         Button* m_naviImageButton = nullptr;        // 나비 이미지 버튼
         Button* m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
@@ -76,7 +75,7 @@ namespace JDScene {
         CatType m_selectedNation = CatType::CatTypeMAX;
 
         // 초임 집사, 경험있는 집사 선택 버튼
-        Button* m_newCatParentButton = nullptr;
+        // Button* m_newCatParentButton = nullptr;      // (튜토리얼 로직 변경에 따라서 사용하지 않게되었음.)
         Button* m_experiencedCatParentButton = nullptr;
     };
 }

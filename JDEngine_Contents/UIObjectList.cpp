@@ -174,6 +174,7 @@ namespace JDGameObject {
 			m_backgroundImage->GetComponent<RectTransform>()->SetParent(rootRect);
 			m_backgroundImage->GetComponent<RectTransform>()->SetAnchor({ 0.5f, 0.5f });
 			m_backgroundImage->GetComponent<RectTransform>()->SetPivot({ 0.5f, 0.5f });
+			m_backgroundImage->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
 
 			m_fillImage = scene->CreateUIObject<Image>(L"Slider_Fill");
 			auto fillRect = m_fillImage->GetComponent<RectTransform>();

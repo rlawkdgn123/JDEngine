@@ -100,7 +100,7 @@ namespace JDScene {
         gameStart->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
         gameStart->SetText(L"GAME START");
         gameStart->SetSize({ 360, 58 });
-        gameStart->SetPosition({ -522, -34 });
+        gameStart->SetPosition({ -522, -36 });
         gameStart->SetTextFormatName("Sebang_Bold_37");
         gameStart->SetTextColor(D2D1::ColorF(0xD6BD94));
 
@@ -240,6 +240,10 @@ namespace JDScene {
                     m_selectControlDummyText->SetActive(true);
                     m_selectCreditDummyText->SetActive(true);
 
+                    m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+                    m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+                    m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+
                     m_masterSlider->SetActiveSlider(true);
                     m_bgmSlider->SetActiveSlider(true);
                     m_sfxSlider->SetActiveSlider(true);
@@ -329,11 +333,10 @@ namespace JDScene {
 
         m_masterSlider->SetHandleImageSize({ 57.f, 52.f });
 
-        // TODO : 마스터 볼륨으로 받아야함
-        //m_masterSlider->SetValue(AudioManager::Instance().GetMusicVolume());
-        //m_masterSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
-        //    AudioManager::Instance().SetMusicVolume(newValue);
-        //    });
+        m_masterSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        m_masterSlider->AddOnValueChanged("Set Master Volume", [](float newValue) {
+            AudioManager::Instance().SetMasterVolume(newValue);
+            });
 
         m_masterSlider->SetActiveSlider(false);
 
@@ -453,6 +456,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
+            m_masterSlider->SetActiveSlider(true);
             m_bgmSlider->SetActiveSlider(true);
             m_sfxSlider->SetActiveSlider(true);
 
@@ -487,6 +491,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(0xD6BD94));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
+            m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
 
@@ -521,6 +526,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(0xD6BD94));
 
+            m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
 
@@ -560,6 +566,10 @@ namespace JDScene {
             m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
+
+            m_stopKeyText->SetActive(false);
+            m_playKeyText->SetActive(false);
+            m_speedKeyText->SetActive(false);
 
             isOpenOption = false;
             });

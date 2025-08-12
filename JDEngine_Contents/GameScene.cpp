@@ -10,6 +10,8 @@
 #include "CombatSystem.h"
 #include "ExpeditionSystem.h"
 #include "TextRenderer.h"
+#include "TitleScene.h"
+#include "SceneManager.h"
 
 using namespace std;
 using namespace JDGameObject::Content;
@@ -37,7 +39,7 @@ namespace JDScene {
         CreateGameMap();
         CreateBarrackUI();
         CreateOptionUI();
-        CreateFillter();
+        // CreateFillter();
 
         //// 1) 배경
         //auto battleMap = CreateUIObject<Image>(L"BATTLE_MAP");
@@ -1867,19 +1869,21 @@ namespace JDScene {
         // 정지 버튼 클릭하면 실행될 이벤트
         m_stopButton->AddOnClick("Quit Game", [this]()
             {
+                if (isOpenOption) { return; }
+
                 SetTimeScale(0.0f);
             });
 
         // 정지 버튼 마우스를 올리면 실행될 이벤트
         m_stopButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 정지 버튼 마우스가 벗어나면 실행될 이벤트
         m_stopButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -1894,19 +1898,21 @@ namespace JDScene {
         // 재생 버튼 클릭하면 실행될 이벤트
         m_playButton->AddOnClick("Quit Game", [this]()
             {
+                if (isOpenOption) { return; }
+
                 SetTimeScale(1.0f);
             });
 
         // 재생 버튼 마우스를 올리면 실행될 이벤트
         m_playButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 재생 버튼 마우스가 벗어나면 실행될 이벤트
         m_playButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -1915,12 +1921,14 @@ namespace JDScene {
         m_speedButton = CreateUIObject<Button>(L"UI_SpeedButton");
         m_speedButton->SetTextureName("ART_Fast01");
         m_speedButton->SetText(L"");
-        m_speedButton->SetSize({ 68, 68 });
-        m_speedButton->SetPosition({ 842.f, 475.f });
+        m_speedButton->SetSize({ 67, 72 });
+        m_speedButton->SetPosition({ 842.f, 473.f });
 
         // 스피드 버튼 클릭하면 실행될 이벤트
         m_speedButton->AddOnClick("Quit Game", [this]()
             {
+                if (isOpenOption) { return; }
+
                 if (GetTimeScale() == 2.0f) {
                     SetTimeScale(4.0f);
                 }
@@ -1935,13 +1943,13 @@ namespace JDScene {
         // 스피드 버튼 마우스를 올리면 실행될 이벤트
         m_speedButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 스피드 버튼 마우스가 벗어나면 실행될 이벤트
         m_speedButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -1956,20 +1964,21 @@ namespace JDScene {
         // 옵션 버튼 클릭하면 실행될 이벤트
         m_optionButton->AddOnClick("Show Option", [this]()
             {
-                std::cout << "클릭함?";
+                if (isOpenOption) { return; }
+
                 ShowOptionUI();
             });
 
         // 옵션 버튼 마우스를 올리면 실행될 이벤트
         m_optionButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 옵션 버튼 마우스가 벗어나면 실행될 이벤트
         m_optionButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -2115,6 +2124,8 @@ namespace JDScene {
         // 주거지 버튼 클릭하면 실행될 이벤트
         m_buildHouse->AddOnClick("Clicked House", [this]()
             {
+                if (isOpenOption) { return; }
+
                 wcout << L"주거지 선택이되..................." << m_selectedCollider->GetOwner()->GetName() << endl;
                 wcout << L"주거지 선택이되..................." << endl;
                 wcout << L"주거지 선택이되..................." << endl;
@@ -2177,12 +2188,16 @@ namespace JDScene {
         // 주거지 버튼 마우스를 올리면 실행될 이벤트
         m_buildHouse->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowGridCreateInfo(JDGlobal::Contents::BuildingType::House, "50", "1/초");
             });
 
         // 주거지 버튼 마우스가 벗어나면 실행될 이벤트
         m_buildHouse->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseGridCreateInfo();
             });
 
@@ -2199,18 +2214,22 @@ namespace JDScene {
         // 낚시터 버튼 클릭하면 실행될 이벤트
         m_buildFishingspot->AddOnClick("Clicked FishingSpot", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 낚시터 버튼 마우스를 올리면 실행될 이벤트
         m_buildFishingspot->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowGridCreateInfo(JDGlobal::Contents::BuildingType::FishingSpot, "40", "2/초");
             });
 
         // 낚시터 버튼 마우스가 벗어나면 실행될 이벤트
         m_buildFishingspot->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseGridCreateInfo();
             });
 
@@ -2227,18 +2246,22 @@ namespace JDScene {
         // 제재소 버튼 클릭하면 실행될 이벤트
         m_buildRumbermill->AddOnClick("Clicked LumberMill", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 제재소 버튼 마우스를 올리면 실행될 이벤트
         m_buildRumbermill->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowGridCreateInfo(JDGlobal::Contents::BuildingType::LumberMill, "30", "3/초");
             });
 
         // 제재소 버튼 마우스가 벗어나면 실행될 이벤트
         m_buildRumbermill->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseGridCreateInfo();
             });
 
@@ -2255,18 +2278,22 @@ namespace JDScene {
         // 광산 버튼 클릭하면 실행될 이벤트
         m_buildMine->AddOnClick("Clicked Mine", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 광산 버튼 마우스를 올리면 실행될 이벤트
         m_buildMine->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowGridCreateInfo(JDGlobal::Contents::BuildingType::Mine, "20", "4/초");
             });
 
         // 광산 버튼 마우스가 벗어나면 실행될 이벤트
         m_buildMine->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseGridCreateInfo();
             });
 
@@ -2365,18 +2392,22 @@ namespace JDScene {
         // 코네 선택 버튼 클릭하면 실행될 이벤트
         m_koneSetButton->AddOnClick("On Click", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 코네 선택 버튼 마우스를 올리면 실행될 이벤트
         m_koneSetButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowCatInfo(JDGlobal::Contents::CatType::Kone, "50", "1/초");
             });
 
         // 코네 선택 버튼 마우스가 벗어나면 실행될 이벤트
         m_koneSetButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseCatInfo();
             });
 
@@ -2392,18 +2423,22 @@ namespace JDScene {
         // 나비냥 선택 버튼 클릭하면 실행될 이벤트
         m_naviSetButton->AddOnClick("On Click", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 나비냥 선택 버튼 마우스를 올리면 실행될 이벤트
         m_naviSetButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowCatInfo(JDGlobal::Contents::CatType::Navi, "50", "1/초");
             });
 
         // 나비냥 선택 버튼 마우스가 벗어나면 실행될 이벤트
         m_naviSetButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseCatInfo();
             });
 
@@ -2419,18 +2454,22 @@ namespace JDScene {
         // 펠리스 선택 버튼 클릭하면 실행될 이벤트
         m_felisSetButton->AddOnClick("On Click", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 펠리스 선택 버튼 마우스를 올리면 실행될 이벤트
         m_felisSetButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpenOption) { return; }
+
                 ShowCatInfo(JDGlobal::Contents::CatType::Felis, "50", "1/초");
             });
 
         // 펠리스 선택 버튼 마우스가 벗어나면 실행될 이벤트
         m_felisSetButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpenOption) { return; }
+
                 CloseCatInfo();
             });
 
@@ -2508,19 +2547,19 @@ namespace JDScene {
         // 다운그레이드 버튼 클릭하면 실행될 이벤트
         m_downgradeButton->AddOnClick("Quit Game", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 다운그레이드 버튼 마우스를 올리면 실행될 이벤트
         m_downgradeButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 다운그레이드 버튼 마우스가 벗어나면 실행될 이벤트
         m_downgradeButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         //////////
@@ -2534,19 +2573,19 @@ namespace JDScene {
         // 업그레이드 버튼 클릭하면 실행될 이벤트
         m_upgradeButton->AddOnClick("Quit Game", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 업그레이드 버튼 마우스를 올리면 실행될 이벤트
         m_upgradeButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 업그레이드 버튼 마우스가 벗어나면 실행될 이벤트
         m_upgradeButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
 #pragma endregion
@@ -2580,6 +2619,8 @@ namespace JDScene {
         // 견습냥이 버튼 클릭 시 실행될 이벤트
         m_trainerCatButton->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
                 UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
@@ -2588,13 +2629,13 @@ namespace JDScene {
         // 견습냥이 버튼 마우스를 올리면 실행될 이벤트
         m_trainerCatButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 견습냥이 버튼 마우스가 벗어나면 실행될 이벤트
         m_trainerCatButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
@@ -2613,14 +2654,14 @@ namespace JDScene {
         m_trainerCatCostInfo->SetPosition({ 5, -380 });
 
         m_trainerCatCostImage01 = CreateUIObject<Image>(L"UI_TrainerCatCostImage01");
-        m_trainerCatCostImage01->SetTextureName("ART_CostWood01");
+        m_trainerCatCostImage01->SetTextureName("ART_CostFood01");
         m_trainerCatCostImage01->SetSizeToOriginal();
         m_trainerCatCostImage01->SetScale({ 0.5f, 0.5f });
         m_trainerCatCostImage01->SetPosition({ 48, -361 });
         m_trainerCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_trainerCatCostText01 = CreateUIObject<Text>(L"UI_TrainerCatCostText01");
-        m_trainerCatCostText01->SetText(L"x50");
+        m_trainerCatCostText01->SetText(L"x200");
         m_trainerCatCostText01->SetTextFormatName("Sebang_16");
         m_trainerCatCostText01->SetColor(D2D1::ColorF(0x69512C));
         m_trainerCatCostText01->SetSize({ 300, 100 });
@@ -2680,24 +2721,26 @@ namespace JDScene {
         m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
         m_expertCatButton->SetScale({ 0.5f, 0.5f });
 
-        // 견습냥이 버튼 클릭 시 실행될 이벤트
+        // 숙련냥이 버튼 클릭 시 실행될 이벤트
         m_expertCatButton->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Expert);
                 UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
 
-        // 견습냥이 버튼 마우스를 올리면 실행될 이벤트
+        // 숙련냥이 버튼 마우스를 올리면 실행될 이벤트
         m_expertCatButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
-        // 견습냥이 버튼 마우스가 벗어나면 실행될 이벤트
+        // 숙련냥이 버튼 마우스가 벗어나면 실행될 이벤트
         m_expertCatButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
@@ -2716,14 +2759,14 @@ namespace JDScene {
         m_expertCatCostInfo->SetPosition({ 362, -380 });
 
         m_expertCatCostImage01 = CreateUIObject<Image>(L"UI_ExpertCatCostImage01");
-        m_expertCatCostImage01->SetTextureName("ART_CostWood01");
+        m_expertCatCostImage01->SetTextureName("ART_CostFood01");
         m_expertCatCostImage01->SetSizeToOriginal();
         m_expertCatCostImage01->SetScale({ 0.5f, 0.5f });
         m_expertCatCostImage01->SetPosition({ 406, -361 });
         m_expertCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_expertCatCostText01 = CreateUIObject<Text>(L"UI_ExpertCatCostText01");
-        m_expertCatCostText01->SetText(L"x50");
+        m_expertCatCostText01->SetText(L"x100");
         m_expertCatCostText01->SetTextFormatName("Sebang_16");
         m_expertCatCostText01->SetColor(D2D1::ColorF(0x69512C));
         m_expertCatCostText01->SetSize({ 300, 100 });
@@ -2731,7 +2774,7 @@ namespace JDScene {
 
         // 숙련냥이 코스트 _ 02 ( 이미지 & 텍스트 )
         m_expertCatCostImage02 = CreateUIObject<Image>(L"UI_ExpertCatCostImage02");
-        m_expertCatCostImage02->SetTextureName("ART_CostWood01");
+        m_expertCatCostImage02->SetTextureName("ART_CostMineral01");
         m_expertCatCostImage02->SetSizeToOriginal();
         m_expertCatCostImage02->SetScale({ 0.5f, 0.5f });
         m_expertCatCostImage02->SetPosition({ 406, -404 });
@@ -2793,6 +2836,8 @@ namespace JDScene {
         // 원정 초급 버튼 클릭하면 실행될 이벤트
         m_awayBeginner->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"초급 원정");
@@ -2802,13 +2847,13 @@ namespace JDScene {
         // 원정 초급 버튼 마우스를 올리면 실행될 이벤트
         m_awayBeginner->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 원정 초급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayBeginner->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 중급 Button
@@ -2822,6 +2867,8 @@ namespace JDScene {
         // 원정 중급 버튼 클릭하면 실행될 이벤트
         m_awayIntermediate->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
@@ -2831,13 +2878,13 @@ namespace JDScene {
         // 원정 중급 버튼 마우스를 올리면 실행될 이벤트
         m_awayIntermediate->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 원정 중급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayIntermediate->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 상급 Button
@@ -2850,6 +2897,8 @@ namespace JDScene {
         // 원정 상급 버튼 클릭하면 실행될 이벤트
         m_awayAdvanced->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
@@ -2859,19 +2908,19 @@ namespace JDScene {
         // 원정 상급 버튼 마우스를 올리면 실행될 이벤트
         m_awayAdvanced->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 원정 상급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayAdvanced->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         //////////
         // 원정 정보 팝업 Image
         m_awayPopupUI = CreateUIObject<Image>(L"UI_AwayPopupUI");
-        m_awayPopupUI->SetTextureName("ART_CHAT");      // TODO : 실제 리소스로 바꿔야함.
+        m_awayPopupUI->SetTextureName("ART_Information_Box_Expedition");
         m_awayPopupUI->SetSize({ 386, 297 });
         m_awayPopupUI->SetPosition({ 770, -113 });
         m_awayPopupUI->SetAnchor({ 1.0f, 0.0f });
@@ -2958,6 +3007,8 @@ namespace JDScene {
         // 병력 보내기 버튼 클릭하면 실행될 이벤트
         m_awayButton->AddOnClick("On Click", [this]()
             {
+                if (isOpenOption) { return; }
+
                 // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
                 if (m_awayButton->GetTextureName() == "병력 보내기  복사 2")
                 {
@@ -2981,13 +3032,13 @@ namespace JDScene {
         // 병력 보내기 버튼 마우스를 올리면 실행될 이벤트
         m_awayButton->AddOnEnter("Highlight On", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
         // 병력 보내기 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayButton->AddOnExit("Highlight Off", [this]()
             {
-
+                if (isOpenOption) { return; }
             });
 
 #pragma endregion
@@ -3446,11 +3497,10 @@ namespace JDScene {
 
         m_masterSlider->SetHandleImageSize({ 57.f, 52.f });
 
-        // TODO : 마스터 볼륨으로 받아야함
-        //m_masterSlider->SetValue(AudioManager::Instance().GetMusicVolume());
-        //m_masterSlider->AddOnValueChanged("Set BGM Volume", [](float newValue) {
-        //    AudioManager::Instance().SetMusicVolume(newValue);
-        //    });
+        m_masterSlider->SetValue(AudioManager::Instance().GetMusicVolume());
+        m_masterSlider->AddOnValueChanged("Set Master Volume", [](float newValue) {
+            AudioManager::Instance().SetMasterVolume(newValue);
+            });
 
         m_masterSlider->SetActiveSlider(false);
 
@@ -3570,6 +3620,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
+            m_masterSlider->SetActiveSlider(true);
             m_bgmSlider->SetActiveSlider(true);
             m_sfxSlider->SetActiveSlider(true);
 
@@ -3604,6 +3655,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(0xD6BD94));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
+            m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
 
@@ -3638,6 +3690,7 @@ namespace JDScene {
             m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(0xD6BD94));
 
+            m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
 
@@ -3648,6 +3701,7 @@ namespace JDScene {
 
         //////////////////////////////////////////////////////////////////////////////////
 
+        /////
         // 옵션 닫기 버튼 ( Close )
         m_closeOption = CreateUIObject<Button>(L"CloseSetting_Button");
         m_closeOption->SetTextureName("ART_Back01_mouseout");
@@ -3657,7 +3711,7 @@ namespace JDScene {
         m_closeOption->SetActive(false);
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_closeOption->AddOnClick("CloseOption", [this]() {
+        m_closeOption->AddOnClick("Close Option", [this]() {
             AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             CloseOptionUI();
             });
@@ -3674,11 +3728,76 @@ namespace JDScene {
             m_closeOption->SetTextureName("ART_Back01_mouseout");
             });
 
+        /////
+        // 타이틀 이동 버튼
+        m_backToTitle = CreateUIObject<Button>(L"BackToTitle_Button");
+        m_backToTitle->SetTextureName("Art_Button_Mouseover02");
+        m_backToTitle->SetText(L"BACK TO TITLE");
+        m_backToTitle->SetTextFormatName("Sebang_Bold_20");
+        m_backToTitle->SetTextColor(D2D1::ColorF(0x576023));
+        m_backToTitle->SetSize({ 174, 54 });
+        m_backToTitle->SetPosition({ -505, -300 });
+        m_backToTitle->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.0f));
+        m_backToTitle->SetActive(false);
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        m_backToTitle->AddOnClick("Back To Title", [this]() {
+            // SceneManager를 이용해 다음 씬으로 넘어갑니다.
+            SceneManager::Instance().ChangeScene("TitleScene");
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        m_backToTitle->AddOnEnter("Highlight On", [this]() {
+
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        m_backToTitle->AddOnExit("Highlight Off", [this]() {
+
+            });
+
+        /////
+        // 게임 종료 버튼
+        m_quitGame = CreateUIObject<Button>(L"QuitGame_Button");
+        m_quitGame->SetTextureName("Art_Button_Mouseover02");
+        m_quitGame->SetText(L"QUIT GAME");
+        m_quitGame->SetTextFormatName("Sebang_Bold_22");
+        m_quitGame->SetTextColor(D2D1::ColorF(0xD6BD94));
+        m_quitGame->SetSize({ 174, 54 });
+        m_quitGame->SetPosition({ -505, -354 });
+        m_quitGame->SetActive(false);
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        m_quitGame->AddOnClick("Quit Game", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            // 1. 메인 윈도우의 핸들(HWND)을 가져옵니다.
+            HWND mainWindowHandle = JDGlobal::Window::WindowSize::Instance().GetHWND();
+
+            // 2. PostMessage를 사용해 WM_CLOSE 메시지를 보냅니다.
+            if (mainWindowHandle)
+            {
+                PostMessage(mainWindowHandle, WM_CLOSE, 0, 0);
+            }
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        m_quitGame->AddOnEnter("Highlight On", [this]() {
+
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        m_quitGame->AddOnExit("Highlight Off", [this]() {
+
+            });
+
         //////////////////////////////////////////////////////////////////////////////////
     }
     void GameScene::ShowOptionUI()
     {
         isOpenOption = true;
+        m_prevGameSpeed = GetTimeScale();
+        SetTimeScale(0.0f);
 
         if (m_optionUI) {
             m_optionUI->SetActive(true);
@@ -3689,10 +3808,16 @@ namespace JDScene {
             m_selectCredit->SetActive(true);
 
             m_closeOption->SetActive(true);
+            m_backToTitle->SetActive(true);
+            m_quitGame->SetActive(true);
 
             m_selectVolumeDummyText->SetActive(true);
             m_selectControlDummyText->SetActive(true);
             m_selectCreditDummyText->SetActive(true);
+
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
             m_masterSlider->SetActiveSlider(true);
             m_bgmSlider->SetActiveSlider(true);
@@ -3702,16 +3827,21 @@ namespace JDScene {
     void GameScene::CloseOptionUI()
     {
         isOpenOption = false;
+        SetTimeScale(m_prevGameSpeed);
 
         if (m_optionUI) {
             m_optionUI->SetActive(false);
             m_optionVolume->SetActive(false);
+            m_optionControl->SetActive(false);
+            m_optionCredit->SetActive(false);
 
             m_selectVolume->SetActive(false);
             m_selectControl->SetActive(false);
             m_selectCredit->SetActive(false);
 
             m_closeOption->SetActive(false);
+            m_backToTitle->SetActive(false);
+            m_quitGame->SetActive(false);
 
             m_selectVolumeDummyText->SetActive(false);
             m_selectControlDummyText->SetActive(false);
@@ -3720,6 +3850,10 @@ namespace JDScene {
             m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
             m_sfxSlider->SetActiveSlider(false);
+
+            m_stopKeyText->SetActive(false);
+            m_playKeyText->SetActive(false);
+            m_speedKeyText->SetActive(false);
         }
     }
     void GameScene::CreateFillter()

@@ -2465,6 +2465,12 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] ART_Barracks_HP 텍스처 로드 실패" << std::endl;
     }
+
+    if (!AssetManager::Instance().LoadTexture("ART_Information_Box_Expedition", L"../Resource/BATTLE/ART_Information_Box_Expedition.png"))
+    {
+        std::cout << "[ERROR] ART_Information_Box_Expedition 텍스처 로드 실패" << std::endl;
+    }
+
 #pragma endregion
 
 

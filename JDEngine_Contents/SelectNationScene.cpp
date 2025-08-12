@@ -495,13 +495,13 @@ namespace JDScene {
         switch (m_selectedNation)
         {
         case CatType::Navi:
-            m_experiencedCatParentButton->SetText(L"나비냥 으로 게임 시작");
+            m_experiencedCatParentButton->SetText(L"나비 공화국의 자유로운 신 개척지의 질서를 확립할 행정관입니다.");
             break;
         case CatType::Felis:
-            m_experiencedCatParentButton->SetText(L"펠리스냥 으로 게임 시작");
+            m_experiencedCatParentButton->SetText(L"펠리스 연합왕국의 방패로 변경을 수호할 기사단장입니다.");
             break;
         case CatType::Kone:
-            m_experiencedCatParentButton->SetText(L"코네냥 으로 게임 시작");
+            m_experiencedCatParentButton->SetText(L"코네 제국의 강철 같은 규율로 최전선을 지휘할 백부장입니다.");
             break;
         default:
             m_experiencedCatParentButton->SetText(L"게임 시작");

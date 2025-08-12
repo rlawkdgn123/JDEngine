@@ -402,6 +402,8 @@ namespace JDScene {
         Text* m_awayCostText01 = nullptr;
         Image* m_awayCostImage02 = nullptr;
         Text* m_awayCostText02 = nullptr;
+        Image* m_awayCostImage03 = nullptr;
+        Text* m_awayCostText03 = nullptr;
 
         Text* m_awayAwardInfo = nullptr;
         Text* m_awayAwardText01 = nullptr;
@@ -428,6 +430,8 @@ namespace JDScene {
 
         // 옵션 닫기 버튼
         Button* m_closeOption = nullptr;
+        Button* m_backToTitle = nullptr;
+        Button* m_quitGame = nullptr;
 
         // 옵션 선택 실제 버튼
         Button* m_selectVolume = nullptr;
@@ -449,11 +453,12 @@ namespace JDScene {
         Text* m_playKeyText = nullptr;
         Text* m_speedKeyText = nullptr;
 
+        float m_prevGameSpeed = 0.0f;
+
         ////////////////////////////////////////////////////////////////////////////////
 
         // UI 개발용 필터
         void CreateFillter();
-
         Image* m_fillter = nullptr;
     };
 }

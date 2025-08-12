@@ -3,6 +3,9 @@
 #include "framework.h"
 #include "GameObjectBase.h"
 #include "UIObject.h"
+#include "Animation.h"
+#include "Texture.h"
+#include "TextRenderer.h"
 #include <memory>
 
 //GameObjectBase; // 전방 선언
@@ -74,7 +77,37 @@ namespace JDScene {
         }; // LateUpdate 실행 후 마지막 실행에 파괴 큐 오브젝트 제거
 
 
-        virtual void Render(float deltaTime) {};
+        virtual void Render(float deltaTime) {
+            using JDGlobal::Base::RenderLayerInfo;
+            using JDGlobal::Base::SortingLayer;
+
+            // 오브젝트 → 정렬 키 추출 (컴포넌트가 여러 개면 더 뒤에 그려질 쪽을 채택)
+            auto layerKey = [](const JDScene::GameObject* obj) -> RenderLayerInfo
+                {
+                    RenderLayerInfo key{ SortingLayer::None, 0 };
+
+                    if (auto ar = obj->GetComponent<JDComponent::AnimationRender>()) {
+                        key = ar->GetLayerInfo();
+                    }
+                    if (auto textureRender = obj->GetComponent<JDComponent::TextureRenderer>()) {
+                        const auto textureRenderInfo = textureRender->GetLayerInfo();
+                        if (key < textureRenderInfo) key = textureRenderInfo; // 더 큰(뒤에 그려질) 키로 교체
+                    }
+                    if (auto textRender = obj->GetComponent<JDComponent::TextRenderer>()) {
+                        const auto textRenderInfo = textRender->GetLayerInfo();
+                        if (key < textRenderInfo) key = textRenderInfo; // 더 큰(뒤에 그려질) 키로 교체
+                    }
+                    return key;
+                };
+
+
+            std::stable_sort(m_gameObjects.begin(), m_gameObjects.end(),
+                [&](const std::unique_ptr<JDScene::GameObject>& a,
+                    const std::unique_ptr<JDScene::GameObject>& b)
+                {
+                    return layerKey(a.get()) < layerKey(b.get());
+                });
+        };
         
         template<typename T, typename... Args>
         T* CreateGameObject(Args&&... args);

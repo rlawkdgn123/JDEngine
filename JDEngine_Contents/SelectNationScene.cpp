@@ -84,7 +84,7 @@ namespace JDScene {
 
         // 뒤로가기 버튼
         auto back_Button = CreateUIObject<Button>(L"Back_Button");
-        back_Button->SetTextureName("ART_Back01_mouseout");
+        back_Button->SetTextureName("ART_Back02_mouseout");
         back_Button->SetText(L"");
         back_Button->SetSize({ 66, 60 });
         back_Button->SetPosition({ -887, 450 });
@@ -98,13 +98,13 @@ namespace JDScene {
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         back_Button->AddOnEnter("Highlight On", [this, back_Button]() {
             // 텍스트 변경
-            back_Button->SetTextureName("ART_Back01_mouseover");
+            back_Button->SetTextureName("ART_Back02_mouseover");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         back_Button->AddOnExit("Highlight Off", [this, back_Button]() {
             // 텍스트 변경
-            back_Button->SetTextureName("ART_Back01_mouseout");
+            back_Button->SetTextureName("ART_Back02_mouseout");
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +141,8 @@ namespace JDScene {
         // 초임 집사 선택 버튼
         ////////////////////////////////////////////////////////////////////////////////
 
+        // 2025.08.12 튜토리얼을 게임씬에 팝업 형식으로 띄워서
+        /*
         m_newCatParentButton = CreateUIObject<Button>(L"newCatParent_Button");
         m_newCatParentButton->SetTextureName("ART_CHAT_mouseout");
         m_newCatParentButton->SetSize({ 1536, 150 });
@@ -168,6 +170,8 @@ namespace JDScene {
             m_newCatParentButton->SetTextureName("ART_CHAT_mouseout");
             m_newCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
             });
+        */
+        
 
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -177,9 +181,10 @@ namespace JDScene {
         m_experiencedCatParentButton = CreateUIObject<Button>(L"experiencedCatParnet_Button");
         m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseout");
         m_experiencedCatParentButton->SetSize({ 1536, 150 });
-        m_experiencedCatParentButton->SetPosition({ 0, -420 });
+        m_experiencedCatParentButton->SetPosition({ 0, -360 });
 
-        m_experiencedCatParentButton->SetText(L"경험있는 집사 입니다.");
+        // m_experiencedCatParentButton->SetText(L"경험있는 집사 입니다.");
+        m_experiencedCatParentButton->SetText(L"게임 시작");
         m_experiencedCatParentButton->SetTextFormatName("Sebang_40");
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
@@ -388,6 +393,7 @@ namespace JDScene {
 
     void SelectNationScene::LogicUpdate()
     {
+        // 국가 설명
         switch (m_selectedNation)
         {
         case CatType::Navi:
@@ -397,7 +403,7 @@ namespace JDScene {
             // 나비, 펠리스, 코네 국가 선택
             ////////////////////////////////////////////////////////////////////////////////
 
-            m_newCatParentButton->SetActive(true);
+            //m_newCatParentButton->SetActive(true);
             m_experiencedCatParentButton->SetActive(true);
 
             m_nationDescImage->SetActive(false);
@@ -414,7 +420,7 @@ namespace JDScene {
 
             ////////////////////////////////////////////////////////////////////////////////
 
-            m_newCatParentButton->SetActive(false);
+            //m_newCatParentButton->SetActive(false);
             m_experiencedCatParentButton->SetActive(false);
 
             m_nationDescImage->SetActive(true);
@@ -487,6 +493,23 @@ namespace JDScene {
 
             break;
         }
+
+        // 게임 시작 멘트
+        switch (m_selectedNation)
+        {
+        case CatType::Navi:
+            m_experiencedCatParentButton->SetText(L"나비 공화국의 자유로운 신 개척지의 질서를 확립할 행정관입니다.");
+            break;
+        case CatType::Felis:
+            m_experiencedCatParentButton->SetText(L"펠리스 연합왕국의 방패로 변경을 수호할 기사단장입니다.");
+            break;
+        case CatType::Kone:
+            m_experiencedCatParentButton->SetText(L"코네 제국의 강철 같은 규율로 최전선을 지휘할 백부장입니다.");
+            break;
+        default:
+            m_experiencedCatParentButton->SetText(L"게임 시작");
+            break;
+        }
     }
 
     void SelectNationScene::ClickUpdate() {
@@ -533,7 +556,7 @@ namespace JDScene {
                     // SelectNationScene 로직
                     ////////////////////////////////////////////////////////////////////////////////
 
-                    if (GetSelectedObject() == m_newCatParentButton || GetSelectedObject() == m_experiencedCatParentButton)
+                    if (GetSelectedObject() == m_experiencedCatParentButton)
                     {
                         break;
                     }

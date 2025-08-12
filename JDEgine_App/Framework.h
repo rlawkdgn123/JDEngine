@@ -19,3 +19,4 @@
 #include "ColliderBase.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
+#include "TextRenderer.h"

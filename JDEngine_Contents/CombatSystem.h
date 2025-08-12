@@ -9,7 +9,7 @@ namespace JDGameSystem {
         ~CombatSystem() = default;
 
         void ResolveBattle(ArmySystem& player, const ArmySystem& enemy);
-        void ResolveBattle(const UnitCounts& playerUnits, int playerPower,
+        bool ResolveBattle(const UnitCounts& playerUnits, int playerPower,
                            const UnitCounts& enemyUnits, int enemyPower,
                            UnitCounts& outPlayerResult, UnitCounts& outEnemyResult);
     };

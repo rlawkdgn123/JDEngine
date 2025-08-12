@@ -30,6 +30,7 @@ namespace JDGlobal {
 			BackGround,
 			Building,
 			Cat,
+			Front,
 		};
 		
 		struct RenderLayerInfo {

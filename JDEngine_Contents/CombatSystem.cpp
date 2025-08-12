@@ -64,7 +64,7 @@ namespace JDGameSystem {
 		//std::cout << "[CombatSystem] 전투력 손실: " << diffTotalPower << std::endl;
 	}
 
-	void CombatSystem::ResolveBattle(const UnitCounts& playerUnits, int playerPower,
+	bool CombatSystem::ResolveBattle(const UnitCounts& playerUnits, int playerPower,
 		                             const UnitCounts& enemyUnits, int enemyPower,
 		                             UnitCounts& outPlayerResult, UnitCounts& outEnemyResult) {
 		// 총 공격력.
@@ -74,13 +74,13 @@ namespace JDGameSystem {
 		if (P_enemy <= 0.0f) { // 0 이하 나누기 방지.
 			outPlayerResult = playerUnits;
 			std::cout << "[CombatSystem] Invalid enemy TotalPower." << P_enemy <<std::endl;
-			return;
+			return false;
 		}
 
 		if (P_my <= 0.0f) { // 0 이하 나누기 방지.
 			outEnemyResult = enemyUnits;
 			std::cout << "[CombatSystem] Invalid player TotalPower." << std::endl;
-			return;
+			return false;
 		}
 
 		// 우세도 계산.
@@ -128,5 +128,7 @@ namespace JDGameSystem {
 		outEnemyResult[UnitType::Novice] = std::max(0, enemyUnits[UnitType::Novice] - w_n_loss_enemy);
 		outEnemyResult[UnitType::Expert] = std::max(0, enemyUnits[UnitType::Expert] - w_e_loss_enemy);
 
+		if (R_my < 1.0f) return false;
+		else             return true;
 	}
 }

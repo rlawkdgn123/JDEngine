@@ -284,23 +284,36 @@ void EngineCore::UpdateLogic()
 
 
     // 배속 키 입력처리
-    static float speeds[] = { 2.f, 4.f, 8.f };
-    static int   idx = 0;
+    //static float speeds[] = { 2.f, 4.f, 8.f };
+    //static int   idx = 0;
     InputManager& input = InputManager::Instance();
     if (input.GetKeyPressed('1')) {
         SceneManager::Instance().SetSceneTimeScale(0.0f);
-        std::cout << "0" << std::endl;
-        idx = 0;
+        std::cout << "0000" << std::endl;
+        //idx = 0;
     }
     else if (input.GetKeyPressed('2')) {
         SceneManager::Instance().SetSceneTimeScale(1.0f);
-        std::cout << "1" << std::endl;
-        idx = 0;
+        std::cout << "1111" << std::endl;
+        //idx = 0;
     }
     else if (input.GetKeyPressed('3')) {
-        SceneManager::Instance().SetSceneTimeScale(speeds[idx]);
-        std::cout << speeds[idx] << std::endl;
-        idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
+
+        if (SceneManager::Instance().GetCurrentScene()->GetTimeScale() == 2.0f) {
+            SceneManager::Instance().SetSceneTimeScale(4.0f);
+            std::cout << "4444" << std::endl;
+        }
+        else if (SceneManager::Instance().GetCurrentScene()->GetTimeScale() == 4.0f) {
+            SceneManager::Instance().SetSceneTimeScale(8.0f);
+            std::cout << "8888" << std::endl;
+        }
+        else {
+            SceneManager::Instance().SetSceneTimeScale(2.0f);
+            std::cout << "2222" << std::endl;
+        }
+        //SceneManager::Instance().SetSceneTimeScale(speeds[idx]);
+        //std::cout << speeds[idx] << std::endl;
+        //idx = (idx + 1) % (sizeof(speeds) / sizeof(*speeds));
     }
 
     // 콜라이더 그리기 토글

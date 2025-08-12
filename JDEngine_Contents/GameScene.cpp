@@ -8,7 +8,6 @@
 #include "BuildSystem.h"
 #include "GameScene.h"
 #include "CombatSystem.h"
-#include "WaveManager.h"
 #include "ExpeditionSystem.h"
 #include "TextRenderer.h"
 
@@ -59,6 +58,7 @@ namespace JDScene {
         m_showedDays.clear();
         m_elapsedTime = 0.0f;
         WaveManager::Instance().LoadStageWaves();
+        m_date = WaveManager::Instance().GetConvertedDate();
 
         // 자원 세팅.
         auto& rs = ResourceSystem::Instance();
@@ -77,6 +77,8 @@ namespace JDScene {
         /////////////////////////////////////////////////////////////////////////////
         AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
+
+        DateUIUpdate();
     }
 
     void GameScene::OnLeave() {
@@ -275,6 +277,16 @@ namespace JDScene {
         if (m_elapsedTime >= m_dayTime) {
             m_elapsedTime = 0.0f;
             WaveManager::Instance().AdvanceDay();
+            m_date = WaveManager::Instance().GetConvertedDate();
+            std::cout << "[GameScene] 현재 날짜: " << m_date.year << "년 " << m_date.month << "월 " << m_date.day << "일 " << std::endl;
+            DateUIUpdate(); // 날짜 텍스트 업데이트.
+
+            int power = WaveManager::Instance().GetWaveEnemyPower();
+            if (power >= 0) {
+                SpawnNextWaveIndicator(power);
+            }
+
+            AdvanceNextWaveIndicators(); // 웨이브 표시 옮기기.
 
             const int currDay = WaveManager::Instance().GetCurrDay();
             //const int warningDay = currDay + 2;
@@ -287,7 +299,7 @@ namespace JDScene {
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
                 //float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
                 //SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
-                SpawnWaveEnemy({ 1010.0f, 245.0f });
+                SpawnWaveEnemy({ 1010.0f, 230.0f });
                 AddEnemyDay(warningDay);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
             }
@@ -301,7 +313,7 @@ namespace JDScene {
         JDGameSystem::UnitCounts playerResult;
         JDGameSystem::UnitCounts enemyResult;
 
-        combat.ResolveBattle(
+        bool isWin = combat.ResolveBattle(
             m_playerBattleArmy,
             m_playerTotalPower,
             m_enemyBattleArmy,
@@ -309,6 +321,10 @@ namespace JDScene {
             playerResult,
             enemyResult
         );
+
+        if (isWin) { 
+            BattleReward();
+        }
 
         m_playerBattleArmy = { 0 , 0 };
         m_playerTotalPower = 0;
@@ -328,6 +344,10 @@ namespace JDScene {
         m_btlElapsedTime = 0.0f;
         SafeDestroy(m_battleObject);
         std::cout << "[GameScene] 전투 끝." << std::endl;
+    }
+    void GameScene::BattleReward()
+    {
+        std::cout << "[GameScene] WIN!!!!!!!!!!!!!!!" << std::endl;
     }
     void GameScene::SpawnWaveEnemy(const Vector2F& pos)
     {
@@ -366,9 +386,11 @@ namespace JDScene {
         const float speed = 100.0f; // 픽셀/초
         Vector2F wallDir = { -1.0f, 0.0f }; // 기본 방향. (성벽이 없다면)
 
-        for (auto& objPtr : m_gameObjects)
+        const size_t N = m_gameObjects.size();
+        for (size_t i = 0; i < N; ++i)
         {
-            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy ||
+            GameObjectBase* objPtr = m_gameObjects[i].get();
+            if (!objPtr || !objPtr->IsActive() || objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy ||
                 objPtr->GetState() != JDGlobal::Contents::State::Move) continue;
 
             auto* transform = objPtr->GetComponent<Transform>();
@@ -382,13 +404,13 @@ namespace JDScene {
                 Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
 
                 if (diffPos.Length() <= 10.0f) {
-                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr);
                     if (soldier) {
                         m_enemyBattleArmy += soldier->GetUnitCounts();
                         m_enemyTotalPower += soldier->GetPower();
                         std::cout << "[GameScene] 적 병력 추가." << std::endl;
                     }
-                    SafeDestroy(objPtr.get());
+                    SafeDestroy(objPtr);
                     m_btlElapsedTime = 0.0f;
                     continue;
                 }
@@ -417,8 +439,8 @@ namespace JDScene {
                 objPtr->SetState(JDGlobal::Contents::State::Idle);
 
                 auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
-                    [&](auto& a) { return a.enemy == objPtr.get(); });
-                if (it == m_attackers.end()) { m_attackers.push_back({ objPtr.get(), 0.0f }); }
+                    [&](auto& a) { return a.enemy == objPtr; });
+                if (it == m_attackers.end()) { m_attackers.push_back({ objPtr, 0.0f }); }
                 continue;
             }
             wallDir = diffPos.Normalized();
@@ -437,9 +459,11 @@ namespace JDScene {
         const float backSpeed = 100.0f;
         Vector2F delta;
 
-        for (auto& objPtr : m_gameObjects)
+        const size_t N = m_gameObjects.size();
+        for (size_t i = 0; i < N; ++i)
         {
-            if (!objPtr || objPtr->GetTag() != JDGlobal::Base::GameTag::Player ||
+            GameObjectBase* objPtr = m_gameObjects[i].get();
+            if (!objPtr || !objPtr->IsActive() || objPtr->GetTag() != JDGlobal::Base::GameTag::Player ||
                 (objPtr->GetState() != JDGlobal::Contents::State::Move &&
                     objPtr->GetState() != JDGlobal::Contents::State::Back))
                 continue;
@@ -455,20 +479,20 @@ namespace JDScene {
                 Vector2F diffPos = battleTm->GetPosition() - transform->GetPosition();
 
                 if (diffPos.Length() <= 10.0f) {
-                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr);
                     if (soldier) {
                         m_playerBattleArmy += soldier->GetUnitCounts();
                         m_playerTotalPower += soldier->GetPower();
                         std::cout << "[GameScene] 아군 병력 추가." << std::endl;
                     }
-                    SafeDestroy(objPtr.get());
+                    SafeDestroy(objPtr);
                     m_btlElapsedTime = 0.0f;
                     continue;
                 }
             }
 
             // 최초 아군일 경우, 타겟 적과의 충돌 체크. 충돌하면 제거.
-            if (objPtr.get() == m_playerObject && m_targetEnemy && m_playerObject) {
+            if (objPtr == m_playerObject && m_targetEnemy && m_playerObject) {
                 auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
                 if (!enemyTm) continue;
                 Vector2F diffPos = enemyTm->GetPosition() - transform->GetPosition();
@@ -477,7 +501,7 @@ namespace JDScene {
                     Vector2F pPos = transform->GetPosition();
                     Vector2F ePos = enemyTm->GetPosition();
                     Vector2F mid = { (pPos.x + ePos.x) * 0.5f, (pPos.y + ePos.y) * 0.5f };
-                    auto* player = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    auto* player = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr);
                     if (player) {
                         m_playerBattleArmy += player->GetUnitCounts();
                         m_playerTotalPower += player->GetPower();
@@ -499,7 +523,7 @@ namespace JDScene {
             }
 
             // 전투 오브젝트가 없고, 일반 아군이면 후퇴 상태로 전환
-            if (!m_battleObject && objPtr.get() != m_playerObject) {
+            if (!m_battleObject && objPtr != m_playerObject) {
                 if (!m_barracksObject) continue;
                 auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
                 if (texRenderer) {
@@ -510,14 +534,14 @@ namespace JDScene {
                 Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();
 
                 if (diffPos.Length() <= 10.0f) {
-                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr.get());
+                    auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr);
                     if (soldier) {
                         JDGameSystem::UnitCounts updated = soldier->GetUnitCounts();
                         updated += m_playerArmy.GetUnitCounts();
                         m_playerArmy.OverrideUnitCounts(updated);
                         std::cout << "[GameScene] 병영 합류." << std::endl;
                     }
-                    SafeDestroy(objPtr.get());
+                    SafeDestroy(objPtr);
                     continue;
                 }
 
@@ -538,7 +562,7 @@ namespace JDScene {
                     }
                 }
             }
-            else if (objPtr.get() == m_playerObject && m_targetEnemy) {
+            else if (objPtr == m_playerObject && m_targetEnemy) {
                 // 적 유닛 방향으로 이동
                 auto* enemyTm = m_targetEnemy->GetComponent<Transform>();
                 if (enemyTm) {
@@ -558,6 +582,12 @@ namespace JDScene {
             delta = direction * (moveSpeed * deltaTime);
             Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
+
+            //auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
+            //if (texRenderer) {
+            //    if (direction.x < 0 && !texRenderer->GetFlipX()) texRenderer->SetFlipX(true); // 좌우 반전!
+            //    else if (direction.x >= 0 && texRenderer->GetFlipX()) texRenderer->SetFlipX(false);
+            //}
 
             if (sfx) sfx->Play();
         }
@@ -579,13 +609,13 @@ namespace JDScene {
         Vector2F diff = target - current;
         float dist = diff.Length();
 
-        if (dist < 10.0f) { // �� �߰� ������ �����ϸ� ��ǥ ������ ���� ������ �ٲ۴�.
+        if (dist < 10.0f) { 
             m_currentWaypointIndex = (m_currentWaypointIndex + 1) % m_waypoints.size();
 
-            if (m_currentWaypointIndex == 0) { // ���� ������ ������ ���������� ���� ����� �����ϰ�, �����븦 �����Ѵ�. 
+            if (m_currentWaypointIndex == 0) { 
                 JDGameSystem::ExpeditionSystem::Instance().ResolveExpedition();
                 SafeDestroy(m_expeditionObject);
-                std::cout << "[GameScene] ���� ��." << std::endl;
+                std::cout << "[GameScene] 원정 끝." << std::endl;
             }
         }
         else {
@@ -948,7 +978,7 @@ namespace JDScene {
 
         m_expeditionObject = obj;
 
-        std::cout << "[tutoScene] 원정대 생성." << std::endl;
+        std::cout << "[GameScene] 원정대 생성." << std::endl;
     }
 
     void GameScene::InitGridCreateMenu()
@@ -1554,7 +1584,7 @@ namespace JDScene {
         // 풀 밭 _ 레이어 1
         auto* map_battleLayer01 = CreateGameObject<GameObject>(L"Map_FieldLayer01");
         map_battleLayer01->AddComponent<Transform>()->SetPosition(Vector2F{ 0.f, 0.f });
-        auto map_battleLayer01Texture = map_battleLayer01->AddComponent<TextureRenderer>("ART_BattleMapLayer01", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        auto map_battleLayer01Texture = map_battleLayer01->AddComponent<TextureRenderer>("ART_BattleMapLayer01", RenderLayerInfo{ SortingLayer::Front, 1 });
         map_battleLayer01Texture->SetSize({ JDGlobal::Window::WindowSize::Instance().GetSize() });
 
         // 성벽
@@ -1884,7 +1914,15 @@ namespace JDScene {
         // 스피드 버튼 클릭하면 실행될 이벤트
         m_speedButton->AddOnClick("Quit Game", [this]()
             {
-                SetTimeScale(2.0f);
+                if (GetTimeScale() == 2.0f) {
+                    SetTimeScale(4.0f);
+                }
+                else if (GetTimeScale() == 4.0f) {
+                    SetTimeScale(8.0f);
+                }
+                else {
+                    SetTimeScale(2.0f);
+                }
             });
 
         // 스피드 버튼 마우스를 올리면 실행될 이벤트
@@ -2746,6 +2784,7 @@ namespace JDScene {
         // 원정 초급 버튼 클릭하면 실행될 이벤트
         m_awayBeginner->AddOnClick("On Click", [this]()
             {
+                JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"초급 원정");
                 m_awayButton->SetTextureName("병력 보내기  복사 2");
@@ -2774,6 +2813,7 @@ namespace JDScene {
         // 원정 중급 버튼 클릭하면 실행될 이벤트
         m_awayIntermediate->AddOnClick("On Click", [this]()
             {
+                JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
                 m_awayButton->SetTextureName("병력 보내기  복사 4");
@@ -2801,6 +2841,7 @@ namespace JDScene {
         // 원정 상급 버튼 클릭하면 실행될 이벤트
         m_awayAdvanced->AddOnClick("On Click", [this]()
             {
+                JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
                 m_awayButton->SetTextureName("병력 보내기  복사 6");
@@ -3146,6 +3187,84 @@ namespace JDScene {
             m_speedButton->SetTextureName("ART_Fast01_ing");
         }
     }
+
+    void GameScene::DateUIUpdate()
+    {
+        m_yearText->SetText(std::to_wstring(m_date.year));
+        m_monthText->SetText(std::to_wstring(m_date.month));
+        m_dayText->SetText(std::to_wstring(m_date.day));
+    }
+  
+    void GameScene::SpawnNextWaveIndicator(int wavePower)
+    {
+        const Vector2F startPosIcon{ 570.0f, 440.0f };
+        const Vector2F startPosText{ 570.0f, 400.0f };
+
+        auto* icon = CreateUIObject<Image>(L"UI_NextWaveIcon");
+        icon->SetTextureName("ART_Monster01"); 
+        icon->SetSize({ 45, 86 });
+        //icon->SetAnchor({ 1.0f, 0.0f });
+        icon->SetPosition(startPosIcon);
+        icon->SetActive(true);
+
+        auto* text = CreateUIObject<Text>(L"UI_NextWavePowerText");
+        text->SetTextFormatName("Sebang_Bold_20"); 
+        text->SetText(std::to_wstring(wavePower));
+        //text->SetAnchor({ 1.0f, 0.0f });
+        text->SetPosition(startPosText);
+        text->SetActive(true);
+
+        NextWaveIndicator ind;
+        ind.waveIcon = icon;
+        ind.powerText = text;
+        ind.stepsMoved = 0;
+        ind.srcDay = WaveManager::Instance().GetCurrDay();
+        ind.lastMovedDay = ind.srcDay;
+
+        m_nextWaveIndicators.push_back(ind);
+    }
+  
+    void GameScene::AdvanceNextWaveIndicators()
+    {
+        constexpr float kPerDay = -5.76f; // 하루 이동량
+        constexpr int   kMaxDays = 80;    // 총 수명 80일
+
+        const int today = WaveManager::Instance().GetCurrDay();
+
+        auto eraseBeg = std::remove_if(m_nextWaveIndicators.begin(), m_nextWaveIndicators.end(),
+            [&](NextWaveIndicator& ind)
+            {
+                if (!ind.waveIcon || !ind.powerText) return true;
+
+                // 스킵된 날짜가 있으면 그만큼 한 번에 반영
+                int daysToApply = today - ind.lastMovedDay;
+                if (daysToApply > 0) {
+                    float deltaX = kPerDay * static_cast<float>(daysToApply);
+
+                    if (auto* trI = ind.waveIcon->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+                        auto p = trI->GetPosition();
+                        trI->SetPosition({ p.x + deltaX, p.y });
+                    }
+                    if (auto* trT = ind.powerText->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+                        auto p = trT->GetPosition();
+                        trT->SetPosition({ p.x + deltaX, p.y });
+                    }
+
+                    ind.lastMovedDay = today;
+                }
+
+                // 생성일로부터 80일 지나면 제거
+                if (today - ind.srcDay >= kMaxDays) {
+                    ind.waveIcon->SetActive(false);
+                    ind.powerText->SetActive(false);
+                    return true;
+                }
+                return false;
+            });
+
+        m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
+    }
+  
     void GameScene::CreateBarrackUI()
     {
         //////////

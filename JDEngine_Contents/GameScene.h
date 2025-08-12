@@ -11,6 +11,7 @@
 #include "ParticleSystem.h"
 #include "BuildSystem.h"
 #include "ArmySystem.h"
+#include "WaveManager.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -46,6 +47,7 @@ namespace JDScene {
 
         void ProcessDayTimer(float deltaTime);
         void ProcessBattle(float deltaTime);
+        void BattleReward();
 
         void SpawnWaveEnemy(const Vector2F& pos);
         void SpawnPlayerArmy(const Vector2F& pos);
@@ -132,6 +134,9 @@ namespace JDScene {
         // 배속 버튼 관리
         void GameSpeedButtonUpdate();
 
+        // 날짜 UI
+        void DateUIUpdate();
+
     private:
         FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
@@ -155,7 +160,7 @@ namespace JDScene {
         int m_playerTotalPower = 0;
         int m_enemyTotalPower = 0;
 
-        const float m_dayTime = 10.0f;
+        const float m_dayTime = 1.0f;
         float m_elapsedTime = 0.0f;
         const float m_battleTime = 2.0f;
         float m_btlElapsedTime = 0.0f;
@@ -168,7 +173,7 @@ namespace JDScene {
         //JDGameObject::GameObjectBase* m_wallObject = nullptr;      // 아군 성벽.
         JDGameObject::GameObjectBase* m_expeditionObject = nullptr;  // 원정대.
 
-        Vector2F m_wallPos = { -300.0f, 75.0f }; // 성벽위치.
+        Vector2F m_wallPos = { -90.0f, 75.0f }; // 성벽위치.
 
         int m_currentWaypointIndex = 0;
         std::array<Vector2F, 3> m_waypoints = { Vector2F{ 255.0f, -135.0f },
@@ -179,6 +184,23 @@ namespace JDScene {
         int   m_wallHealth = 1000;            // 성벽 체력 초기값
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
+
+        GameDate m_date; // 현재 날짜.
+
+        // 웨이브 표시
+        struct NextWaveIndicator { // 웨이브 아이콘 표시
+            Image* waveIcon = nullptr;
+            Text*  powerText = nullptr;
+            int    stepsMoved = 0;   // 이동한 횟수.
+            int    srcDay = 0;       // 생성 시점 날짜.
+            int    lastMovedDay = 0; // 마지막으로 위치 반영한 날짜.
+        };
+
+
+        void SpawnNextWaveIndicator(int wavePower);
+        void AdvanceNextWaveIndicators(); // 현재 날짜 기준으로 nextMoveDay를 지난 것만 이동
+        std::vector<NextWaveIndicator> m_nextWaveIndicators;
+        ///////////////////////////////////////////////////////////////////////////////
 
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////

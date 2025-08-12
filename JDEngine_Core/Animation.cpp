@@ -71,6 +71,8 @@ void AnimationRender::Update(float dt)
 
 void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
+    if (!GetEnabled()) return;
+
     auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
     auto bitmap = AssetManager::Instance().GetTexture(m_clipName);
     if (!clip || !bitmap) return;

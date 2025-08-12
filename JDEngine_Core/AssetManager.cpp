@@ -65,11 +65,44 @@ void AssetManager::TextureSetUp() {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
     }
 
-    if (!AssetManager::Instance().LoadTexture("Torch", L"../Resource/ART_BG_TorchSprite01.png")) {
-        std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
+    if (!AssetManager::Instance().LoadTexture("basic_Torch", L"../Resource/Animation/ART_BG_Torch01.png")) {
+        std::cout << "[ERROR] basic_Torch 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadAnimationRender("Torch", L"../Resource/ART_BG_TorchSprite01.json")) {
-        std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
+    if (!AssetManager::Instance().LoadTexture("Torch", L"../Resource/Animation/ART_BG_TorchSprite01.png")) {
+        std::cout << "[ERROR] basic_Torch 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("Torch", L"../Resource/Animation/ART_BG_TorchSprite01.json")) {
+        std::cout << "[ERROR] basic_Torch 애니메이션 로드 실패!" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("basic_Frog", L"../Resource/Animation/Frog_1.png")) {
+        std::cout << "[ERROR] basic_Frog 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("cry_Frog", L"../Resource/Animation/Frog_2.png")) {
+        std::cout << "[ERROR] cry_Frog 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Frog1", L"../Resource/Animation/ART_BG_FrogSprite01.png")) {
+        std::cout << "[ERROR] Frog1 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("Frog1", L"../Resource/Animation/ART_BG_FrogSprite01.json")) {
+        std::cout << "[ERROR] Frog1 애니 로드 실패!" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Frog2", L"../Resource/Animation/ART_BG_FrogSprite02.png")) {
+        std::cout << "[ERROR] Frog2 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("Frog2", L"../Resource/Animation/ART_BG_FrogSprite02.json")) {
+        std::cout << "[ERROR] Frog2 애니 로드 실패!" << std::endl;
+    }
+
+    
+    if (!AssetManager::Instance().LoadTexture("basic_Rat", L"../Resource/Animation/ART_BG_MouseSprite01.png")) {
+        std::cout << "[ERROR] basic_Rat 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Rat", L"../Resource/Animation/Rat_1-sheet.png")) {
+        std::cout << "[ERROR] Rat 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("Rat", L"../Resource/Animation/ART_BG_MouseSprite01.json")) {
+        std::cout << "[ERROR] Rat 애니 로드 실패!" << std::endl;
     }
 
     if (!AssetManager::Instance().LoadTexture("Hidden_Cat", L"../Resource/testcat.png")) {
@@ -105,6 +138,15 @@ bool AssetManager::LoadTexture(const std::string& name, const std::wstring& file
         std::cout << "[에러] render target is null\n";
         return false;
     }
+
+   /* D2D1_BITMAP_PROPERTIES props = {};
+    props.pixelFormat = D2D1::PixelFormat(
+        DXGI_FORMAT_B8G8R8A8_UNORM,
+        D2D1_ALPHA_MODE_PREMULTIPLIED
+    );
+
+    props.dpiX = 96.0f;   
+    props.dpiY = 96.0f;*/
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap> bitmap;
     hr = m_renderTarget->CreateBitmapFromWicBitmap(converter.Get(), nullptr, &bitmap);

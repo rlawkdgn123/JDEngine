@@ -117,7 +117,10 @@ bool EngineCore::Initialize()
     AudioManager::Instance().LoadAudio("SFX_Cat_Put", "../Resource/Audio/SFX/SFX_Cat_Put.mp3", false);
     AudioManager::Instance().LoadAudio("SFX_Change", "../Resource/Audio/SFX/SFX_Change.mp3", false);
     AudioManager::Instance().LoadAudio("SFX_GroundAdd", "../Resource/Audio/SFX/SFX_GroundAdd.mp3", false);
-
+    AudioManager::Instance().LoadAudio("FrogSound", "../Resource/Audio/SFX/FrogSound.mp3", false);
+    AudioManager::Instance().LoadAudio("FrogPop", "../Resource/Audio/SFX/FrogPop.mp3", false);
+    AudioManager::Instance().LoadAudio("RatHide", "../Resource/Audio/SFX/RatHide.mp3", false);
+    AudioManager::Instance().LoadAudio("Torch", "../Resource/Audio/SFX/Fire.mp3", false);
     InputManager::Instance().Initialize(m_hWnd);
     //if (false == InputManager::Instance().Initialize(m_hWnd))
     //{
@@ -157,8 +160,8 @@ bool EngineCore::Initialize()
     SceneManager::Instance().RegisterScene(make_unique< JDScene::GameScene>(JDGlobal::Core::SceneType::SCENE_TEST, "GameScene"));
     SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-     SceneManager::Instance().ChangeScene("TitleScene");
-    // SceneManager::Instance().ChangeScene("TestScene01");
+    // SceneManager::Instance().ChangeScene("TitleScene");
+     SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
     // SceneManager::Instance().ChangeScene("SelectNationScene");

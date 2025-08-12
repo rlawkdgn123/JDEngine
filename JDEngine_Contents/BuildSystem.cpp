@@ -103,6 +103,7 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             // ==========================================================
 
             textureRenderer->SetSize({ squareCellSize, squareCellSize });
+            textureRenderer->SetLayerInfo({ SortingLayer::Grid, 0 });
 
             auto* collider = box->AddComponent<BoxCollider>(Vector2F{ squareCellSize / 2.0f, squareCellSize / 2.0f });
             collider->SetIndex(idx);

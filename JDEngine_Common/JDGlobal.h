@@ -28,6 +28,7 @@ namespace JDGlobal {
 		enum class SortingLayer : int {
 			None,
 			BackGround,
+			Grid,
 			Building,
 			Cat,
 			Front,

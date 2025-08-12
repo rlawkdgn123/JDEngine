@@ -94,6 +94,8 @@ namespace JDScene {
         //void CloseBuildInfo();
         //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
+        // 자원 UI 업데이트
+        void UpdateResourceUI();
 
         ////////////////////////////////////////////////////////////////////////////////
         // 1. 건설 UI

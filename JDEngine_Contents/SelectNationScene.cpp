@@ -171,7 +171,6 @@ namespace JDScene {
             m_newCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
             });
         */
-        
 
 
         ////////////////////////////////////////////////////////////////////////////////

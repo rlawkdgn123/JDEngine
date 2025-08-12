@@ -2140,7 +2140,7 @@ namespace JDScene {
 
                         auto* tr = building->AddComponent<TextureRenderer>(
                             "ART_BuildCabin01",
-                            RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                            RenderLayerInfo{ SortingLayer::Building, 0 }
                         );
 
                         tr->SetTextureName("ART_BuildCabin01");
@@ -2224,7 +2224,7 @@ namespace JDScene {
 
                         auto* tr = building->AddComponent<TextureRenderer>(
                             "ART_BuildFishing01",
-                            RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                            RenderLayerInfo{ SortingLayer::Building, 0 }
                         );
 
                         tr->SetTextureName("ART_BuildFishing01");
@@ -2307,7 +2307,7 @@ namespace JDScene {
 
                         auto* tr = building->AddComponent<TextureRenderer>(
                             "ART_BuildLumbermill01",
-                            RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                            RenderLayerInfo{ SortingLayer::Building, 0 }
                         );
 
                         tr->SetTextureName("ART_BuildLumbermill01");
@@ -2390,7 +2390,7 @@ namespace JDScene {
 
                     auto* tr = building->AddComponent<TextureRenderer>(
                         "ART_BuildMine01",
-                        RenderLayerInfo{ SortingLayer::BackGround, 0 }
+                        RenderLayerInfo{ SortingLayer::Building, 0 }
                     );
 
                     tr->SetTextureName("ART_BuildMine01");

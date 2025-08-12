@@ -79,6 +79,9 @@ namespace JDScene {
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
 
         DateUIUpdate();
+        UpdateBarrackUI();
+        UpdateAttackPowerText();
+        UpdateAwayPointUI();
     }
 
     void GameScene::OnLeave() {
@@ -361,6 +364,7 @@ namespace JDScene {
         auto* playerObj = CreateSoldierUnit(m_playerArmy.GetUnitCounts(), JDGlobal::Base::GameTag::Player,
             JDGlobal::Contents::State::Move, pos, "f1");
         m_playerArmy.OverrideUnitCounts({ 0, 0 });
+        UpdateAttackPowerText();
         if (!m_playerObject && !m_battleObject) m_playerObject = playerObj;
     }
     void GameScene::SpawnBattleObject(const Vector2F& pos)
@@ -539,6 +543,7 @@ namespace JDScene {
                         JDGameSystem::UnitCounts updated = soldier->GetUnitCounts();
                         updated += m_playerArmy.GetUnitCounts();
                         m_playerArmy.OverrideUnitCounts(updated);
+                        UpdateAttackPowerText();
                         std::cout << "[GameScene] 병영 합류." << std::endl;
                     }
                     SafeDestroy(objPtr);
@@ -615,6 +620,7 @@ namespace JDScene {
             if (m_currentWaypointIndex == 0) { 
                 JDGameSystem::ExpeditionSystem::Instance().ResolveExpedition();
                 SafeDestroy(m_expeditionObject);
+                UpdateAwayPointUI();
                 std::cout << "[GameScene] 원정 끝." << std::endl;
             }
         }
@@ -633,6 +639,7 @@ namespace JDScene {
                 if (soldier) {
                     int dmg = soldier->GetPower();
                     m_wallHealth = std::max(0, m_wallHealth - dmg);
+                    UpdateBarrackUI();
                     std::cout << "[GameScene] 성벽 남은 체력: " << m_wallHealth << std::endl;
                     it->timer -= m_battleTime;
                 }
@@ -2574,6 +2581,7 @@ namespace JDScene {
         m_trainerCatButton->AddOnClick("On Click", [this]()
             {
                 m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
+                UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
 
@@ -2676,6 +2684,7 @@ namespace JDScene {
         m_expertCatButton->AddOnClick("On Click", [this]()
             {
                 m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Expert);
+                UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
 
@@ -3170,21 +3179,31 @@ namespace JDScene {
         {
             m_stopButton->SetTextureName("ART_Pause01_ing");
             m_playButton->SetTextureName("ART_Play01");
-            m_speedButton->SetTextureName("ART_Fast01");
+            m_speedButton->SetTextureName("ART_QuickPlay01");
         }
-
         else if (GetTimeScale() == 1.0f)
         {
             m_stopButton->SetTextureName("ART_Pause01");
             m_playButton->SetTextureName("ART_Play01_ing");
-            m_speedButton->SetTextureName("ART_Fast01");
+            m_speedButton->SetTextureName("ART_QuickPlay01");
         }
-
+        else if (GetTimeScale() == 2.0f)
+        {
+            m_stopButton->SetTextureName("ART_Pause01");
+            m_playButton->SetTextureName("ART_Play01");
+            m_speedButton->SetTextureName("ART_QuickPlay01_ing");
+        }
+        else if (GetTimeScale() == 4.0f)
+        {
+            m_stopButton->SetTextureName("ART_Pause01");
+            m_playButton->SetTextureName("ART_Play01");
+            m_speedButton->SetTextureName("ART_QuickPlay02_ing");
+        }
         else
         {
             m_stopButton->SetTextureName("ART_Pause01");
             m_playButton->SetTextureName("ART_Play01");
-            m_speedButton->SetTextureName("ART_Fast01_ing");
+            m_speedButton->SetTextureName("ART_QuickPlay03_ing");
         }
     }
 
@@ -3265,6 +3284,15 @@ namespace JDScene {
         m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
     }
   
+    void GameScene::UpdateAwayPointUI()
+    {
+        int expeditionPoints = JDGameSystem::ExpeditionSystem::Instance().GetExpeditionPoints();
+        int goalPoints = JDGameSystem::ExpeditionSystem::Instance().GetGoalPoints();
+
+        m_awayCurValue->SetText(std::to_wstring(expeditionPoints));
+        m_awayMaxValue->SetText(std::to_wstring(goalPoints));
+    }
+
     void GameScene::CreateBarrackUI()
     {
         //////////
@@ -3283,8 +3311,13 @@ namespace JDScene {
         // 병영 체력 Cur / Div / Max 텍스트
         // 현재 체력 Cur
         m_barrackCurText = CreateGameObject<GameObject>(L"GameUI_BarrackCurHP");
+        m_barrackCurText->SetTag(JDGameObject::GameObject::Tag::UI);
         m_barrackCurText->AddComponent<Editor_Clickable>();
-        m_barrackCurText->AddComponent<JDComponent::TextRenderer>();
+        m_barrackCurText->AddComponent<JDComponent::TextRenderer>(
+            L"200",
+            D2D1::SizeF(100.f, 100.f),
+            RenderLayerInfo{ SortingLayer::BackGround, 10 }
+        );
         
         m_barrackCurText->GetComponent<JDComponent::Transform>()->SetPosition({ -200, 273 });
 
@@ -3295,8 +3328,13 @@ namespace JDScene {
 
         // 구분선 Div
         m_barrackDivText = CreateGameObject<GameObject>(L"GameUI_BarrackDivHP");
+        m_barrackDivText->SetTag(JDGameObject::GameObject::Tag::UI);
         m_barrackDivText->AddComponent<Editor_Clickable>();
-        m_barrackDivText->AddComponent<JDComponent::TextRenderer>();
+        m_barrackDivText->AddComponent<JDComponent::TextRenderer>(
+            L"/",
+            D2D1::SizeF(100.f, 100.f),
+            RenderLayerInfo{ SortingLayer::BackGround, 10 }
+        );
         
         m_barrackDivText->GetComponent<JDComponent::Transform>()->SetPosition({ -185, 273 });
 
@@ -3307,13 +3345,18 @@ namespace JDScene {
 
         // 최대체력 Max
         m_barrackMaxText = CreateGameObject<GameObject>(L"GameUI_BarrackMaxHP");
+        m_barrackMaxText->SetTag(JDGameObject::GameObject::Tag::UI);
         m_barrackMaxText->AddComponent<Editor_Clickable>();
-        m_barrackMaxText->AddComponent<JDComponent::TextRenderer>();
+        m_barrackMaxText->AddComponent<JDComponent::TextRenderer>(
+            L"999",
+            D2D1::SizeF(100.f, 100.f),
+            RenderLayerInfo{ SortingLayer::BackGround, 10 }
+        );
         
         m_barrackMaxText->GetComponent<JDComponent::Transform>()->SetPosition({ -170, 273 });
 
         auto barrackMaxTextRender = m_barrackMaxText->GetComponent<JDComponent::TextRenderer>();
-        barrackMaxTextRender->SetText(L"200");
+        barrackMaxTextRender->SetText(L"999");
         barrackMaxTextRender->SetTextFormatName("Sebang_12");
         barrackMaxTextRender->SetColor(D2D1::ColorF(0xD6BD94));
 
@@ -3322,7 +3365,11 @@ namespace JDScene {
         m_attackPowerText = CreateGameObject<GameObject>(L"GameUI_AttackPower");
         m_attackPowerText->SetTag(JDGameObject::GameObject::Tag::UI);
         m_attackPowerText->AddComponent<Editor_Clickable>();
-        m_attackPowerText->AddComponent<JDComponent::TextRenderer>();
+        m_attackPowerText->AddComponent<JDComponent::TextRenderer>(
+            L"1234567",
+            D2D1::SizeF(100.f, 100.f),
+            RenderLayerInfo{ SortingLayer::BackGround, 10 }
+        );
 
         m_attackPowerText->GetComponent<JDComponent::Transform>()->SetPosition({ -184, 253 });
 
@@ -3330,6 +3377,20 @@ namespace JDScene {
         attackPowerTextRender->SetText(L"2731245");
         attackPowerTextRender->SetTextFormatName("Sebang_12");
         attackPowerTextRender->SetColor(D2D1::ColorF(0xD6BD94));
+    }
+
+    void GameScene::UpdateBarrackUI()
+    {
+        auto barrackTextRender = m_barrackCurText->GetComponent<JDComponent::TextRenderer>();
+        if (!barrackTextRender) return;
+        barrackTextRender->SetText(std::to_wstring(m_wallHealth));
+    }
+
+    void GameScene::UpdateAttackPowerText()
+    {
+        auto attackPowerTextRender = m_attackPowerText->GetComponent<JDComponent::TextRenderer>();
+        if (!attackPowerTextRender) return;
+        attackPowerTextRender->SetText(std::to_wstring(m_playerArmy.CalculateTotalPower()));
     }
 
     void GameScene::CreateOptionUI()

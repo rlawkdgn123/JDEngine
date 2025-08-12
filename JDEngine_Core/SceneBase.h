@@ -5,6 +5,7 @@
 #include "UIObject.h"
 #include "Animation.h"
 #include "Texture.h"
+#include "TextRenderer.h"
 #include <memory>
 
 //GameObjectBase; // 전방 선언
@@ -88,9 +89,13 @@ namespace JDScene {
                     if (auto ar = obj->GetComponent<JDComponent::AnimationRender>()) {
                         key = ar->GetLayerInfo();
                     }
-                    if (auto tr = obj->GetComponent<JDComponent::TextureRenderer>()) {
-                        const auto trInfo = tr->GetLayerInfo();
-                        if (key < trInfo) key = trInfo; // 더 큰(뒤에 그려질) 키로 교체
+                    if (auto textureRender = obj->GetComponent<JDComponent::TextureRenderer>()) {
+                        const auto textureRenderInfo = textureRender->GetLayerInfo();
+                        if (key < textureRenderInfo) key = textureRenderInfo; // 더 큰(뒤에 그려질) 키로 교체
+                    }
+                    if (auto textRender = obj->GetComponent<JDComponent::TextRenderer>()) {
+                        const auto textRenderInfo = textRender->GetLayerInfo();
+                        if (key < textRenderInfo) key = textRenderInfo; // 더 큰(뒤에 그려질) 키로 교체
                     }
                     return key;
                 };

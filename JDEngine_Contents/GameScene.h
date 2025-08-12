@@ -181,7 +181,7 @@ namespace JDScene {
                                                 Vector2F{ 1010.0f, -175.0f } }; // 원정대 경로.
 
         std::vector<Attacker> m_attackers;    // 현재 성벽을 공격 중인 적들
-        int   m_wallHealth = 1000;            // 성벽 체력 초기값
+        int m_wallHealth = 999;              // 성벽 현재 체력
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
 
@@ -262,6 +262,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // 원정 포인트 UI
+        void UpdateAwayPointUI();
         Image* m_away = nullptr;
         Text* m_awayCurValue = nullptr;
         Text* m_awayDivText = nullptr;          // "/" 이렇게 구분하는 텍스트
@@ -269,6 +270,8 @@ namespace JDScene {
 
         // 병영 Info UI
         void CreateBarrackUI();
+        void UpdateBarrackUI();
+        void UpdateAttackPowerText();
         GameObject* m_barrackUI = nullptr;
         GameObject* m_barrackCurText = nullptr;
         GameObject* m_barrackDivText = nullptr;

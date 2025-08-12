@@ -2210,6 +2210,23 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_SettingIcon01 텍스처 로드 실패" << std::endl;
     }
 
+    if (!AssetManager::Instance().LoadTexture("ART_QuickPlay01", L"../Resource/BATTLE/ART_QuickPlay01.png"))
+    {
+        std::cout << "[ERROR] ART_QuickPlay01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_QuickPlay01_ing", L"../Resource/BATTLE/ART_QuickPlay01_ing.png"))
+    {
+        std::cout << "[ERROR] ART_QuickPlay01_ing 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_QuickPlay02_ing", L"../Resource/BATTLE/ART_QuickPlay02_ing.png"))
+    {
+        std::cout << "[ERROR] ART_QuickPlay02_ing 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_QuickPlay03_ing", L"../Resource/BATTLE/ART_QuickPlay03_ing.png"))
+    {
+        std::cout << "[ERROR] ART_QuickPlay03_ing 텍스처 로드 실패" << std::endl;
+    }
+
 
     if (!AssetManager::Instance().LoadTexture("ART_Monster01", L"../Resource/BATTLE/ART_Monster01.png"))
     {

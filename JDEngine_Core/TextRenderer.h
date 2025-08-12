@@ -4,12 +4,6 @@
 #include "Component.h"
 #include "D2DRenderer.h"
 
-// 전방 선언
-namespace JDGlobal::Base {
-    struct RenderLayerInfo;
-    enum class SortingLayer;
-}
-
 namespace JDComponent {
 
     using RenderLayerInfo = JDGlobal::Base::RenderLayerInfo;
@@ -29,8 +23,8 @@ namespace JDComponent {
             const RenderLayerInfo& layerInfo = { SortingLayer::None, 0 }
         );
 
-    private:
-        TextRenderer() = delete; // 기본 생성자 비활성화
+    //private:
+    //    TextRenderer() = delete; // 기본 생성자 비활성화
 
     public:
         // 렌더링 함수: 외부에서 월드 변환 행렬을 받아 텍스트를 그립니다.

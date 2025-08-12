@@ -6,6 +6,7 @@
 #include "UIObject.h"
 #include "Texture.h"
 #include "Animation.h"
+#include "TextRenderer.h"
 
 using GameObject = JDGameObject::GameObject;
 using UIObject = JDGameObject::UIObject;

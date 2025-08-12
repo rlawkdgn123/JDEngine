@@ -239,9 +239,19 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 원정 이미지
+        // 원정 포인트 UI
         Image* m_away = nullptr;
-        Image* m_awayGauge = nullptr;
+        Text* m_awayCurValue = nullptr;
+        Text* m_awayDivText = nullptr;          // "/" 이렇게 구분하는 텍스트
+        Text* m_awayMaxValue = nullptr;
+
+        // 병영 Info UI
+        void CreateBarrackUI();
+        GameObject* m_barrackUI = nullptr;
+        GameObject* m_barrackCurText = nullptr;
+        GameObject* m_barrackDivText = nullptr;
+        GameObject* m_barrackMaxText = nullptr;
+        GameObject* m_attackPowerText = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -373,5 +383,52 @@ namespace JDScene {
         Text* m_awayAwardText02 = nullptr;
 
         Button* m_awayButton = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 2025.08.12 옵션 추가 (게임 씬)
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void CreateOptionUI();
+        void ShowOptionUI();
+        void CloseOptionUI();
+
+        // 옵션창
+
+        bool isOpenOption = false;
+
+        Image* m_optionUI = nullptr;
+        Image* m_optionVolume = nullptr;
+        Image* m_optionControl = nullptr;
+        Image* m_optionCredit = nullptr;
+
+        // 옵션 닫기 버튼
+        Button* m_closeOption = nullptr;
+
+        // 옵션 선택 실제 버튼
+        Button* m_selectVolume = nullptr;
+        Button* m_selectControl = nullptr;
+        Button* m_selectCredit = nullptr;
+
+        // 옵션 선택 더미 텍스트
+        Text* m_selectVolumeDummyText = nullptr;
+        Text* m_selectControlDummyText = nullptr;
+        Text* m_selectCreditDummyText = nullptr;
+
+        // 볼륨 선택 슬라이더
+        Slider* m_masterSlider = nullptr;
+        Slider* m_bgmSlider = nullptr;
+        Slider* m_sfxSlider = nullptr;
+
+        // 배속 키 텍스트
+        Text* m_stopKeyText = nullptr;
+        Text* m_playKeyText = nullptr;
+        Text* m_speedKeyText = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // UI 개발용 필터
+        void CreateFillter();
+
+        Image* m_fillter = nullptr;
     };
 }

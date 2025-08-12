@@ -83,6 +83,7 @@ namespace JDScene {
         Image* m_optionControl = nullptr;
         Image* m_optionCredit = nullptr;
 
+        // 옵션 닫기 버튼
         Button* m_closeOption = nullptr;
 
         // 옵션 선택 실제 버튼

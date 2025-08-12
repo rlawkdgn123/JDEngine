@@ -72,10 +72,18 @@ namespace JDGameSystem {
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> dist(0.0f, 100.0f);
-
 		float randValue = dist(gen);
 
 		return randValue < successRate;
+	}
+
+	void ExpeditionSystem::RollBonusType() {
+		// 자원 중 하나만 선택해서 보상.
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int> dist(0, 2);
+		m_randomResourceIndex = dist(gen);
+		std::cout << "[ExpeditionSystem] 랜덤보상 종류 : " << m_randomResourceIndex << std::endl;
 	}
 
 	void ExpeditionSystem::ResolveExpedition() {
@@ -88,19 +96,15 @@ namespace JDGameSystem {
 		m_expeditionPoints = std::min(m_goalPoints, m_expeditionPoints + expeditionInfo.m_point); // 원정 포인트 더하기.
 		m_expeditionActive = true; // 다시 원정 갈 수 있게.
 
+		RollBonusType(); // 랜덤 보상 다시 정해주기.
+
 		if (!RollBonusReward(expeditionInfo.m_successRate)) { // 확률을 뚫지 못하면 끝.
 			std::cout << "[ExpeditionSystem] 확률을 뚫지 못함." << std::endl;
 			return;
 		}
 
-		// 자원 중 하나만 선택해서 보상.
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> dist(0, 2);
-		int randomResourceIndex = dist(gen);
-
 		Resource reward = {0, 0, 0};
-		switch (randomResourceIndex) { // 랜덤 자원 하나만 더해줄거임.
+		switch (m_randomResourceIndex) { // 랜덤 자원 하나만 더해줄거임.
 		case 0:
 			reward.m_food = expeditionInfo.m_reward.m_food;
 			break;

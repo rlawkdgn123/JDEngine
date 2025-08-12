@@ -11,6 +11,7 @@
 #include "ParticleSystem.h"
 #include "BuildSystem.h"
 #include "ArmySystem.h"
+#include "WaveManager.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -46,6 +47,7 @@ namespace JDScene {
 
         void ProcessDayTimer(float deltaTime);
         void ProcessBattle(float deltaTime);
+        void BattleReward();
 
         void SpawnWaveEnemy(const Vector2F& pos);
         void SpawnPlayerArmy(const Vector2F& pos);
@@ -92,6 +94,8 @@ namespace JDScene {
         //void CloseBuildInfo();
         //void ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
 
+        // 자원 UI 업데이트
+        void UpdateResourceUI();
 
         ////////////////////////////////////////////////////////////////////////////////
         // 1. 건설 UI
@@ -132,6 +136,9 @@ namespace JDScene {
         // 배속 버튼 관리
         void GameSpeedButtonUpdate();
 
+        // 날짜 UI
+        void DateUIUpdate();
+
     private:
         FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
@@ -155,7 +162,7 @@ namespace JDScene {
         int m_playerTotalPower = 0;
         int m_enemyTotalPower = 0;
 
-        const float m_dayTime = 10.0f;
+        const float m_dayTime = 1.0f;
         float m_elapsedTime = 0.0f;
         const float m_battleTime = 2.0f;
         float m_btlElapsedTime = 0.0f;
@@ -168,7 +175,7 @@ namespace JDScene {
         //JDGameObject::GameObjectBase* m_wallObject = nullptr;      // 아군 성벽.
         JDGameObject::GameObjectBase* m_expeditionObject = nullptr;  // 원정대.
 
-        Vector2F m_wallPos = { -300.0f, 75.0f }; // 성벽위치.
+        Vector2F m_wallPos = { -90.0f, 75.0f }; // 성벽위치.
 
         int m_currentWaypointIndex = 0;
         std::array<Vector2F, 3> m_waypoints = { Vector2F{ 255.0f, -135.0f },
@@ -176,9 +183,26 @@ namespace JDScene {
                                                 Vector2F{ 1010.0f, -175.0f } }; // 원정대 경로.
 
         std::vector<Attacker> m_attackers;    // 현재 성벽을 공격 중인 적들
-        int   m_wallHealth = 1000;            // 성벽 체력 초기값
+        int m_wallHealth = 999;              // 성벽 현재 체력
 
         bool m_isBarracksSelected = false; // 병영 선택 여부.
+
+        GameDate m_date; // 현재 날짜.
+
+        // 웨이브 표시
+        struct NextWaveIndicator { // 웨이브 아이콘 표시
+            Image* waveIcon = nullptr;
+            Text*  powerText = nullptr;
+            int    stepsMoved = 0;   // 이동한 횟수.
+            int    srcDay = 0;       // 생성 시점 날짜.
+            int    lastMovedDay = 0; // 마지막으로 위치 반영한 날짜.
+        };
+
+
+        void SpawnNextWaveIndicator(int wavePower);
+        void AdvanceNextWaveIndicators(); // 현재 날짜 기준으로 nextMoveDay를 지난 것만 이동
+        std::vector<NextWaveIndicator> m_nextWaveIndicators;
+        ///////////////////////////////////////////////////////////////////////////////
 
         // 맵 생성 변수
         ////////////////////////////////////////////////////////////////////////////////
@@ -203,21 +227,21 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // [상단] 자원
-        Button* m_resPop = nullptr;             // 인구 UI
-        Text* m_resPopText = nullptr;           // 인구 텍스트
-        Text* m_resPopBonusText = nullptr;      // 인구 보너스 텍스트
+        Button* m_buttonPop = nullptr;           // 인구 UI
+        Text* m_curPopText = nullptr;           // 인구 보유량
+        Text* m_maxPopText = nullptr;           // 인구 최대치
 
-        Button* m_resFood = nullptr;            // 음식 UI
-        Text* m_resFoodText = nullptr;          // 음식 텍스트
-        Text* m_resFoodBonusText = nullptr;     // 음식 보너스 텍스트
+        Button* m_buttonFood = nullptr;         // 음식 UI
+        Text* m_curFoodText = nullptr;          // 음식 보유량
+        Text* m_resFoodText = nullptr;          // 음식 재생량
 
-        Button* m_resWood = nullptr;            // 목재 UI
-        Text* m_resWoodText = nullptr;          // 목재 텍스트
-        Text* m_resWoodBonusText = nullptr;     // 목재 보너스 텍스트
+        Button* m_buttonWood = nullptr;         // 목재 UI
+        Text* m_curWoodText = nullptr;          // 목재 보유량
+        Text* m_resWoodText = nullptr;          // 목재 재생량
 
-        Button* m_resMineral = nullptr;         // 광물 UI
-        Text* m_resMineralText = nullptr;       // 광물 텍스트
-        Text* m_resMineralBonusText = nullptr;  // 광물 보너스 텍스트
+        Button* m_buttonMineral = nullptr;      // 광물 UI
+        Text* m_curMineralText = nullptr;       // 광물 보유량
+        Text* m_resMineralText = nullptr;       // 광물 재생량
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -239,9 +263,22 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 원정 이미지
+        // 원정 포인트 UI
+        void UpdateAwayPointUI();
         Image* m_away = nullptr;
-        Image* m_awayGauge = nullptr;
+        Text* m_awayCurValue = nullptr;
+        Text* m_awayDivText = nullptr;          // "/" 이렇게 구분하는 텍스트
+        Text* m_awayMaxValue = nullptr;
+
+        // 병영 Info UI
+        void CreateBarrackUI();
+        void UpdateBarrackUI();
+        void UpdateAttackPowerText();
+        GameObject* m_barrackUI = nullptr;
+        GameObject* m_barrackCurText = nullptr;
+        GameObject* m_barrackDivText = nullptr;
+        GameObject* m_barrackMaxText = nullptr;
+        GameObject* m_attackPowerText = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -367,11 +404,63 @@ namespace JDScene {
         Text* m_awayCostText01 = nullptr;
         Image* m_awayCostImage02 = nullptr;
         Text* m_awayCostText02 = nullptr;
+        Image* m_awayCostImage03 = nullptr;
+        Text* m_awayCostText03 = nullptr;
 
         Text* m_awayAwardInfo = nullptr;
         Text* m_awayAwardText01 = nullptr;
         Text* m_awayAwardText02 = nullptr;
 
         Button* m_awayButton = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 2025.08.12 옵션 추가 (게임 씬)
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void CreateOptionUI();
+        void ShowOptionUI();
+        void CloseOptionUI();
+
+        // 옵션창
+
+        bool isOpenOption = false;
+
+        Image* m_optionUI = nullptr;
+        Image* m_optionVolume = nullptr;
+        Image* m_optionControl = nullptr;
+        Image* m_optionCredit = nullptr;
+
+        // 옵션 닫기 버튼
+        Button* m_closeOption = nullptr;
+        Button* m_backToTitle = nullptr;
+        Button* m_quitGame = nullptr;
+
+        // 옵션 선택 실제 버튼
+        Button* m_selectVolume = nullptr;
+        Button* m_selectControl = nullptr;
+        Button* m_selectCredit = nullptr;
+
+        // 옵션 선택 더미 텍스트
+        Text* m_selectVolumeDummyText = nullptr;
+        Text* m_selectControlDummyText = nullptr;
+        Text* m_selectCreditDummyText = nullptr;
+
+        // 볼륨 선택 슬라이더
+        Slider* m_masterSlider = nullptr;
+        Slider* m_bgmSlider = nullptr;
+        Slider* m_sfxSlider = nullptr;
+
+        // 배속 키 텍스트
+        Text* m_stopKeyText = nullptr;
+        Text* m_playKeyText = nullptr;
+        Text* m_speedKeyText = nullptr;
+
+        float m_prevGameSpeed = 0.0f;
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // UI 개발용 필터
+        void CreateFillter();
+        Image* m_fillter = nullptr;
     };
 }

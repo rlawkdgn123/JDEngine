@@ -175,6 +175,9 @@
     <ClInclude Include="CameraFader.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Component\SpriteRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">
@@ -248,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="DataTableManager.cpp">
       <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Component\SpriteRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

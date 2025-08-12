@@ -70,6 +70,8 @@ private:
 
 	//std::shared_ptr<OnlyForTestScene> m_TestScenePtr = nullptr; //씬은 지금 분리해야함
 	
+	// ImGui 활성/비활성
+	bool m_showImGui = false;
 };
 
 

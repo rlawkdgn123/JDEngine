@@ -191,8 +191,6 @@ bool EngineCore::Initialize()
     ImGui_ImplWin32_Init(m_hWnd);              // 윈도우 핸들 (GameApp 멤버에 저장된 윈도우 핸들)
     ImGui_ImplDX11_Init(D2DRenderer::Instance().GetD3DDevice(), D2DRenderer::Instance().GetD3DContext());
 
-
-
     return true;
 }
 
@@ -252,11 +250,6 @@ void EngineCore::Finalize()
 
 void EngineCore::UpdateTime()
 {
-    // ImGui
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-
     ////////////////////////////////////////////////////////////////////////////////
 
     assert(m_EngineTimer != nullptr);
@@ -436,6 +429,14 @@ void EngineCore::UpdateLogic()
         {
             m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1.0f, 1.0f, 0.0f, 1.0f));
         }
+
+
+        // ImGui 토글 기능 추가
+        // ~ 키 (VK_OEM_3)가 눌렸는지 확인합니다.
+        if (input.GetKeyPressed(VK_OEM_3))
+        {
+            m_showImGui = !m_showImGui; // 플래그를 반전시킵니다.
+        }
     }
 }
 
@@ -477,13 +478,21 @@ void EngineCore::Render()
 
     renderer.RenderEnd(false);
 
-    RenderImGui();
+    if (m_showImGui)
+    {
+        RenderImGui();
+    }
 
     renderer.Present();
 }
 
 void EngineCore::RenderImGui()
 {
+    // ImGui
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
     ID3D11DeviceContext* context = D2DRenderer::Instance().GetD3DContext();
     ID3D11RenderTargetView* rtv = D2DRenderer::Instance().GetD3DRenderTargetView();
 

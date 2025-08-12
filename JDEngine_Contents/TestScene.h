@@ -4,6 +4,7 @@
 #include "SceneBase.h"
 #include "InputManager.h" 
 #include <random>
+#include "ParticleSystem.h"
 
 namespace JDScene {
     class TestScene : public SceneBase
@@ -35,6 +36,19 @@ namespace JDScene {
         std::vector<std::shared_ptr<GameObject>> m_sceneObjects;
         std::vector<std::shared_ptr<UIObject>> m_UIObjects;
 
+        //파티클
+        std::unique_ptr<ParticleSystem> m_mouseParticles;
+        std::unique_ptr<ParticleSystem> m_leafParticles;
+        std::unique_ptr<ParticleSystem> m_smokeParticles;
+        std::unique_ptr<ParticleSystem> m_footdustParticles;
+        std::unique_ptr<ParticleSystem> m_waveParticles;
+
+        float m_torchSmokeAcc = 0.f;
+        bool  m_emitTorchSmoke = false;
+        float m_torchSmokePeriod = 0.2f;
+
+        bool  m_emitleaf = false;
+        bool  m_emitwave = false;
         //개구리
         JDGameObject::GameObject* m_frog = nullptr;
         JDComponent::TextureRenderer* m_frogTex = nullptr;

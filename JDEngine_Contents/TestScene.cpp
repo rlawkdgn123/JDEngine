@@ -146,6 +146,23 @@ namespace JDScene {
         auto gameStart = CreateUIObject<Button>(L"GameStart_Button");
         gameStart->SetTextureName("GAME_START_B");
         gameStart->SetSizeToOriginal();
+
+        //파티클 초기화
+        m_mouseParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_leafParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_smokeParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_footdustParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_waveParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
     }
 
     void TestScene::OnLeave() {
@@ -154,6 +171,10 @@ namespace JDScene {
 
     void TestScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
+
+        auto cam = D2DRenderer::Instance().GetCamera();
+        float W = (float)cam->GetScreenWidth();
+        float H = (float)cam->GetScreenHeight();
 
         float speed = 100.f;  // 픽셀/초
         Vector2F delta{ speed * deltaTime, 0.f };
@@ -191,6 +212,57 @@ namespace JDScene {
             }
         }
 
+        //파티클
+
+        //  나뭇잎
+        if (m_leafParticles && m_emitleaf) {
+            if (auto* tm = m_rat->GetComponent<JDComponent::Transform>()) {
+                Vector2F p = tm->GetPosition();
+                m_leafParticles->SpawnLeavesParticle(/*pos*/{ p.x, p.y - 130 },
+                    /*count*/1,
+                    /*scale*/1.0f,
+                    /*maxLife*/4.0f);
+            }
+        }
+
+        if (m_leafParticles)  m_leafParticles->UpdateLeaves(deltaTime, W, H);
+        m_emitleaf = false;
+        //  연기
+        if (m_emitTorchSmoke && m_smokeParticles) {
+            m_torchSmokeAcc += deltaTime;
+
+            if (auto* tm = m_torch->GetComponent<JDComponent::Transform>()) {
+                Vector2F p = tm->GetPosition();
+                p.y -= 126.f; // 네가 쓰던 오프셋 유지(원하면 조절)
+                while (m_torchSmokeAcc >= m_torchSmokePeriod) {
+                    m_smokeParticles->SpawnSmokeParticle(p, 1, 1.6f, 2.2f);
+                    m_torchSmokeAcc -= m_torchSmokePeriod;
+                }
+            }
+        }
+        else {
+            m_torchSmokeAcc = 0.f; // 꺼지면 누적 리셋
+        }
+
+        if (m_smokeParticles) {
+            m_smokeParticles->UpdateSmoke(deltaTime, W, H);
+        }
+        //  물파동 
+
+        if (m_waveParticles && m_emitwave) {
+            if (auto* tm = m_frog->GetComponent<JDComponent::Transform>()) {
+                Vector2F p = tm->GetPosition();
+                // 시작 스케일, 확산 속도, 수명, 기본 픽셀 크기는 취향대로 조절
+                m_waveParticles->SpawnWaterWaveParticle(/*pos*/{ p.x, p.y - 100 },
+                    /*startScale*/0.35f,
+                    /*expandSpeed*/1.6f,
+                    /*maxLife*/0.8f,
+                    /*baseSizePx*/64.f);
+            }
+        }
+
+        if (m_waveParticles)  m_waveParticles->UpdateWaterWave(deltaTime);
+        m_emitwave = false;
         //////////////////////////////////////
         for (auto& objPtr : m_gameObjects) {
 
@@ -263,23 +335,32 @@ namespace JDScene {
         auto camera = D2DRenderer::Instance().GetCamera();
 
         if (camera)
+        {
             D2DRenderer::Instance().SetTransform(camera->GetViewMatrix());
+        }
         else
+        {
             D2DRenderer::Instance().SetTransform(D2D1::Matrix3x2F::Identity());
+        }
 
-        //게임 오브젝트 렌더
-
-        for (auto& obj : m_gameObjects) {
+        for (auto& obj : m_gameObjects)
+        {
             D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
         }
 
-        DrawColider();
-
         for (auto& uiObj : m_uiObjects)
-
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
+
+        auto ctx = D2DRenderer::Instance().GetD2DContext();
+
+        if (m_leafParticles) m_leafParticles->RenderLeaves(ctx);
+        if (m_smokeParticles) m_smokeParticles->RenderSmoke(ctx);
+        if (m_waveParticles) m_waveParticles->RenderWaterWave(ctx);
+
+        //if (m_mouseParticles) m_mouseParticles->RenderGlow(ctx);
+        
     }
     void TestScene::ClickUpdate()
     {
@@ -404,6 +485,8 @@ namespace JDScene {
                                 m_frogTimer = dur;
                                 m_frogChanged = true; // Update에서 복귀 처리
                             }
+
+                            m_emitwave = true;
                         }
                     }
                 }
@@ -435,6 +518,8 @@ namespace JDScene {
                             std::uniform_real_distribution<float> dLock(2.0f, 3.0f); // 예: 2~3초
                             m_ratLockTimer = dLock(rng);
                             m_ratLocked = true;
+
+                            m_emitleaf = true;
                         }
                     }
                 }
@@ -450,6 +535,7 @@ namespace JDScene {
 
                             if (m_torchAnim && m_torchAnim->GetEnabled())
                             {
+                                m_emitTorchSmoke = false;
                                 // 애니 끄고 텍스처 복귀
                                 m_torchAnim->SetEnabled(false);
                                 if (m_torchTex) m_torchTex->SetEnabled(true);
@@ -459,6 +545,7 @@ namespace JDScene {
                             }
                             else
                             {
+                                m_emitTorchSmoke = true;
                                 // 텍스처 숨기고 애니 시작(2프레임부터 루프)
                                 if (m_torchTex)  m_torchTex->SetEnabled(false);
                                 if (m_torchAnim) {

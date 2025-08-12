@@ -74,6 +74,7 @@ namespace JDGameObject {
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[m_curLevel + 1] - m_stats.m_initPopulation[m_curLevel]);
 
             ++m_curLevel;
+
             return true;
         }
         bool House::LevelDown()

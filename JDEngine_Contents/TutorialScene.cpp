@@ -99,7 +99,6 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        // 무슨 코드임???
         //float speed = 100.f;  // 픽셀/초
         //Vector2F delta{ speed * deltaTime, 0.f };
 
@@ -227,10 +226,10 @@ namespace JDScene {
         for (auto& obj : m_gameObjects) {
             if (auto grid = dynamic_cast<Grid*>(obj.get())) {
                 if (grid->HasBuilding()) {
-                    auto resText = CreateUIObject<Text>(L"resText");
-                    resText->SetText(L"agadfngldfgjkdf");
-                    resText->SetPosition({0, 0});
-                    resText->SetColor(D2D1::ColorF(D2D1::ColorF::White, 1.f)); // 화이트여야
+                    //auto resText = CreateUIObject<Text>(L"resText");
+                    //resText->SetText(L"agadfngldfgjkdf");
+                    //resText->SetPosition({0, 0});
+                    //resText->SetColor(D2D1::ColorF(D2D1::ColorF::White, 1.f)); // 화이트여야
                 }
 
             }
@@ -2770,7 +2769,38 @@ namespace JDScene {
         // 다운그레이드 버튼 클릭하면 실행될 이벤트
         m_downgradeButton->AddOnClick("Quit Game", [this]()
             {
+                if (m_selectedCollider) {
+                    wcout << L"다운그레이드 선택이되..................." << m_selectedCollider->GetOwner()->GetName() << endl;
+                    wcout << L"다운그레이드 선택이되..................." << endl;
+                    wcout << L"다운그레이드 선택이되..................." << endl;
+                    wcout << L"다운그레이드 선택이되..................." << endl;
 
+                    auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+                    Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+                    
+                    if (!grid) return;
+
+                    auto* building = dynamic_cast<Building*>(grid->GetBuilding());
+                    if (building) {
+                        if(building->GetLevel() > 0) building->LevelDown();
+                        else {
+                            cout << "빌딩 파괴!!!" << endl;
+                            grid->SetHasBuilding(false);
+                            grid->SetBuilding(nullptr);
+                            this->DestroyObject(building);
+                        }
+                    }
+                    else if (auto* house = dynamic_cast<House*>(grid->GetBuilding())) {
+                        if (house->GetLevel() > 0) house->LevelDown();
+                        else {
+                            cout << "집 파괴!!!" << endl;
+                            grid->SetHasBuilding(false);
+                            grid->SetBuilding(nullptr);
+                            this->DestroyObject(house);
+                            
+                        }
+                    }
+                }
             });
 
         // 다운그레이드 버튼 마우스를 올리면 실행될 이벤트
@@ -2796,7 +2826,25 @@ namespace JDScene {
         // 업그레이드 버튼 클릭하면 실행될 이벤트
         m_upgradeButton->AddOnClick("Quit Game", [this]()
             {
+                if (m_selectedCollider) {
+                    wcout << L"업그레이드 선택이되..................." << m_selectedCollider->GetOwner()->GetName() << endl;
+                    wcout << L"업그레이드 선택이되..................." << endl;
+                    wcout << L"업그레이드 선택이되..................." << endl;
+                    wcout << L"업그레이드 선택이되..................." << endl;
 
+                    auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+                    Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+
+                    if (!grid) return;
+
+                    auto* building = dynamic_cast<Building*>(grid->GetBuilding());
+                    if (building) {
+                        building->LevelUp();
+                    }
+                    else if (auto* house = dynamic_cast<House*>(grid->GetBuilding())) {
+                        house->LevelUp();
+                    }
+                }
             });
 
         // 업그레이드 버튼 마우스를 올리면 실행될 이벤트

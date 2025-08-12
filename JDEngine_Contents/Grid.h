@@ -1,4 +1,6 @@
 #include "JDGlobal.h"
+#include "ResourceSystem.h"
+
 #pragma once
 namespace JDGameObject {
     namespace Content {
@@ -6,16 +8,20 @@ namespace JDGameObject {
         class Building; // 전방 선언
     }
 }
+
 namespace JDGameObject {
     namespace Content {
         class Grid : public JDGameObject::GameObject
         {
         public:
-            using Direction =JDGlobal::Contents::Direction;
+            using Direction = JDGlobal::Contents::Direction;
+            using CatType = JDGlobal::Contents::CatType;
+            using SynergyBonus = JDGlobal::Contents::CatSynergyBonus;
         public:
-            Grid() : GameObject(L"Grid") {}
-            Grid(const std::wstring& name) : GameObject(name) {}
+            Grid() : GameObject(L"Grid") { m_cat = CatType::None; }
+            Grid(const std::wstring& name) : GameObject(name) { m_cat = CatType::None; }
         public:
+
             void Awake() override;
             void Start() override;                              // 최초 1회만 호출
             void Update(float deltaTime) override;              // Update
@@ -31,8 +37,12 @@ namespace JDGameObject {
             bool HasBuilding() const { return m_hasBuilding; }
             void SetHasBuilding(bool hasBuilding) { m_hasBuilding = hasBuilding; }
 
-            void SetBuilding(const JDGameObject::GameObject* building);
-            GameObject* GetBuilding() { return BuildingRaw; }
+            void SetBuilding(JDGameObject::GameObject* building);
+            GameObject* GetBuilding() const { return m_buildingRaw; }
+            CatType GetCatType() const { return m_cat; }
+
+            void ChangeCatType(CatType type);
+            void UpdateSynergy();
 
             void SetOtherGrid(Direction dir, Grid* otherGrid) {
                 switch (dir) {
@@ -57,7 +67,10 @@ namespace JDGameObject {
             bool m_occupied = false; // 현재 확장 후 소유한 지형인지 여부
             bool m_hasBuilding = false; // 건물 소유 여부
 
-            JDGameObject::GameObject* BuildingRaw; // 소유중인 건물 참조 ptr
+            CatType m_cat;
+            JDGameObject::GameObject* m_buildingRaw; // 소유중인 건물 참조 ptr
+            JDGlobal::Contents::Resource m_synergyBonus;
+            JDGameSystem::ResourceSystem* m_resourceSystem;
 
             // 상, 하, 좌, 우 인접 그리드 포인터 배열 (0:상,1:하,2:좌,3:우)
             Grid* others[4] = { nullptr, nullptr, nullptr, nullptr };

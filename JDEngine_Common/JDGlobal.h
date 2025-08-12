@@ -224,6 +224,26 @@ namespace JDGlobal {
 			inline int GetAllCats() { return (Felis + Navi + Kone); }
 		};
 
+		struct CatSynergyBonus {
+			CatSynergyBonus()
+				: FelisBonus{ 0,10,0 },
+				NaviBonus{ 10,0,0 },
+				KoneBonus{ 0,0,10 },
+				FelisPenalty{ 0,-10,0 },
+				NaviPenalty{ -10,0,0 },
+				KonePenalty{ 0,0,-10 }
+			{}
+
+			Resource FelisBonus;
+			Resource FelisPenalty;
+
+			Resource NaviBonus;
+			Resource NaviPenalty;
+
+			Resource KoneBonus;
+			Resource KonePenalty;
+		};
+
 		struct CatResourceBonus {
 			CatResourceBonus()
 				: FelisBonus(0, 10, 0),

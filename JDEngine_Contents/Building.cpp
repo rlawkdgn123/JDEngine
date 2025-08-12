@@ -89,8 +89,27 @@ namespace JDGameObject {
                 m_resourceSystem->AddCurPopulation(1);
             }
 
+            //디버그
+              // 상태 갱신 전에 디버그 로그 출력
+            auto CatTypeToString = [](CatType cat) -> const char* {
+                switch (cat) {
+                case CatType::None:  return "None";
+                case CatType::Felis: return "Felis";
+                case CatType::Navi:  return "Navi";
+                case CatType::Kone:  return "Kone";
+                default:             return "Unknown";
+                }
+                };
+
+            std::cout << "Building cat type changed from " << CatTypeToString(oldCat)
+                << " to " << CatTypeToString(newCat) << std::endl;
+
+
+
             // 모든 적용 성공 시에만 상태 갱신
             m_cat = newCat;
+
+            
             return true;
         }
 

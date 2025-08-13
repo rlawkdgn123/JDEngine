@@ -62,6 +62,7 @@ namespace JDGameSystem {
 			//m_maxPopulation = 10;		    // 최대 인구수
 			m_curPopulation = 0;		    // 현재 인구수
 		}
+
 		void Update(float deltaTime) {
 			m_secondTimer += deltaTime; // 누적 시간을 더해줍니다.
 			UpdateTotalResourcePerSec(); // 초당 자원량을 먼저 계산합니다.
@@ -119,6 +120,7 @@ namespace JDGameSystem {
 			m_totalResource = value;
 			ClampResourceToLimits(m_totalResource);
 		}
+
 		void AddTotalResource(const Resource& value) {
 			m_totalResource += value;
 			ClampResourceToLimits(m_totalResource);
@@ -126,7 +128,9 @@ namespace JDGameSystem {
 
 		void SetResourceBonus(const Resource& value) {
 			m_resourceBonus = ClampBonus(value);
-		}void AddResourceBonus(const Resource& value) {
+		}
+		
+		void AddResourceBonus(const Resource& value) {
 			m_resourceBonus += value;
 			m_resourceBonus = ClampBonus(m_resourceBonus);
 		}
@@ -134,10 +138,12 @@ namespace JDGameSystem {
 		void SetSynergyBonus(const Resource& value) {
 			m_synergyBonus = ClampBonus(value);
 		}
+
 		void AddSynergyBonus(const Resource& value) {
 			m_synergyBonus += value;
 			m_synergyBonus = ClampBonus(m_synergyBonus);
 		}
+
 		void SetMaxPopulation(const int& value);
 		void AddMaxPopulation(const int& value);
 		void SetCurPopulation(const int& value);

@@ -18,7 +18,7 @@ using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
-
+using Direction = JDGlobal::Contents::Direction;
 namespace JDScene {
 
     // TestScene
@@ -800,6 +800,18 @@ namespace JDScene {
                             else {
                                 if (grid->IsExpanded()) {
                                     cout << "확장 가능한 미점유 지역입니다." << endl;
+                                    if (m_buildSystem->GetChoiceCount() > 0) {
+                                        m_buildSystem->AddChoiceCount(-1);
+                                        cout << "지역이 확장되었습니다." << endl;
+                                        grid->SetExpanded(false);
+                                        grid->SetOccupied(true);   
+                                        for (int dir = 0; dir < static_cast<int>(Direction::DIRECTION_MAX); ++dir) {
+                                            
+                                            auto otherGrid = grid->GetOtherGrid(dir);
+                                            if (!otherGrid || otherGrid->IsOccupied()) continue;
+                                            else { otherGrid->SetExpanded(true); }
+                                        }
+                                    }
                                 }
                                 else {
                                     cout << "확장 불가능한 미점유 지역입니다." << endl;

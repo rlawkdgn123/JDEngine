@@ -279,6 +279,9 @@ namespace JDScene {
         Text* m_curMineralText = nullptr;       // 광물 보유량
         Text* m_resMineralText = nullptr;       // 광물 재생량
 
+        Button* m_buttonExpand = nullptr;       // 확장 UI
+        Text* m_expandCountText = nullptr;      // 확장 선택권 보유량
+
         ////////////////////////////////////////////////////////////////////////////////
 
         // [상단] 몬스터 웨이브
@@ -586,12 +589,8 @@ namespace JDScene {
         //자원 - 광물 UI
         Image* m_MineralUI = nullptr;
         Text* m_MineralText = nullptr;
-        
         ////////////////////////////////////////////////////////////////////////////////
-
-        Button* m_buttonExpand = nullptr;           // 확장 UI
-        Text* m_expandCountText = nullptr;           // 확장 선택권 보유량
-        
+        //자원 - 확장권
         // 설명 팝업
         Image* m_expandCountUI = nullptr;
         Text* m_expandCountInfoText = nullptr;

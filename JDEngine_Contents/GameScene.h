@@ -585,6 +585,15 @@ namespace JDScene {
         Text* m_MineralText = nullptr;
         
         ////////////////////////////////////////////////////////////////////////////////
+
+        Button* m_buttonExpand = nullptr;           // 확장 UI
+        Text* m_expandCountText = nullptr;           // 확장 선택권 보유량
+        
+        // 설명 팝업
+        Image* m_expandCountUI = nullptr;
+        Text* m_expandCountInfoText = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
         void RenderCursor(Vector2F mouseClientPos,
             float scale = 1.0f, float alpha = 1.0f);
 

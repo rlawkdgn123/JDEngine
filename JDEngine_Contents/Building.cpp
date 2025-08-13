@@ -51,8 +51,7 @@ namespace JDGameObject {
 
         bool Building::ChangeCat(CatType newCat)
         {
-            // 동일 타입이면 아무 것도 하지 않음
-            if (m_cat == newCat) return true;
+            if (m_cat == newCat) return true; // 동일 타입이면 아무 것도 안 함
 
             auto bonus = JDGlobal::Contents::CatResourceBonus();
             CatType oldCat = m_cat;
@@ -65,36 +64,42 @@ namespace JDGameObject {
             default: break;
             }
 
-            // 기존 고양이 상태가 비어있지 않았다면
+            // 이전 고양이가 있었다면 초당 자원량 제거 및 인구 회복
             if (oldCat != CatType::None) {
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceSubPerSec[m_curLevel]);
-                // 고양이 제거 시 인구 회복
                 m_resourceSystem->AddCurPopulation(1);
             }
 
-            // 새로운 상태에 따른 초당 자원량 변경
-            if (newCat != CatType::None) { // 새 고양이 타입이 None이 아니라면
-                // 남은 인구(cur)가 1 이상인지 확인 (0 이하이면 배치 불가)
+            // 새로운 고양이가 있다면
+            if (newCat != CatType::None) {
                 if (m_resourceSystem->GetCurPopulation() <= 0) {
-                    std::cout << "인구 부족으로 고양이 배치 실패!" << std::endl;
-                    // 실패 시 이전 상태의 보너스를 다시 적용하고 함수 종료
+                    // 인구 부족 시 이전 보너스 복구
                     switch (oldCat) {
                     case CatType::Felis: m_resourceSystem->AddResourceBonus(bonus.FelisBonus); break;
                     case CatType::Navi:  m_resourceSystem->AddResourceBonus(bonus.NaviBonus);  break;
                     case CatType::Kone:  m_resourceSystem->AddResourceBonus(bonus.KoneBonus);  break;
                     default: break;
                     }
+                    std::cout << "인구 부족으로 고양이 배치 실패!" << std::endl;
                     return false;
                 }
 
+                // 초당 자원량 적용
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceSubPerSec[m_curLevel]);
-                // 고양이 배치 시 인구 차감
                 m_resourceSystem->AddCurPopulation(-1);
+
+                // ★ 고양이 보너스 적용
+                switch (newCat) {
+                case CatType::Felis: m_resourceSystem->AddResourceBonus(bonus.FelisBonus); break;
+                case CatType::Navi:  m_resourceSystem->AddResourceBonus(bonus.NaviBonus);  break;
+                case CatType::Kone:  m_resourceSystem->AddResourceBonus(bonus.KoneBonus);  break;
+                default: break;
+                }
             }
 
-            //디버그
+            // 디버그 출력
             auto CatTypeToString = [](CatType cat) -> const char* {
                 switch (cat) {
                 case CatType::None:  return "None";
@@ -104,15 +109,15 @@ namespace JDGameObject {
                 default:             return "Unknown";
                 }
                 };
-
             std::cout << "Building cat type changed from " << CatTypeToString(oldCat)
                 << " to " << CatTypeToString(newCat) << std::endl;
 
-            // 모든 적용 성공 시에만 상태 갱신
+            // 상태 갱신
             m_cat = newCat;
 
             return true;
         }
+
 
         // 해당 코드에서의 return false : 취소한다는 뜻
         bool Building::LevelUp()

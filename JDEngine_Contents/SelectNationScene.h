@@ -53,6 +53,20 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
     private:
+
+        ////////////////////////////////////////////////////////////////////////////////
+        
+        void UpdatePage();
+        void CloseOpeningCut();
+
+        bool isOpening = true;
+        int pageCount = 0;
+        Image* openingCut = nullptr;
+        Button* prevButton = nullptr;
+        Button* nextButton = nullptr;
+        Button* skipButton = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
         //FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
         // 나비, 펠리스, 코네

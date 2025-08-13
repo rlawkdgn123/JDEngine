@@ -99,22 +99,22 @@ namespace JDScene {
         flag->GetComponent<Transform>()->SetScale({ 0.6,0.6 });
         flag->AddComponent<AnimationRender>("ART_FlagSprite01", 1.0, RenderLayerInfo{ SortingLayer::Front, 2 });
 
-        torches.push_back(makeTorch(L"Torch01", { -100.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch02", { 50.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch03", { 00.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch04", { -50.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch05", { -100.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch06", { -150.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
-        torches.push_back(makeTorch(L"Torch07", { -200.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch01", { 933.f, 100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch02", { 695.f, 290.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch03", { 400.f, 218.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch04", { 525.f, -125.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch05", { 240.f, -45.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch06", { 216.f, -233.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch07", { -190.f, -6.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
 
-        frogs.push_back(makeActor(L"Frog01", { 100.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
-        frogs.push_back(makeActor(L"Frog02", { 160.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
-        frogs.push_back(makeActor(L"Frog03", { 220.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
-        frogs.push_back(makeActor(L"Frog04", { 280.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog01", { 115.f, 262.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog02", { -52.f, -206.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog03", { 715.f, -130.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        //frogs.push_back(makeActor(L"Frog04", { 220.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
 
-        rats.push_back(makeActor(L"Rat01", { 00.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
-        rats.push_back(makeActor(L"Rat02", { 60.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
-        rats.push_back(makeActor(L"Rat03", { 120.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+        rats.push_back(makeActor(L"Rat01", { -123.f, -158.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+        rats.push_back(makeActor(L"Rat02", { 142.f, 351.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+        rats.push_back(makeActor(L"Rat03", { 800.f, 42.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
 
         //파티클 초기화
         m_mouseParticles = std::make_unique<ParticleSystem>(

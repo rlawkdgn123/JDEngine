@@ -1,17 +1,17 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Framework.h"
 #include "EngineCore.h"
 
 using namespace std;
 
 /*
-ºó ³×ÀÓ½ºÆäÀÌ½º :
+ë¹ˆ ë„¤ìž„ìŠ¤íŽ˜ì´ìŠ¤ :
 
-ÀÌ Àü¿ª º¯¼ö´Â ¿ÀÁ÷ ÀÌ .cpp ÆÄÀÏ ¾È¿¡¼­¸¸ À¯È¿
+ì´ ì „ì—­ ë³€ìˆ˜ëŠ” ì˜¤ì§ ì´ .cpp íŒŒì¼ ì•ˆì—ì„œë§Œ ìœ íš¨
 
-´Ù¸¥ .cpp ÆÄÀÏ¿¡ °°Àº ÀÌ¸§ÀÇ Àü¿ª º¯¼ö°¡ ÀÖ¾îµµ Ãæµ¹ ¾È ÇÔ
+ë‹¤ë¥¸ .cpp íŒŒì¼ì— ê°™ì€ ì´ë¦„ì˜ ì „ì—­ ë³€ìˆ˜ê°€ ìžˆì–´ë„ ì¶©ëŒ ì•ˆ í•¨
 
-Àü¿ª ½ºÄÚÇÁ ¿À¿°À» ¸·À½ (¸µÄ¿ ¿À·ù ¹æÁö)
+ì „ì—­ ìŠ¤ì½”í”„ ì˜¤ì—¼ì„ ë§‰ìŒ (ë§ì»¤ ì˜¤ë¥˜ ë°©ì§€)
 */
 namespace
 {
@@ -19,15 +19,15 @@ namespace
 	
 }
 
-int main(void) {
-	//std::wcoutÀÌ ½Ã½ºÅÛÀÇ ÇöÀç ·ÎÄÉÀÏ(locale) ¼³Á¤À» µû¸£µµ·Ï ¼³Á¤ÇÏ´Â ÄÚµå
-	std::wcout.imbue(std::locale("")); // ½Ã½ºÅÛ ·ÎÄÉÀÏ ÀÚµ¿ Àû¿ë
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	//std::wcoutì´ ì‹œìŠ¤í…œì˜ í˜„ìž¬ ë¡œì¼€ì¼(locale) ì„¤ì •ì„ ë”°ë¥´ë„ë¡ ì„¤ì •í•˜ëŠ” ì½”ë“œ
+	std::wcout.imbue(std::locale("")); // ì‹œìŠ¤í…œ ë¡œì¼€ì¼ ìžë™ ì ìš©
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // ¸Þ¸ð¸® ¸¯(´©¼ö) °Ë»ç
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // ë©”ëª¨ë¦¬ ë¦­(ëˆ„ìˆ˜) ê²€ì‚¬
 
-	HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); // CPU ½º·¹µå¸¦ COM °´Ã¼¿Í ¿¬°á½ÃÅ°±â À§ÇÑ COM ¶óÀÌºê·¯¸® ÃÊ±âÈ­
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); // CPU ìŠ¤ë ˆë“œë¥¼ COM ê°ì²´ì™€ ì—°ê²°ì‹œí‚¤ê¸° ìœ„í•œ COM ë¼ì´ë¸ŒëŸ¬ë¦¬ ì´ˆê¸°í™”
 	if (FAILED(hr))
-		return -1; // -1 ½ÇÆÐ ½ÅÈ£ ¹ÝÈ¯ ÈÄ Á¾·á
+		return -1; // -1 ì‹¤íŒ¨ ì‹ í˜¸ ë°˜í™˜ í›„ ì¢…ë£Œ
 
 	//g_pEngineCore = new  EngineCore();
 	g_pEngineCore = make_unique<EngineCore>();
@@ -42,7 +42,7 @@ int main(void) {
 
 	g_pEngineCore->Finalize();
 
-	//delete g_pEngineCore; // ½º¸¶Æ®ptrÀÌ Á¦°Å
+	//delete g_pEngineCore; // ìŠ¤ë§ˆíŠ¸ptrì´ ì œê±°
 
 	CoUninitialize();
 

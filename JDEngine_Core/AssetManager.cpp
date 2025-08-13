@@ -154,9 +154,13 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01_Example", L"../Resource/BATTLE/ART_BattleMap01_Example.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01", L"../Resource/BATTLE/ART_BattleMap01.png"))
     {
-        std::cout << "[ERROR] ART_BattleMap01_Example 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BattleMap01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01_Example(old)", L"../Resource/BATTLE/ART_BattleMap01_Example(old).png"))
+    {
+        std::cout << "[ERROR] ART_BattleMap01_Example(old) 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
     {
@@ -169,6 +173,16 @@ void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadTexture("UI_Exam", L"../Resource/UI_Exam.png"))
     {
         std::cout << "[ERROR] UI_Exam 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("Opening_Exam01", L"../Resource/Opening_Exam01.png"))
+    {
+        std::cout << "[ERROR] Opening_Exam01 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("Opening_Exam02", L"../Resource/Opening_Exam02.png"))
+    {
+        std::cout << "[ERROR] Opening_Exam02 텍스처 로드 실패" << std::endl;
     }
 
 #pragma endregion

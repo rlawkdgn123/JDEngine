@@ -3261,8 +3261,13 @@ namespace JDScene {
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
+
                 m_awayPopupInfo->SetText(L"초급 원정");
                 m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
+
+                m_awayStar01->SetTextureName("Art_Expedition_Level_Empty");
+                m_awayStar02->SetTextureName("Art_Expedition_Level_Empty");
+                m_awayStar03->SetTextureName("Art_Expedition_Level_Full");
             });
 
         // 원정 초급 버튼 마우스를 올리면 실행될 이벤트
@@ -3300,6 +3305,10 @@ namespace JDScene {
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
                 m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)");
+
+                m_awayStar01->SetTextureName("Art_Expedition_Level_Empty");
+                m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
+                m_awayStar03->SetTextureName("Art_Expedition_Level_Full");
             });
 
         // 원정 중급 버튼 마우스를 올리면 실행될 이벤트
@@ -3336,6 +3345,10 @@ namespace JDScene {
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
                 m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
+
+                m_awayStar01->SetTextureName("Art_Expedition_Level_Full");
+                m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
+                m_awayStar03->SetTextureName("Art_Expedition_Level_Full");
             });
 
         // 원정 상급 버튼 마우스를 올리면 실행될 이벤트
@@ -3380,52 +3393,52 @@ namespace JDScene {
         m_awayCostInfo->SetTextFormatName("Sebang_Bold_22");
         m_awayCostInfo->SetColor(D2D1::ColorF(0x69512C));
         m_awayCostInfo->SetSize({ 300, 100 });
-        m_awayCostInfo->SetPosition({ 622.5f, -65.0f });
+        m_awayCostInfo->SetPosition({ 610.0f, -65.0f });
 
         // 원정 코스트 _ 01 ( 이미지 & 텍스트 )
         m_awayCostImage01 = CreateUIObject<Image>(L"UI_AwayCostImage01");
-        m_awayCostImage01->SetTextureName("ART_CostWood01");
+        m_awayCostImage01->SetTextureName("ART_CostFood01");
         m_awayCostImage01->SetSizeToOriginal();
         m_awayCostImage01->SetScale({ 0.5f, 0.5f });
-        m_awayCostImage01->SetPosition({ 666, -48 });
+        m_awayCostImage01->SetPosition({ 650, -48 });
         m_awayCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_awayCostText01 = CreateUIObject<Text>(L"UI_AwayCostText01");
-        m_awayCostText01->SetText(L"50");
+        m_awayCostText01->SetText(L"150");
         m_awayCostText01->SetTextFormatName("Sebang_16");
         m_awayCostText01->SetColor(D2D1::ColorF(0x69512C));
-        m_awayCostText01->SetSize({ 300, 100 });
-        m_awayCostText01->SetPosition({ 737, -70 });
+        m_awayCostText01->SetSize({ 50, 100 });
+        m_awayCostText01->SetPosition({ 724, -70 });
 
         // 원정 코스트 _ 02 ( 이미지 & 텍스트 )
         m_awayCostImage02 = CreateUIObject<Image>(L"UI_AwayCostImage02");
         m_awayCostImage02->SetTextureName("ART_CostWood01");
         m_awayCostImage02->SetSizeToOriginal();
         m_awayCostImage02->SetScale({ 0.5f, 0.5f });
-        m_awayCostImage02->SetPosition({ 762, -48 });
+        m_awayCostImage02->SetPosition({ 750, -48 });
         m_awayCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_awayCostText02 = CreateUIObject<Text>(L"UI_AwayCostText02");
-        m_awayCostText02->SetText(L"x50");
+        m_awayCostText02->SetText(L"150");
         m_awayCostText02->SetTextFormatName("Sebang_16");
         m_awayCostText02->SetColor(D2D1::ColorF(0x69512C));
-        m_awayCostText02->SetSize({ 300, 100 });
-        m_awayCostText02->SetPosition({ 831, -70 });
+        m_awayCostText02->SetSize({ 50, 100 });
+        m_awayCostText02->SetPosition({ 822, -70 });
 
         // 원정 코스트 _ 03 ( 이미지 & 텍스트 )
         m_awayCostImage03 = CreateUIObject<Image>(L"UI_AwayCostImage03");
-        m_awayCostImage03->SetTextureName("ART_CostWood01");
+        m_awayCostImage03->SetTextureName("ART_CostMineral01");
         m_awayCostImage03->SetSizeToOriginal();
         m_awayCostImage03->SetScale({ 0.5f, 0.5f });
-        m_awayCostImage03->SetPosition({ 762, -48 });
+        m_awayCostImage03->SetPosition({ 852, -48 });
         m_awayCostImage03->SetAnchor({ 1.0f, 0.0f });
 
         m_awayCostText03 = CreateUIObject<Text>(L"UI_AwayCostText03");
-        m_awayCostText03->SetText(L"x50");
+        m_awayCostText03->SetText(L"150");
         m_awayCostText03->SetTextFormatName("Sebang_16");
         m_awayCostText03->SetColor(D2D1::ColorF(0x69512C));
-        m_awayCostText03->SetSize({ 300, 100 });
-        m_awayCostText03->SetPosition({ 831, -70 });
+        m_awayCostText03->SetSize({ 50, 100 });
+        m_awayCostText03->SetPosition({ 926, -70 });
 
         /////
         // 보상 정보 Info
@@ -3434,28 +3447,28 @@ namespace JDScene {
         m_awayAwardInfo->SetTextFormatName("Sebang_Bold_22");
         m_awayAwardInfo->SetColor(D2D1::ColorF(0x69512C));
         m_awayAwardInfo->SetSize({ 300, 100 });
-        m_awayAwardInfo->SetPosition({ 622.5f, -140.0f });
+        m_awayAwardInfo->SetPosition({ 610.0f, -140.0f });
 
         // 보상 정보 Text
         m_awayAwardText01 = CreateUIObject<Text>(L"UI_AwayAwardText01");
         m_awayAwardText01->SetText(L"N 원정포인트");
         m_awayAwardText01->SetTextFormatName("Sebang_20");
         m_awayAwardText01->SetColor(D2D1::ColorF(0x69512C));
-        m_awayAwardText01->SetSize({ 300, 100 });
-        m_awayAwardText01->SetPosition({ 729, -125 });
+        m_awayAwardText01->SetSize({ 300, 50 });
+        m_awayAwardText01->SetPosition({ 708, -127 });
 
         // 추가 보상 정보 Text
         m_awayAwardText02 = CreateUIObject<Text>(L"UI_AwayAwardText02");
         m_awayAwardText02->SetText(L"N% 확률로 ㅇㅇㅇ 추가 보상");
         m_awayAwardText02->SetTextFormatName("Sebang_20");
         m_awayAwardText02->SetColor(D2D1::ColorF(0x69512C));
-        m_awayAwardText02->SetSize({ 300, 100 });
-        m_awayAwardText02->SetPosition({ 791, -162 });
+        m_awayAwardText02->SetSize({ 300, 50 });
+        m_awayAwardText02->SetPosition({ 770, -162 });
 
         /////
         // 병력 보내기 Button
         m_awayButton = CreateUIObject<Button>(L"UI_AwayButton");
-        m_awayButton->SetTextureName("병력 보내기  복사 2");
+        m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
         m_awayButton->SetText(L"");
         m_awayButton->SetSize({ 125.f, 35.0f });
         m_awayButton->SetPosition({ 768, -216 });
@@ -3466,19 +3479,19 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
-                if (m_awayButton->GetTextureName() == "병력 보내기  복사 2")
+                if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv01)_mouseover")
                 {
                     auto& sys = JDGameSystem::ExpeditionSystem::Instance();
                     if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Beginner)) CreateExpedition();
                 }
 
-                else if (m_awayButton->GetTextureName() == "병력 보내기  복사 4")
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv02)_mouseover")
                 {
                     auto& sys = JDGameSystem::ExpeditionSystem::Instance();
                     if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Intermediate)) CreateExpedition();
                 }
 
-                else if (m_awayButton->GetTextureName() == "병력 보내기  복사 6")
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv03)_mouseover")
                 {
                     auto& sys = JDGameSystem::ExpeditionSystem::Instance();
                     if (sys.SendExpedition(JDGameSystem::ExpeditionGrade::Higher)) CreateExpedition();
@@ -3489,33 +3502,69 @@ namespace JDScene {
         m_awayButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
+                if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv01)")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)_mouseover");
+                }
+
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv02)")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)_mouseover");
+                }
+
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv03)")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)_mouseover");
+                }
+
+                m_awayButton->SetSize({ 135.f, 47.0f });
             });
 
         // 병력 보내기 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayButton->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
+                if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv01)_mouseover")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
+                }
+
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv02)_mouseover")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)");
+                }
+
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv03)_mouseover")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
+                }
+
+                m_awayButton->SetSize({ 125.f, 35.0f });
             });
 
         // 병력 보내기 팝업 별 이미지
         m_awayStar01 = CreateUIObject<Image>(L"UI_AwayStar01");
         m_awayStar01->SetTextureName("Art_Expedition_Level_Full");
         m_awayStar01->SetSizeToOriginal();
-        m_awayStar01->SetScale({ 0.3f, 0.3f });
+        m_awayStar01->SetScale({ 0.4f, 0.4f });
         m_awayStar01->SetPosition({ 835, 20 });
         m_awayStar01->SetAnchor({ 1.0f, 0.0f });
 
         m_awayStar02 = CreateUIObject<Image>(L"UI_AwayStar02");
         m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
         m_awayStar02->SetSizeToOriginal();
-        m_awayStar02->SetScale({ 0.3f, 0.3f });
+        m_awayStar02->SetScale({ 0.4f, 0.4f });
         m_awayStar02->SetPosition({ 875, 20 });
         m_awayStar02->SetAnchor({ 1.0f, 0.0f });
 
         m_awayStar03 = CreateUIObject<Image>(L"UI_AwayStar03");
         m_awayStar03->SetTextureName("Art_Expedition_Level_Full");
         m_awayStar03->SetSizeToOriginal();
-        m_awayStar03->SetScale({ 0.3f, 0.3f });
+        m_awayStar03->SetScale({ 0.4f, 0.4f });
         m_awayStar03->SetPosition({ 915, 20 });
         m_awayStar03->SetAnchor({ 1.0f, 0.0f });
 

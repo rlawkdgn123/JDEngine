@@ -2612,27 +2612,63 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
     }
 
-    
-
 #pragma endregion
-
-
     
+    // 초급, 중급, 상급
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_Level.png"))    // 초급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_Level.png"))    // 중급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_Level.png"))    // 상급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
 
-    // TODO : 이름 변경해줘야함.
-    if (!AssetManager::Instance().LoadTexture("초급 복사 2", L"../Resource/BATTLE/초급 복사 2.png"))
+
+    // 병력보내기
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01).png"))    // 초급
     {
-        std::cout << "[ERROR] 초급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01) 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("중급 복사 2", L"../Resource/BATTLE/중급 복사 2.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_mouseover.png"))
     {
-        std::cout << "[ERROR] 중급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_mouseover 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("상급 복사 2", L"../Resource/BATTLE/상급 복사 2.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02).png"))    // 중급
     {
-        std::cout << "[ERROR] 상급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02) 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_mouseover 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03).png"))    // 상급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_mouseover 텍스처 로드 실패" << std::endl;
+    }
+
+
+    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png")) // 원정 포인트
     {
         std::cout << "[ERROR] 원정 포인트 텍스처 로드 실패" << std::endl;
     }

@@ -2997,10 +2997,10 @@ namespace JDScene {
         // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
         m_trainerCatButton = CreateUIObject<Button>(L"UI_TrainerCatButton");
         m_trainerCatButton->SetTextureName("ART_RecruitCat03");
-        m_trainerCatButton->SetSize({ 256, 279 });
-        m_trainerCatButton->SetPosition({ -178, -340 });
+        m_trainerCatButton->SetSize({ 128, 139 });
+        m_trainerCatButton->SetPosition({ -111, -405 });
         m_trainerCatButton->SetAnchor({ 1.0f, 0.0f });
-        m_trainerCatButton->SetScale({ 0.5f, 0.5f });
+        m_trainerCatButton->SetScale({ 1.f, 1.f });
 
         // 견습냥이 버튼 클릭 시 실행될 이벤트
         m_trainerCatButton->AddOnClick("On Click", [this]()
@@ -3016,12 +3016,16 @@ namespace JDScene {
         m_trainerCatButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_trainerCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.8f));
             });
 
         // 견습냥이 버튼 마우스가 벗어나면 실행될 이벤트
         m_trainerCatButton->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_trainerCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
         m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
@@ -3036,7 +3040,7 @@ namespace JDScene {
         m_trainerCatCostInfo->SetText(L"코스트 :");
         m_trainerCatCostInfo->SetTextFormatName("Sebang_21");
         m_trainerCatCostInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatCostInfo->SetSize({ 300, 100 });
+        m_trainerCatCostInfo->SetSize({ 90, 100 });
         m_trainerCatCostInfo->SetPosition({ 5, -380 });
 
         m_trainerCatCostImage01 = CreateUIObject<Image>(L"UI_TrainerCatCostImage01");
@@ -3050,7 +3054,7 @@ namespace JDScene {
         m_trainerCatCostText01->SetText(L"x200");
         m_trainerCatCostText01->SetTextFormatName("Sebang_16");
         m_trainerCatCostText01->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatCostText01->SetSize({ 300, 100 });
+        m_trainerCatCostText01->SetSize({ 50, 100 });
         m_trainerCatCostText01->SetPosition({ 117, -376 });
 
         // 견습냥이 코스트 _ 02 ( 이미지 & 텍스트 )
@@ -3065,7 +3069,7 @@ namespace JDScene {
         m_trainerCatCostText02->SetText(L"x50");
         m_trainerCatCostText02->SetTextFormatName("Sebang_16");
         m_trainerCatCostText02->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatCostText02->SetSize({ 300, 100 });
+        m_trainerCatCostText02->SetSize({ 50, 100 });
         m_trainerCatCostText02->SetPosition({ 117, -422 });
 
         // 견습냥이 모집병력 Info & Text
@@ -3073,14 +3077,14 @@ namespace JDScene {
         m_trainerCatRecruitInfo->SetText(L"모집병력 :");
         m_trainerCatRecruitInfo->SetTextFormatName("Sebang_21");
         m_trainerCatRecruitInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatRecruitInfo->SetSize({ 300, 100 });
+        m_trainerCatRecruitInfo->SetSize({ 90, 100 });
         m_trainerCatRecruitInfo->SetPosition({ 14, -462 });
 
         m_trainerCatRecruitText = CreateUIObject<Text>(L"UI_TrainerCatRecruitText");
         m_trainerCatRecruitText->SetText(L"10");
         m_trainerCatRecruitText->SetTextFormatName("Sebang_16");
         m_trainerCatRecruitText->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatRecruitText->SetSize({ 300, 100 });
+        m_trainerCatRecruitText->SetSize({ 50, 100 });
         m_trainerCatRecruitText->SetPosition({ 96, -462 });
 
         // 견습냥이 전투력 Info & Text
@@ -3088,24 +3092,24 @@ namespace JDScene {
         m_trainerCatPowerInfo->SetText(L"전투력 :");
         m_trainerCatPowerInfo->SetTextFormatName("Sebang_21");
         m_trainerCatPowerInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatPowerInfo->SetSize({ 300, 100 });
+        m_trainerCatPowerInfo->SetSize({ 90, 100 });
         m_trainerCatPowerInfo->SetPosition({ 5, -500 });
 
         m_trainerCatPowerText = CreateUIObject<Text>(L"UI_TrainerCatPowerText");
         m_trainerCatPowerText->SetText(L"10");
         m_trainerCatPowerText->SetTextFormatName("Sebang_16");
         m_trainerCatPowerText->SetColor(D2D1::ColorF(0x69512C));
-        m_trainerCatPowerText->SetSize({ 300, 100 });
+        m_trainerCatPowerText->SetSize({ 50, 100 });
         m_trainerCatPowerText->SetPosition({ 96, -500 });
 
         //////////
         // 징병 _ 숙련냥이 이미지
         m_expertCatButton = CreateUIObject<Button>(L"UI_ExpertCatButton");
         m_expertCatButton->SetTextureName("ART_RecruitCat03");
-        m_expertCatButton->SetSize({ 256, 279 });
-        m_expertCatButton->SetPosition({ 182, -340 });
+        m_expertCatButton->SetSize({ 128, 139 });
+        m_expertCatButton->SetPosition({ 245, -405 });
         m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
-        m_expertCatButton->SetScale({ 0.5f, 0.5f });
+        m_expertCatButton->SetScale({ 1.f, 1.f });
 
         // 숙련냥이 버튼 클릭 시 실행될 이벤트
         m_expertCatButton->AddOnClick("On Click", [this]()
@@ -3121,12 +3125,16 @@ namespace JDScene {
         m_expertCatButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+                
+                m_expertCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.8f));
             });
 
         // 숙련냥이 버튼 마우스가 벗어나면 실행될 이벤트
         m_expertCatButton->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_expertCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
         m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
@@ -3141,7 +3149,7 @@ namespace JDScene {
         m_expertCatCostInfo->SetText(L"코스트 :");
         m_expertCatCostInfo->SetTextFormatName("Sebang_21");
         m_expertCatCostInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatCostInfo->SetSize({ 300, 100 });
+        m_expertCatCostInfo->SetSize({ 90, 100 });
         m_expertCatCostInfo->SetPosition({ 362, -380 });
 
         m_expertCatCostImage01 = CreateUIObject<Image>(L"UI_ExpertCatCostImage01");
@@ -3155,7 +3163,7 @@ namespace JDScene {
         m_expertCatCostText01->SetText(L"x100");
         m_expertCatCostText01->SetTextFormatName("Sebang_16");
         m_expertCatCostText01->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatCostText01->SetSize({ 300, 100 });
+        m_expertCatCostText01->SetSize({ 50, 100 });
         m_expertCatCostText01->SetPosition({ 476, -376 });
 
         // 숙련냥이 코스트 _ 02 ( 이미지 & 텍스트 )
@@ -3170,7 +3178,7 @@ namespace JDScene {
         m_expertCatCostText02->SetText(L"x50");
         m_expertCatCostText02->SetTextFormatName("Sebang_16");
         m_expertCatCostText02->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatCostText02->SetSize({ 300, 100 });
+        m_expertCatCostText02->SetSize({ 50, 100 });
         m_expertCatCostText02->SetPosition({ 476, -422 });
 
         // 숙련냥이 모집병력 Info & Text
@@ -3178,14 +3186,14 @@ namespace JDScene {
         m_expertCatRecruitInfo->SetText(L"모집병력 :");
         m_expertCatRecruitInfo->SetTextFormatName("Sebang_21");
         m_expertCatRecruitInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatRecruitInfo->SetSize({ 300, 100 });
+        m_expertCatRecruitInfo->SetSize({ 90, 100 });
         m_expertCatRecruitInfo->SetPosition({ 372, -462 });
 
         m_expertCatRecruitText = CreateUIObject<Text>(L"UI_ExpertCatRecruitText");
         m_expertCatRecruitText->SetText(L"10");
         m_expertCatRecruitText->SetTextFormatName("Sebang_16");
         m_expertCatRecruitText->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatRecruitText->SetSize({ 300, 100 });
+        m_expertCatRecruitText->SetSize({ 50, 100 });
         m_expertCatRecruitText->SetPosition({ 455, -462 });
 
         // 숙련냥이 전투력 Info & Text
@@ -3193,14 +3201,14 @@ namespace JDScene {
         m_expertCatPowerInfo->SetText(L"전투력 :");
         m_expertCatPowerInfo->SetTextFormatName("Sebang_21");
         m_expertCatPowerInfo->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatPowerInfo->SetSize({ 300, 100 });
+        m_expertCatPowerInfo->SetSize({ 90, 100 });
         m_expertCatPowerInfo->SetPosition({ 362, -500 });
 
         m_expertCatPowerText = CreateUIObject<Text>(L"UI_ExpertCatPowerText");
         m_expertCatPowerText->SetText(L"10");
         m_expertCatPowerText->SetTextFormatName("Sebang_16");
         m_expertCatPowerText->SetColor(D2D1::ColorF(0x69512C));
-        m_expertCatPowerText->SetSize({ 300, 100 });
+        m_expertCatPowerText->SetSize({ 50, 100 });
         m_expertCatPowerText->SetPosition({ 455, -500 });
 
         //////////
@@ -3214,7 +3222,7 @@ namespace JDScene {
 
         // 원정 초급 Button
         m_awayBeginner = CreateUIObject<Button>(L"UI_AwayBeginnerButton");
-        m_awayBeginner->SetTextureName("초급 복사 2");
+        m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level");
         m_awayBeginner->SetText(L"");
         m_awayBeginner->SetSize({ 174.8f, 33.0f });
         m_awayBeginner->SetPosition({ 760, -425 });
@@ -3227,25 +3235,31 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"초급 원정");
-                m_awayButton->SetTextureName("병력 보내기  복사 2");
+                m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
             });
 
         // 원정 초급 버튼 마우스를 올리면 실행될 이벤트
         m_awayBeginner->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level_mouseover");
+                m_awayBeginner->SetSize({ 183.f, 42.f });
             });
 
         // 원정 초급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayBeginner->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level");
+                m_awayBeginner->SetSize({ 174.8f, 33.0f });
             });
 
         // 중급 Button
         // 원정 중급 Button
         m_awayIntermediate = CreateUIObject<Button>(L"UI_AwayIntermediate");
-        m_awayIntermediate->SetTextureName("중급 복사 2");
+        m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level");
         m_awayIntermediate->SetText(L"");
         m_awayIntermediate->SetSize({ 174.8f, 33.0f });
         m_awayIntermediate->SetPosition({ 760, -463 });
@@ -3258,24 +3272,30 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
-                m_awayButton->SetTextureName("병력 보내기  복사 4");
+                m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)");
             });
 
         // 원정 중급 버튼 마우스를 올리면 실행될 이벤트
         m_awayIntermediate->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level_mouseover");
+                m_awayIntermediate->SetSize({ 183.f, 42.f });
             });
 
         // 원정 중급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayIntermediate->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level");
+                m_awayIntermediate->SetSize({ 174.8f, 33.0f });
             });
 
         // 상급 Button
         m_awayAdvanced = CreateUIObject<Button>(L"UI_AwayAdvanced");
-        m_awayAdvanced->SetTextureName("상급 복사 2");
+        m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level");
         m_awayAdvanced->SetText(L"");
         m_awayAdvanced->SetSize({ 174.8f, 33.0f });
         m_awayAdvanced->SetPosition({ 760, -500 });
@@ -3288,27 +3308,35 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
-                m_awayButton->SetTextureName("병력 보내기  복사 6");
+                m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
             });
 
         // 원정 상급 버튼 마우스를 올리면 실행될 이벤트
         m_awayAdvanced->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level_mouseover");
+                m_awayAdvanced->SetSize({ 183.f, 42.f });
+                 
             });
 
         // 원정 상급 버튼 마우스가 벗어나면 실행될 이벤트
         m_awayAdvanced->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level");
+                m_awayAdvanced->SetSize({ 174.8f, 33.0f });
+
             });
 
         //////////
         // 원정 정보 팝업 Image
         m_awayPopupUI = CreateUIObject<Image>(L"UI_AwayPopupUI");
         m_awayPopupUI->SetTextureName("ART_Information_Box_Expedition");
-        m_awayPopupUI->SetSize({ 386, 297 });
-        m_awayPopupUI->SetPosition({ 770, -113 });
+        m_awayPopupUI->SetSize({ 406, 277 });
+        m_awayPopupUI->SetPosition({ 757, -113 });
         m_awayPopupUI->SetAnchor({ 1.0f, 0.0f });
 
         // 원정 정보 Info

@@ -99,66 +99,66 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-  
-        if (m_isEnding && !m_endAnimStarted && !m_endAnimDone) {
-            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-
-            
-
-            m_endAnimStarted = true;
-            m_endAnimTime = 0.0f;
-
-            float screenW = (float)JDGlobal::Window::WindowSize::Instance().GetWidth();
-            float screenH = (float)JDGlobal::Window::WindowSize::Instance().GetHeight();
-
-            m_endStartPos = { 0.0f, +1000.0f };
-            m_endTargetPos = { 0.0f,  +100.0f };
-
-            m_retryStartPos = { m_endStartPos.x - 500.0f, m_endStartPos.y };
-            m_retryTargetPos = { m_endTargetPos.x - 500.0f, m_endTargetPos.y };
-
-            m_menuStartPos = { m_endStartPos.x + 500.0f, m_endStartPos.y };
-            m_menuTargetPos = { m_endTargetPos.x + 500.0f, m_endTargetPos.y };
-
-            m_endingUI->SetActive(true);
-            m_retry->SetActive(true);
-            m_goMenu->SetActive(true);
-
-            m_endingUI->SetPosition(m_endStartPos);
-            m_retry->SetPosition(m_retryStartPos);
-            m_goMenu->SetPosition(m_menuStartPos);
-        }
 
         // 애니 진행
-        if (m_isEnding && m_endAnimStarted) {
-            m_endAnimTime += deltaTime;
-            float t = m_endAnimTime / m_endAnimDur;
-            if (t > 1.0f) t = 1.0f;
+        if (m_endAnimStarted) {
 
-            float e = EaseOutCubic(t);
-
-            auto Lerp = [](const Vector2F& a, const Vector2F& b, float k) -> Vector2F {
+            float animSpeed = 0.8f;
+            m_endAnimTime += deltaTime * animSpeed;
+            
+            auto Clamp01 = [](float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); };
+            auto Lerp = [](const Vector2F& a, const Vector2F& b, float k)->Vector2F {
                 return { a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k };
                 };
 
-            const Vector2F posEnd = Lerp(m_endStartPos, m_endTargetPos, e);
-            const Vector2F posRetry = Lerp(m_retryStartPos, m_retryTargetPos, e);
-            const Vector2F posMenu = Lerp(m_menuStartPos, m_menuTargetPos, e);
+            // 이징을 모두 "float(float)" 형태로 래핑 ( EaseOutBack은 인자 2개라 래핑 필요)
+            auto easeBack07 = [](float t) { return EaseOutBack(t, 0.7f); };
+            auto easeBack10 = [](float t) { return EaseOutBack(t, 1.0f); };
+            auto easeBack03 = [](float t) { return EaseOutBack(t, 0.3f); };
+            auto easeCubic = [](float t) { return EaseOutCubic(t);      };
+            auto easeElasticS = [](float t) { return EaseOutElasticSmall(t); };
+
+            // 공통 평가 함수
+            auto EvalPos = [&](const Vector2F& s, const Vector2F& d,
+                float delay, float dur,
+                auto&& ease)->Vector2F
+                {
+                    float t = Clamp01((m_endAnimTime - delay) / dur); // 요소별 딜레이/지속시간
+                    float e = ease(t);                                // 요소별 이징
+                    return Lerp(s, d, e);
+                };
+
+            // 각자 다른 속도·딜레이·이징
+            const Vector2F posEnd = EvalPos(m_endStartPos, m_endTargetPos, m_delayEnd, m_durEnd, easeBack07);   // 살짝 튕김
+            const Vector2F posRetry = EvalPos(m_retryStartPos, m_retryTargetPos, m_delayRetry, m_durRetry, easeCubic);    // 기본
+            const Vector2F posMenu = EvalPos(m_menuStartPos, m_menuTargetPos, m_delayMenu, m_durMenu, easeBack07); // 더 탱탱
 
             m_endingUI->SetPosition(posEnd);
             m_retry->SetPosition(posRetry);
             m_goMenu->SetPosition(posMenu);
 
-            if (t >= 1.0f) {
-                // 스냅(오차 제거) + 종료 플래그
+            // 모두 완료됐는지 체크(각자의 딜레이/지속시간 기준)
+            const float tEnd = Clamp01((m_endAnimTime - m_delayEnd) / m_durEnd);
+            const float tRetry = Clamp01((m_endAnimTime - m_delayRetry) / m_durRetry);
+            const float tMenu = Clamp01((m_endAnimTime - m_delayMenu) / m_durMenu);
+
+            if (tEnd >= 1.f && tRetry >= 1.f && tMenu >= 1.f) {
                 m_endingUI->SetPosition(m_endTargetPos);
                 m_retry->SetPosition(m_retryTargetPos);
                 m_goMenu->SetPosition(m_menuTargetPos);
-
                 m_endAnimStarted = false;
-                m_endAnimDone = true;    // ★ 다시는 초기화 블록 안 들어감
+                m_endAnimDone = true;
+
+                m_spear->SetActive(true);
+                if (m_spearAnim) {
+                    m_spearAnim->SetEnabled(true);
+                    m_spearAnim->PlayOnceFromStart(); // ← 여기서 한 번만!
+                }
             }
         }
+
+        
+
         if(ResolveGameEnding()) return; // 엔딩 관리.
 
         UpdateResourceUI();
@@ -351,7 +351,7 @@ namespace JDScene {
         for (auto& uiObj : m_uiObjects) {
             
             auto name = uiObj->GetName(); // std::wstring / std::wstring_view 가정
-            if (name == L"ART_BadEnd01"
+            if (name == L"ART_NomalEnd01"
                 || name == L"ART_BACK_TO_MENU01"
                 || name == L"ART_BACK_TO_MENU02"
                 || name == L"ART_RETRY01"
@@ -3842,15 +3842,18 @@ namespace JDScene {
         if (m_isEnding) return true; // 엔딩을 한번 실행했으면 끝.
 
         if (m_wallHealth == 0) {
+            StartEnding(EndingType::Bad);
             std::cout << "[GameScene] 배드엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             m_isEnding = true;
             return true;
         }
         else if (CheckEnding()) {
             if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                StartEnding(EndingType::Good);
                 std::cout << "[GameScene] 굿엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             }
             else {
+                StartEnding(EndingType::None);
                 std::cout << "[GameScene] 엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             }
             m_isEnding = true;
@@ -4519,10 +4522,18 @@ namespace JDScene {
 
         {
             m_spear = CreateGameObject<Player>(L"SPEAR");
-            m_spear->GetComponent<Transform>()->SetPosition({ 0.0f, 0.0f });
-            //m_spear->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::Front, 10 });
-            m_spear->AddComponent<AnimationRender>("ART_SpearSprite01", 0.5, RenderLayerInfo{ SortingLayer::Front, 10 });
-            m_spear->SetActive(true);
+            auto* tr = m_spear->GetComponent<Transform>();
+            tr->SetPosition({ 0.f, 0.f });
+            tr->SetScale({ 4.0f, 4.0f });
+            
+            m_spearAnim = m_spear->AddComponent<AnimationRender>(
+                "ART_SpearSprite01", 0.7f, RenderLayerInfo{ SortingLayer::Front, 10 });
+
+            if (m_spearAnim) {
+                m_spearAnim->SetClipName("ART_SpearSprite01"); // 내부 클립명이 다르면 거기에 맞게
+                m_spearAnim->SetEnabled(false);                // 초기엔 비활성
+            }
+            m_spear->SetActive(false);                        // 오브젝트도 숨김
         }
 
         {
@@ -4548,8 +4559,8 @@ namespace JDScene {
         }
         
         {
-            m_endingUI = CreateUIObject<Image>(L"ART_BadEnd01");
-            m_endingUI->SetTextureName("ART_BadEnd01");
+            m_endingUI = CreateUIObject<Image>(L"ART_NomalEnd01");
+            m_endingUI->SetTextureName("ART_NomalEnd01");
             m_endingUI->SetSizeToOriginal();
             Vector2F size = m_endingUI->GetSize();
             m_endingUI->SetSize(size / 2);
@@ -4561,19 +4572,122 @@ namespace JDScene {
         {
             m_selecRetry = CreateUIObject<Button>(L"RETRY_BUTTON");
             m_selecRetry->SetTextureName("Art_Opacity");
-            m_selecRetry->SetTextureColor(D2D1::ColorF(0xD6BD94));
-            m_selecRetry->SetActive(true);
+            m_selecRetry->SetTextureColor(D2D1::ColorF(0xD6BD94, 0.0f));
+            m_selecRetry->SetActive(false);
             m_selecRetry->SetSize({ 250, 150 });
             m_selecRetry->SetPosition({ -350, -300 });
+            
+            // 리트라이 버튼 클릭하면 실행될 이벤트
+            m_selecRetry->AddOnClick("Quit Game", [this]()
+                {
+                    if (isOpenOption) { return; }
+                    SceneManager::Instance().ChangeScene("GameScene");
+                });
+
+
+            // 리트라이 버튼 마우스를 올리면 실행될 이벤트
+            m_selecRetry->AddOnEnter("Highlight On", [this]()
+                {
+                    if (isOpenOption) { return; }
+
+                    m_retry->SetTextureName("ART_RETRY01");
+                    Vector2F oldtm = m_retry->GetComponent<RectTransform>()->GetPosition();
+                    m_retry->SetPosition({ oldtm.x , oldtm.y - 50 });
+                });
+
+            // 리트라이 버튼 마우스가 벗어나면 실행될 이벤트
+            m_selecRetry->AddOnExit("Highlight Off", [this]()
+                {
+                    if (isOpenOption) { return; }
+                    Vector2F oldtm = m_retry->GetComponent<RectTransform>()->GetPosition();
+                    m_retry->SetTextureName("ART_RETRY02");
+                    m_retry->SetPosition({ oldtm.x , oldtm.y + 50 });
+                });
         }
+            
+        
 
         {
             m_selecGoMenu = CreateUIObject<Button>(L"MENU_BUTTON");
             m_selecGoMenu->SetTextureName("Art_Opacity");
-            m_selecGoMenu->SetTextureColor(D2D1::ColorF(0xD6BD94));
-            m_selecGoMenu->SetActive(true);
+            m_selecGoMenu->SetTextureColor(D2D1::ColorF(0xD6BD94, 0.0f));
+            m_selecGoMenu->SetActive(false);
             m_selecGoMenu->SetSize({ 250, 150 });
             m_selecGoMenu->SetPosition({ 350, -300 });
+
+            m_selecGoMenu->AddOnClick("Quit Game", [this]()
+                {
+                    if (isOpenOption) { return; }
+                    SceneManager::Instance().ChangeScene("TitleScene");
+                });
+
+
+            // 리트라이 버튼 마우스를 올리면 실행될 이벤트
+            m_selecGoMenu->AddOnEnter("Highlight On", [this]()
+                {
+                    if (isOpenOption) { return; }
+
+                    m_goMenu->SetTextureName("ART_BACK_TO_MENU01");
+                    Vector2F oldtm = m_goMenu->GetComponent<RectTransform>()->GetPosition();
+                    m_goMenu->SetPosition({ oldtm.x , oldtm.y - 50 });
+                });
+
+            // 리트라이 버튼 마우스가 벗어나면 실행될 이벤트
+            m_selecGoMenu->AddOnExit("Highlight Off", [this]()
+                {
+                    if (isOpenOption) { return; }
+                    Vector2F oldtm = m_goMenu->GetComponent<RectTransform>()->GetPosition();
+                    m_goMenu->SetTextureName("ART_BACK_TO_MENU02");
+                    m_goMenu->SetPosition({ oldtm.x , oldtm.y + 50 });
+                });
         }
+    }
+
+    void GameScene::StartEnding(EndingType type)
+    {
+        SetTimeScale(1.0f);
+        
+        m_endingType = type;
+        m_endAnimStarted = true;
+        m_endAnimDone = false;
+        m_endAnimTime = 0.0f;
+
+        // 연출: 배드엔딩은 검은 페이드, 굿엔딩은 흰 페이드(원하면 바꿔도 됨)
+        if (type == EndingType::Bad)
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0, 0, 0, 1));
+        else
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(1, 1, 1, 1));
+
+        // 시작/타겟 위치(예: 위에서 내려와 중앙 근처에 정지)
+        m_endStartPos = { 0.0f, +600.0f };
+        m_endTargetPos = { 0.0f,  +100.0f };
+
+        m_retryStartPos = { m_endStartPos.x - 450.0f, m_endStartPos.y};
+        m_retryTargetPos = { m_endTargetPos.x - 450.0f, m_endTargetPos.y - 50 };
+
+        m_menuStartPos = { m_endStartPos.x + 450.0f, m_endStartPos.y};
+        m_menuTargetPos = { m_endTargetPos.x + 450.0f, m_endTargetPos.y - 50 };
+
+        // UI 활성화 + 시작 위치
+        m_endingUI->SetActive(true);
+        m_retry->SetActive(true);
+        m_goMenu->SetActive(true);
+        if (m_selecRetry)  m_selecRetry->SetActive(true);
+        if (m_selecGoMenu) m_selecGoMenu->SetActive(true);
+        
+        // 타입별 메인 배너 텍스처(자산 이름은 프로젝트에 맞게)
+        if (type == EndingType::Bad) {
+            m_endingUI->SetTextureName("ART_BadEnd01");
+        }
+        else if(type == EndingType::Good){
+            m_endingUI->SetTextureName("ART_GoodEnd01"); 
+        }
+        else {
+            m_endingUI->SetTextureName("ART_NomalEnd01");
+        }
+
+        m_endingUI->SetPosition(m_endStartPos);
+        m_retry->SetPosition(m_retryStartPos);
+        m_goMenu->SetPosition(m_menuStartPos);
     }
 }

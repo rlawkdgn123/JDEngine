@@ -2635,6 +2635,14 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] ART_BadEnd01 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("ART_GoodEnd01", L"../Resource/BATTLE/ART_GoodEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_GoodEnd01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_NomalEnd01", L"../Resource/BATTLE/ART_NomalEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_NomalEnd01 텍스처 로드 실패" << std::endl;
+    }
 #pragma endregion
 
 

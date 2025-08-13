@@ -19,7 +19,6 @@ using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
 
-
 namespace JDScene {
 
     // TestScene
@@ -84,6 +83,10 @@ namespace JDScene {
 
     void GameScene::OnLeave() {
         //cout << "[TestScene] OnLeave()\n";
+        if (m_buildSystem) {
+            m_buildSystem->DestroyGrid(this);
+        }
+
         if (bgmChannel) {
             bgmChannel->stop(); // FMOD에서 채널을 멈춤
             bgmChannel = nullptr; // 포인터도 초기화 (안전)
@@ -194,6 +197,33 @@ namespace JDScene {
 
         // 배속 버튼 관리
         GameSpeedButtonUpdate();
+
+        ///// Test
+        if (m_selectedCollider) {
+            auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+            Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+
+            if (!grid) return;
+
+            // 주거지 체크.
+            auto* house = dynamic_cast<House*>(grid->GetBuilding());
+            auto* building = dynamic_cast<Building*>(grid->GetBuilding());
+            if (house)
+            {
+                int nextLevel = house->GetLevel() + 1;
+                if (nextLevel < JDGlobal::Contents::MAX_GAME_LEVEL) {
+                    auto& cost = house->GetHouseStats().m_upgradeCost[nextLevel];
+                    m_upgradeCostText->SetText(to_wstring(cost.m_wood));
+                }
+            }
+            else if (building) {
+                int nextLevel = building->GetLevel() + 1;
+                if (nextLevel < JDGlobal::Contents::MAX_GAME_LEVEL) {
+                    auto& cost = building->GetBuildingStats().m_upgradeCost[nextLevel];
+                    m_upgradeCostText->SetText(to_wstring(cost.m_wood));
+                }
+            }
+        }
     }
 
     void GameScene::FixedUpdate(float fixedDeltaTime) {
@@ -773,40 +803,32 @@ namespace JDScene {
 
                             if (!collider->IsMouseOver(mousePos)) continue;
 
-                            if (collider->IsOpen())
-                            {
-                                std::cout << "[DEBUG] right ID: " << id << std::endl;
+                            std::cout << "[DEBUG] right ID: " << id << std::endl;
 
-                                m_selectedCollider = collider;
+                            m_selectedCollider = collider;
 
-                                //auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
+                            //auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
 
-                                if (grid->IsOccupied()) {
-                                    if (grid->HasBuilding()) {
-                                        cout << "HasBuilding() : True" << endl;
-                                        isGridSetting = true;
-                                        ShowGridSettingMenu();
-                                    }
-                                    else {
-                                        cout << "HasBuilding() : False" << endl;
-                                        isGridBuild = true;
-                                        ShowGridCreateMenu();
-                                    }
+                            if (grid->IsOccupied()) {
+                                if (grid->HasBuilding()) {
+                                    cout << "HasBuilding() : True" << endl;
+                                    isGridSetting = true;
+                                    ShowGridSettingMenu();
                                 }
                                 else {
-                                    if (grid->IsExpanded()) {
-                                        cout << "확장 가능한 미점유 지역입니다." << endl;
-                                    }
-                                    else {
-                                        cout << "확장 불가능한 미점유 지역입니다." << endl;
-                                    }
+                                    cout << "HasBuilding() : False" << endl;
+                                    isGridBuild = true;
+                                    ShowGridCreateMenu();
                                 }
-
-
                             }
-
-                            collider->SetOpen(true);
-                            std::cout << "[DEBUG] left ID: " << id << std::endl;
+                            else {
+                                if (grid->IsExpanded()) {
+                                    cout << "확장 가능한 미점유 지역입니다." << endl;
+                                }
+                                else {
+                                    cout << "확장 불가능한 미점유 지역입니다." << endl;
+                                }
+                            }
                         }
 
                         // 태그 기반 처리
@@ -2814,7 +2836,7 @@ namespace JDScene {
 
         // 건물 타입 텍스트
         m_builtTypeText = CreateUIObject<Text>(L"UI_BuilTTypeText");
-        m_builtTypeText->SetText(L"건물 정보");
+        m_builtTypeText->SetText(L"업그레이드");
         m_builtTypeText->SetTextFormatName("Sebang_Bold_24");
         m_builtTypeText->SetColor(D2D1::ColorF(0x69512C));
         m_builtTypeText->SetSize({ 300, 100 });
@@ -2864,7 +2886,7 @@ namespace JDScene {
         m_upgradeEffctImage->SetPosition({ 754, -460 });
         m_upgradeEffctImage->SetAnchor({ 1.0f, 0.0f });
         m_upgradeEffctImage->SetScale({ 0.5f, 0.5f });
-
+       
 
         ////////////////////////////////////////
         // 건물 업그레이드 & 다운그레이드 버튼

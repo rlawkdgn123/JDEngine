@@ -2557,6 +2557,54 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Information_Box_Expedition 텍스처 로드 실패" << std::endl;
     }
 
+    // 시너지 효과
+    if (!AssetManager::Instance().LoadTexture("ART_Down5", L"../Resource/BATTLE/ART_Down5.png"))
+    {
+        std::cout << "[ERROR] ART_Down5 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Down10", L"../Resource/BATTLE/ART_Down10.png"))
+    {
+        std::cout << "[ERROR] ART_Down10 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Up5", L"../Resource/BATTLE/ART_Up5.png"))
+    {
+        std::cout << "[ERROR] ART_Up5 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Up10", L"../Resource/BATTLE/ART_Up10.png"))
+    {
+        std::cout << "[ERROR] ART_Up10 텍스처 로드 실패" << std::endl;
+    }
+
+    // 그리드 테두리
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke01", L"../Resource/BATTLE/Tile_Stroke01.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke02", L"../Resource/BATTLE/Tile_Stroke02.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke02 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke03", L"../Resource/BATTLE/Tile_Stroke03.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke03 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke04", L"../Resource/BATTLE/Tile_Stroke04.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke04 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke05", L"../Resource/BATTLE/Tile_Stroke05.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke05 텍스처 로드 실패" << std::endl;
+    }
+
+    // 이름
+    if (!AssetManager::Instance().LoadTexture("ART_Building_Level", L"../Resource/BATTLE/ART_Building_Level.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
+
+    
+
 #pragma endregion
 
 

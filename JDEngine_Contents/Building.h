@@ -33,6 +33,8 @@ namespace JDGameObject {
             void PrintCat();
             CatType GetCatType() { return m_cat; }
             int GetLevel() { return m_curLevel; }
+            const JDGlobal::Contents::BuildingStats& GetBuildingStats() const { return m_stats; }
+
         protected:
 
             JDGlobal::Contents::BuildingStats m_stats;

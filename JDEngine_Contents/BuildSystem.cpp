@@ -3,18 +3,23 @@
 #include "ColliderBase.h"
 #include "BoxCollider.h"
 #include "BuildSystem.h"
+#include "Grid.h"
 
 using namespace JDComponent;
 using namespace JDGlobal::Contents;
 using namespace std;
 
+using Grid = JDGameObject::Content::Grid;
+
 void BuildSystem::CreateGrid(SceneBase* curScene)
 {
-
 
     // =====================================================================
     // 그리드 생성 로직
     // =====================================================================
+
+    // 0. 그리드 생성 전 필드 청소 // 나중에 다른 씬에도 쓸 수 있도록 확장할거면 preScene 필요합니다.
+    DestroyGrid(curScene);
 
     // 1. 실제 셀들이 배치될 수 있는 공간 계산 (전체 영역 - 총 간격)
     float m_contentWidth = m_areaWidth - (m_padding * (m_totalCols - 1));
@@ -35,8 +40,8 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
     float offsetX = (m_areaWidth - finalGridWidth) / 2.0f;
     float offsetY = (m_areaHeight - finalGridHeight) / 2.0f;
 
-    // 배열 형태로 그리드 포인터 저장
-    std::vector<std::vector<Grid*>> gridArray(m_totalRows, std::vector<Grid*>(m_totalCols, nullptr));
+    // std::vector<std::vector<Grid*>> gridArray(m_totalRows, std::vector<Grid*>(m_totalCols, nullptr));
+    m_gridArray.assign(m_totalRows, std::vector<Grid*>(m_totalCols, nullptr));
 
     for (int row = 0; row < m_totalRows; ++row) {
         for (int col = 0; col < m_totalCols; ++col) {
@@ -49,6 +54,7 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             float x = m_areaTopLeft.x + offsetX + (col * (squareCellSize + m_padding)) + (squareCellSize / 2.0f);
             float y = m_areaTopLeft.y - offsetY - (row * (squareCellSize + m_padding)) - (squareCellSize / 2.0f);
 
+            box->CreateTextureObj(*curScene);
             box->GetComponent<Transform>()->SetPosition({ x, y });
             box->AddComponent<Editor_Clickable>();
 
@@ -108,26 +114,39 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             auto* collider = box->AddComponent<BoxCollider>(Vector2F{ squareCellSize / 2.0f, squareCellSize / 2.0f });
             collider->SetIndex(idx);
 
-            // 생성된 그리드 포인터 저장
-            gridArray[row][col] = box;
+            // [수정] 생성된 그리드 포인터를 멤버 변수에 저장
+            // gridArray[row][col] = box;
+            m_gridArray[row][col] = box; // ← 변경됨
         }
     }
     //각 그리드의 others[4]에 상하좌우 인접 그리드 포인터 설정
     for (int row = 0; row < m_totalRows; ++row) {
         for (int col = 0; col < m_totalCols; ++col) {
-            Grid* current = gridArray[row][col];
+            Grid* current = m_gridArray[row][col];
 
             // 상
-            current->SetOtherGrid(Direction::North, (row > 0) ? gridArray[row - 1][col] : nullptr);
+            current->SetOtherGrid(Direction::North, (row > 0) ? m_gridArray[row - 1][col] : nullptr); // ← 변경됨
             // 하
-            current->SetOtherGrid(Direction::South, (row < m_totalRows - 1) ? gridArray[row + 1][col] : nullptr);
+            current->SetOtherGrid(Direction::South, (row < m_totalRows - 1) ? m_gridArray[row + 1][col] : nullptr); // ← 변경됨
             // 좌
-            current->SetOtherGrid(Direction::West, (col > 0) ? gridArray[row][col - 1] : nullptr);
+            current->SetOtherGrid(Direction::West, (col > 0) ? m_gridArray[row][col - 1] : nullptr); // ← 변경됨
             // 우
-            current->SetOtherGrid(Direction::East, (col < m_totalCols - 1) ? gridArray[row][col + 1] : nullptr);
+            current->SetOtherGrid(Direction::East, (col < m_totalCols - 1) ? m_gridArray[row][col + 1] : nullptr); // ← 변경됨
         }
     }
 }
+
+void BuildSystem::DestroyGrid(JDScene::SceneBase* curScene) {
+
+for (auto& row : m_gridArray) {
+    for (auto* grid : row) {
+            grid->DeleteTextureObj(*curScene); // 그리드와 관련된(그리드가 생성한) 오브젝트 우선 일괄 제거
+            curScene->DestroyObject(grid); // 그리드 본체 제거
+        }
+    }
+    m_gridArray.clear();
+}
+
 /* {
 const float startX = -500.0f;
 const float startY = 300.0f;
@@ -190,4 +209,8 @@ void BuildSystem::ExpandTile(Grid* tile)
         cout << "땅을 샀다. 나도 사고싶다." << endl;
         cout << "남은 카운트 : " << m_choiceCount << endl;
     }
+}
+
+void BuildSystem::OnDestroy() {
+
 }

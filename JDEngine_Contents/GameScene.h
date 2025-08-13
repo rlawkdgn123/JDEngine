@@ -374,6 +374,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // 3. 징병 & 원정 Info
+        void ChangeAwayCatImage();
 
         /////
         // 견습 냥이
@@ -435,6 +436,10 @@ namespace JDScene {
         Text* m_awayAwardText02 = nullptr;
 
         Button* m_awayButton = nullptr;
+
+        Image* m_awayStar01 = nullptr;
+        Image* m_awayStar02 = nullptr;
+        Image* m_awayStar03 = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
         // 2025.08.12 옵션 추가 (게임 씬)

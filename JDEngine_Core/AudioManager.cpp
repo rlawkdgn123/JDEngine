@@ -160,56 +160,60 @@ void AudioManager::StopBGM()
 
 bool AudioManager::ChangeBGM(const std::string& key, float fadeSec)
 {
+    // 같은 곡이면 중복 호출 방지
+    FMOD::Channel* curNow = usingA_ ? musicChA_ : musicChB_;
+    if (!currentBGMKey_.empty() && currentBGMKey_ == key && IsPlaying(curNow))
+        return true;
+
     auto it = audioPaths_.find(key);
-    if (it == audioPaths_.end()) return false;
+    if (it == audioPaths_.end() || !musicGroup_) return false;
 
     FMOD::System* sys = FMODSystem::Instance().GetCoreSystem();
-    if (!sys || !musicGroup_) return false;
+    if (!sys) return false;
 
-    // 출력 샘플레이트 가져오기 (DSP Clock 계산용)
-    int rate = 48000; // 기본값
-    FMOD_SPEAKERMODE sm;
-    int num;
+    int rate = 48000; FMOD_SPEAKERMODE sm; int num;
     sys->getSoftwareFormat(&rate, &sm, &num);
 
-    // 현재 사용 중인 채널 / 비사용 채널 선택
+    // 현재/다음 슬롯
     FMOD::Channel* cur = usingA_ ? musicChA_ : musicChB_;
     FMOD::Channel** nextOut = usingA_ ? &musicChB_ : &musicChA_;
+    *nextOut = nullptr;
 
-    // 1) 다음 트랙을 일단 일시정지 상태로 로드
+    // 다음 트랙 준비 (그룹에 붙여서 재생해야 함!)
     FMODSystem::Instance().PlayLooped(it->second, musicGroup_, nextOut);
     FMOD::Channel* next = *nextOut;
     if (!next) return false;
 
-    next->setPaused(true);
-    next->setVolume(0.0f);
-    next->setVolumeRamp(true);  // 페이드 시 계단현상 방지
-
-    // 2) DSP Clock 기준 페이드 스케줄링
-    unsigned long long dspClock = 0, parent = 0;
-    musicGroup_->getDSPClock(&dspClock, &parent);
-
+    // 그룹 DSPClock 확보
+    unsigned long long gclk = 0, parent = 0;
+    musicGroup_->getDSPClock(&gclk, &parent);
     const unsigned long long fadeTicks = (unsigned long long)(fadeSec * (double)rate);
-    const unsigned long long t0 = dspClock + (rate / 1000); // 1ms 후 시작(여유)
 
-    // 현재 채널이 있으면 out 페이드 설정
+    // 새 채널: 0.05에서 시작 → 1.0까지 (가상화 회피용)
+    next->setPaused(true);
+    next->setVolumeRamp(true);
+    next->removeFadePoints(0, ULLONG_MAX);
+    next->setVolume(0.05f); // adv.vol0virtualvol=0.0 설정했으면 0.0f로 시작해도 됨
+    next->addFadePoint(gclk, 0.05f);
+    next->addFadePoint(gclk + fadeTicks, 1.0f);
+    next->setPaused(false); // 지금부터 페이드 인
+
+    // 현재 채널: 현재 볼륨에서 0.0까지
     if (cur) {
         cur->setVolumeRamp(true);
-        cur->addFadePoint(t0, 1.0f);                 // 지금 볼륨을 1.0으로 가정
-        cur->addFadePoint(t0 + fadeTicks, 0.0f);     // fadeSec 동안 0까지
-        // 페이드가 끝나면 자동 정지는 직접 처리하거나, 약간 뒤에 stop 예약도 가능:
-        // cur->setDelay(0, t0 + fadeTicks + rate/50, true); // 20ms 뒤 stop (선택)
+        cur->removeFadePoints(0, ULLONG_MAX);
+
+        float curVol = 1.0f;
+        cur->getVolume(&curVol);
+        cur->addFadePoint(gclk, curVol);
+        cur->addFadePoint(gclk + fadeTicks, 0.0f);
+
+        // 페이드 끝나면 자동 정지 예약(약간 여유)
+        cur->setDelay(0, gclk + fadeTicks + rate / 50, true);
     }
 
-    // 다음 채널은 0 → 1.0 으로 상승
-    next->addFadePoint(t0, 0.0f);
-    next->addFadePoint(t0 + fadeTicks, 1.0f);
-    next->setPaused(false); // 스케줄 적용 후 재생 시작
-
-    usingA_ = !usingA_; // 다음부터는 이쪽이 "현재"가 됨
-
-    // (선택) 너무 많은 채널이 쌓이지 않도록 이전 채널을 나중에 정리
-    // 안전하게 하려면 Update에서 "페이드 끝난 후 정지"를 검사해도 됩니다.
+    usingA_ = !usingA_;
+    currentBGMKey_ = key;
     return true;
 }
 

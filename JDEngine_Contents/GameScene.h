@@ -145,7 +145,6 @@ namespace JDScene {
         void DateUIUpdate();
 
     private:
-        FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_lightParticles;

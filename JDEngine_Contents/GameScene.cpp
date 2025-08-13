@@ -81,7 +81,7 @@ namespace JDScene {
         m_isEnding = false;
 
         /////////////////////////////////////////////////////////////////////////////
-        AudioManager::Instance().PlayBGM("BGM_Play", &bgmChannel);
+        AudioManager::Instance().PlayBGM("BGM_Play");
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
 
         DateUIUpdate();
@@ -98,11 +98,7 @@ namespace JDScene {
         if (m_buildSystem) {
             m_buildSystem->DestroyGrid(this);
         }
-
-        if (bgmChannel) {
-            bgmChannel->stop(); // FMOD에서 채널을 멈춤
-            bgmChannel = nullptr; // 포인터도 초기화 (안전)
-        }
+        AudioManager::Instance().StopBGM();
 
         // 선택된 오브젝트 포인터 초기화
         SetSelectedObject(nullptr);
@@ -465,6 +461,7 @@ namespace JDScene {
 
             int power = WaveManager::Instance().GetWaveEnemyPower();
             if (power >= 0) {
+                AudioManager::Instance().ChangeBGM("BGM_Battle", 1.25f);
                 SpawnNextWaveIndicator(power);
             }
 

@@ -18,14 +18,14 @@ namespace JDScene {
         size_t n = m_gameObjects.size();
         for (size_t i = 0; i < n; ++i) {
             auto* objA = m_gameObjects[i].get();
-            if (!objA) continue;
+            if (!objA || !objA->IsActive()) continue;
 
             auto* colA = objA->GetComponent<JDComponent::ColliderBase>();
             if (!colA) continue;
 
             for (size_t j = i + 1; j < n; ++j) {
                 auto* objB = m_gameObjects[j].get();
-                if (!objB) continue;
+                if (!objB || !objB->IsActive()) continue;
 
                 auto* colB = objB->GetComponent<JDComponent::ColliderBase>();
                 if (!colB) continue;
@@ -77,37 +77,52 @@ namespace JDScene {
         }
 
         // 충돌 끝 처리 (Exit)
-        for (auto& prev : m_prevPairs) {
-            auto* colA = prev.A->GetComponent<JDComponent::ColliderBase>();
-            auto* colB = prev.B->GetComponent<JDComponent::ColliderBase>();
+        auto isAlive = [&](JDGameObject::GameObjectBase* obj) -> bool {
+            if (!obj) return false;
+            for (auto& up : m_gameObjects) {
+                if (up.get() == obj) return obj->IsActive(); // Active도 확인
+            }
+            return false;
+            };
 
-            bool stillColliding = false; // 현재 충돌쌍과 같은 과거 충돌쌍이 없다면 false.(Exit)
+        for (auto& prev : m_prevPairs) {
+            const bool aliveA = isAlive(prev.A);
+            const bool aliveB = isAlive(prev.B);
+
+            // 아직도 충돌 중인가?
+            bool stillColliding = false;
             for (auto& curr : m_currPairs) {
-                if ((prev.A == curr.A && prev.B == curr.B) || (prev.A == curr.B && prev.B == curr.A)) {
+                if ((prev.A == curr.A && prev.B == curr.B) ||
+                    (prev.A == curr.B && prev.B == curr.A)) {
                     stillColliding = true;
                     break;
                 }
             }
-            if (!stillColliding) { // 충돌이 끝났다면 Exit.
-                if (colA && colB) {
-                    if (colA->IsTrigger() || colB->IsTrigger()) {
-                        colA->OnTriggerExit(colB);
-                        colB->OnTriggerExit(colA);
-                    }
-                    else {
-                        colA->OnCollisionExit(colB);
-                        colB->OnCollisionExit(colA);
-                    }
-                }
-                else if (colA) {
+            if (stillColliding) continue;
+
+            // Exit 이벤트: 살아있는 쪽에만 보낸다 (죽은 쪽 역참조 금지)
+            JDComponent::ColliderBase* colA = (aliveA ? prev.A->GetComponent<JDComponent::ColliderBase>() : nullptr);
+            JDComponent::ColliderBase* colB = (aliveB ? prev.B->GetComponent<JDComponent::ColliderBase>() : nullptr);
+
+            if (colA && colB) {
+                if (colA->IsTrigger() || colB->IsTrigger()) {
                     colA->OnTriggerExit(colB);
-                }
-                else if (colB) {
                     colB->OnTriggerExit(colA);
                 }
+                else {
+                    colA->OnCollisionExit(colB);
+                    colB->OnCollisionExit(colA);
+                }
+            }
+            else if (colA) {
+                // 반대쪽이 이미 사라졌다면, 필요하면 단독 Exit만 호출 (게임 규칙에 맞게 유지/삭제)
+                colA->OnTriggerExit(nullptr); // 또는 스킵
+            }
+            else if (colB) {
+                colB->OnTriggerExit(nullptr); // 또는 스킵
             }
         }
-        // 이제 다 끝났으니 현재 충돌 정보를 과거 정보로 넘겨주기.
+        // 다음 프레임을 위해 prev <- curr
         m_prevPairs.swap(m_currPairs);
     }
 

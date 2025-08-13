@@ -11,8 +11,8 @@ namespace JDComponent {
         void RectTransform::UpdateMatrices()
         {
             // 앵커 적용이 안된 렉트트랜스폼
-            /*
-            std::cout << "m_scale = (" << m_scale.x << ", " << m_scale.y << ")\n";
+  
+            /*std::cout << "m_scale = (" << m_scale.x << ", " << m_scale.y << ")\n";
             std::cout << "m_rotation = " << m_rotation << " degrees\n";
             std::cout << "m_position = (" << m_position.x << ", " << m_position.y << ")\n";
             std::cout << "m_pivot = (" << m_pivot.x << ", " << m_pivot.y << ")\n";*/

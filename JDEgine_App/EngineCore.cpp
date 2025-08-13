@@ -74,7 +74,6 @@ std::wstring UTF8ToWString(const std::string& utf8Str)
 
     return wstr;
 }
-
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -1962,9 +1961,9 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_1_Exam", L"../Resource/BATTLE_MAP_1_Exam.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01_Example", L"../Resource/BATTLE/ART_BattleMap01_Example.png"))
     {
-        std::cout << "[ERROR] BATTLE_MAP_1_Exam 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BattleMap01_Example 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
     {
@@ -2169,6 +2168,140 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] Russ 애니메이션 로드 실패!" << std::endl;
     }
 
+#pragma region character
+
+    // character
+    ////////////////////////////////////////////////////////////////////////////////
+
+    ///// 펠리스
+    if (!AssetManager::Instance().LoadAnimationRender("ART_FelisAdv_Sprite01", L"../Resource/character/Norway/adv/ART_FelisAdv_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_FelisAdv_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_FelisAdv_Sprite01", L"../Resource/character/Norway/adv/ART_FelisAdv_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_FelisAdv_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Norway_adv_Frame 1", L"../Resource/character/Norway/adv/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_FelisEx_Sprite01", L"../Resource/character/Norway/ex/ART_FelisEx_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_FelisEx_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_FelisEx_Sprite01", L"../Resource/character/Norway/ex/ART_FelisEx_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_FelisEx_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Norway_ex_Frame 1", L"../Resource/character/Norway/ex/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_FelisNov_Sprite01", L"../Resource/character/Norway/nov/ART_FelisNov_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_FelisNov_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_FelisNov_Sprite01", L"../Resource/character/Norway/nov/ART_FelisNov_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_FelisNov_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Norway_nov_Frame 1", L"../Resource/character/Norway/nov/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+    ///// 코네
+    if (!AssetManager::Instance().LoadAnimationRender("ART_KoneAdv_Sprite01", L"../Resource/character/Russ/adv/ART_KoneAdv_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_KoneAdv_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_KoneAdv_Sprite01", L"../Resource/character/Russ/adv/ART_KoneAdv_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_KoneAdv_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Russ_adv_Frame 1", L"../Resource/character/Russ/adv/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_KoneEx_Sprite01", L"../Resource/character/Russ/ex/ART_KoneEx_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_KoneEx_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_KoneEx_Sprite01", L"../Resource/character/Russ/ex/ART_KoneEx_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_KoneEx_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Russ_ex_Frame 1", L"../Resource/character/Russ/ex/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_KoneNov_Sprite01", L"../Resource/character/Russ/nov/ART_KoneNov_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_KoneNov_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_KoneNov_Sprite01", L"../Resource/character/Russ/nov/ART_KoneNov_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_KoneNov_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Russ_nov_Frame 1", L"../Resource/character/Russ/nov/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+
+    ///// 나비
+    if (!AssetManager::Instance().LoadAnimationRender("ART_NaviAdv_Sprite01", L"../Resource/character/Scottish/adv/ART_NaviAdv_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_NaviAdv_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_NaviAdv_Sprite01", L"../Resource/character/Scottish/adv/ART_NaviAdv_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_NaviAdv_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Scottish_adv_Frame 1", L"../Resource/character/Scottish/adv/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_NaviEx_Sprite01", L"../Resource/character/Scottish/ex/ART_NaviEx_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_NaviEx_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_NaviEx_Sprite01", L"../Resource/character/Scottish/ex/ART_NaviEx_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_NaviEx_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Scottish_ex_Frame 1", L"../Resource/character/Scottish/ex/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadAnimationRender("ART_NaviNov_Sprite01", L"../Resource/character/Scottish/nov/ART_NaviNov_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_NaviNov_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_NaviNov_Sprite01", L"../Resource/character/Scottish/nov/ART_NaviNov_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_NaviNov_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Scottish_nov_Frame 1", L"../Resource/character/Scottish/nov/Frame 1.png"))
+    {
+        std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
+    }
+
+#pragma endregion
+
+    
+
+
 #pragma region Asset_BATTLE
 
     // BATTLE
@@ -2202,6 +2335,14 @@ void EngineCore::LoadResources()
     if (!AssetManager::Instance().LoadTexture("ART_Barracks02", L"../Resource/BATTLE/ART_Barracks02.png"))
     {
         std::cout << "[ERROR] ART_Barracks02 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks02_mouse_over", L"../Resource/BATTLE/ART_Barracks02_mouse_over.png"))
+    {
+        std::cout << "[ERROR] ART_Barracks02_mouse_over 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks02_mouseout_", L"../Resource/BATTLE/ART_Barracks02_mouseout_.png"))
+    {
+        std::cout << "[ERROR] ART_Barracks02_mouseout_ 텍스처 로드 실패" << std::endl;
     }
 
 
@@ -2343,6 +2484,14 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Monster04 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_Monster05", L"../Resource/BATTLE/ART_Monster05.png"))
+    {
+        std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Enemy_Mark", L"../Resource/BATTLE/ART_Enemy_Mark.png"))
+    {
+        std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Player_Mark", L"../Resource/BATTLE/ART_Player_Mark.png"))
     {
         std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
     }
@@ -2643,39 +2792,71 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] ART_NomalEnd01 텍스처 로드 실패" << std::endl;
     }
+
 #pragma endregion
-
-
     
+    // 초급, 중급, 상급
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_Level.png"))    // 초급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_Level.png"))    // 중급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_Level", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_Level.png"))    // 상급
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_Level_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_Level_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level_mouseover 텍스처 로드 실패" << std::endl;
+    }
 
-    // TODO : 이름 변경해줘야함.
-    if (!AssetManager::Instance().LoadTexture("초급 복사 2", L"../Resource/BATTLE/초급 복사 2.png"))
+
+    // 병력보내기
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01).png"))    // 초급
     {
-        std::cout << "[ERROR] 초급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01) 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("중급 복사 2", L"../Resource/BATTLE/중급 복사 2.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv01)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv01)_mouseover.png"))
     {
-        std::cout << "[ERROR] 중급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv01)_mouseover 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("상급 복사 2", L"../Resource/BATTLE/상급 복사 2.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02).png"))    // 중급
     {
-        std::cout << "[ERROR] 상급 복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02) 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("원정 포인트", L"../Resource/BATTLE/원정 포인트.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv02)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv02)_mouseover.png"))
     {
-        std::cout << "[ERROR] 원정 포인트 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv02)_mouseover 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 2", L"../Resource/BATTLE/병력 보내기  복사 2.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03).png"))    // 상급
     {
-        std::cout << "[ERROR] 병력 보내기  복사 2 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_Level 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 4", L"../Resource/BATTLE/병력 보내기  복사 4.png"))
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Lv03)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Lv03)_mouseover.png"))
     {
-        std::cout << "[ERROR] 병력 보내기  복사 4 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Button(Lv03)_mouseover 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("병력 보내기  복사 6", L"../Resource/BATTLE/병력 보내기  복사 6.png"))
+
+
+    // 별
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Level_Empty", L"../Resource/BATTLE/Expedition/Art_Expedition_Level_Empty.png"))
     {
-        std::cout << "[ERROR] 병력 보내기  복사 6 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] Art_Expedition_Level_Empty 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Level_Full", L"../Resource/BATTLE/Expedition/Art_Expedition_Level_Full.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Level_Full 텍스처 로드 실패" << std::endl;
     }
 
 

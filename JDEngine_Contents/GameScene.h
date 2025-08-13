@@ -30,7 +30,7 @@ namespace JDScene {
     class GameScene : public SceneBase
     {
     public:
-        GameScene(SceneType type, std::string id) : SceneBase(type, id) {}
+        GameScene(SceneType type, std::string id) : SceneBase(type, id) { }
 
         ~GameScene() override {}
 
@@ -238,7 +238,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         std::unique_ptr <BuildSystem> m_buildSystem;
-
+        DataTableManager* m_dataTableManager;
 
         // 그리드
         int m_totalCols = 4;
@@ -304,6 +304,8 @@ namespace JDScene {
         void CreateBarrackUI();
         void UpdateBarrackUI();
         void UpdateAttackPowerText();
+        void ShowClickedBarrackObj();
+        void SetBarracksSelected(bool on);
         GameObject* m_barrackUI = nullptr;
         GameObject* m_barrackCurText = nullptr;
         GameObject* m_barrackDivText = nullptr;
@@ -383,6 +385,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         // 3. 징병 & 원정 Info
+        void ChangeAwayCatImage();
 
         /////
         // 견습 냥이
@@ -444,6 +447,10 @@ namespace JDScene {
         Text* m_awayAwardText02 = nullptr;
 
         Button* m_awayButton = nullptr;
+
+        Image* m_awayStar01 = nullptr;
+        Image* m_awayStar02 = nullptr;
+        Image* m_awayStar03 = nullptr;
 
         ////////////////////////////////////////////////////////////////////////////////
         // 2025.08.12 옵션 추가 (게임 씬)

@@ -109,7 +109,7 @@ namespace JDGameSystem {
 		m_expeditionPoints = std::min(m_goalPoints, m_expeditionPoints + expeditionInfo.m_point); // 원정 포인트 더하기.
 		m_expeditionActive = true; // 다시 원정 갈 수 있게.
 
-		RollBonusType(); // 랜덤 보상 다시 정해주기.
+		//RollBonusType(); // 랜덤 보상 다시 정해주기.
 
 		if (!RollBonusReward(expeditionInfo.m_successRate)) { // 확률을 뚫지 못하면 끝.
 			std::cout << "[ExpeditionSystem] 확률을 뚫지 못함." << std::endl;

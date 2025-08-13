@@ -757,6 +757,22 @@ namespace JDScene {
                 }
 
                 std::cout << "[GameScene] 원정 끝." << std::endl;
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                int rate = expeditionSystem.GetExpeditionInfo(expeditionSystem.GetExpeditionGrade()).m_successRate;
+
+                JDGameSystem::ExpeditionSystem::Instance().RollBonusType();
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
             }
         }
         else {
@@ -921,11 +937,13 @@ namespace JDScene {
                                 if (grid->HasBuilding()) {
                                     cout << "HasBuilding() : True" << endl;
                                     isGridSetting = true;
+                                    if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 다른걸 클릭했으니 병영이 켜져있다면 병영 끄기. 
                                     ShowGridSettingMenu();
                                 }
                                 else {
                                     cout << "HasBuilding() : False" << endl;
                                     isGridBuild = true;
+                                    if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 다른걸 클릭했으니 병영이 켜져있다면 병영 끄기. 
                                     ShowGridCreateMenu();
                                 }
                             }
@@ -950,7 +968,6 @@ namespace JDScene {
                                 }
                             }
 
-                            if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 그리드 하나를 클릭했으니 병영이 켜져있다면 병영 끄기. 
                             break;
                         }
 
@@ -3515,6 +3532,27 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_successRate;
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
 
                 m_awayPopupInfo->SetText(L"초급 원정");
@@ -3562,6 +3600,27 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_successRate;
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
@@ -3607,6 +3666,28 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_successRate;
+
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
@@ -3733,7 +3814,7 @@ namespace JDScene {
         m_awayAwardText02->SetTextFormatName("Sebang_20");
         m_awayAwardText02->SetColor(D2D1::ColorF(0x2F3315));
         m_awayAwardText02->SetSize({ 300, 50 });
-        m_awayAwardText02->SetPosition({ 770, -162 });
+        m_awayAwardText02->SetPosition({ 760, -162 });
 
         /////
         // 병력 보내기 Button

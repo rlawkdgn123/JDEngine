@@ -66,7 +66,6 @@ namespace JDScene {
 
         void ClickUpdate();
 
-        void MouseUpdate();                     // 마우스 커서 업데이트
         // 공통 생성 함수.
         GameObjectBase* CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag,
             JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName); // 병사.
@@ -564,7 +563,13 @@ namespace JDScene {
 
         GameObject* m_spear = nullptr;
 
-        //마우스커서
-        Image* m_mouse = nullptr;
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 4.0f, 4.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
     };
 }

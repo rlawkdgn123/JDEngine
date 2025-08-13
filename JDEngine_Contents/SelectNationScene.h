@@ -42,7 +42,6 @@ namespace JDScene {
 
         void LogicUpdate();                     // 로직 업데이트
         void ClickUpdate();                     // 클릭 업데이트
-        void MouseUpdate();                     // 마우스 업데이트
         void ParticleUpdate(float deltaTime);   // 파티클 업데이트
 
         void RenderSelectNationScene(float deltaTime);      // 국가 선택 씬 렌더
@@ -78,7 +77,14 @@ namespace JDScene {
         // Button* m_newCatParentButton = nullptr;      // (튜토리얼 로직 변경에 따라서 사용하지 않게되었음.)
         Button* m_experiencedCatParentButton = nullptr;
         //마우스커서
-        Image* m_mouse = nullptr;
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 4.0f, 4.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
     };
 }
 

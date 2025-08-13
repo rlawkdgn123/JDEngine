@@ -1896,13 +1896,20 @@ void EngineCore::RenderImGui()
 
             ImGui::Text("CurCat"); ImGui::SameLine();
             switch(grid->GetCatType()) {
-            case CatType::Felis: ImGui::Text("Felis"); ImGui::SameLine(); break;
-            case CatType::Navi: ImGui::Text("Navi"); ImGui::SameLine(); break;
-            case CatType::Kone: ImGui::Text("Kone"); ImGui::SameLine(); break;
-            case CatType::None: ImGui::Text("None"); ImGui::SameLine(); break;
-            default: ImGui::Text("Default"); ImGui::SameLine(); break;
+            case CatType::Felis: ImGui::Text("Felis"); break;
+            case CatType::Navi: ImGui::Text("Navi"); break;
+            case CatType::Kone: ImGui::Text("Kone"); break;
+            case CatType::None: ImGui::Text("None"); break;
+            default: ImGui::Text("Default"); break;
             }
-       }
+
+            ImGui::Text("SynerGyBonus");
+            ImGui::Text(to_string(grid->GetSynergyBonus().m_food).c_str());
+            ImGui::Text(to_string(grid->GetSynergyBonus().m_wood).c_str());
+            ImGui::Text(to_string(grid->GetSynergyBonus().m_mineral).c_str());
+
+        }
+
 
 
        //////////////////////////////////////////////////////////////////////////

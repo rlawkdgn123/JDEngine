@@ -66,10 +66,10 @@ namespace JDScene {
         m_date = WaveManager::Instance().GetConvertedDate();
 
         // 자원 세팅.
-        auto& rs = ResourceSystem::Instance();
+       /* auto& rs = ResourceSystem::Instance();
         rs.SetTotalResource(Resource(1000, 1000, 1000));
         rs.SetMaxPopulation(500);
-        rs.SetCurPopulation(100);
+        rs.SetCurPopulation(100);*/
 
         m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
@@ -1365,33 +1365,58 @@ namespace JDScene {
 
     void GameScene::UpdateResourceUI()
     {
-        auto curPop = ResourceSystem::Instance().GetCurPopulation();
-        if (curPop >= 0) m_curPopText->SetText(std::to_wstring(curPop));
-        else m_curPopText->SetText(std::to_wstring(curPop));
+        ResourceSystem& rs = ResourceSystem::Instance();
 
-        auto maxPop = ResourceSystem::Instance().GetMaxPopulation();
-        m_maxPopText->SetText(std::to_wstring(maxPop));
+        auto curPop = rs.GetCurPopulation();
+        auto maxPop = rs.GetMaxPopulation();
+        if (curPop >= 0) m_curPopText->SetText(std::to_wstring(curPop) + L" / " + std::to_wstring(maxPop));
 
-        auto totFood = ResourceSystem::Instance().GetTotalResource().m_food;
+        /*auto maxPop = rs.GetMaxPopulation();
+        m_maxPopText->SetText(std::to_wstring(maxPop));*/
+
+        auto totFood = rs.GetTotalResource().m_food;
         m_curFoodText->SetText(std::to_wstring(totFood));
 
-        auto resFood = ResourceSystem::Instance().GetTotalResourcePerSec().m_food;
+        auto resFood = rs.GetTotalResourcePerSec().m_food;
         if (resFood >= 0) m_resFoodText->SetText(L"+" + std::to_wstring(resFood));  // curPop 대신 resFood 기준으로 체크하는 게 적절
         else m_resFoodText->SetText(std::to_wstring(resFood));
 
-        auto totWood = ResourceSystem::Instance().GetTotalResource().m_wood;
+        auto totWood = rs.GetTotalResource().m_wood;
         m_curWoodText->SetText(std::to_wstring(totWood));
 
-        auto resWood = ResourceSystem::Instance().GetTotalResourcePerSec().m_wood;
+        auto resWood = rs.GetTotalResourcePerSec().m_wood;
         if (resWood >= 0) m_resWoodText->SetText(L"+" + std::to_wstring(resWood));
         else m_resWoodText->SetText(std::to_wstring(resWood));
 
-        auto totMineral = ResourceSystem::Instance().GetTotalResource().m_mineral;
+        auto totMineral = rs.GetTotalResource().m_mineral;
         m_curMineralText->SetText(std::to_wstring(totMineral));  // totMineral 출력으로 수정
 
-        auto resMineral = ResourceSystem::Instance().GetTotalResourcePerSec().m_mineral;
+        auto resMineral = rs.GetTotalResourcePerSec().m_mineral;
         if (resMineral >= 0) m_resMineralText->SetText(L"+" + std::to_wstring(resMineral));
         else m_resMineralText->SetText(std::to_wstring(resMineral));
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 툴팁 갱신
+        
+        m_FoodText->SetText(L" 식량은 생산 인원 할당 / 군대 양성 / 원정 / 주거지 소모량 등에 사용됩니다.\n\n식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
+            L") = 낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
+
+        m_WoodText->SetText(L"목재는 건축 / 군대 양성 / 원정 / 업그레이드 등에 사용됩니다.\n\n목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
+            L") = 제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
+
+        m_MineralText->SetText(L"광물은 군대 양성 / 원정 등에 사용됩니다.\n\n광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
+            L") = 광산 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_mineral) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
+
+        ////////////////////////////////////////////////////////////////////////////////
 
         if (m_selectedCollider) {
             int level = 0;
@@ -1409,7 +1434,6 @@ namespace JDScene {
                     if (FishingSpot* building = dynamic_cast<FishingSpot*>(grid->GetBuilding())) {
                         level = building->GetLevel();
                         
-                        cout << to_string(m_dataTableManager->GetFishingSpotTableInfo().m_resourceGenPerSec[level].m_food) << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
                         buldingType = BuildingType::FishingSpot;
                     }
                     else if (LumberMill* building = dynamic_cast<LumberMill*>(grid->GetBuilding())) {
@@ -1423,7 +1447,6 @@ namespace JDScene {
                     }
                     else if (House* building = dynamic_cast<House*>(grid->GetBuilding())) {
                         level = building->GetLevel();
-                        cout << to_string(m_dataTableManager->GetHouseTableInfo().m_initPopulation[level]) << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
                         buldingType = BuildingType::House;
                     }
                 }
@@ -2240,7 +2263,7 @@ namespace JDScene {
         m_buttonPop = CreateUIObject<Button>(L"UI_Pop");
         m_buttonPop->SetText(L"");
         m_buttonPop->SetTextureName("ART_RESPop01");
-        m_buttonPop->SetSize({ 150.0f, 66.f });
+        m_buttonPop->SetSize({ 170.0f, 66.f });
         m_buttonPop->SetPosition({ -858.f, 493.f });
         m_buttonPop->SetAnchor({ 0.0f, 1.0f });
 
@@ -2253,17 +2276,17 @@ namespace JDScene {
         m_curPopText->SetPosition({ -832, 489 });
 
         // 인구 최대치 텍스트
-        m_maxPopText = CreateUIObject<Text>(L"UI_MaxPopText");
+        /*m_maxPopText = CreateUIObject<Text>(L"UI_MaxPopText");
         m_maxPopText->SetText(std::to_wstring(ResourceSystem::Instance().GetMaxPopulation()));
         m_maxPopText->SetTextFormatName("Sebang_16");
         m_maxPopText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
         m_maxPopText->SetSize({ 300, 100 });
-        m_maxPopText->SetPosition({ -775, 510 });
+        m_maxPopText->SetPosition({ -775, 510 });*/
 
         // 인구 자원 버튼 마우스를 올리면 실행될 이벤트
         m_buttonPop->AddOnEnter("Highlight On", [this]()
             {
-                cout << "호버버버법버버버버버버벗" << endl;
+
                 m_PopulationUI->SetActive(true);
                 m_PopulationText->SetActive(true);
             });
@@ -2396,6 +2419,12 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        Button* m_buttonExpand = nullptr;           // 확장 UI
+        Text* m_expandCountText = nullptr;           // 확장 선택권 보유량
+
+        // 설명 팝업
+        Image* m_expandCountUI = nullptr;
+        Text* m_expandCountInfoText = nullptr;
 
         // 1) [상단] 몬스터 웨이브
         m_monsterWaveBackground = CreateUIObject<Image>(L"UI_MonWaveBackground");
@@ -4314,7 +4343,7 @@ namespace JDScene {
         m_PopulationUI->SetActive(false);
 
         m_PopulationText = CreateUIObject<Text>(L"UI_PopulationInfoText");
-        m_PopulationText->SetText(L"N  인구 자원은 다음과 같이 계산됩니다 :");
+        m_PopulationText->SetText(L"인구 자원은 할당 가능 인구 / 최대 인구로 이뤄져있으며, 병력과 생산건물 할당에 사용됩니다.\n 할당 인구가 소모되면 다시 돌려받습니다.");
         m_PopulationText->SetTextFormatName("Sebang_16");
         m_PopulationText->SetColor(D2D1::ColorF(0x2F3315));
         m_PopulationText->SetSize({ 300, 50 });
@@ -4335,8 +4364,8 @@ namespace JDScene {
         m_FoodUI->SetActive(false);
 
         m_FoodText = CreateUIObject<Text>(L"UI_FoodInfoText");
-        m_FoodText->SetText(L"N 식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
-            L"낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
+        m_FoodText->SetText(L"식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
+            L") = 낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
@@ -4360,8 +4389,8 @@ namespace JDScene {
         m_WoodUI->SetActive(false);
 
         m_WoodText = CreateUIObject<Text>(L"UI_WoodInfoText");
-        m_WoodText->SetText(L"N 목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
-            L"제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
+        m_WoodText->SetText(L"목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
+            L") = 제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
@@ -4385,8 +4414,8 @@ namespace JDScene {
         m_MineralUI->SetActive(false);
 
         m_MineralText = CreateUIObject<Text>(L"UI_MineralInfoText");
-        m_MineralText->SetText(L"N 광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
-           L"광산 건물 초당 생산량("+to_wstring(rs.GetResourcePerSec().m_mineral) +
+        m_MineralText->SetText(L"광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
+           L") = 광산 건물 초당 생산량("+to_wstring(rs.GetResourcePerSec().m_mineral) +
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");

@@ -20,7 +20,7 @@ void WaveManager::LoadStageWaves()
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 9} }, 2500 });
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {20, 0} }, 2800 });
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 11} }, 3000 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 84 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 4 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 94 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 104 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 114 });

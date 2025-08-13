@@ -301,6 +301,8 @@ namespace JDScene {
         void CreateBarrackUI();
         void UpdateBarrackUI();
         void UpdateAttackPowerText();
+        void ShowClickedBarrackObj();
+        void SetBarracksSelected(bool on);
         GameObject* m_barrackUI = nullptr;
         GameObject* m_barrackCurText = nullptr;
         GameObject* m_barrackDivText = nullptr;

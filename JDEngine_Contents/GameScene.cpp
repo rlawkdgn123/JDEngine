@@ -4007,7 +4007,7 @@ namespace JDScene {
 
         m_PopulationText = CreateUIObject<Text>(L"UI_PopulationInfoText");
         m_PopulationText->SetText(L"N  인구 자원은 다음과 같이 계산됩니다 :");
-        m_PopulationText->SetTextFormatName("Sebang_20");
+        m_PopulationText->SetTextFormatName("Sebang_16");
         m_PopulationText->SetColor(D2D1::ColorF(0x2F3315));
         m_PopulationText->SetSize({ 300, 50 });
         m_PopulationText->SetPosition(m_PopulationUI->GetComponent<RectTransform>()->GetPosition());
@@ -4032,7 +4032,7 @@ namespace JDScene {
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
-        m_FoodText->SetTextFormatName("Sebang_20");
+        m_FoodText->SetTextFormatName("Sebang_16");
         m_FoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_FoodText->SetSize({ 300, 50 });
         m_FoodText->SetPosition(m_FoodUI->GetComponent<RectTransform>()->GetPosition());
@@ -4057,7 +4057,7 @@ namespace JDScene {
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
-        m_WoodText->SetTextFormatName("Sebang_20");
+        m_WoodText->SetTextFormatName("Sebang_16");
         m_WoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_WoodText->SetSize({ 300, 50 });
         m_WoodText->SetPosition(m_WoodUI->GetComponent<RectTransform>()->GetPosition());
@@ -4082,7 +4082,7 @@ namespace JDScene {
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
-        m_MineralText->SetTextFormatName("Sebang_20");
+        m_MineralText->SetTextFormatName("Sebang_16");
         m_MineralText->SetColor(D2D1::ColorF(0x2F3315));
         m_MineralText->SetSize({ 300, 50 });
         m_MineralText->SetPosition(m_MineralUI->GetComponent<RectTransform>()->GetPosition());

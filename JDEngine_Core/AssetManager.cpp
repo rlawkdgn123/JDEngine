@@ -746,6 +746,10 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] ART_RESWood01 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("ART_RESCoin01", L"../Resource/BATTLE/ART_RESCoin01.png"))
+    {
+        std::cout << "[ERROR] ART_RESCoin01 텍스처 로드 실패" << std::endl;
+    }
 
 
     if (!AssetManager::Instance().LoadTexture("ART_Stiker01", L"../Resource/BATTLE/ART_Stiker01.png"))

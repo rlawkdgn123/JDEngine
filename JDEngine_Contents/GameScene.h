@@ -513,6 +513,8 @@ namespace JDScene {
 
         void StartEnding(EndingType type);
 
+        bool m_endingBGMFired = false;
+
         static inline float Clamp01(float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); }
 
         static float EaseOutBack(float t, float overshoot = 0.7f) {

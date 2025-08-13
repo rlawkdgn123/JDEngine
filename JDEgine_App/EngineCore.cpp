@@ -100,9 +100,13 @@ bool EngineCore::Initialize()
     //FMODSystem::Instance().PlayOneShot("assets/sfx/explosion.wav");
     //AudioManager::Instance().LoadAudio("MainTheme","../Resource/Audio/TestSound.mp3", true);
     //AudioManager::Instance().LoadAudio("MainTheme", "../Resource/Audio/KJH.mp3", true);
-    AudioManager::Instance().LoadAudio("BGM_Battle", "../Resource/Audio/BGM/Battle.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Battle", "../Resource/Audio/BGM/SND_Battle01.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_Play", "../Resource/Audio/BGM/SND_Play01.mp3", true);
     AudioManager::Instance().LoadAudio("BGM_Fiield", "../Resource/Audio/BGM/Fiield.mp3", true);
     AudioManager::Instance().LoadAudio("BGM_Title", "../Resource/Audio/BGM/Title.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_End_Bad", "../Resource/Audio/BGM/SND_Defeat01.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_End_Good", "../Resource/Audio/BGM/SND_Victory01.mp3", true);
+    AudioManager::Instance().LoadAudio("BGM_End_Neutral", "../Resource/Audio/BGM/SND_Normal01.mp3", true);
     AudioManager::Instance().LoadAudio("SFX_Battle_Defeat", "../Resource/Audio/SFX/SFX_Battle_Defeat.mp3", false);
     AudioManager::Instance().LoadAudio("SFX_Battle_Expedition", "../Resource/Audio/SFX/SFX_Battle_Expedition.mp3", false);
     AudioManager::Instance().LoadAudio("SFX_Battle_Unit", "../Resource/Audio/SFX/SFX_Battle_Unit.mp3", false);

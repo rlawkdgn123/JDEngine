@@ -53,7 +53,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
         // 파티클
 
-        FMOD::Channel* bgmChannel = nullptr;
+        //FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_mouseParticles;

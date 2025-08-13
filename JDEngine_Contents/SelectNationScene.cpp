@@ -198,6 +198,7 @@ namespace JDScene {
             // TODO : 게임 씬으로 이동
             ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("GameScene");
+            AudioManager::Instance().StopBGM();
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -344,10 +345,14 @@ namespace JDScene {
     void SelectNationScene::FinalizeSelectNationScene()
     {
         // 효과음 재생 중이면 정지
-        if (m_hoverSfxChannel)
+        if (sfxChannel)
         {
-            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            //sfxChannel->stop();        // 사운드 정지
+            sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
         }
+
+        
+
 
         // 선택된 오브젝트 포인터 초기화
         SetSelectedObject(nullptr);

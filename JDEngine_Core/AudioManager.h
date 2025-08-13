@@ -35,6 +35,11 @@ public:
     void SetMute(bool mute);
     bool IsMuted() const;
 
+    FMOD::Channel* GetCurrentBGMChannel() const;
+
+    void StopBGM();
+
+    bool ChangeBGM(const std::string& key, float fadeSec = 0.75f);
 private:
     AudioManager() = default;
     ~AudioManager() = default;
@@ -46,6 +51,12 @@ private:
     FMOD::ChannelGroup* masterGroup_ = nullptr;
     FMOD::ChannelGroup* musicGroup_ = nullptr;
     FMOD::ChannelGroup* sfxGroup_ = nullptr;
+
+    FMOD::Channel* musicChA_ = nullptr;
+    FMOD::Channel* musicChB_ = nullptr;
+    bool usingA_ = true;
+    std::string currentBGMKey_;
+    float defaultFadeSec_ = 0.75f;
 
     float musicVolume_ = 1.0f;
     float sfxVolume_ = 1.0f;

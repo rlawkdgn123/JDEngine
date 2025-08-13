@@ -81,7 +81,7 @@ namespace JDScene {
         m_isEnding = false;
 
         /////////////////////////////////////////////////////////////////////////////
-        AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
+        AudioManager::Instance().PlayBGM("BGM_Play", &bgmChannel);
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
 
         DateUIUpdate();
@@ -477,10 +477,11 @@ namespace JDScene {
             std::cout << "[GameScene] 날짜 증가: " << currDay << std::endl;
 
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
-            if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
+            if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {//여기요
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
                 SpawnWaveEnemy({ 1010.0f, 230.0f });
                 AddEnemyDay(warningDay);
+                AudioManager::Instance().ChangeBGM("BGM_Battle", 1.25f);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
             }
         }
@@ -518,11 +519,11 @@ namespace JDScene {
         if (enemyResult.Total() > 0) {
             auto* enemyObj = CreateSoldierUnit(enemyResult, JDGlobal::Base::GameTag::Enemy,
                 JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "ART_NaviAdv_Sprite01");
-
         }
 
         m_btlElapsedTime = 0.0f;
-        SafeDestroy(m_battleObject);
+        SafeDestroy(m_battleObject);//여기요
+        AudioManager::Instance().ChangeBGM("BGM_Play", 1.25f);
         std::cout << "[GameScene] 전투 끝." << std::endl;
     }
     void GameScene::BattleReward()
@@ -5584,5 +5585,23 @@ namespace JDScene {
         m_endingUI->SetPosition(m_endStartPos);
         m_retry->SetPosition(m_retryStartPos);
         m_goMenu->SetPosition(m_menuStartPos);
+
+        if (!m_endingBGMFired)
+        {
+            const float kFade = 1.25f; // 원하는 페이드 시간
+            switch (type)
+            {
+            case EndingType::Bad:
+                AudioManager::Instance().ChangeBGM("BGM_End_Bad", kFade);
+                break;
+            case EndingType::Good:
+                AudioManager::Instance().ChangeBGM("BGM_End_Good", kFade);
+                break;
+            case EndingType::None:
+                AudioManager::Instance().ChangeBGM("BGM_End_Neutral", kFade);
+                break;
+            }
+            m_endingBGMFired = true;
+        }
     }
 }

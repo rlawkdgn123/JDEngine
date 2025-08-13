@@ -630,17 +630,13 @@ namespace JDScene {
 
     void TitleScene::FinalizeTitleScene()
     {
-        ShowCursor(TRUE);
+        //ShowCursor(TRUE);
 
         // 효과음 재생 중이면 정지
         if (sfxChannel)
         {
             //sfxChannel->stop();        // 사운드 정지
             sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-        }
-        if (bgmChannel) {
-            bgmChannel->stop(); // FMOD에서 채널을 멈춤
-            bgmChannel = nullptr; // 포인터도 초기화 (안전)
         }
 
         // 선택된 오브젝트 포인터 초기화
@@ -701,7 +697,7 @@ namespace JDScene {
         //    AudioManager::Instance().SetSFXVolume(newValue);
         //    });
 
-        AudioManager::Instance().PlayBGM("BGM_Title", &bgmChannel);
+        AudioManager::Instance().PlayBGM("BGM_Title");
     }
 
     void TitleScene::InitParticle()

@@ -355,6 +355,8 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        void ChangeSettingCatImage();
+
         // 2. 업그레이드 Info
         // 고양이 배치
         Text* m_catTypeText = nullptr;

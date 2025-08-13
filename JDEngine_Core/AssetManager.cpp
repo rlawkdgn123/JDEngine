@@ -807,6 +807,10 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] ART_Upgrade01 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("ART_Upgrade02", L"../Resource/BATTLE/ART_Upgrade02.png"))
+    {
+        std::cout << "[ERROR] ART_Upgrade02 텍스처 로드 실패" << std::endl;
+    }
 
     // 타일 1x1
     if (!AssetManager::Instance().LoadTexture("ART_Tile01", L"../Resource/BATTLE/ART_Tile01.png"))
@@ -1087,6 +1091,50 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] Art_Expedition_Level_Full 텍스처 로드 실패" << std::endl;
     }
+
+    // 국가별 배치 고양이
+    // 코네 국가
+    if (!AssetManager::Instance().LoadTexture("ART_EmpCatFelis01_mouseout", L"../Resource/BATTLE/ART_EmpCatFelis01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_EmpCatFelis01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_EmpCatKone01_mouseout", L"../Resource/BATTLE/ART_EmpCatKone01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_EmpCatKone01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_EmpCatNavi01_mouseout", L"../Resource/BATTLE/ART_EmpCatNavi01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_EmpCatNavi01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+
+    // 펠리스 국가
+    if (!AssetManager::Instance().LoadTexture("ART_RepCatFelis01_mouseout", L"../Resource/BATTLE/ART_RepCatFelis01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_RepCatFelis01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RepCatKone01_mouseout", L"../Resource/BATTLE/ART_RepCatKone01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_RepCatKone01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RepCatNavi01_mouseout", L"../Resource/BATTLE/ART_RepCatNavi01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_RepCatNavi01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+
+    // 나비 국가
+    if (!AssetManager::Instance().LoadTexture("ART_UniteCatFelis01_mouseout", L"../Resource/BATTLE/ART_UniteCatFelis01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_UniteCatFelis01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_UniteCatKone01_mouseout", L"../Resource/BATTLE/ART_UniteCatKone01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_UniteCatKone01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_UniteCatNavi01_mouseout", L"../Resource/BATTLE/ART_UniteCatNavi01_mouseout.png"))
+    {
+        std::cout << "[ERROR] ART_UniteCatNavi01_mouseout 텍스처 로드 실패" << std::endl;
+    }
+
     
     // Patikle Resource
       ////////////////////////////////////////////////////////////////////////////////

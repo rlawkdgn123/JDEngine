@@ -79,6 +79,8 @@ namespace JDScene {
         UpdateBarrackUI();
         UpdateAttackPowerText();
         UpdateAwayPointUI();
+
+        ChangeAwayCatImage();
     }
 
     void GameScene::OnLeave() {
@@ -1349,12 +1351,18 @@ namespace JDScene {
         m_awayCostText01->SetActive(false);
         m_awayCostImage02->SetActive(false);
         m_awayCostText02->SetActive(false);
+        m_awayCostImage03->SetActive(false);
+        m_awayCostText03->SetActive(false);
 
         m_awayAwardInfo->SetActive(false);
         m_awayAwardText01->SetActive(false);
         m_awayAwardText02->SetActive(false);
 
         m_awayButton->SetActive(false);
+
+        m_awayStar01->SetActive(false);
+        m_awayStar02->SetActive(false);
+        m_awayStar03->SetActive(false);
     }
 
     void GameScene::ShowAwayMenu()
@@ -1422,6 +1430,8 @@ namespace JDScene {
         m_awayCostText01->SetActive(false);
         m_awayCostImage02->SetActive(false);
         m_awayCostText02->SetActive(false);
+        m_awayCostImage03->SetActive(false);
+        m_awayCostText03->SetActive(false);
 
         m_awayAwardInfo->SetActive(false);
         m_awayAwardText01->SetActive(false);
@@ -1494,6 +1504,8 @@ namespace JDScene {
         m_awayCostText01->SetActive(false);
         m_awayCostImage02->SetActive(false);
         m_awayCostText02->SetActive(false);
+        m_awayCostImage03->SetActive(false);
+        m_awayCostText03->SetActive(false);
 
         m_awayAwardInfo->SetActive(false);
         m_awayAwardText01->SetActive(false);
@@ -1501,6 +1513,9 @@ namespace JDScene {
 
         m_awayButton->SetActive(false);
 
+        m_awayStar01->SetActive(false);
+        m_awayStar02->SetActive(false);
+        m_awayStar03->SetActive(false);
     }
 
     void GameScene::ShowAwayPopup()
@@ -1515,12 +1530,18 @@ namespace JDScene {
         m_awayCostText01->SetActive(true);
         m_awayCostImage02->SetActive(true);
         m_awayCostText02->SetActive(true);
+        m_awayCostImage03->SetActive(true);
+        m_awayCostText03->SetActive(true);
 
         m_awayAwardInfo->SetActive(true);
         m_awayAwardText01->SetActive(true);
         m_awayAwardText02->SetActive(true);
 
         m_awayButton->SetActive(true);
+
+        m_awayStar01->SetActive(true);
+        m_awayStar02->SetActive(true);
+        m_awayStar03->SetActive(true);
     }
 
     void GameScene::CloseAwayPopup()
@@ -1535,12 +1556,18 @@ namespace JDScene {
         m_awayCostText01->SetActive(false);
         m_awayCostImage02->SetActive(false);
         m_awayCostText02->SetActive(false);
+        m_awayCostImage03->SetActive(false);
+        m_awayCostText03->SetActive(false);
 
         m_awayAwardInfo->SetActive(false);
         m_awayAwardText01->SetActive(false);
         m_awayAwardText02->SetActive(false);
 
         m_awayButton->SetActive(false);
+
+        m_awayStar01->SetActive(false);
+        m_awayStar02->SetActive(false);
+        m_awayStar03->SetActive(false);
     }
 
     // void GameScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
@@ -2996,7 +3023,7 @@ namespace JDScene {
         //////////
         // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
         m_trainerCatButton = CreateUIObject<Button>(L"UI_TrainerCatButton");
-        m_trainerCatButton->SetTextureName("ART_RecruitCat03");
+        //m_trainerCatButton->SetTextureName("ART_RecruitCat03");
         m_trainerCatButton->SetSize({ 128, 139 });
         m_trainerCatButton->SetPosition({ -111, -405 });
         m_trainerCatButton->SetAnchor({ 1.0f, 0.0f });
@@ -3105,7 +3132,7 @@ namespace JDScene {
         //////////
         // 징병 _ 숙련냥이 이미지
         m_expertCatButton = CreateUIObject<Button>(L"UI_ExpertCatButton");
-        m_expertCatButton->SetTextureName("ART_RecruitCat03");
+        //m_expertCatButton->SetTextureName("ART_RecruitCat03");
         m_expertCatButton->SetSize({ 128, 139 });
         m_expertCatButton->SetPosition({ 245, -405 });
         m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
@@ -3385,6 +3412,21 @@ namespace JDScene {
         m_awayCostText02->SetSize({ 300, 100 });
         m_awayCostText02->SetPosition({ 831, -70 });
 
+        // 원정 코스트 _ 03 ( 이미지 & 텍스트 )
+        m_awayCostImage03 = CreateUIObject<Image>(L"UI_AwayCostImage03");
+        m_awayCostImage03->SetTextureName("ART_CostWood01");
+        m_awayCostImage03->SetSizeToOriginal();
+        m_awayCostImage03->SetScale({ 0.5f, 0.5f });
+        m_awayCostImage03->SetPosition({ 762, -48 });
+        m_awayCostImage03->SetAnchor({ 1.0f, 0.0f });
+
+        m_awayCostText03 = CreateUIObject<Text>(L"UI_AwayCostText03");
+        m_awayCostText03->SetText(L"x50");
+        m_awayCostText03->SetTextFormatName("Sebang_16");
+        m_awayCostText03->SetColor(D2D1::ColorF(0x69512C));
+        m_awayCostText03->SetSize({ 300, 100 });
+        m_awayCostText03->SetPosition({ 831, -70 });
+
         /////
         // 보상 정보 Info
         m_awayAwardInfo = CreateUIObject<Text>(L"UI_AwayAwardInfo");
@@ -3454,6 +3496,28 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
             });
+
+        // 병력 보내기 팝업 별 이미지
+        m_awayStar01 = CreateUIObject<Image>(L"UI_AwayStar01");
+        m_awayStar01->SetTextureName("Art_Expedition_Level_Full");
+        m_awayStar01->SetSizeToOriginal();
+        m_awayStar01->SetScale({ 0.3f, 0.3f });
+        m_awayStar01->SetPosition({ 835, 20 });
+        m_awayStar01->SetAnchor({ 1.0f, 0.0f });
+
+        m_awayStar02 = CreateUIObject<Image>(L"UI_AwayStar02");
+        m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
+        m_awayStar02->SetSizeToOriginal();
+        m_awayStar02->SetScale({ 0.3f, 0.3f });
+        m_awayStar02->SetPosition({ 875, 20 });
+        m_awayStar02->SetAnchor({ 1.0f, 0.0f });
+
+        m_awayStar03 = CreateUIObject<Image>(L"UI_AwayStar03");
+        m_awayStar03->SetTextureName("Art_Expedition_Level_Full");
+        m_awayStar03->SetSizeToOriginal();
+        m_awayStar03->SetScale({ 0.3f, 0.3f });
+        m_awayStar03->SetPosition({ 915, 20 });
+        m_awayStar03->SetAnchor({ 1.0f, 0.0f });
 
 #pragma endregion
 
@@ -3953,6 +4017,33 @@ namespace JDScene {
         auto attackPowerTextRender = m_attackPowerText->GetComponent<JDComponent::TextRenderer>();
         if (!attackPowerTextRender) return;
         attackPowerTextRender->SetText(std::to_wstring(m_playerArmy.CalculateTotalPower()));
+    }
+
+    void GameScene::ChangeAwayCatImage()
+    {
+
+        CatType catType = ResourceSystem::Instance().GetNation();
+        std::cout << static_cast<int>(catType) << std::endl;
+
+        switch (catType) {
+        case CatType::Felis:
+            m_trainerCatButton->SetTextureName("Norway_nov_Frame 1");
+            m_expertCatButton->SetTextureName("Norway_ex_Frame 1");
+            break;
+        case CatType::Navi:
+            m_trainerCatButton->SetTextureName("Scottish_nov_Frame 1");
+            m_expertCatButton->SetTextureName("Scottish_ex_Frame 1");
+            break;
+        case CatType::Kone:
+            m_trainerCatButton->SetTextureName("Russ_nov_Frame 1");
+            m_expertCatButton->SetTextureName("Russ_ex_Frame 1");
+            break;
+        default:
+            break;
+        } 
+
+        m_trainerCatButton->SetSizeToOriginal();
+        m_expertCatButton->SetSizeToOriginal();
     }
 
     void GameScene::CreateOptionUI()

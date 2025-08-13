@@ -18,7 +18,8 @@ using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
-
+using Direction = JDGlobal::Contents::Direction;
+using BuildingType = JDGlobal::Contents::BuildingType;
 namespace JDScene {
 
     // TestScene
@@ -28,7 +29,12 @@ namespace JDScene {
         using namespace JDComponent;
         using JDScene::GameScene;
 
+        m_dataTableManager = &DataTableManager::Instance();
         m_buildSystem = make_unique<BuildSystem>();
+
+        /*for (int level = 0; level < JDGlobal::Contents::MAX_GAME_LEVEL; ++level) {
+            cout << "[Level " << level << "] InitPopulation = " << m_dataTableManager->GetHouseTableInfo().m_initPopulation[level] << '\n';
+        }*/
 
         // 게임 맵 생성
         CreateGameMap();
@@ -308,6 +314,8 @@ namespace JDScene {
 
             ctx->SetTransform(old);
         }
+
+        m_buildSystem->UpdateTextureObj(m_selectedCollider);
     }
     void GameScene::ProcessDayTimer(float deltaTime)
     {
@@ -802,6 +810,18 @@ namespace JDScene {
                             else {
                                 if (grid->IsExpanded()) {
                                     cout << "확장 가능한 미점유 지역입니다." << endl;
+                                    if (m_buildSystem->GetChoiceCount() > 0) {
+                                        m_buildSystem->AddChoiceCount(-1);
+                                        cout << "지역이 확장되었습니다." << endl;
+                                        grid->SetExpanded(false);
+                                        grid->SetOccupied(true);   
+                                        for (int dir = 0; dir < static_cast<int>(Direction::DIRECTION_MAX); ++dir) {
+                                            
+                                            auto otherGrid = grid->GetOtherGrid(dir);
+                                            if (!otherGrid || otherGrid->IsOccupied()) continue;
+                                            else { otherGrid->SetExpanded(true); }
+                                        }
+                                    }
                                 }
                                 else {
                                     cout << "확장 불가능한 미점유 지역입니다." << endl;
@@ -1029,6 +1049,63 @@ namespace JDScene {
         auto resMineral = ResourceSystem::Instance().GetTotalResourcePerSec().m_mineral;
         if (resMineral >= 0) m_resMineralText->SetText(L"+" + std::to_wstring(resMineral));
         else m_resMineralText->SetText(std::to_wstring(resMineral));
+
+        if (m_selectedCollider) {
+            int level = 0;
+            BuildingType buldingType = BuildingType::FishingSpot;
+
+            auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+            Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+            if (grid) {
+                if (!grid->IsOccupied()) {
+                    cout << "[Error] 점유되지 않은 구역입니다. 건물 설치 취소!!" << endl;
+                    CloseGridSettingMenu();
+                    return;
+                }
+                if (grid->HasBuilding()) { // 그리드가 빌딩이 있고, 점유중이면
+                    if (FishingSpot* building = dynamic_cast<FishingSpot*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        
+                        cout << to_string(m_dataTableManager->GetFishingSpotTableInfo().m_resourceGenPerSec[level].m_food) << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
+                        buldingType = BuildingType::FishingSpot;
+                    }
+                    else if (LumberMill* building = dynamic_cast<LumberMill*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        buldingType = BuildingType::LumberMill;
+                    }
+                    else if (Mine* building = dynamic_cast<Mine*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+  
+                        buldingType = BuildingType::Mine;
+                    }
+                    else if (House* building = dynamic_cast<House*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        cout << to_string(m_dataTableManager->GetHouseTableInfo().m_initPopulation[level]) << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
+                        buldingType = BuildingType::House;
+                    }
+                }
+
+                switch (buldingType) {
+                case BuildingType::House: 
+                    m_upgradeEffctImage->SetTextureName("ART_CostPop01");
+                    m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetHouseTableInfo().m_initPopulation[level]) + L"/초");
+                    break;
+                case BuildingType::FishingSpot: 
+                    m_upgradeEffctImage->SetTextureName("ART_CostFood01");
+                    m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetFishingSpotTableInfo().m_resourceGenPerSec[level].m_food) + L"/초");
+                    break;
+                case BuildingType::LumberMill: 
+                    m_upgradeEffctImage->SetTextureName("ART_CostWood01");
+                    m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetLumbermillTableInfo().m_resourceGenPerSec[level].m_wood) + L"/초");
+                    break;
+                case BuildingType::Mine: 
+                    m_upgradeEffctImage->SetTextureName("ART_CostMineral01");
+                    m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetMineTableInfo().m_resourceGenPerSec[level].m_mineral) + L"/초");
+                    break;
+                }
+
+            }
+        }
     }
 
     void GameScene::InitGridCreateMenu()
@@ -2167,7 +2244,7 @@ namespace JDScene {
         m_effectInfoText->SetPosition({ -126, -479 });
 
         m_effectText = CreateUIObject<Text>(L"UI_BuildEffectText");
-        m_effectText->SetText(L"1/초");
+        m_effectText->SetText(L"/초");
         m_effectText->SetTextFormatName("Sebang_22");
         m_effectText->SetColor(D2D1::ColorF(0x69512C));
         m_effectText->SetSize({ 300, 100 });
@@ -2229,11 +2306,11 @@ namespace JDScene {
                         std::cout << "건물 추가됨" << std::endl;
 
                         auto* tr = building->AddComponent<TextureRenderer>(
-                            "ART_BuildCabin01",
-                            RenderLayerInfo{ SortingLayer::Building, 0 }
+                            "ART_TileCabin01",
+                            RenderLayerInfo{ SortingLayer::Grid, 0 }
                         );
 
-                        tr->SetTextureName("ART_BuildCabin01");
+                        tr->SetTextureName("ART_TileCabin01");
                         tr->SetSize({ boxCol->GetSize().x, boxCol->GetSize().y });
 
                         building->GetComponent<Transform>()->SetPosition(tileWorldPos);
@@ -2320,11 +2397,11 @@ namespace JDScene {
                         std::cout << "건물 추가됨" << std::endl;
 
                         auto* tr = building->AddComponent<TextureRenderer>(
-                            "ART_BuildFishing01",
-                            RenderLayerInfo{ SortingLayer::Building, 0 }
+                            "ART_TileFishing01",
+                            RenderLayerInfo{ SortingLayer::Grid, 0 }
                         );
 
-                        tr->SetTextureName("ART_BuildFishing01");
+                        tr->SetTextureName("ART_TileFishing01");
                         tr->SetSize({ boxCol->GetSize().x, boxCol->GetSize().y });
 
                         building->GetComponent<Transform>()->SetPosition(tileWorldPos);
@@ -2410,11 +2487,11 @@ namespace JDScene {
                         std::cout << "건물 추가됨" << std::endl;
 
                         auto* tr = building->AddComponent<TextureRenderer>(
-                            "ART_BuildLumbermill01",
-                            RenderLayerInfo{ SortingLayer::Building, 0 }
+                            "ART_TileLumbermill01",
+                            RenderLayerInfo{ SortingLayer::Grid, 0 }
                         );
 
-                        tr->SetTextureName("ART_BuildLumbermill01");
+                        tr->SetTextureName("ART_TileLumbermill01");
                         tr->SetSize({ boxCol->GetSize().x, boxCol->GetSize().y });
 
                         building->GetComponent<Transform>()->SetPosition(tileWorldPos);
@@ -2501,11 +2578,11 @@ namespace JDScene {
                         std::cout << "건물 추가됨" << std::endl;
 
                         auto* tr = building->AddComponent<TextureRenderer>(
-                            "ART_BuildMine01",
-                            RenderLayerInfo{ SortingLayer::Building, 0 }
+                            "ART_TileMine01",
+                            RenderLayerInfo{ SortingLayer::Grid, 0 }
                         );
 
-                        tr->SetTextureName("ART_BuildMine01");
+                        tr->SetTextureName("ART_TileMine01");
                         tr->SetSize({ boxCol->GetSize().x, boxCol->GetSize().y });
 
                         building->GetComponent<Transform>()->SetPosition(tileWorldPos);
@@ -2860,6 +2937,43 @@ namespace JDScene {
         m_upgradeCostText->SetSize({ 300, 100 });
         m_upgradeCostText->SetPosition({ 824.5, -432 });
 
+       
+        int level = 0;
+        BuildingType buldingType = BuildingType::FishingSpot;
+        if (m_selectedCollider) {
+            auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+            Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+
+            // 그리드 건물 유무 확인
+            if (grid) {
+                if (!grid->IsOccupied()) {
+                    cout << "[Error] 점유되지 않은 구역입니다. 건물 설치 취소!!" << endl;
+                    CloseGridSettingMenu();
+                    return;
+                }
+
+                if (grid->HasBuilding()) { // 그리드가 빌딩이 있고, 점유중이면
+                    if(FishingSpot* building = dynamic_cast<FishingSpot*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        buldingType = BuildingType::FishingSpot;
+                    }
+                    else if (LumberMill* building = dynamic_cast<LumberMill*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        buldingType = BuildingType::LumberMill;
+                    }
+                    else if (Mine* building = dynamic_cast<Mine*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        buldingType = BuildingType::Mine;
+                    }
+                    else if (House* building = dynamic_cast<House*>(grid->GetBuilding())) {
+                        level = building->GetLevel();
+                        buldingType = BuildingType::House;
+                    }
+
+                }
+            }
+        }
+
         // 업그레이드 코스트 이미지
         m_upgradeCostImage = CreateUIObject<Image>(L"UI_UpgradeCostImage");
         m_upgradeCostImage->SetTextureName("ART_CostWood01");
@@ -2875,8 +2989,15 @@ namespace JDScene {
         m_upgradeEffectInfoText->SetSize({ 300, 100 });
         m_upgradeEffectInfoText->SetPosition({ 702, -479 });
 
+
         m_upgradeEffectText = CreateUIObject<Text>(L"UI_UpgradeEffectText");
-        m_upgradeEffectText->SetText(L"1/초");
+        switch (buldingType) {
+        case BuildingType::House: m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetHouseTableInfo().m_initPopulation[level]) + L"/초"); break;
+        case BuildingType::FishingSpot: m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetFishingSpotTableInfo().m_resourceGenPerSec[level].m_food)+L"/초"); break;
+        case BuildingType::LumberMill: m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetLumbermillTableInfo().m_resourceGenPerSec[level].m_wood) + L"/초"); break;
+        case BuildingType::Mine: m_upgradeEffectText->SetText(to_wstring(m_dataTableManager->GetMineTableInfo().m_resourceGenPerSec[level].m_mineral) + L"/초"); break;
+        }
+        
         m_upgradeEffectText->SetTextFormatName("Sebang_20");
         m_upgradeEffectText->SetColor(D2D1::ColorF(0x69512C));
         m_upgradeEffectText->SetSize({ 300, 100 });
@@ -2884,7 +3005,13 @@ namespace JDScene {
 
         // 업그레이드 효과 이미지
         m_upgradeEffctImage = CreateUIObject<Image>(L"UI_UpgradeEffctImage");
-        m_upgradeEffctImage->SetTextureName("ART_CostFood01");
+        switch (buldingType) {
+        case BuildingType::House: m_upgradeEffctImage->SetTextureName("ART_CostPop01"); break;
+        case BuildingType::FishingSpot: m_upgradeEffctImage->SetTextureName("ART_CostFood01"); break;
+        case BuildingType::LumberMill: m_upgradeEffctImage->SetTextureName("ART_CostWood01"); break;
+        case BuildingType::Mine: m_upgradeEffctImage->SetTextureName("ART_CostMineral01"); break;
+        }
+        
         m_upgradeEffctImage->SetSizeToOriginal();
         m_upgradeEffctImage->SetPosition({ 754, -460 });
         m_upgradeEffctImage->SetAnchor({ 1.0f, 0.0f });

@@ -290,8 +290,9 @@ namespace JDGlobal {
 		{
 			North = 0,
 			South,
+			West,
 			East,
-			West
+			DIRECTION_MAX
 		};
 
 		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.

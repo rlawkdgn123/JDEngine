@@ -29,7 +29,7 @@ namespace JDScene {
     class GameScene : public SceneBase
     {
     public:
-        GameScene(SceneType type, std::string id) : SceneBase(type, id) {}
+        GameScene(SceneType type, std::string id) : SceneBase(type, id) { }
 
         ~GameScene() override {}
 
@@ -231,7 +231,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
         std::unique_ptr <BuildSystem> m_buildSystem;
-
+        DataTableManager* m_dataTableManager;
 
         // 그리드
         int m_totalCols = 4;

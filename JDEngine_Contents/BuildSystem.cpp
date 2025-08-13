@@ -54,7 +54,7 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             float x = m_areaTopLeft.x + offsetX + (col * (squareCellSize + m_padding)) + (squareCellSize / 2.0f);
             float y = m_areaTopLeft.y - offsetY - (row * (squareCellSize + m_padding)) - (squareCellSize / 2.0f);
 
-            box->CreateTextureObj(*curScene);
+           
             box->GetComponent<Transform>()->SetPosition({ x, y });
             box->AddComponent<Editor_Clickable>();
 
@@ -114,9 +114,11 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             auto* collider = box->AddComponent<BoxCollider>(Vector2F{ squareCellSize / 2.0f, squareCellSize / 2.0f });
             collider->SetIndex(idx);
 
+            box->CreateTextureObj(*curScene);
+
             // [수정] 생성된 그리드 포인터를 멤버 변수에 저장
             // gridArray[row][col] = box;
-            m_gridArray[row][col] = box; // ← 변경됨
+            m_gridArray[row][col] = box;
         }
     }
     //각 그리드의 others[4]에 상하좌우 인접 그리드 포인터 설정
@@ -125,13 +127,13 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             Grid* current = m_gridArray[row][col];
 
             // 상
-            current->SetOtherGrid(Direction::North, (row > 0) ? m_gridArray[row - 1][col] : nullptr); // ← 변경됨
+            current->SetOtherGrid(Direction::North, (row > 0) ? m_gridArray[row - 1][col] : nullptr);
             // 하
-            current->SetOtherGrid(Direction::South, (row < m_totalRows - 1) ? m_gridArray[row + 1][col] : nullptr); // ← 변경됨
+            current->SetOtherGrid(Direction::South, (row < m_totalRows - 1) ? m_gridArray[row + 1][col] : nullptr);
             // 좌
-            current->SetOtherGrid(Direction::West, (col > 0) ? m_gridArray[row][col - 1] : nullptr); // ← 변경됨
+            current->SetOtherGrid(Direction::West, (col > 0) ? m_gridArray[row][col - 1] : nullptr); 
             // 우
-            current->SetOtherGrid(Direction::East, (col < m_totalCols - 1) ? m_gridArray[row][col + 1] : nullptr); // ← 변경됨
+            current->SetOtherGrid(Direction::East, (col < m_totalCols - 1) ? m_gridArray[row][col + 1] : nullptr); 
         }
     }
 }
@@ -194,6 +196,45 @@ for (int row = 0; row < MAX_GAME_GRID_RAW; ++row) {
         collider->SetIndex(idx);
     }
 }*/
+
+void BuildSystem::UpdateTextureObj(JDComponent::ColliderBase* selectedCol) {
+    for (auto& row : m_gridArray) {
+        for (auto* grid : row) {
+            // 확장 지역
+            if (m_choiceCount >= 0 && grid->IsExpanded()) { // 카운트가 있으면
+                grid->SetActiveExpendEffectTextureObj(true);
+            }
+            else {
+                grid->SetActiveExpendEffectTextureObj(false);
+            }
+
+            if (grid->IsOccupied()) {
+                // 건물 상태
+                if (grid->HasBuilding()) {
+                    grid->SetActiveLevelTextureObj(true);
+                }
+                else {
+                    false;
+                }
+                // 고양이 상태
+                if (grid->GetCatType() != CatType::None && grid->GetCatType() != CatType::CatTypeMAX) {
+                    grid->SetActiveCatTextureObj(true);
+                }
+                else {
+                    grid->SetActiveCatTextureObj(false);
+                }
+            }
+            if (!selectedCol) { grid->SetActiveSelectEffectTextureObj(false); continue; }
+
+            if (grid->GetID() == selectedCol->GetOwner()->GetID()) {
+                grid->SetActiveSelectEffectTextureObj(true);
+            }
+            else {
+                grid->SetActiveSelectEffectTextureObj(false);
+            }
+        }
+    }
+}
 
 
 void BuildSystem::ExpandTile(Grid* tile)

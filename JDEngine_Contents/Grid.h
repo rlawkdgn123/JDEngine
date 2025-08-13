@@ -63,19 +63,27 @@ namespace JDGameObject {
 
             void SetOtherGrid(Direction dir, Grid* otherGrid) {
                 switch (dir) {
-                case Direction::North: others[0] = otherGrid; break;
-                case Direction::South: others[1] = otherGrid; break;
-                case Direction::West: others[2] = otherGrid; break;
-                case Direction::East: others[3] = otherGrid; break;
+                case Direction::North: others[static_cast<int>(Direction::North)] = otherGrid; break;
+                case Direction::South: others[static_cast<int>(Direction::South)] = otherGrid; break;
+                case Direction::West: others[static_cast<int>(Direction::West)] = otherGrid; break;
+                case Direction::East: others[static_cast<int>(Direction::East)] = otherGrid; break;
                 }
             }
 
             Grid* GetOtherGrid(Direction dir) const{
                 switch (dir) {
-                case Direction::North: return others[0]; break;
-                case Direction::South: return others[1]; break;
-                case Direction::West: return others[2]; break;
-                case Direction::East: return others[3]; break;
+                case Direction::North: return others[static_cast<int>(Direction::North)]; break;;
+                case Direction::South: return others[static_cast<int>(Direction::South)]; break;;
+                case Direction::West: return others[static_cast<int>(Direction::West)]; break;
+                case Direction::East: return others[static_cast<int>(Direction::East)]; break;
+                }
+            }
+            Grid* GetOtherGrid(int dir) const {
+                switch (dir) {
+                case static_cast<int>(Direction::North): return others[static_cast<int>(Direction::North)]; break;
+                case static_cast<int>(Direction::South): return others[static_cast<int>(Direction::South)]; break;
+                case static_cast<int>(Direction::West): return others[static_cast<int>(Direction::West)]; break;
+                case static_cast<int>(Direction::East): return others[static_cast<int>(Direction::East)]; break;
                 }
             }
 

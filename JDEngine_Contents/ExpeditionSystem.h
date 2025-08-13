@@ -27,6 +27,8 @@ namespace JDGameSystem {
 
 	class ExpeditionSystem {
 	public:
+		using ExpeditionStats = JDGlobal::Contents::ExpeditionStats;
+	public:
 		static ExpeditionSystem& Instance() {
 			static ExpeditionSystem instance;
 			return instance;
@@ -61,6 +63,7 @@ namespace JDGameSystem {
 		ExpeditionGrade m_nowExpeditionGrade = ExpeditionGrade::Beginner; // 현재 진행중인 원정.
 
 		std::array<ExpeditionInfo, GradeCount> m_expeditionGrades; // 원정 정보 저장용.
+		ExpeditionStats m_expeditionTable;
 
 		int m_randomResourceIndex = 0; // 랜덤 보너스 보상 종류. 0: 음식, 2: 목재, 3: 광물.
 	};

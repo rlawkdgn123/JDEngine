@@ -38,6 +38,11 @@ namespace JDScene {
 
         LogicUpdate();                        // 씬 로직 업데이트
         ClickUpdate();                        // 클릭 업데이트
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+        MouseState ms = InputManager::Instance().GetMouseState();
+        mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
     }
 
     void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
@@ -53,6 +58,7 @@ namespace JDScene {
     void SelectNationScene::Render(float deltaTime) {
 
         RenderSelectNationScene(deltaTime);    // 씬 렌더
+        RenderCursor(mouseClientPos, 1.0f, 1.0f); //마우스커서
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -112,8 +118,9 @@ namespace JDScene {
         // 타이틀 텍스트 이미지
         m_titleTextImage = CreateUIObject<Image>(L"TitleText_Image");
         m_titleTextImage->SetTextureName("ART_Q_1");
-        m_titleTextImage->SetSize({ 725, 68 });
-        m_titleTextImage->SetPosition({ -400, 456 });
+        m_titleTextImage->SetSizeToOriginal();
+        m_titleTextImage->SetScale({ 0.5f, 0.5f });
+        m_titleTextImage->SetPosition({ -766, 485 });
 
         // 국가 설명 이미지
         m_nationDescImage = CreateUIObject<Image>(L"NationDesc_Image");
@@ -188,14 +195,17 @@ namespace JDScene {
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_experiencedCatParentButton->AddOnClick("Load GameScene", [this]() {
+        m_experiencedCatParentButton->AddOnClick("On Click", [this]() {
             // TODO : 게임 씬으로 이동
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("GameScene");
+            AudioManager::Instance().StopBGM();
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
             });
@@ -220,13 +230,15 @@ namespace JDScene {
         m_naviImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_naviImageButton->AddOnClick("Load GameScene", []() {
-
+        m_naviImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_naviImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseover");
@@ -261,13 +273,15 @@ namespace JDScene {
         m_felisImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_felisImageButton->AddOnClick("Load GameScene", []() {
-
+        m_felisImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_felisImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseover");
@@ -302,13 +316,15 @@ namespace JDScene {
         m_koneImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_koneImageButton->AddOnClick("Load GameScene", []() {
-
+        m_koneImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_koneImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_koneImageButton->SetTextureName("ART_SelectKone01_mouseover");
@@ -338,10 +354,14 @@ namespace JDScene {
     void SelectNationScene::FinalizeSelectNationScene()
     {
         // 효과음 재생 중이면 정지
-        if (m_hoverSfxChannel)
+        if (sfxChannel)
         {
-            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            //sfxChannel->stop();        // 사운드 정지
+            sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
         }
+
+        
+
 
         // 선택된 오브젝트 포인터 초기화
         SetSelectedObject(nullptr);
@@ -588,10 +608,10 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Navi)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_4");
+                            m_titleTextImage->SetTextureName("ART_Q_3");
                         }
                     }
-                    
+
                     // 펠릭스 이미지가 클릭되었음.
                     else if (GetSelectedObject() == m_felisImageButton)
                     {
@@ -618,7 +638,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Felis)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_3");
+                            m_titleTextImage->SetTextureName("ART_Q_2");
                         }
                     }
 
@@ -648,7 +668,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Kone)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_2");
+                            m_titleTextImage->SetTextureName("ART_Q_4");
                         }
                     }
 
@@ -708,6 +728,60 @@ namespace JDScene {
                 SetSelectedObject(nullptr);
             }
         }
+    }
+
+    void SelectNationScene::RenderCursor(Vector2F mouseClientPos, float scale, float alpha)
+    {
+        auto* ctx = D2DRenderer::Instance().GetD2DContext();
+        if (!ctx) return;
+
+        // 입력 상태
+        MouseState ms = InputManager::Instance().GetMouseState();
+
+        // 사용할 비트맵 선택 + 폴백
+        ID2D1Bitmap* bmp = nullptr;
+        if (ms.leftPressed && g_cursorDownBmp)
+            bmp = g_cursorDownBmp;
+        else
+            bmp = g_cursorBmp;
+
+        if (!bmp) return; // 두 비트맵 다 없으면 종료
+
+        // 현재 선택된 비트맵의 픽셀 크기 사용 (g_cursorPx에 의존 X)
+        const auto px = bmp->GetPixelSize();
+        if (px.width == 0 || px.height == 0) return;
+
+        // 뷰/월드 영향 제거
+        D2D1_MATRIX_3X2_F oldTM;
+        ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // 화면 고정 커서 위치 계산 (mouseClientPos가 DIP인지 픽셀인지 일관성 유지)
+        const float w = px.width * scale;
+        const float h = px.height * scale;
+
+        const float offsetX = -18.0f; // 왼쪽으로 이동
+        const float offsetY = -30.0f; // 위로 이동
+
+        const D2D1_RECT_F dest = {
+            mouseClientPos.x - g_hotspot.x * scale + offsetX,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY,
+            mouseClientPos.x - g_hotspot.x * scale + offsetX + w,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY + h
+        };
+
+        const D2D1_RECT_F src = { 0, 0, (float)px.width, (float)px.height };
+
+        // 커서 그리기 — 반드시 선택된 bmp로!
+        ctx->DrawBitmap(
+            bmp,
+            dest,
+            alpha,
+            D2D1_INTERPOLATION_MODE_LINEAR,
+            &src
+        );
+
+        ctx->SetTransform(oldTM);
     }
 
     void SelectNationScene::ParticleUpdate(float deltaTime)

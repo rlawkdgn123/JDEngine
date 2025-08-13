@@ -6,6 +6,8 @@ namespace JDGameObject {
         public:
             Player() : GameObject(L"Player") {}
             Player(const std::wstring& name) : GameObject(name) {}
+            Player(const wchar_t* name) : GameObject(std::wstring{ name }) {}
+
             void Awake() override;
             void Start() override;                              // 최초 1회만 호출
             void Update(float deltaTime) override;              // Update

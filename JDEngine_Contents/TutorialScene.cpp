@@ -1233,47 +1233,6 @@ namespace JDScene {
         m_upgradeButton->SetActive(false);
     }
 
-    //void TutorialScene::ShowUpgradeMenu()
-    //{
-    //    // 업그레이드 UI 보이기
-    //    CloseBuildMenu();
-    //    CloseAWayMenu();
-
-    //    m_defaultUI->SetActive(false);
-    //    m_buildUI->SetActive(false);
-    //    m_upgradeUI->SetActive(true);
-    //    m_awayUI->SetActive(false);
-
-    //    // 고양이 배치 UI
-    //    m_catTypeText->SetActive(true);
-
-    //    //m_catCostInfoText->SetActive(true);
-    //    //m_catCostText->SetActive(true);
-    //    //m_catCostImage->SetActive(true);
-
-    //    //m_catEffectInfoText->SetActive(true);
-    //    //m_catEffectText->SetActive(true);
-    //    //m_catEffctImage->SetActive(true);
-
-    //    m_naviSetButton->SetActive(true);
-    //    m_felisSetButton->SetActive(true);
-    //    m_koneSetButton->SetActive(true);
-
-    //    // 건설 업그레이드 UI
-    //    m_builtTypeText->SetActive(true);
-    //    
-    //    m_upgradeCostInfoText->SetActive(true);
-    //    m_upgradeCostText->SetActive(true);
-    //    m_upgradeCostImage->SetActive(true);
-
-    //    m_upgradeEffectInfoText->SetActive(true);
-    //    m_upgradeEffectText->SetActive(true);
-    //    m_upgradeEffctImage->SetActive(true);
-
-    //    m_downgradeButton->SetActive(true);
-    //    m_upgradeButton->SetActive(true);
-    //}
-
     void TutorialScene::CloseGridSettingMenu()
     {
         // 업그레이드 UI 끄기

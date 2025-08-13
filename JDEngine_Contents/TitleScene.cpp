@@ -56,6 +56,7 @@ namespace JDScene {
 
         RenderTitleScene(deltaTime);    // 타이틀 렌더
         RenderParticle();               // 파티클 렌더
+        RenderCursor(mouseClientPos, 1.0f, 1.0f);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +579,10 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        m_closeOption->AddOnEnter("Highlight On", [this]() {
+        m_closeOption->AddOnEnter("Highlight On", [this]() 
+            {
+            AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
             // 텍스트 변경
             m_closeOption->SetTextureName("ART_Back01_mouseover");
             });
@@ -619,21 +623,23 @@ namespace JDScene {
         //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
         //bgmSlider->SetFillImage("VOLUME_LINE_2");
         //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        /*m_mouse = CreateUIObject<Image>(L"mouse");
+        m_mouse->SetTextureName("mouse");
+        m_mouse->SetPivot({ 0.5,0.5 });
+        m_mouse->SetSizeToOriginal();
+        m_mouse->SetActive(true);*/
     }
 
     void TitleScene::FinalizeTitleScene()
     {
-        ShowCursor(TRUE);
+        //ShowCursor(TRUE);
 
         // 효과음 재생 중이면 정지
         if (sfxChannel)
         {
             //sfxChannel->stop();        // 사운드 정지
             sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
-        }
-        if (bgmChannel) {
-            bgmChannel->stop(); // FMOD에서 채널을 멈춤
-            bgmChannel = nullptr; // 포인터도 초기화 (안전)
         }
 
         // 선택된 오브젝트 포인터 초기화
@@ -694,7 +700,7 @@ namespace JDScene {
         //    AudioManager::Instance().SetSFXVolume(newValue);
         //    });
 
-        AudioManager::Instance().PlayBGM("BGM_Title", &bgmChannel);
+        AudioManager::Instance().PlayBGM("BGM_Title");
     }
 
     void TitleScene::InitParticle()
@@ -802,20 +808,29 @@ namespace JDScene {
         float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
         float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
         Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+        MouseState ms = InputManager::Instance().GetMouseState();
+        mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
+
+        //Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
 
         // 1) 마우스 파티클 업데이트 & Emit
-        {
-            MouseState ms = InputManager::Instance().GetMouseState();
-            Vector2F mousePos{ (float)ms.pos.x, (float)ms.pos.y };
+        //{
+        //    MouseState ms = InputManager::Instance().GetMouseState();
+        //    Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
+        //    
+        //    if (auto* rtf = m_mouse->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+        //        rtf->SetPosition({ mousePos.x,mousePos.y });
+        //    }
 
-            m_mouseParticles->Update(deltaTime, mousePos);
-            m_mouseParticles->Emit(
-                mousePos,
-                /*count=*/30,
-                D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
-                /*scale=*/2.5f
-            );
-        }
+        //    bool pressed = ms.leftPressed;     // 네 입력 시스템에 맞게: leftDown/leftUp이 있으면 엣지로 써도 됨
+        //    if (pressed != m_prevLeftPressed) {
+        //        if (auto* img = m_mouse->GetComponent<UI_ImageComponent>()) {
+        //            img->SetTextureName(pressed ? "click" : "mouse"); // 클릭/기본
+        //        }
+        //        m_mouse->SetSizeToOriginal(); // 이미지 바꾼 뒤 원본 크기 재적용(필요시)
+        //        m_prevLeftPressed = pressed;
+        //    }
+        //}
 
         // 2) 벚꽃 낙하 파티클 스폰 & 업데이트
         {
@@ -938,13 +953,67 @@ namespace JDScene {
 
         if (m_mouseParticles) m_mouseParticles->RenderGlow(ctx);
         if (m_sakuraParticles) m_sakuraParticles->Render(ctx);
-        if (m_dustParticles) m_dustParticles->RenderDust(ctx);
-        if (m_dust2Particles) m_dust2Particles->RenderDust2(ctx);
+        //if (m_dustParticles) m_dustParticles->RenderDust(ctx);
+        //if (m_dust2Particles) m_dust2Particles->RenderDust2(ctx);
         if (m_sparkleParticles) m_sparkleParticles->RenderSparkle(ctx);
 
         ctx->SetTransform(old);
     }
   
+    void TitleScene::RenderCursor(Vector2F mouseClientPos, float scale, float alpha)
+    {
+        auto* ctx = D2DRenderer::Instance().GetD2DContext();
+        if (!ctx) return;
+
+        // 입력 상태
+        MouseState ms = InputManager::Instance().GetMouseState();
+
+        // 사용할 비트맵 선택 + 폴백
+        ID2D1Bitmap* bmp = nullptr;
+        if (ms.leftPressed && g_cursorDownBmp)
+            bmp = g_cursorDownBmp;
+        else
+            bmp = g_cursorBmp;
+
+        if (!bmp) return; // 두 비트맵 다 없으면 종료
+
+        // 현재 선택된 비트맵의 픽셀 크기 사용 (g_cursorPx에 의존 X)
+        const auto px = bmp->GetPixelSize();
+        if (px.width == 0 || px.height == 0) return;
+
+        // 뷰/월드 영향 제거
+        D2D1_MATRIX_3X2_F oldTM;
+        ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // 화면 고정 커서 위치 계산 (mouseClientPos가 DIP인지 픽셀인지 일관성 유지)
+        const float w = px.width * scale;
+        const float h = px.height * scale;
+
+        const float offsetX = -18.0f; // 왼쪽으로 이동
+        const float offsetY = -30.0f; // 위로 이동
+
+        const D2D1_RECT_F dest = {
+            mouseClientPos.x - g_hotspot.x * scale + offsetX,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY,
+            mouseClientPos.x - g_hotspot.x * scale + offsetX + w,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY + h
+        };
+
+        const D2D1_RECT_F src = { 0, 0, (float)px.width, (float)px.height };
+
+        // 커서 그리기 — 반드시 선택된 bmp로!
+        ctx->DrawBitmap(
+            bmp,
+            dest,
+            alpha,
+            D2D1_INTERPOLATION_MODE_LINEAR,
+            &src
+        );
+
+        ctx->SetTransform(oldTM);
+    }
+
     //void TitleScene::ClickUpdate() {
 
     //    // ImGui가 마우스 입력을 사용 중이면 게임 내 클릭을 무시합니다.

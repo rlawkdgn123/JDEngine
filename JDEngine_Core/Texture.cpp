@@ -7,6 +7,8 @@ using namespace JDComponent;
 
 void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F worldTransform)
 {
+    if (!m_Owner || !m_Owner->IsActive()) return;
+
     if (!GetEnabled()) return;
     // AssetManager에서 ID2D1Bitmap1*으로 받아옵니다.
     auto bitmap = static_cast<ID2D1Bitmap1*>(

@@ -156,7 +156,9 @@ void InputManager::HandleMsgMouse(const MSG& msg)
     int x = GetXFromLParam(msg.lParam);
     int y = GetYFromLParam(msg.lParam);
 
+    POINT prev = m_CurMouse.pos;
     m_CurMouse.pos = { x, y };
+    m_CurMouse.delta = { x - prev.x, y - prev.y };
 
     if (msg.message == WM_LBUTTONDOWN)
     {
@@ -196,8 +198,8 @@ void InputManager::HandleMsgMouse(const MSG& msg)
     }
     else
     {
-        m_CurMouse.delta.x = 0;
-        m_CurMouse.delta.y = 0;
+        //m_CurMouse.delta.x = 0;
+        //m_CurMouse.delta.y = 0;
     }
 
     char buf[128];

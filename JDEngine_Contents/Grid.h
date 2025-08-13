@@ -20,7 +20,7 @@ namespace JDGameObject {
             using SynergyBonus = JDGlobal::Contents::CatSynergyBonus;
             using GameObject = JDGameObject::GameObject;
             using SceneBase = JDScene::SceneBase;
-
+            using Resource = JDGlobal::Contents::Resource;
         public:
             Grid() : GameObject(L"Grid") { m_cat = CatType::None; }
             Grid(const std::wstring& name) : GameObject(name) { m_cat = CatType::None; }
@@ -87,6 +87,7 @@ namespace JDGameObject {
                 }
             }
 
+            Resource GetSynergyBonus() const { return m_synergyBonus; }
         private:
             bool m_expanded = false; // 현재 지형 확장 선택 가능 여부
             bool m_occupied = false; // 현재 확장 후 소유한 지형인지 여부

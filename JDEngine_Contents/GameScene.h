@@ -11,8 +11,11 @@
 #include "ParticleSystem.h"
 #include "BuildSystem.h"
 #include "ArmySystem.h"
+#include "BoxCollider.h"
+#include "Player.h"
+#include "D2DRenderer.h"
+#include "Camera.h"
 #include "WaveManager.h"
-#include "Animation.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -100,6 +103,7 @@ namespace JDScene {
 
         // 자원 UI 업데이트
         void UpdateResourceUI();
+        void ShowResourceInfo(JDGlobal::Contents::ResourceType resourceType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 1. 건설 UI
@@ -107,10 +111,10 @@ namespace JDScene {
         void ShowGridCreateMenu();
         void CloseGridCreateMenu();
 
-        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText);
         void CloseGridCreateInfo();
 
-        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 2. 업그레이드 UI
@@ -120,9 +124,9 @@ namespace JDScene {
         void CloseGridSettingMenu();
 
         // 업그레이드 UI 
-        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText);
         void CloseCatInfo();
-        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 3. 징병 UI
@@ -144,7 +148,6 @@ namespace JDScene {
         void DateUIUpdate();
 
     private:
-        FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_lightParticles;
@@ -354,6 +357,8 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        void ChangeSettingCatImage();
+
         // 2. 업그레이드 Info
         // 고양이 배치
         Text* m_catTypeText = nullptr;
@@ -393,7 +398,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         Button* m_trainerCatButton = nullptr;
-        Text* m_trainerCatName = nullptr;
+        //Text* m_trainerCatName = nullptr;
 
         Text* m_trainerCatCostInfo = nullptr;
         Image* m_trainerCatCostImage01 = nullptr;
@@ -410,7 +415,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         Button* m_expertCatButton = nullptr;
-        Text* m_expertCatName = nullptr;
+        //Text* m_expertCatName = nullptr;
 
         Text* m_expertCatCostInfo = nullptr;
         Image* m_expertCatCostImage01 = nullptr;
@@ -511,6 +516,8 @@ namespace JDScene {
 
         void StartEnding(EndingType type);
 
+        bool m_endingBGMFired = false;
+
         static inline float Clamp01(float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); }
 
         static float EaseOutBack(float t, float overshoot = 0.7f) {
@@ -562,5 +569,352 @@ namespace JDScene {
         Button* m_selecGoMenu = nullptr;
 
         GameObject* m_spear = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 인구 UI
+        Image* m_PopulationUI = nullptr;
+        Text* m_PopulationText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 음식 UI
+        Image* m_FoodUI = nullptr;
+        Text* m_FoodText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 목재 UI
+        Image* m_WoodUI = nullptr;
+        Text* m_WoodText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 광물 UI
+        Image* m_MineralUI = nullptr;
+        Text* m_MineralText = nullptr;
+        
+        ////////////////////////////////////////////////////////////////////////////////
+
+        Button* m_buttonExpand = nullptr;           // 확장 UI
+        Text* m_expandCountText = nullptr;           // 확장 선택권 보유량
+        
+        // 설명 팝업
+        Image* m_expandCountUI = nullptr;
+        Text* m_expandCountInfoText = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 4.0f, 4.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
+
+        std::mt19937_64 rng{ std::random_device{}() };
+        //파티클
+        std::unique_ptr<ParticleSystem> m_mouseParticles;
+        std::unique_ptr<ParticleSystem> m_leafParticles;
+        std::unique_ptr<ParticleSystem> m_smokeParticles;
+        std::unique_ptr<ParticleSystem> m_footdustParticles;
+        std::unique_ptr<ParticleSystem> m_waveParticles;
+
+        float m_torchSmokeAcc = 0.f;
+        bool  m_emitTorchSmoke = false;
+        float m_torchSmokePeriod = 0.2f;
+
+        bool  m_emitleaf = false;
+        bool  m_emitwave = false;
+
+        struct Actor {
+            JDGameObject::GameObject* go = nullptr;
+            JDComponent::TextureRenderer* tex = nullptr;
+            JDComponent::AnimationRender* anim = nullptr;
+            JDComponent::SFX* sfx = nullptr;
+            JDComponent::BoxCollider* col = nullptr;
+
+            // 상태 공통
+            float timer = 0.f;        // 애니 끝나면 텍스쳐로 돌아갈 때 사용
+            float lockTimer = 0.f;    // 락 해제까지 시간
+            bool  changed = false;    // 애니->텍스쳐 복귀 대기 중
+            bool  locked = false;    // 클릭 무시 락
+
+            // 편의
+            Vector2F emitOffset{ 0,0 }; // 파티클/효과 발사 위치 보정
+        };
+
+        static D2D1_SIZE_F GetAnimFirstFrameSize(const char* animKey) {
+            auto* clip = AssetManager::Instance().GetAnimationRender(animKey);
+            if (!clip || clip->frames.empty()) return { 0,0 };
+            const auto& fr = clip->frames[0];
+
+            float w = fr.srcRect.right - fr.srcRect.left;
+            float h = fr.srcRect.bottom - fr.srcRect.top;
+            return { w, h };
+
+        }
+        struct Torch {
+            Actor actor;
+            bool  emitSmoke = false;
+            float period = 0.2f; // 토치별 스폰 주기
+            float acc = 0.f;  // 토치별 누적 시간
+        };
+
+        void updateTorchSmoke(Torch& t, ParticleSystem* smokePS, float dt, float /*W*/, float /*H*/)
+        {
+            if (!smokePS) return;
+
+            if (t.emitSmoke) {
+                t.acc += dt;
+                if (auto* tr = t.actor.go->GetComponent<JDComponent::Transform>()) {
+                    Vector2F p = tr->GetPosition() + t.actor.emitOffset; // 예: {0, -126}
+                    while (t.acc >= t.period) {
+                        smokePS->SpawnSmokeParticle(p, /*count=*/1, /*baseScale=*/1.6f, /*maxLife=*/2.2f);
+                        t.acc -= t.period;
+                    }
+                }
+            }
+            else {
+                t.acc = 0.f;
+            }
+        }
+
+        std::vector<Actor> frogs;
+        std::vector<Actor> rats;
+        std::vector<Torch> torches;
+        float hx = JDGlobal::Window::WindowSize::Instance().GetHeight() / 2;
+        float hy = JDGlobal::Window::WindowSize::Instance().GetWidth() / 2;
+
+        //생성 헬퍼
+        Actor makeActor(const wchar_t* name,
+            const Vector2F& pos,
+            const char* texKey,
+            const char* animKey,
+            const char* sfxKey = nullptr,
+            Vector2F emitOffset = { 0,0 })
+        {
+            using namespace JDGameObject;
+            using namespace JDComponent;
+
+            // GameObject 생성
+            JDGameObject::GameObject* go = CreateGameObject<JDGameObject::Content::Player>(name);
+
+            JDComponent::Transform* tr = go->GetComponent<Transform>();
+            tr->SetPosition(pos);
+            tr->SetScale({ 0.5,0.5 });
+            //tr->SetPivot(Vector2F{ 0.5f, 0.5f });
+            go->AddComponent<Editor_Clickable>();
+
+            // TextureRenderer 추가
+            JDComponent::TextureRenderer* tex =
+                go->AddComponent<TextureRenderer>(texKey, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            if (tex) tex->SetEnabled(true);
+
+            // AnimationRender 추가
+            JDComponent::AnimationRender* anim =
+                go->AddComponent<AnimationRender>(animKey, 1, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+            if (anim) anim->SetEnabled(false);
+
+            // 콜라이더는 텍스쳐 사이즈 기준
+            ID2D1Bitmap* bmp =
+                static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(texKey));
+            JDComponent::BoxCollider* col =
+                (bmp ? go->AddComponent<BoxCollider>(
+                    Vector2F{ bmp->GetSize().width / 2.f, bmp->GetSize().height / 2.f }) : nullptr);
+
+            if (anim && tex) {
+                D2D1_SIZE_F animFirst = GetAnimFirstFrameSize(animKey);
+                if (animFirst.width > 0 && animFirst.height > 0) {
+                    tex->SetSize(animFirst);
+                    if (col) col->SetHalfSize({ animFirst.width * 0.5f, animFirst.height * 0.5f });
+                }
+            }
+
+            JDComponent::SFX* sfx = nullptr;
+            if (sfxKey) {
+                sfx = go->AddComponent<SFX>(sfxKey);
+                if (sfx) {
+                    sfx->SetEnabled(true);
+                    sfx->SetLoop(false);
+                    sfx->SetPlayOnMove(false);
+                    sfx->SetVolume(1.0f);
+                }
+            }
+
+            Actor a;
+            a.go = go;
+            a.tex = tex;
+            a.anim = anim;
+            a.sfx = sfx;
+            a.col = col;
+            a.emitOffset = { emitOffset };
+            return a;
+        }
+
+        //공통 동작 헬퍼
+        inline bool isClicked(const Actor& a, const Vector2F& worldPos) {
+            if (!a.col) return false;
+            return a.col->IsMouseOver(worldPos);
+        }
+
+        inline void toTexture(Actor& a) {
+            if (a.anim) a.anim->SetEnabled(false);
+            if (a.tex)  a.tex->SetEnabled(true);
+            a.changed = a.locked = false; a.timer = a.lockTimer = 0.f;
+        }
+
+        inline void playOnce(Actor& a, const char* clip, bool hideTexture = true) {
+            if (hideTexture && a.tex) a.tex->SetEnabled(false);
+            if (a.anim) {
+                a.anim->SetClipName(clip);
+                a.anim->SetEnabled(true);
+                a.anim->PlayOnceFromStart();
+            }
+        }
+
+        inline Torch makeTorch(const wchar_t* name,
+            const Vector2F& pos,
+            const char* texKey,
+            const char* animKey,
+            const char* sfxKey,
+            Vector2F emitOffset,
+            float periodSec = 0.2f)
+        {
+            Torch t;
+            t.actor = makeActor(name, pos, texKey, animKey, sfxKey, emitOffset);
+            t.period = periodSec;
+            t.emitSmoke = false;
+            t.acc = 0.f;
+            if (t.actor.sfx) t.actor.sfx->SetLoop(true);
+            return t;
+        }
+
+        void onClickFrog(Actor& f, ParticleSystem* wavePS, std::mt19937_64& rng, const Vector2F& clickPos) {
+            if (f.locked) return;
+
+            std::uniform_real_distribution<float> d01(0.f, 1.f);
+            bool useAnim1 = (d01(rng) < 0.2f);
+            const char* clip = useAnim1 ? "Frog1" : "Frog2";
+
+            playOnce(f, clip);
+            if (f.sfx) {
+                f.sfx->Stop();
+                f.sfx->SetClipName(useAnim1 ? "FrogPop" : "FrogSound");
+                f.sfx->SetEnabled(true);
+                f.sfx->SetPlayOnMove(false);
+                f.sfx->SetVolume(1.0f);
+                f.sfx->Play();
+
+                std::cout << "[Frog] clip=" << (useAnim1 ? "FrogPop" : "FrogSound")
+                    << " enabled=" << f.sfx->GetEnabled()
+                    << " vol=" << f.sfx->GetVolume()
+                    << " playing=" << f.sfx->IsPlaying() << "\n";
+            }
+
+            if (useAnim1) {
+                std::uniform_real_distribution<float> dLock(3.f, 5.f);
+                f.lockTimer = dLock(rng);
+                f.locked = true;
+            }
+            else {
+                // Frog2 길이 계산 후 복귀 타이머
+                float dur = 1.f;
+                if (auto* clipData = AssetManager::Instance().GetAnimationRender("Frog2")) {
+                    dur = 0.f; for (auto& fr : clipData->frames) dur += fr.duration; if (dur <= 0.f) dur = 1.f;
+                }
+                f.timer = dur; f.changed = true;
+            }
+
+            ////////////////////
+            // 자체적으로 좌표 계산을 막고 ClickUpdate에서 계산한 월드좌표를 인자로 직접 전달하도록 수정
+
+            //// 물파동 ( 클릭 위치 )
+            //if (wavePS) {
+            //    // 개구리의 Transform 컴포넌트를 가져올 필요가 없습니다.
+            //    // auto* tr = f.go->GetComponent<JDComponent::Transform>();
+
+            //    // 바로 함수로 전달받은 '클릭 위치'를 사용합니다.
+            //    wavePS->SpawnWaterWaveParticle({ clickPos.x, clickPos.y }, 0.35f, 1.6f, 0.8f, 64.f);
+            //}
+
+            // 물파동 ( 오브젝트 위치 )
+            if (wavePS) {
+                // 1. 클릭된 개구리(f)의 Transform 컴포넌트를 가져옵니다.
+                auto* tr = f.go->GetComponent<JDComponent::Transform>();
+                if (tr)
+                {
+                    // 2. Transform에서 개구리의 월드 좌표를 가져옵니다.
+                    Vector2F spawnPos = tr->GetPosition();
+
+                    // (선택사항) 필요하다면 오프셋을 더해줄 수 있습니다.
+                    // spawnPos += f.emitOffset;
+
+                    // 3. 클릭 위치(clickPos)가 아닌, '개구리의 위치(spawnPos)'에 파티클을 생성합니다.
+                    wavePS->SpawnWaterWaveParticle({ spawnPos.x, spawnPos.y }, 0.35f, 1.6f, 0.8f, 64.f);
+                }
+            }
+        }
+
+        void onClickRat(Actor& r, ParticleSystem* leafPS, std::mt19937_64& rng, const Vector2F& clickPos) {
+            if (r.locked) return;
+
+            playOnce(r, "Rat");
+            if (r.sfx) r.sfx->Play();
+
+            std::uniform_real_distribution<float> dLock(2.f, 3.f);
+            r.lockTimer = dLock(rng);
+            r.locked = true;
+
+            if (leafPS) {
+                auto* tr = r.go->GetComponent<JDComponent::Transform>();
+                if (tr)
+                {
+                    // 2. Transform에서 쥐의 월드 좌표를 가져옵니다.
+                    Vector2F spawnPos = tr->GetPosition();
+
+                    // (선택사항) 필요하다면 오프셋을 더해줄 수 있습니다.
+                    // spawnPos += f.emitOffset;
+
+                    // 3. 클릭 위치(clickPos)가 아닌, '개구리의 위치(spawnPos)'에 파티클을 생성합니다.
+                    leafPS->SpawnLeavesParticle({ spawnPos.x, spawnPos.y }, 6, 1.0f, 4.0f);
+                }
+            }
+        }
+
+        void toggleTorch(Torch& t) {
+            auto& a = t.actor;
+            if (a.anim && a.anim->GetEnabled()) {
+                toTexture(a);
+                if (a.sfx) { a.sfx->Stop(); a.sfx->SetEnabled(false); }
+                t.emitSmoke = false;
+                t.acc = 0.f;
+            }
+            else {
+                if (a.tex) a.tex->SetEnabled(false);
+                if (a.anim) { a.anim->SetEnabled(true); a.anim->PlayOnceThenLoopRange(1, UINT_MAX); }
+                if (a.sfx) { a.sfx->SetEnabled(true); a.sfx->SetLoop(true); if (!a.sfx->IsPlaying()) a.sfx->Play(); }
+                t.emitSmoke = true;
+            }
+        }
+
+        void updateActor(Actor& a, float dt) {
+            if (a.changed && !a.locked) {
+                a.timer -= dt;
+                if (a.timer <= 0.f) toTexture(a);
+            }
+            if (a.locked) {
+                a.lockTimer -= dt;
+                if (a.lockTimer <= 0.f) toTexture(a);
+            }
+        }
+
+        inline void emitTorchSmoke(Torch& t, ParticleSystem* smokePS, float dt) {
+            if (!smokePS) return;
+            if (!t.emitSmoke) { t.acc = 0.f; return; }
+
+            t.acc += dt;
+            if (auto* tr = t.actor.go->GetComponent<JDComponent::Transform>()) {
+                auto p = tr->GetPosition() + t.actor.emitOffset; // 예: {0,-126}
+                while (t.acc >= t.period) {
+                    smokePS->SpawnSmokeParticle(p, 1, 1.6f, 2.2f); // 필요하면 여기서 count 조절
+                    t.acc -= t.period;
+                }
+            }
+        }
     };
 }

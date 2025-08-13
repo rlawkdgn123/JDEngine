@@ -119,6 +119,7 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_EXPEDITION_TYPE = 3;
 		constexpr int RESOURCE_COUNT = 3;
 
+
 		struct Resource {
 
 			Resource() = default;
@@ -220,7 +221,12 @@ namespace JDGlobal {
 			Lab
 		};
 
-
+		enum class ResourceType : int {
+			food = 0,
+			wood,
+			mineral,
+			Population,
+		};
 
 		struct Cats {
 			int Felis;
@@ -318,6 +324,8 @@ namespace JDGlobal {
 		struct SordierTypeStats { // 병종 정보.
 			Resource m_novice;
 			Resource m_expert;
+			int m_novicePow;
+			int m_expertPow;
 			void PrintStats();
 		};
 

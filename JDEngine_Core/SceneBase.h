@@ -120,6 +120,17 @@ namespace JDScene {
             if (std::find(m_destroyQueue.begin(), m_destroyQueue.end(), object) == m_destroyQueue.end()) { // 이터레이터 끝까지 순회해도 m_destroyQueue에 이미 있지 않으면
                 m_destroyQueue.push_back(object); // m_destroyQueue에 추가
             }
+
+            // 제거된 오브젝트 충돌쌍 삭제.
+            auto purgePairs = [&](std::vector<CollisionPair>& v) {
+                v.erase(std::remove_if(v.begin(), v.end(),
+                    [&](const CollisionPair& p) {
+                        return p.A == object || p.B == object;
+                    }),
+                    v.end());
+                };
+            purgePairs(m_prevPairs);
+            purgePairs(m_currPairs);
         }
 
         // 컨테이너의 ptr과 동일한지 체크

@@ -19,7 +19,6 @@ using JDComponent::AnimationRender;
 using JDComponent::D2DTM::RectTransform;
 using JDComponent::TextureRenderer;
 
-
 namespace JDScene {
 
     // TestScene
@@ -84,6 +83,10 @@ namespace JDScene {
 
     void GameScene::OnLeave() {
         //cout << "[TestScene] OnLeave()\n";
+        if (m_buildSystem) {
+            m_buildSystem->DestroyGrid(this);
+        }
+
         if (bgmChannel) {
             bgmChannel->stop(); // FMOD에서 채널을 멈춤
             bgmChannel = nullptr; // 포인터도 초기화 (안전)
@@ -194,6 +197,38 @@ namespace JDScene {
 
         // 배속 버튼 관리
         GameSpeedButtonUpdate();
+
+
+        // 따라다니는 전투력
+        UpdateAttachments(deltaTime);
+
+        ///// Test
+        if (m_selectedCollider) {
+            auto* boxCol = static_cast<JDComponent::BoxCollider*>(m_selectedCollider);
+            Grid* grid = dynamic_cast<Grid*>(boxCol->GetOwner());
+
+            if (!grid) return;
+
+            // 주거지 체크.
+            auto* house = dynamic_cast<House*>(grid->GetBuilding());
+            auto* building = dynamic_cast<Building*>(grid->GetBuilding());
+            if (house)
+            {
+                int nextLevel = house->GetLevel() + 1;
+                if (nextLevel < JDGlobal::Contents::MAX_GAME_LEVEL) {
+                    auto& cost = house->GetHouseStats().m_upgradeCost[nextLevel];
+                    m_upgradeCostText->SetText(to_wstring(cost.m_wood));
+                }
+            }
+            else if (building) {
+                int nextLevel = building->GetLevel() + 1;
+                if (nextLevel < JDGlobal::Contents::MAX_GAME_LEVEL) {
+                    auto& cost = building->GetBuildingStats().m_upgradeCost[nextLevel];
+                    m_upgradeCostText->SetText(to_wstring(cost.m_wood));
+                }
+            }
+        }
+
     }
 
     void GameScene::FixedUpdate(float fixedDeltaTime) {
@@ -300,8 +335,6 @@ namespace JDScene {
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
             if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
-                //float windowWidth = JDGlobal::Window::WindowSize::Instance().GetWidth();
-                //SpawnWaveEnemy({ (windowWidth + 100.0F) / 2.0f, 100.0f });
                 SpawnWaveEnemy({ 1010.0f, 230.0f });
                 AddEnemyDay(warningDay);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
@@ -350,6 +383,7 @@ namespace JDScene {
     }
     void GameScene::BattleReward()
     {
+        m_buildSystem->AddChoiceCount(1); // 건물 선택권.
         std::cout << "[GameScene] WIN!!!!!!!!!!!!!!!" << std::endl;
     }
     void GameScene::SpawnWaveEnemy(const Vector2F& pos)
@@ -385,21 +419,19 @@ namespace JDScene {
             m_battleObject = battleObj;
         }
     }
+
     void GameScene::MoveEnemyObjects(float deltaTime)
     {
         const float speed = 100.0f; // 픽셀/초
         Vector2F wallDir = { -1.0f, 0.0f }; // 기본 방향. (성벽이 없다면)
 
-        const size_t N = m_gameObjects.size();
-        for (size_t i = 0; i < N; ++i)
-        {
-            GameObjectBase* objPtr = m_gameObjects[i].get();
-            if (!objPtr || !objPtr->IsActive() || objPtr->GetTag() != JDGlobal::Base::GameTag::Enemy ||
-                objPtr->GetState() != JDGlobal::Contents::State::Move) continue;
+        for (auto* objPtr : m_enemies) {
+            if (!objPtr || !objPtr->IsActive()) continue;
+            if (objPtr->GetState() != JDGlobal::Contents::State::Move) continue;
 
             auto* transform = objPtr->GetComponent<Transform>();
-            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
             if (!transform) continue;
+            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
 
             // 적이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
             if (m_battleObject) {
@@ -419,23 +451,6 @@ namespace JDScene {
                     continue;
                 }
             }
-
-            // 성벽이랑 충돌하면 멈추고 성벽을 공격함.
-            /*if (m_wallObject) {
-                auto* wallTm = m_wallObject->GetComponent<Transform>();
-                if (!wallTm)  continue;
-                Vector2F diffPos = wallTm->GetPosition() - transform->GetPosition();
-
-                if (diffPos.Length() <= 10.0f) {
-                    objPtr->SetState(JDGlobal::Contents::State::Idle);
-
-                    auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
-                       [&](auto& a) { return a.enemy == objPtr.get(); });
-                    if (it == m_attackers.end()) { m_attackers.push_back({ objPtr.get(), 0.0f }); }
-                    continue;
-                }
-                wallDir = diffPos.Normalized();
-            }*/
 
             Vector2F diffPos = m_wallPos - transform->GetPosition();
 
@@ -457,24 +472,18 @@ namespace JDScene {
             if (sfx) sfx->Play();  // 이동 시 효과음 재생
         }
     }
+
     void GameScene::MovePlayerObjects(float deltaTime)
     {
         const float speed = 100.0f;
         const float backSpeed = 100.0f;
         Vector2F delta;
 
-        const size_t N = m_gameObjects.size();
-        for (size_t i = 0; i < N; ++i)
-        {
-            GameObjectBase* objPtr = m_gameObjects[i].get();
-            if (!objPtr || !objPtr->IsActive() || objPtr->GetTag() != JDGlobal::Base::GameTag::Player ||
-                (objPtr->GetState() != JDGlobal::Contents::State::Move &&
-                    objPtr->GetState() != JDGlobal::Contents::State::Back))
-                continue;
-
+        for (auto* objPtr : m_players) {
+            if (!objPtr || !objPtr->IsActive()) continue;
             auto* transform = objPtr->GetComponent<Transform>();
-            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
             if (!transform) continue;
+            auto* sfx = objPtr->GetComponent<JDComponent::SFX>();
 
             // 아군이 전투 오브젝트와 충돌하면 전투 시간 초기화하고 제거.
             if (m_battleObject) {
@@ -553,6 +562,7 @@ namespace JDScene {
                 objPtr->SetState(JDGlobal::Contents::State::Back);
             }
 
+            // 이동.
             Vector2F direction = { 1.0f, 0.0f }; // 기본값.
             float moveSpeed = speed;
 
@@ -587,12 +597,6 @@ namespace JDScene {
             delta = direction * (moveSpeed * deltaTime);
             Vector2F newPos = transform->GetPosition() + delta;
             transform->SetPosition(newPos);
-
-            //auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
-            //if (texRenderer) {
-            //    if (direction.x < 0 && !texRenderer->GetFlipX()) texRenderer->SetFlipX(true); // 좌우 반전!
-            //    else if (direction.x >= 0 && texRenderer->GetFlipX()) texRenderer->SetFlipX(false);
-            //}
 
             if (sfx) sfx->Play();
         }
@@ -654,26 +658,28 @@ namespace JDScene {
             }
         }
     }
+
     void GameScene::SafeDestroy(GameObjectBase* obj)
     {
         if (!obj) return;
+
+        // 새로 추가: 컨테이너/팔로워 정리
+        DetachByHost(obj);
+        UnregisterUnit(obj);
 
         if (m_targetEnemy == obj) m_targetEnemy = nullptr;
         if (m_playerObject == obj) m_playerObject = nullptr;
         if (m_barracksObject == obj) m_barracksObject = nullptr;
         if (m_battleObject == obj) m_battleObject = nullptr;
-        // if (m_wallObject == obj) m_wallObject = nullptr;
         if (m_expeditionObject == obj) m_expeditionObject = nullptr;
         if (GetSelectedObject() == obj) SetSelectedObject(nullptr);
 
-        m_attackers.erase(
-            std::remove_if(m_attackers.begin(), m_attackers.end(),
-                [&](auto& a) { return a.enemy == obj; }),
-            m_attackers.end()
-        );
+        m_attackers.erase(std::remove_if(m_attackers.begin(), m_attackers.end(),
+            [&](auto& a) { return a.enemy == obj; }), m_attackers.end());
 
         SceneBase::DestroyObject(obj);
     }
+
     void GameScene::ClickUpdate()
     {
         auto camera = D2DRenderer::Instance().GetCamera();
@@ -773,40 +779,32 @@ namespace JDScene {
 
                             if (!collider->IsMouseOver(mousePos)) continue;
 
-                            if (collider->IsOpen())
-                            {
-                                std::cout << "[DEBUG] right ID: " << id << std::endl;
+                            std::cout << "[DEBUG] right ID: " << id << std::endl;
 
-                                m_selectedCollider = collider;
+                            m_selectedCollider = collider;
 
-                                //auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
+                            //auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
 
-                                if (grid->IsOccupied()) {
-                                    if (grid->HasBuilding()) {
-                                        cout << "HasBuilding() : True" << endl;
-                                        isGridSetting = true;
-                                        ShowGridSettingMenu();
-                                    }
-                                    else {
-                                        cout << "HasBuilding() : False" << endl;
-                                        isGridBuild = true;
-                                        ShowGridCreateMenu();
-                                    }
+                            if (grid->IsOccupied()) {
+                                if (grid->HasBuilding()) {
+                                    cout << "HasBuilding() : True" << endl;
+                                    isGridSetting = true;
+                                    ShowGridSettingMenu();
                                 }
                                 else {
-                                    if (grid->IsExpanded()) {
-                                        cout << "확장 가능한 미점유 지역입니다." << endl;
-                                    }
-                                    else {
-                                        cout << "확장 불가능한 미점유 지역입니다." << endl;
-                                    }
+                                    cout << "HasBuilding() : False" << endl;
+                                    isGridBuild = true;
+                                    ShowGridCreateMenu();
                                 }
-
-
                             }
-
-                            collider->SetOpen(true);
-                            std::cout << "[DEBUG] left ID: " << id << std::endl;
+                            else {
+                                if (grid->IsExpanded()) {
+                                    cout << "확장 가능한 미점유 지역입니다." << endl;
+                                }
+                                else {
+                                    cout << "확장 불가능한 미점유 지역입니다." << endl;
+                                }
+                            }
                         }
 
                         // 태그 기반 처리
@@ -923,8 +921,7 @@ namespace JDScene {
         auto* obj = CreateGameObject<Soldier>((tag == JDGlobal::Base::GameTag::Player) ? L"playerObj" : L"enemyObj");
         obj->SetUnitCounts(units);
 
-        JDGameSystem::ArmySystem army;
-        army.OverrideUnitCounts(units);
+        JDGameSystem::ArmySystem army; army.OverrideUnitCounts(units);
         obj->SetPower(army.CalculateTotalPower());
 
         obj->SetTag(tag);
@@ -941,10 +938,16 @@ namespace JDScene {
 
         if (tag == JDGlobal::Base::GameTag::Enemy) {
             obj->AddComponent<Editor_Clickable>();
-            auto* texRenderer = obj->GetComponent<TextureRenderer>();
-            if (texRenderer) {
-                texRenderer->SetFlipX(true); // 좌우 반전!
-            }
+            if (auto* tr = obj->GetComponent<TextureRenderer>()) tr->SetFlipX(true);
+        }
+
+        // 진영 컨테이너 등록
+        RegisterUnit(tag, obj);
+
+        // 전투력 표시.
+        auto* headTextGO = CreateHeadMarker(obj);
+        if (auto* tr = headTextGO->GetComponent<JDComponent::TextRenderer>()) {
+            tr->SetText(std::to_wstring(obj->GetPower()));
         }
 
         return obj;
@@ -967,7 +970,7 @@ namespace JDScene {
         return obj;
     }
 
-    JDGameObject::GameObjectBase* GameScene::CreateUIButton(const std::wstring& name, const Vector2F& pos, const std::string& textureName, const std::string& clickEventName, std::function<void()> callback)
+    /*JDGameObject::GameObjectBase* GameScene::CreateUIButton(const std::wstring& name, const Vector2F& pos, const std::string& textureName, const std::string& clickEventName, std::function<void()> callback)
     {
         auto* btn = CreateUIObject<Button>(name);
         btn->SetTextureName(textureName);
@@ -976,7 +979,7 @@ namespace JDScene {
         btn->AddOnClick(clickEventName, callback);
 
         return btn;
-    }
+    }*/
 
     void GameScene::CreateExpedition()
     {
@@ -985,11 +988,6 @@ namespace JDScene {
         obj->SetTag(JDGlobal::Base::GameTag::Player);
         obj->SetState(JDGlobal::Contents::State::Idle);
         obj->AddComponent<JDComponent::TextureRenderer>("f1", RenderLayerInfo{ SortingLayer::Cat, 1 });
-
-        // auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture("f1"));
-        // Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
-        // obj->AddComponent<JDComponent::BoxCollider>(size);
-        // obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
 
         Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
         obj->GetComponent<Transform>()->SetPosition(pos);
@@ -2814,7 +2812,7 @@ namespace JDScene {
 
         // 건물 타입 텍스트
         m_builtTypeText = CreateUIObject<Text>(L"UI_BuilTTypeText");
-        m_builtTypeText->SetText(L"건물 정보");
+        m_builtTypeText->SetText(L"업그레이드");
         m_builtTypeText->SetTextFormatName("Sebang_Bold_24");
         m_builtTypeText->SetColor(D2D1::ColorF(0x69512C));
         m_builtTypeText->SetSize({ 300, 100 });
@@ -2864,7 +2862,7 @@ namespace JDScene {
         m_upgradeEffctImage->SetPosition({ 754, -460 });
         m_upgradeEffctImage->SetAnchor({ 1.0f, 0.0f });
         m_upgradeEffctImage->SetScale({ 0.5f, 0.5f });
-
+       
 
         ////////////////////////////////////////
         // 건물 업그레이드 & 다운그레이드 버튼
@@ -3715,12 +3713,109 @@ namespace JDScene {
                 if (today - ind.srcDay >= kMaxDays) {
                     ind.waveIcon->SetActive(false);
                     ind.powerText->SetActive(false);
+                    SceneBase::DestroyObject(ind.waveIcon);
+                    SceneBase::DestroyObject(ind.powerText);
                     return true;
                 }
                 return false;
             });
 
         m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
+    }
+
+    void GameScene::RegisterUnit(JDGlobal::Base::GameTag tag, JDGameObject::GameObjectBase* obj)
+    {
+        if (!obj) return;
+        if (tag == JDGlobal::Base::GameTag::Player) m_players.push_back(obj);
+        else if (tag == JDGlobal::Base::GameTag::Enemy) m_enemies.push_back(obj);
+    }
+
+    void GameScene::UnregisterUnit(JDGameObject::GameObjectBase* obj)
+    {
+        auto erasePtr = [&](auto& vec) {
+            vec.erase(std::remove(vec.begin(), vec.end(), obj), vec.end());
+            };
+        erasePtr(m_players);
+        erasePtr(m_enemies);
+    }
+
+    JDGameObject::GameObjectBase* GameScene::AttachObject(JDGameObject::GameObjectBase* follower, JDGameObject::GameObjectBase* host, Vector2F offset)
+    {
+        if (!follower || !host) return nullptr;
+        m_attachments.push_back({ follower, host, offset });
+        // 처음 위치 동기화
+        if (auto* ht = host->GetComponent<Transform>())
+            if (auto* ft = follower->GetComponent<Transform>())
+                ft->SetPosition(ht->GetPosition() + offset);
+        return follower;
+    }
+
+    void GameScene::UpdateAttachments(float dt)
+    {
+        for (auto it = m_attachments.begin(); it != m_attachments.end();) {
+            auto& a = *it;
+            if (!a.host || !a.follower || !a.host->IsActive() || !a.follower->IsActive()) {
+                it = m_attachments.erase(it);
+                continue;
+            }
+            auto* ht = a.host->GetComponent<Transform>();
+            auto* ft = a.follower->GetComponent<Transform>();
+            if (ht && ft) ft->SetPosition(ht->GetPosition() + a.offset);
+            ++it;
+        }
+    }
+
+    void GameScene::DetachByHost(JDGameObject::GameObjectBase* host)
+    {
+        // m_attachments.erase(std::remove_if(m_attachments.begin(), m_attachments.end(),
+        //     [&](const Attachment& a) { return a.host == host; }), m_attachments.end());
+
+        std::vector<JDGameObject::GameObjectBase*> toDestroy;
+        m_attachments.erase(
+            std::remove_if(m_attachments.begin(), m_attachments.end(),
+                [&](const Attachment& a) {
+                    if (a.host == host) {
+                        if (a.follower) toDestroy.push_back(a.follower);
+                        return true;
+                    }
+                    return false;
+                }), m_attachments.end());
+
+        for (auto* f : toDestroy) {
+            SceneBase::DestroyObject(f);
+        }
+    }
+
+    JDGameObject::GameObjectBase* GameScene::CreateHeadMarker(JDGameObject::GameObjectBase* host)
+    {
+        if (!host) return nullptr;
+
+        using namespace JDGameObject;
+        using namespace JDComponent;
+
+        auto* txtGO = CreateGameObject<GameObject>(L"HeadText");
+        txtGO->SetTag(JDGlobal::Base::GameTag::None);
+        auto* tr = txtGO->AddComponent<JDComponent::TextRenderer>(
+            L"",                                 // 초기 텍스트
+            D2D1::SizeF(100.f, 20.f),             // 레이아웃 크기
+            RenderLayerInfo{ SortingLayer::BackGround, 10 } // 레이어 정보
+        );
+
+        auto txtRender = txtGO->GetComponent<JDComponent::TextRenderer>();
+        txtRender->SetText(L"");
+        txtRender->SetTextFormatName("Sebang_20");
+        //txtRender->SetColor(D2D1::ColorF(0xD6BD94));
+
+        Vector2F offset{ 0, -30.0f }; // 기본값
+        if (auto* col = host->GetComponent<JDComponent::BoxCollider>())
+        {
+            auto half = col->GetHalfSize();
+            offset.y = -half.y - 12.0f; 
+        }
+
+        AttachObject(txtGO, host, offset);
+
+        return txtGO; 
     }
   
     void GameScene::UpdateAwayPointUI()

@@ -82,6 +82,7 @@ namespace JDScene {
         UpdateBarrackUI();
         UpdateAttackPowerText();
         UpdateAwayPointUI();
+        CreateEndingUI();
     }
 
     void GameScene::OnLeave() {
@@ -99,10 +100,65 @@ namespace JDScene {
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
   
-        if (m_isEnding) {
-            //엔딩 
+        if (m_isEnding && !m_endAnimStarted && !m_endAnimDone) {
+            m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+
+            
+
+            m_endAnimStarted = true;
+            m_endAnimTime = 0.0f;
+
+            float screenW = (float)JDGlobal::Window::WindowSize::Instance().GetWidth();
+            float screenH = (float)JDGlobal::Window::WindowSize::Instance().GetHeight();
+
+            m_endStartPos = { 0.0f, +1000.0f };
+            m_endTargetPos = { 0.0f,  +100.0f };
+
+            m_retryStartPos = { m_endStartPos.x - 500.0f, m_endStartPos.y };
+            m_retryTargetPos = { m_endTargetPos.x - 500.0f, m_endTargetPos.y };
+
+            m_menuStartPos = { m_endStartPos.x + 500.0f, m_endStartPos.y };
+            m_menuTargetPos = { m_endTargetPos.x + 500.0f, m_endTargetPos.y };
+
+            m_endingUI->SetActive(true);
+            m_retry->SetActive(true);
+            m_goMenu->SetActive(true);
+
+            m_endingUI->SetPosition(m_endStartPos);
+            m_retry->SetPosition(m_retryStartPos);
+            m_goMenu->SetPosition(m_menuStartPos);
         }
 
+        // 애니 진행
+        if (m_isEnding && m_endAnimStarted) {
+            m_endAnimTime += deltaTime;
+            float t = m_endAnimTime / m_endAnimDur;
+            if (t > 1.0f) t = 1.0f;
+
+            float e = EaseOutCubic(t);
+
+            auto Lerp = [](const Vector2F& a, const Vector2F& b, float k) -> Vector2F {
+                return { a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k };
+                };
+
+            const Vector2F posEnd = Lerp(m_endStartPos, m_endTargetPos, e);
+            const Vector2F posRetry = Lerp(m_retryStartPos, m_retryTargetPos, e);
+            const Vector2F posMenu = Lerp(m_menuStartPos, m_menuTargetPos, e);
+
+            m_endingUI->SetPosition(posEnd);
+            m_retry->SetPosition(posRetry);
+            m_goMenu->SetPosition(posMenu);
+
+            if (t >= 1.0f) {
+                // 스냅(오차 제거) + 종료 플래그
+                m_endingUI->SetPosition(m_endTargetPos);
+                m_retry->SetPosition(m_retryTargetPos);
+                m_goMenu->SetPosition(m_menuTargetPos);
+
+                m_endAnimStarted = false;
+                m_endAnimDone = true;    // ★ 다시는 초기화 블록 안 들어감
+            }
+        }
         if(ResolveGameEnding()) return; // 엔딩 관리.
 
         UpdateResourceUI();
@@ -253,6 +309,9 @@ namespace JDScene {
     void GameScene::Render(float deltaTime) {
         SceneBase::Render(deltaTime);
 
+        auto& renderer = D2DRenderer::Instance();
+        auto ctx = renderer.GetD2DContext();
+
         m_fader.Update(deltaTime);
 
         auto camera = D2DRenderer::Instance().GetCamera();
@@ -271,26 +330,48 @@ namespace JDScene {
         }
 
         DrawColider();
-
+        
         for (auto& uiObj : m_uiObjects)
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
         // 카메라 뷰가 걸려 있는 상태이므로, 
         // 페이드를 스크린 공간에서 그리려면 Transform을 초기화
-        auto& renderer = D2DRenderer::Instance();
-        auto ctx = renderer.GetD2DContext();
-
-        // 현재 Transform(=카메라 뷰)을 잠시 저장
-        D2D1_MATRIX_3X2_F old;
-        ctx->GetTransform(&old);
-
-        // 스크린 좌표계(Identity) 로 바꿔서 페이드만 그리기
-        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+        
         m_fader.Render(ctx, { (float)screenW, (float)screenH });
 
-        // 원래 Transform(카메라 뷰) 복원
-        ctx->SetTransform(old);
+        for (auto& obj : m_gameObjects) {
+            auto name = obj->GetName(); // std::wstring / std::wstring_view 가정
+            if (name == L"SPEAR")
+            {
+                D2DRenderer::Instance().RenderGameObject(*obj, deltaTime);
+            }
+        }
+
+        for (auto& uiObj : m_uiObjects) {
+            
+            auto name = uiObj->GetName(); // std::wstring / std::wstring_view 가정
+            if (name == L"ART_BadEnd01"
+                || name == L"ART_BACK_TO_MENU01"
+                || name == L"ART_BACK_TO_MENU02"
+                || name == L"ART_RETRY01"
+                || name == L"ART_RETRY02"
+                || name == L"RETRY_BUTTON"
+                || name == L"MENU_BUTTON")
+            {
+                D2DRenderer::Instance().RenderUIObject(*uiObj);
+            }
+        }
+        //// 현재 Transform(=카메라 뷰)을 잠시 저장
+        //D2D1_MATRIX_3X2_F old;
+        //ctx->GetTransform(&old);
+
+        //// 스크린 좌표계(Identity) 로 바꿔서 페이드만 그리기
+        //ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+        //
+
+        //// 원래 Transform(카메라 뷰) 복원
+        //ctx->SetTransform(old);
 
         // 얘는 왜 좌표계 복원 뒤에 한거지??
         /* for (auto& tutorialObj : m_TutorialUIObjects)
@@ -4332,6 +4413,7 @@ namespace JDScene {
 
         //////////////////////////////////////////////////////////////////////////////////
     }
+
     void GameScene::ShowOptionUI()
     {
         isOpenOption = true;
@@ -4412,6 +4494,86 @@ namespace JDScene {
             m_fillter->SetSize(Vector2F{ screenWidth, screenHeight });
             m_fillter->SetPosition({ 0.0f,0.0f });
             m_fillter->SetPivot({ 0.5f, 0.5f });
+        }
+    }
+    
+    void GameScene::CreateEndingUI()
+    {
+        auto cam = D2DRenderer::Instance().GetCamera();
+
+        //m_spear = CreateGameObject<Player>(L"SPEAR");
+        //m_spear->GetComponent<Transform>()->SetPosition({ 0.0f, 0.0f });
+        ////boxObj3->AddComponent<Editor_Clickable>();
+        ////boxObj3->AddComponent<TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        //m_spear->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::BackGround, 2 });
+
+        /*auto frames = AssetManager::Instance().GetAnimationRender("GrayBird");
+        if (frames && !frames->frames.empty()) {
+            auto first = frames->frames[0].srcRect;
+            float width = first.right - first.left;
+            float height = first.bottom - first.top;
+            Vector2F halfSize{ width * 0.5f, height * 0.5f };
+            birdObj->AddComponent<BoxCollider>(halfSize);
+            birdObj->AddComponent<Editor_Clickable>();
+        }*/
+
+        {
+            m_spear = CreateGameObject<Player>(L"SPEAR");
+            m_spear->GetComponent<Transform>()->SetPosition({ 0.0f, 0.0f });
+            //m_spear->AddComponent<AnimationRender>("GrayBird", 0.5, RenderLayerInfo{ SortingLayer::Front, 10 });
+            m_spear->AddComponent<AnimationRender>("ART_SpearSprite01", 0.5, RenderLayerInfo{ SortingLayer::Front, 10 });
+            m_spear->SetActive(true);
+        }
+
+        {
+            m_retry = CreateUIObject<Image>(L"ART_RETRY02");
+            m_retry->SetTextureName("ART_RETRY02");
+            m_retry->SetSizeToOriginal();
+            Vector2F size = m_retry->GetSize();
+            m_retry->SetSize(size / 2);
+            m_retry->SetPosition({ 0.0f,0.0f });
+            m_retry->SetPivot({ 0.0f, 0.5f });
+            m_retry->SetActive(false);
+        }
+
+        {
+            m_goMenu = CreateUIObject<Image>(L"ART_BACK_TO_MENU02");
+            m_goMenu->SetTextureName("ART_BACK_TO_MENU02");
+            m_goMenu->SetSizeToOriginal();
+            Vector2F size = m_goMenu->GetSize();
+            m_goMenu->SetSize(size / 2);
+            m_goMenu->SetPosition({ 0.0f,0.0f });
+            m_goMenu->SetPivot({ 1.0f, 0.5f });
+            m_goMenu->SetActive(false);
+        }
+        
+        {
+            m_endingUI = CreateUIObject<Image>(L"ART_BadEnd01");
+            m_endingUI->SetTextureName("ART_BadEnd01");
+            m_endingUI->SetSizeToOriginal();
+            Vector2F size = m_endingUI->GetSize();
+            m_endingUI->SetSize(size / 2);
+            m_endingUI->SetPosition({ 0.0f,0.0f });
+            m_endingUI->SetPivot({ 0.5f, 0.5f });
+            m_endingUI->SetActive(false);
+        }
+
+        {
+            m_selecRetry = CreateUIObject<Button>(L"RETRY_BUTTON");
+            m_selecRetry->SetTextureName("Art_Opacity");
+            m_selecRetry->SetTextureColor(D2D1::ColorF(0xD6BD94));
+            m_selecRetry->SetActive(true);
+            m_selecRetry->SetSize({ 250, 150 });
+            m_selecRetry->SetPosition({ -350, -300 });
+        }
+
+        {
+            m_selecGoMenu = CreateUIObject<Button>(L"MENU_BUTTON");
+            m_selecGoMenu->SetTextureName("Art_Opacity");
+            m_selecGoMenu->SetTextureColor(D2D1::ColorF(0xD6BD94));
+            m_selecGoMenu->SetActive(true);
+            m_selecGoMenu->SetSize({ 250, 150 });
+            m_selecGoMenu->SetPosition({ 350, -300 });
         }
     }
 }

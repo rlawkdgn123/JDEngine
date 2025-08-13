@@ -158,10 +158,10 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    // SceneManager::Instance().ChangeScene("TitleScene");
+     SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
-     SceneManager::Instance().ChangeScene("TutorialScene");
+    // SceneManager::Instance().ChangeScene("TutorialScene");
     // SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
@@ -1932,7 +1932,10 @@ void EngineCore::LoadResources()
 {
 
 #pragma region Asset_Exam
-
+    if (!AssetManager::Instance().LoadTexture("Art_Opacity", L"../Resource/BATTLE/Art_Opacity.png"))
+    {
+        std::cout << "[ERROR] Art_Opacity 텍스처 로드 실패" << std::endl;
+    }
     // 예시 파일 Exam
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("TITLE_Exam", L"../Resource/TITLE_Exam.png"))
@@ -2614,23 +2617,23 @@ void EngineCore::LoadResources()
 
     if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU02", L"../Resource/BATTLE/ART_BACK_TO_MENU02.png"))
     {
-        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BACK_TO_MENU02 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU01", L"../Resource/BATTLE/ART_BACK_TO_MENU01.png"))
     {
-        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BACK_TO_MENU01 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_RETRY02", L"../Resource/BATTLE/ART_RETRY02.png"))
     {
-        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_RETRY02 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_RETRY01", L"../Resource/BATTLE/ART_RETRY01.png"))
     {
-        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_RETRY01 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_BadEnd01", L"../Resource/BATTLE/ART_BadEnd01.png"))
     {
-        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BadEnd01 텍스처 로드 실패" << std::endl;
     }
 #pragma endregion
 

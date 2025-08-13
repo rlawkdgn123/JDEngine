@@ -309,6 +309,8 @@ namespace JDScene {
         GameObject* m_barrackMaxText = nullptr;
         GameObject* m_attackPowerText = nullptr;
 
+        //엔딩UI
+        void CreateEndingUI();
         ////////////////////////////////////////////////////////////////////////////////
 
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
@@ -491,5 +493,30 @@ namespace JDScene {
         // UI 개발용 필터
         void CreateFillter();
         Image* m_fillter = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //엔딩 UI
+        static float EaseOutCubic(float t) {
+            t = (t < 0.f) ? 0.f : (t > 1.f ? 1.f : t);
+            return 1.f - (1.f - t) * (1.f - t) * (1.f - t);
+        }
+
+        bool     m_endAnimStarted = false;
+        bool m_endAnimDone = false;
+        float    m_endAnimTime = 0.0f;
+        float    m_endAnimDur = 0.8f;   // 내려오는 시간(초)
+
+        Vector2F m_endStartPos, m_endTargetPos;
+        Vector2F m_retryStartPos, m_retryTargetPos;  // 좌측 버튼
+        Vector2F m_menuStartPos, m_menuTargetPos;   // 우측 버튼
+
+        Image* m_endingUI = nullptr;
+        Image* m_retry = nullptr;
+        Image* m_goMenu = nullptr;
+
+        Button* m_selecRetry = nullptr;
+        Button* m_selecGoMenu = nullptr;
+
+        GameObject* m_spear = nullptr;
     };
 }

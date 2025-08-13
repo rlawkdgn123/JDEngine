@@ -108,6 +108,13 @@ void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadTexture("Hidden_Cat", L"../Resource/testcat.png")) {
         std::cout << "[ERROR] GrayBird 텍스처 로드 실패" << std::endl;
     }
+
+    if (!AssetManager::Instance().LoadTexture("ART_SpearSprite01", L"../Resource/Animation/ART_SpearSprite01.png")) {
+        std::cout << "[ERROR] ART_SpearSprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("ART_SpearSprite01", L"../Resource/Animation/ART_SpearSprite01.json")) {
+        std::cout << "[ERROR] ART_SpearSprite01 애니 로드 실패!" << std::endl;
+    }
 }
 
 bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filePath)

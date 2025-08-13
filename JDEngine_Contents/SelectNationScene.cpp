@@ -118,8 +118,9 @@ namespace JDScene {
         // 타이틀 텍스트 이미지
         m_titleTextImage = CreateUIObject<Image>(L"TitleText_Image");
         m_titleTextImage->SetTextureName("ART_Q_1");
-        m_titleTextImage->SetSize({ 725, 68 });
-        m_titleTextImage->SetPosition({ -400, 456 });
+        m_titleTextImage->SetSizeToOriginal();
+        m_titleTextImage->SetScale({ 0.5f, 0.5f });
+        m_titleTextImage->SetPosition({ -766, 485 });
 
         // 국가 설명 이미지
         m_nationDescImage = CreateUIObject<Image>(L"NationDesc_Image");
@@ -194,8 +195,9 @@ namespace JDScene {
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_experiencedCatParentButton->AddOnClick("Load GameScene", [this]() {
+        m_experiencedCatParentButton->AddOnClick("On Click", [this]() {
             // TODO : 게임 씬으로 이동
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("GameScene");
             AudioManager::Instance().StopBGM();
@@ -203,6 +205,7 @@ namespace JDScene {
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
             });
@@ -227,13 +230,15 @@ namespace JDScene {
         m_naviImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_naviImageButton->AddOnClick("Load GameScene", []() {
-
+        m_naviImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_naviImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseover");
@@ -268,13 +273,15 @@ namespace JDScene {
         m_felisImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_felisImageButton->AddOnClick("Load GameScene", []() {
-
+        m_felisImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_felisImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseover");
@@ -309,13 +316,15 @@ namespace JDScene {
         m_koneImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_koneImageButton->AddOnClick("Load GameScene", []() {
-
+        m_koneImageButton->AddOnClick("On Click", [this]() {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_koneImageButton->AddOnEnter("Highlight On", [this]()
             {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_koneImageButton->SetTextureName("ART_SelectKone01_mouseover");
@@ -599,7 +608,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Navi)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_4");
+                            m_titleTextImage->SetTextureName("ART_Q_3");
                         }
                     }
 
@@ -629,7 +638,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Felis)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_3");
+                            m_titleTextImage->SetTextureName("ART_Q_2");
                         }
                     }
 
@@ -659,7 +668,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Kone)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_2");
+                            m_titleTextImage->SetTextureName("ART_Q_4");
                         }
                     }
 

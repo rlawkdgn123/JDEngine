@@ -15,38 +15,29 @@
 
 void FMODSystem::PlayLooped(
     const std::string & filepath,
-    FMOD::ChannelGroup * group,          // 그룹 인자
+    FMOD::ChannelGroup * group,
     FMOD::Channel * *outChannel)
 {
-    if (!coreSys_) {
-        std::cerr << "[FMOD ERROR] coreSys_ is null\n";
-        return;
-    }
+    if (!coreSys_) { std::cerr << "[FMOD ERROR] coreSys_ is null\n"; return; }
 
     FMOD::Sound* sound = nullptr;
     FMOD::Channel* channel = nullptr;
-    FMOD_RESULT    res;
 
-    // 1) 스트리밍 + 루프 자동 지정
-    res = coreSys_->createStream(
+    // 1) 스트리밍 + 루프 + 2D
+    FMOD_RESULT res = coreSys_->createStream(
         filepath.c_str(),
-        FMOD_LOOP_NORMAL | FMOD_2D,
+        FMOD_LOOP_NORMAL | FMOD_2D,   // (createStream이므로 STREAM 플래그는 이미 포함)
         nullptr,
         &sound
     );
     FMOD_CHECK(res);
 
-    // 2) 그룹을 지정해서 재생
-    //    nullptr 대신 group 을 넘기면, playSound 내부에서 자동으로 setChannelGroup 처리
-    res = coreSys_->playSound(sound, group, false, &channel);
+    // 2) 반드시 group에 붙여 '일시정지 상태'로 시작 (paused=true)
+    res = coreSys_->playSound(sound, group, true /* paused */, &channel);
     FMOD_CHECK(res);
 
-    // 3) 호출자에게 채널 포인터 전달
-    if (outChannel) {
-        *outChannel = channel;
-    }
-
-    //std::cout << "[FMOD] PlayLooped(\"" << filepath << "\") 성공\n";
+    // (여기서 setVolume/setPaused 하지 마세요. 페이드는 ChangeBGM에서!)
+    if (outChannel) *outChannel = channel;
 }
 
 

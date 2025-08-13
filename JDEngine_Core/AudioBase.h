@@ -10,7 +10,7 @@ namespace JDComponent
             : m_key(key) {
         }
         virtual ~AudioSource() {}
-
+        virtual void SetClipName(const std::string& key) { m_key = key; }
         virtual void Play() = 0;
         virtual void Stop() = 0;
 

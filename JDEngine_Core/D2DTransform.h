@@ -173,7 +173,7 @@ namespace JDComponent {
                 return inv;
             }
 
-            Mat3x2 GetScreenCenterTranslation()
+            static Mat3x2 GetScreenCenterTranslation()
             {
                 float width = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetWidth());
                 float height = static_cast<float>(JDGlobal::Window::WindowSize::Instance().GetHeight());

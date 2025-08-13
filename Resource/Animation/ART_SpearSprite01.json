@@ -1,0 +1,287 @@
+{ "frames": [
+   {
+    "filename": "ART_SpearSprite01 0.png",
+    "frame": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 1.png",
+    "frame": { "x": 480, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 2.png",
+    "frame": { "x": 960, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 3.png",
+    "frame": { "x": 1440, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 4.png",
+    "frame": { "x": 1920, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 5.png",
+    "frame": { "x": 2400, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 6.png",
+    "frame": { "x": 2880, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 7.png",
+    "frame": { "x": 3360, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 8.png",
+    "frame": { "x": 3840, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 9.png",
+    "frame": { "x": 4320, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 10.png",
+    "frame": { "x": 4800, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 11.png",
+    "frame": { "x": 5280, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 12.png",
+    "frame": { "x": 5760, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 13.png",
+    "frame": { "x": 6240, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 14.png",
+    "frame": { "x": 6720, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 15.png",
+    "frame": { "x": 7200, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 16.png",
+    "frame": { "x": 7680, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 17.png",
+    "frame": { "x": 8160, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 18.png",
+    "frame": { "x": 8640, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 19.png",
+    "frame": { "x": 9120, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 20.png",
+    "frame": { "x": 9600, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 21.png",
+    "frame": { "x": 10080, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 22.png",
+    "frame": { "x": 10560, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 23.png",
+    "frame": { "x": 11040, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 24.png",
+    "frame": { "x": 11520, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 25.png",
+    "frame": { "x": 12000, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 26.png",
+    "frame": { "x": 12480, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 27.png",
+    "frame": { "x": 12960, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 28.png",
+    "frame": { "x": 13440, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   },
+   {
+    "filename": "ART_SpearSprite01 29.png",
+    "frame": { "x": 13920, "y": 0, "w": 480, "h": 270 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 270 },
+    "sourceSize": { "w": 480, "h": 270 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-x64",
+  "format": "RGBA8888",
+  "size": { "w": 14400, "h": 270 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

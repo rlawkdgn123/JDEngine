@@ -7,7 +7,7 @@ void WaveManager::LoadStageWaves()
     m_currDay = 1;
 
     switch (m_currStage) {
-    case 1: { // ¾ÆÁ÷ ½ºÅ×ÀÌÁö 1¹Û¿¡ ¾øÀ½.
+    case 1: { // ì•„ì§ ìŠ¤í…Œì´ì§€ 1ë°–ì— ì—†ìŒ.
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {1, 0} }, 300 });  
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 1} }, 500 });  
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {3, 0} }, 800 });
@@ -20,6 +20,7 @@ void WaveManager::LoadStageWaves()
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 9} }, 2500 });
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {20, 0} }, 2800 });
         //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 11} }, 3000 });
+
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 4 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 94 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 104 });
@@ -58,14 +59,14 @@ GameDate WaveManager::GetConvertedDate() const
 {
     const int daysPerMonth = 30; 
     const int monthsPerYear = 12;
-    const int daysPerYear = daysPerMonth * monthsPerYear;  // 360ÀÏ.
+    const int daysPerYear = daysPerMonth * monthsPerYear;  // 360ì¼.
 
     int totalDays = m_currDay - 1;
 
     GameDate date;
     date.year = totalDays / daysPerYear + 1; 
     date.month = (totalDays % daysPerYear) / daysPerMonth + 1; 
-    date.day = (totalDays % daysPerMonth) + 1;  // 1³â 1¿ù 1ÀÏºÎÅÍ ½ÃÀÛ.
+    date.day = (totalDays % daysPerMonth) + 1;  // 1ë…„ 1ì›” 1ì¼ë¶€í„° ì‹œì‘.
 
     return date;
 }

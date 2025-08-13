@@ -26,7 +26,7 @@ namespace JDComponent {
         void        SetTextureName(const std::string& name) { m_textureName = name; }
         std::string GetTextureName() const { return m_textureName; }
 
-        const RenderLayerInfo&  GetLayerInfo() const { return m_layerInfo; }
+        const RenderLayerInfo& GetLayerInfo() const { return m_layerInfo; }
         void                    SetLayerInfo(const RenderLayerInfo& info) { m_layerInfo = info; }
 
         D2D1_SIZE_F GetSize() const { return m_size; }
@@ -39,7 +39,7 @@ namespace JDComponent {
 
         void Update(float dt) override {}
         void OnEvent(const std::string& ev) override {}
-        void OnEnable() override{}
+        void OnEnable() override {}
         void OnDisable() override {}
 
     private:

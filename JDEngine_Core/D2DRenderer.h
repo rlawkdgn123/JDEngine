@@ -51,7 +51,7 @@ public:
 
     std::shared_ptr<Camera> GetCamera() const { return m_camera; }
 
-    void RenderGameObject(const GameObject& obj , float dt);
+    void RenderGameObject(const GameObject& obj, float dt);
 
     void RenderUIObject(const UIObject& uiObj);
 

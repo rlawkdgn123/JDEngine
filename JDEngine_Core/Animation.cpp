@@ -5,21 +5,74 @@
 
 using namespace JDComponent;
 
-void AnimationRender::Update(float dt) {
-    auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
-    if (!clip) return;
+void AnimationRender::Update(float dt)
+{
+    if (!m_playing || m_finished) return;
 
+    auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
+    if (!clip || clip->frames.empty()) return;
+
+    // 루프 구간 보정
+    const uint32_t lastIdx = (uint32_t)clip->frames.size() - 1;
+    if (m_loopEnd > lastIdx) m_loopEnd = lastIdx;
+    if (m_loopStart > m_loopEnd) m_loopStart = m_loopEnd;
+
+    float frameDur = clip->frames[m_currentFrame].duration;
     m_elapsed += dt * m_speed;
 
-    const auto& frames = clip->frames;
-    if (m_elapsed >= frames[m_currentFrame].duration) {
-        m_elapsed -= frames[m_currentFrame].duration;
-        m_currentFrame = (m_currentFrame + 1) % frames.size();
+    while (m_elapsed >= frameDur) {
+        m_elapsed -= frameDur;
+
+        auto advance = [&]() {
+            // 공통: 다음 프레임
+            ++m_currentFrame;
+            // 모드별 래핑
+            switch (m_playMode) {
+            case PlayMode::Loop:
+                if (m_currentFrame > lastIdx) m_currentFrame = 0;
+                break;
+            case PlayMode::LoopRange:
+                if (m_currentFrame > m_loopEnd) m_currentFrame = m_loopStart;
+                break;
+            default: break; // Once, IntroThenLoop, IntroThenLoopRange는 아래에서 처리
+            }
+            };
+
+        bool atLast = (m_currentFrame + 1 > lastIdx);
+
+        if (atLast) {
+            if (m_playMode == PlayMode::Once) {
+                m_currentFrame = lastIdx;
+                m_playing = false; m_finished = true;
+                if (onCompleted) onCompleted();
+                return;
+            }
+            else if (m_playMode == PlayMode::IntroThenLoop) {
+                m_playMode = PlayMode::Loop;
+                m_currentFrame = 0;
+            }
+            else if (m_playMode == PlayMode::IntroThenLoopRange) {
+                m_playMode = PlayMode::LoopRange;
+                m_currentFrame = m_loopStart;
+            }
+            else { // Loop / LoopRange면 advance에서 래핑됨
+                // do nothing; 아래 advance
+            }
+        }
+        else {
+            // 일반 진행
+        }
+
+        advance();
+        frameDur = clip->frames[m_currentFrame].duration;
     }
 }
 
+
 void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
+    if (!GetEnabled()) return;
+
     auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);
     auto bitmap = AssetManager::Instance().GetTexture(m_clipName);
     if (!clip || !bitmap) return;

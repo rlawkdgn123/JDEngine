@@ -82,7 +82,62 @@ public:
         return m_state != State::None;
     }
 
+    // 1) 스크린 좌표의 사각형만 페이드 (컨텍스트 트랜스폼 = Identity 가정)
+    void RenderRect(ID2D1DeviceContext7* ctx, D2D1_RECT_F rect) {
+        if ((m_state == State::None && m_currentAlpha <= 0.f) || m_currentAlpha <= 0.f) return;
+        EnsureBrush(ctx);
+
+        // 현재 컬러/알파 적용
+        m_brush->SetColor(D2D1::ColorF(m_currentColor.r, m_currentColor.g, m_currentColor.b, m_currentAlpha));
+        ctx->FillRectangle(rect, m_brush.Get());
+    }
+
+    // 2) (pos, size, pivot)로 영역 지정해서 페이드
+    //    pos: 기준점(보통 오브젝트의 월드/스크린 위치), 
+    //    size: 픽셀 크기, 
+    //    pivot: [0..1], (0.5,0.5=중심) 
+    void RenderRegionAt(ID2D1DeviceContext7* ctx,
+        D2D1_POINT_2F pos, D2D1_SIZE_F size,
+        D2D1_POINT_2F pivot = { 0.5f, 0.5f })
+    {
+        const float left = pos.x - size.width * pivot.x;
+        const float top = pos.y - size.height * pivot.y;
+        const float right = left + size.width;
+        const float bottom = top + size.height;
+        RenderRect(ctx, D2D1::RectF(left, top, right, bottom));
+    }
+
+    // 3) 로컬 사각형을 월드 행렬로 변환해서 페이드 (회전/스케일 반영)
+    //    rectLocal: (0,0)-(w,h) 같은 로컬 영역
+    //    world:     오브젝트 월드 행렬 (D2D1::Matrix3x2F)
+    void RenderRectTransformed(ID2D1DeviceContext7* ctx,
+        D2D1_RECT_F rectLocal,
+        D2D1_MATRIX_3X2_F world)
+    {
+        if ((m_state == State::None && m_currentAlpha <= 0.f) || m_currentAlpha <= 0.f) return;
+        EnsureBrush(ctx);
+
+        // 컨텍스트에 월드 행렬 적용 → 로컬 좌표로 사각형 채우기
+        D2D1_MATRIX_3X2_F prev;
+        ctx->GetTransform(&prev);
+        ctx->SetTransform(world * prev);
+
+        m_brush->SetColor(D2D1::ColorF(m_currentColor.r, m_currentColor.g, m_currentColor.b, m_currentAlpha));
+        ctx->FillRectangle(rectLocal, m_brush.Get());
+
+        ctx->SetTransform(prev);
+    }
 private:
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_brush;
+
+    void EnsureBrush(ID2D1DeviceContext7* ctx) {
+        if (!m_brush) {
+            ctx->CreateSolidColorBrush(
+                D2D1::ColorF(m_currentColor.r, m_currentColor.g, m_currentColor.b, m_currentAlpha),
+                &m_brush);
+        }
+    }
+
     enum class State { None, Fading };
     State m_state;
     float m_duration;

@@ -91,13 +91,6 @@ namespace JDScene {
         CreateEndingUI();
         ChangeAwayCatImage();
         ChangeSettingCatImage();
-
-        //마우스커서 생성초기화
-        m_mouse = CreateUIObject<Image>(L"mouse");
-        m_mouse->SetTextureName("mouse");
-        m_mouse->SetPivot({ 0.5,0.5 });
-        m_mouse->SetSizeToOriginal();
-        m_mouse->SetActive(true);
     }
 
     void GameScene::OnLeave() {
@@ -129,7 +122,13 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-        MouseUpdate();
+
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+        MouseState ms = InputManager::Instance().GetMouseState();
+        mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
+
         // 애니 진행
         if (m_endAnimStarted) {
 
@@ -366,10 +365,30 @@ namespace JDScene {
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
+
+        // 화면 크기
+        auto sz = ctx->GetSize();
+
+        // UI 설정값
+        D2D1_SIZE_F   size = { 500.f, 74.f };
+        D2D1_POINT_2F anchor = { 1.f, 1.f };       // 우하단
+        D2D1_POINT_2F pos = { 330.f, 485.f };   // 앵커 기준 오프셋(픽셀)
+        D2D1_POINT_2F pivot = { 0.5f, 0.5f };     // 이미지 중심 기준(필요에 맞게 조정)
+
+        // 앵커 지점의 스크린 좌표(픽셀)
+        D2D1_POINT_2F anchorPt = { sz.width * anchor.x, sz.height * anchor.y };
+
+        // 최종 스크린 좌표 = 앵커 지점 + 오프셋
+        D2D1_POINT_2F screenPos = { anchorPt.x + pos.x, anchorPt.y + pos.y };
+
+        m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        // 페이드 렌더 (그 영역만 덮기)
+        m_fader.Update(deltaTime);
+        m_fader.RenderRegionAt(ctx, screenPos, size, pivot);
         // 카메라 뷰가 걸려 있는 상태이므로, 
         // 페이드를 스크린 공간에서 그리려면 Transform을 초기화
         
-        m_fader.Render(ctx, { (float)screenW, (float)screenH });
+        //m_fader.Render(ctx, { (float)screenW, (float)screenH });
 
         for (auto& obj : m_gameObjects) {
             auto name = obj->GetName(); // std::wstring / std::wstring_view 가정
@@ -429,6 +448,8 @@ namespace JDScene {
         }
 
         m_buildSystem->UpdateTextureObj(m_selectedCollider);
+
+        RenderCursor(mouseClientPos, 1.0f, 1.0f);
     }
     void GameScene::ProcessDayTimer(float deltaTime)
     {
@@ -1072,28 +1093,59 @@ namespace JDScene {
         }*/
     }
 
-    void GameScene::MouseUpdate() {
+    void GameScene::RenderCursor(Vector2F mouseClientPos, float scale, float alpha)
+    {
+        auto* ctx = D2DRenderer::Instance().GetD2DContext();
+        if (!ctx) return;
 
-        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
-        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
-        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
-
+        // 입력 상태
         MouseState ms = InputManager::Instance().GetMouseState();
-        Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
 
-        if (auto* rtf = m_mouse->GetComponent<JDComponent::D2DTM::RectTransform>()) {
-            rtf->SetPosition({ mousePos.x,mousePos.y });
-        }
+        // 사용할 비트맵 선택 + 폴백
+        ID2D1Bitmap* bmp = nullptr;
+        if (ms.leftPressed && g_cursorDownBmp)
+            bmp = g_cursorDownBmp;
+        else
+            bmp = g_cursorBmp;
 
-        bool pressed = ms.leftPressed;     // 네 입력 시스템에 맞게: leftDown/leftUp이 있으면 엣지로 써도 됨
-        if (pressed != m_prevLeftPressed) {
-            if (auto* img = m_mouse->GetComponent<UI_ImageComponent>()) {
-                img->SetTextureName(pressed ? "click" : "mouse"); // 클릭/기본
-            }
-            m_mouse->SetSizeToOriginal(); // 이미지 바꾼 뒤 원본 크기 재적용(필요시)
-            m_prevLeftPressed = pressed;
-        }
-    };
+        if (!bmp) return; // 두 비트맵 다 없으면 종료
+
+        // 현재 선택된 비트맵의 픽셀 크기 사용 (g_cursorPx에 의존 X)
+        const auto px = bmp->GetPixelSize();
+        if (px.width == 0 || px.height == 0) return;
+
+        // 뷰/월드 영향 제거
+        D2D1_MATRIX_3X2_F oldTM;
+        ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // 화면 고정 커서 위치 계산 (mouseClientPos가 DIP인지 픽셀인지 일관성 유지)
+        const float w = px.width * scale;
+        const float h = px.height * scale;
+
+        const float offsetX = -18.0f; // 왼쪽으로 이동
+        const float offsetY = -30.0f; // 위로 이동
+
+        const D2D1_RECT_F dest = {
+            mouseClientPos.x - g_hotspot.x * scale + offsetX,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY,
+            mouseClientPos.x - g_hotspot.x * scale + offsetX + w,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY + h
+        };
+
+        const D2D1_RECT_F src = { 0, 0, (float)px.width, (float)px.height };
+
+        // 커서 그리기 — 반드시 선택된 bmp로!
+        ctx->DrawBitmap(
+            bmp,
+            dest,
+            alpha,
+            D2D1_INTERPOLATION_MODE_LINEAR,
+            &src
+        );
+
+        ctx->SetTransform(oldTM);
+    }
 
     JDGameObject::GameObjectBase* GameScene::CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag, JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName)
     {

@@ -73,7 +73,14 @@ namespace JDScene {
         float m_sakuraEmissionRate = 1.5f;//초당 생성 갯수
         float m_sakuraEmitAccumulator = 0.0f;
 
-        Image* m_mouse = nullptr;
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 0.0f, 0.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
         ////////////////////////////////////////////////////////////////////////////////
         // 옵션창
 

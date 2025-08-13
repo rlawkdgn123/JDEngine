@@ -13,6 +13,7 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 
+
 using namespace std;
 using namespace JDGameObject::Content;
 using JDComponent::AnimationRender;
@@ -28,6 +29,7 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
         using JDScene::GameScene;
+        using JDScene::SceneBase;
 
         m_dataTableManager = &DataTableManager::Instance();
         m_buildSystem = make_unique<BuildSystem>();
@@ -91,6 +93,45 @@ namespace JDScene {
         CreateEndingUI();
         ChangeAwayCatImage();
         ChangeSettingCatImage();
+
+        auto* flag = CreateGameObject<Player>(L"ART_FlagSprite01");
+        flag->GetComponent<Transform>()->SetPosition({ -124 , 200 });
+        flag->GetComponent<Transform>()->SetScale({ 0.6,0.6 });
+        flag->AddComponent<AnimationRender>("ART_FlagSprite01", 1.0, RenderLayerInfo{ SortingLayer::Front, 2 });
+
+        torches.push_back(makeTorch(L"Torch01", { -100.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch02", { 50.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch03", { 00.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch04", { -50.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch05", { -100.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch06", { -150.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+        torches.push_back(makeTorch(L"Torch07", { -200.f,100.f }, "basic_Torch", "Torch", "Torch", { 0, 0 }, 0.20f));
+
+        frogs.push_back(makeActor(L"Frog01", { 100.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog02", { 160.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog03", { 220.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+        frogs.push_back(makeActor(L"Frog04", { 280.f, 100.f }, "basic_Frog", "Frog1", "FrogSound", { 960, 360 }));
+
+        rats.push_back(makeActor(L"Rat01", { 00.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+        rats.push_back(makeActor(L"Rat02", { 60.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+        rats.push_back(makeActor(L"Rat03", { 120.f, 100.f }, "basic_Rat", "Rat", "RatHide", { 960, 355 }));
+
+        //파티클 초기화
+        m_mouseParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_leafParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_smokeParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_footdustParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
+        m_waveParticles = std::make_unique<ParticleSystem>(
+            D2DRenderer::Instance().GetD2DContext()
+        );
     }
 
     void GameScene::OnLeave() {
@@ -185,6 +226,30 @@ namespace JDScene {
         
 
         if(ResolveGameEnding()) return; // 엔딩 관리.
+
+        // 화면 크기(파티클 off-screen 처리용)
+        auto cam = D2DRenderer::Instance().GetCamera();
+        const float W = cam ? (float)cam->GetScreenWidth() : 1920.f;
+        const float H = cam ? (float)cam->GetScreenHeight() : 1080.f;
+
+        // 1) 개구리/쥐 상태 타이머 갱신 (애니 끝나면 텍스처 복귀, 락 해제 등)
+        for (auto& f : frogs) updateActor(f, deltaTime);
+        for (auto& r : rats)  updateActor(r, deltaTime);
+
+        // 2) 토치: (필요시) 애니 상태 갱신 + 연기 스폰/업데이트
+        //    - 연기 스폰은 클릭에서 on/off만 바꾸고, 여기서 주기적으로 생성
+        for (auto& t : torches)
+        {
+            updateActor(t.actor, deltaTime); // 토치도 애니에서 텍스처로 복귀 같은 공통 로직 쓰고 싶으면 유지
+
+            // 개별 토치의 스모크 발생/누적/스폰 + 스모크 PS 업데이트
+            updateTorchSmoke(t, m_smokeParticles.get(), deltaTime, W, H);
+        }
+
+        // 3) 다른 파티클 시스템 업데이트 (스모크는 위에서 이미 업데이트됨)
+        if (m_smokeParticles)  m_smokeParticles->UpdateSmoke(deltaTime, W, H);
+        if (m_leafParticles)  m_leafParticles->UpdateLeaves(deltaTime, W, H);
+        if (m_waveParticles)  m_waveParticles->UpdateWaterWave(deltaTime);
 
         UpdateResourceUI();
 
@@ -357,6 +422,23 @@ namespace JDScene {
 
         DrawColider();
         
+        const auto viewMatrix = camera->GetViewMatrix();
+        const auto centerMatrix = JDComponent::D2DTM::Transform::GetScreenCenterTranslation(); // static 함수로 만들었음.
+        const auto particleBaseTransform = viewMatrix * centerMatrix;
+
+        if (m_waveParticles)
+        {
+            m_waveParticles->RenderWaterWave(ctx, particleBaseTransform);
+        }
+        if (m_leafParticles)
+        {
+            m_leafParticles->RenderLeaves(ctx, particleBaseTransform);
+        }
+        if (m_smokeParticles)
+        {
+            m_smokeParticles->RenderSmoke(ctx, particleBaseTransform);
+        }
+
         for (auto& uiObj : m_uiObjects)
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
@@ -927,6 +1009,41 @@ namespace JDScene {
                     Vector2F worldMousePos = camera->ScreenToWorldPoint(unityMousePos);
                     -> 이 부분은 GetMouseWorldPos()로 대체되었으므로 삭제!
                 */
+                // Frogs
+                for (auto& f : frogs) {
+                    if (f.col && f.col->IsMouseOver(worldMousePos)) {
+
+                        SetSelectedObject(f.go);
+                        clicked = true;
+                        onClickFrog(f, m_waveParticles.get(), rng, worldMousePos);
+                        break;
+                    }
+                }
+
+                // Rats
+                if (!clicked) {
+                    for (auto& r : rats) {
+                        if (r.col && r.col->IsMouseOver(worldMousePos)) {
+                            SetSelectedObject(r.go);
+                            clicked = true;
+                            std::cout << "[CLICK] rat hit, m_leafParticles=" << m_leafParticles.get() << "\n";
+                            onClickRat(r, m_leafParticles.get(), rng, worldMousePos);
+                            break;
+                        }
+                    }
+                }
+
+                // Torches
+                if (!clicked) {
+                    for (auto& t : torches) {
+                        if (t.actor.col && t.actor.col->IsMouseOver(worldMousePos)) {
+                            SetSelectedObject(t.actor.go);
+                            clicked = true;
+                            toggleTorch(t);                             // 애니/사운드/연기 토글
+                            break;
+                        }
+                    }
+                }
 
                 for (int i = static_cast<int>(m_gameObjects.size()) - 1; i >= 0; --i)
                 {

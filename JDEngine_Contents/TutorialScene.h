@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "D2DRenderer.h"
 #include "Camera.h"
+
 using namespace JDGameObject::Content;
 class GameTimer;
 

@@ -179,26 +179,27 @@ bool AudioManager::ChangeBGM(const std::string& key, float fadeSec)
     FMOD::Channel** nextOut = usingA_ ? &musicChB_ : &musicChA_;
     *nextOut = nullptr;
 
-    // 다음 트랙 준비 (그룹에 붙여서 재생해야 함!)
+    // 다음 트랙 준비 — 반드시 group에 붙여서 재생되어야 함 (PlayLooped 내부 확인!)
     FMODSystem::Instance().PlayLooped(it->second, musicGroup_, nextOut);
     FMOD::Channel* next = *nextOut;
     if (!next) return false;
 
-    // 그룹 DSPClock 확보
+    // 그룹 DSPClock
     unsigned long long gclk = 0, parent = 0;
     musicGroup_->getDSPClock(&gclk, &parent);
     const unsigned long long fadeTicks = (unsigned long long)(fadeSec * (double)rate);
 
-    // 새 채널: 0.05에서 시작 → 1.0까지 (가상화 회피용)
+    // 새 채널: 0.05f → 1.0f (가상화 회피 + 부드러운 페이드)
     next->setPaused(true);
     next->setVolumeRamp(true);
     next->removeFadePoints(0, ULLONG_MAX);
-    next->setVolume(0.05f); // adv.vol0virtualvol=0.0 설정했으면 0.0f로 시작해도 됨
-    next->addFadePoint(gclk, 0.05f);
-    next->addFadePoint(gclk + fadeTicks, 1.0f);
-    next->setPaused(false); // 지금부터 페이드 인
+    next->setVolume(0.05f);                       // ★ 초기 볼륨 = 첫 포인트 값과 일치
+    next->addFadePoint(gclk, 0.05f);  // now
+    next->addFadePoint(gclk + fadeTicks, 1.0f);   // +fadeSec
+    next->addFadePoint(gclk + fadeTicks + rate / 50, 1.0f);
+    next->setPaused(false);                       // 즉시 시작(스케줄에 맞춰 상승)
 
-    // 현재 채널: 현재 볼륨에서 0.0까지
+    // 현재 채널: 현재 볼륨 → 0.0f
     if (cur) {
         cur->setVolumeRamp(true);
         cur->removeFadePoints(0, ULLONG_MAX);
@@ -208,12 +209,17 @@ bool AudioManager::ChangeBGM(const std::string& key, float fadeSec)
         cur->addFadePoint(gclk, curVol);
         cur->addFadePoint(gclk + fadeTicks, 0.0f);
 
-        // 페이드 끝나면 자동 정지 예약(약간 여유)
+        // 페이드 끝나면 자동 정지(조금 여유)
         cur->setDelay(0, gclk + fadeTicks + rate / 50, true);
     }
 
+    // 상태 갱신 ★
     usingA_ = !usingA_;
     currentBGMKey_ = key;
+
+    FMOD::Channel* now = usingA_ ? musicChA_ : musicChB_;
+    if (now) { now->setVolume(1.0f); }
+
     return true;
 }
 

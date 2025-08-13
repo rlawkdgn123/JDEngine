@@ -116,6 +116,13 @@ void AssetManager::TextureSetUp() {
         std::cout << "[ERROR] ART_SpearSprite01 애니 로드 실패!" << std::endl;
     }
 
+    if (!AssetManager::Instance().LoadTexture("ART_FlagSprite01", L"../Resource/Animation/ART_FlagSprite01.png")) {
+        std::cout << "[ERROR] ART_FlagSprite01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadAnimationRender("ART_FlagSprite01", L"../Resource/Animation/ART_FlagSprite01.json")) {
+        std::cout << "[ERROR] ART_FlagSprite01 애니 로드 실패!" << std::endl;
+    }
+
 #pragma region Asset_Exam
     if (!AssetManager::Instance().LoadTexture("Art_Opacity", L"../Resource/BATTLE/Art_Opacity.png"))
     {

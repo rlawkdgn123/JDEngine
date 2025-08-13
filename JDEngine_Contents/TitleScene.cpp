@@ -241,8 +241,8 @@ namespace JDScene {
                     m_selectCreditDummyText->SetActive(true);
 
                     m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
-                    m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-                    m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+                    m_selectControlDummyText->SetColor(D2D1::ColorF(0x263E38));
+                    m_selectCreditDummyText->SetColor(D2D1::ColorF(0x263E38));
 
                     m_masterSlider->SetActiveSlider(true);
                     m_bgmSlider->SetActiveSlider(true);
@@ -401,6 +401,7 @@ namespace JDScene {
         m_stopKeyText->SetSize({ 115.5f, 23.f });
         m_stopKeyText->SetPosition({ 113, 184 });
         m_stopKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_stopKeyText->SetColor(D2D1::ColorF(0x263E38));
         m_stopKeyText->SetActive(false);
 
         m_playKeyText = CreateUIObject<Text>(L"PlayKey_Text");
@@ -408,6 +409,7 @@ namespace JDScene {
         m_playKeyText->SetSize({ 115.5f, 23.f });
         m_playKeyText->SetPosition({ 113, 100 });
         m_playKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_playKeyText->SetColor(D2D1::ColorF(0x263E38));
         m_playKeyText->SetActive(false);
 
         m_speedKeyText = CreateUIObject<Text>(L"SpeedKey_Text");
@@ -415,6 +417,7 @@ namespace JDScene {
         m_speedKeyText->SetSize({ 115.5f, 23.f });
         m_speedKeyText->SetPosition({ 113, 16 });
         m_speedKeyText->SetTextFormatName("Sebang_Bold_32");
+        m_speedKeyText->SetColor(D2D1::ColorF(0x263E38));
         m_speedKeyText->SetActive(false);
 
         //////////////////////////////////////////////////////////////////////////////////
@@ -453,8 +456,8 @@ namespace JDScene {
             m_optionCredit->SetActive(false);
 
             m_selectVolumeDummyText->SetColor(D2D1::ColorF(0xD6BD94));
-            m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-            m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(0x263E38));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(0x263E38));
 
             m_masterSlider->SetActiveSlider(true);
             m_bgmSlider->SetActiveSlider(true);
@@ -487,9 +490,9 @@ namespace JDScene {
             m_optionControl->SetActive(true);
             m_optionCredit->SetActive(false);
 
-            m_selectVolumeDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(0x263E38));
             m_selectControlDummyText->SetColor(D2D1::ColorF(0xD6BD94));
-            m_selectCreditDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectCreditDummyText->SetColor(D2D1::ColorF(0x263E38));
 
             m_masterSlider->SetActiveSlider(false);
             m_bgmSlider->SetActiveSlider(false);
@@ -522,8 +525,8 @@ namespace JDScene {
             m_optionControl->SetActive(false);
             m_optionCredit->SetActive(true);
 
-            m_selectVolumeDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
-            m_selectControlDummyText->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_selectVolumeDummyText->SetColor(D2D1::ColorF(0x263E38));
+            m_selectControlDummyText->SetColor(D2D1::ColorF(0x263E38));
             m_selectCreditDummyText->SetColor(D2D1::ColorF(0xD6BD94));
 
             m_masterSlider->SetActiveSlider(false);

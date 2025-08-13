@@ -2764,6 +2764,10 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
     }
 
+    // 웨이브
+    if (!AssetManager::Instance().LoadTexture("ART_Monster001", L"../Resource/BATTLE/ART_Monster001.png"))
+    {
+        std::cout << "[ERROR] ART_Monster001 텍스처 로드 실패" << std::endl;
     if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU02", L"../Resource/BATTLE/ART_BACK_TO_MENU02.png"))
     {
         std::cout << "[ERROR] ART_BACK_TO_MENU02 텍스처 로드 실패" << std::endl;

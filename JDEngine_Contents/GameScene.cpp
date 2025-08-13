@@ -71,7 +71,7 @@ namespace JDScene {
         rs.SetMaxPopulation(500);
         rs.SetCurPopulation(100);*/
 
-        m_playerArmy.OverrideUnitCounts({ 100, 100 });
+        // m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
         // 병영.
         m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -197.f, 144.f }, "ART_Barracks02_mouse_over");
@@ -688,6 +688,8 @@ namespace JDScene {
                 }
 
                 objPtr->SetState(JDGlobal::Contents::State::Idle);
+                objPtr->GetComponent<JDComponent::AnimationRender>()->SetClipName("ART_Battle_Sprite01");
+                objPtr->GetComponent<Transform>()->SetScale({ 0.5f, 0.5f });
 
                 auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
                     [&](auto& a) { return a.enemy == objPtr; });

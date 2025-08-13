@@ -4,7 +4,6 @@
 // 원정을 보내봅시다. 일단 시간 없으니까 간단하게.
 namespace JDGameSystem {
 	using Resource = JDGlobal::Contents::Resource;
-	using ExpeditionInfo = JDGlobal::Contents::ExpeditionInfo;
 
 	enum class ExpeditionGrade { // 원정 등급.
 		Beginner,     // 초급.
@@ -15,16 +14,16 @@ namespace JDGameSystem {
 
 	constexpr int GradeCount = static_cast<int>(ExpeditionGrade::Count);
 
-	//struct ExpeditionInfo { // 원정 정보. 
-	//	ExpeditionInfo() = default;
-	//	ExpeditionInfo(Resource cost, int point, float successRate, Resource reward)
-	//		: m_cost(cost), m_point(point), m_successRate(successRate), m_reward(reward) {}
+	struct ExpeditionInfo { // 원정 정보. 
+		ExpeditionInfo() = default;
+		ExpeditionInfo(Resource cost, int point, float successRate, Resource reward)
+			: m_cost(cost), m_point(point), m_successRate(successRate), m_reward(reward) {}
 
-	//	Resource m_cost;           // 필요 자원.
-	//	int m_point;               // 원정 포인트.
-	//	float m_successRate;       // 추가 보상 확률.
-	//	Resource m_reward;         // 추가 보상. 
-	//};
+		Resource m_cost;           // 필요 자원.
+		int m_point;               // 원정 포인트.
+		float m_successRate;       // 추가 보상 확률.
+		Resource m_reward;         // 추가 보상. 
+	};
 
 	class ExpeditionSystem {
 	public:

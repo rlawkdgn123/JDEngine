@@ -1,12 +1,11 @@
 #pragma once
 #include "ArmySystem.h"
+#include "JDGlobal.h"
 
-using WaveData = JDGlobal::Contents::WaveData;
-
-//struct WaveData {
-//    JDGameSystem::UnitCounts enemyUnits;
-//    int day;
-//};
+struct WaveData {
+    JDGameSystem::UnitCounts enemyUnits;
+    int day;
+};
 
 struct GameDate { // m_currDay를 게임 속 날짜로 바꿔 전달하기 용.
     int year;
@@ -17,6 +16,8 @@ struct GameDate { // m_currDay를 게임 속 날짜로 바꿔 전달하기 용.
 constexpr int MAX_DAY = 35640; // 99년 12월 30일
 
 class WaveManager {
+public:
+    using WaveStats = JDGlobal::Contents::WaveStats;
 public:
     static WaveManager& Instance() {
         static WaveManager instance;
@@ -52,7 +53,9 @@ public:
 
 private:
     std::vector<WaveData> m_waves;
+    WaveStats m_wavesTable;
     int m_currDay = 1; // 현재 날짜.
     int m_currStage = 1; // 현재 스테이지.
+
 };
 

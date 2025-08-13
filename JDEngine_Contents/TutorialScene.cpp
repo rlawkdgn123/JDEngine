@@ -2890,7 +2890,7 @@ namespace JDScene {
         // 견습냥이 버튼 클릭 시 실행될 이벤트
         m_trainerCatButton->AddOnClick("On Click", [this]()
             {
-                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
+                m_playerArmy.RecruitUnits(JDGameSystem::SordierType::Novice);
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
 
@@ -2992,7 +2992,7 @@ namespace JDScene {
         // 견습냥이 버튼 클릭 시 실행될 이벤트
         m_expertCatButton->AddOnClick("On Click", [this]()
             {
-                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Expert);
+                m_playerArmy.RecruitUnits(JDGameSystem::SordierType::Expert);
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
 

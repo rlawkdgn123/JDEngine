@@ -44,14 +44,14 @@ namespace JDGameSystem {
 
 		UnitCounts counts = player.GetUnitCounts();
 
-		int W_n = counts[UnitType::Novice];
-		//int W_e = counts[UnitType::Expert];
+		int W_n = counts[SordierType::Novice];
+		//int W_e = counts[SordierType::Expert];
 
 		int w_n_loss = std::min(W_n, N_loss);
 		int w_e_loss = std::max(0, N_loss - W_n);
 
-		counts[UnitType::Novice] -= w_n_loss;
-		counts[UnitType::Expert] -= w_e_loss;
+		counts[SordierType::Novice] -= w_n_loss;
+		counts[SordierType::Expert] -= w_e_loss;
 
 		// 손실 출력 (디버깅용)
 		//int prevTotalPower = player.CalculateTotalPower();
@@ -114,22 +114,22 @@ namespace JDGameSystem {
 		N_loss_my = JDMath::Clamp(N_loss_my + randVal, 0, N_my);
 
 		// 결과.
-		int W_n_my = playerUnits[UnitType::Novice];
+		int W_n_my = playerUnits[SordierType::Novice];
 		int w_n_loss_my = std::min(W_n_my, N_loss_my);
 		int w_e_loss_my = std::max(0, N_loss_my - W_n_my);
 
 		// 죽은 병사만큼 현재 인구 되돌리기.
 		ArmySystem::BringbackPopulation(w_n_loss_my + w_e_loss_my);
 
-		outPlayerResult[UnitType::Novice] = std::max(0, playerUnits[UnitType::Novice] - w_n_loss_my);
-		outPlayerResult[UnitType::Expert] = std::max(0, playerUnits[UnitType::Expert] - w_e_loss_my);
+		outPlayerResult[SordierType::Novice] = std::max(0, playerUnits[SordierType::Novice] - w_n_loss_my);
+		outPlayerResult[SordierType::Expert] = std::max(0, playerUnits[SordierType::Expert] - w_e_loss_my);
 
-		int W_n_enemy = enemyUnits[UnitType::Novice];
+		int W_n_enemy = enemyUnits[SordierType::Novice];
 		int w_n_loss_enemy = std::min(W_n_enemy, N_loss_enemy);
 		int w_e_loss_enemy = std::max(0, N_loss_enemy - W_n_enemy);
 
-		outEnemyResult[UnitType::Novice] = std::max(0, enemyUnits[UnitType::Novice] - w_n_loss_enemy);
-		outEnemyResult[UnitType::Expert] = std::max(0, enemyUnits[UnitType::Expert] - w_e_loss_enemy);
+		outEnemyResult[SordierType::Novice] = std::max(0, enemyUnits[SordierType::Novice] - w_n_loss_enemy);
+		outEnemyResult[SordierType::Expert] = std::max(0, enemyUnits[SordierType::Expert] - w_e_loss_enemy);
 
 		if (R_my < 1.0f) { 
 			std::cout << "[CombatSystem] 졌음." << std::endl;

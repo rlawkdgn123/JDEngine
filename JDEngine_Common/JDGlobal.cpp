@@ -171,5 +171,41 @@ namespace JDGlobal {
 			std::cout << "Population : " << this->m_population << std::endl;
 			std::cout << "==================================" << std::endl;
 		}
+
+
+		void SordierTypeStats::PrintStats() {
+			std::cout << "[SordierTypeStats]\n";
+			std::cout << "Novice: ";
+			m_novice.ResourcePrint();
+			std::cout << "\nExpert: ";
+			m_expert.ResourcePrint();
+			std::cout << "\n";
+		}
+
+		void WaveStats::PrintStats() {
+			std::cout << "[WaveStats]\n";
+			for (int i = 0; i < MAX_GAME_WAVE_COUNT; ++i) {
+				std::cout << "Wave " << i
+					<< " -> Novice=" << m_novice[i]
+					<< ", Expert=" << m_expert[i]
+						<< ", Day=" << m_day[i] << "\n";
+			}
+		}
+
+		void ExpeditionStats::PrintStats() {
+			std::cout << "[ExpeditionStats]\n";
+			for (int i = 0; i < MAX_GAME_EXPEDITION_TYPE; ++i) {
+				std::cout << "Type " << i << ":\n";
+				std::cout << "  Cost: ";
+				m_cost[i].ResourcePrint();
+				std::cout << "\n  Point: " << m_point[i]
+					<< "\n  SuccessRate: " << std::fixed << std::setprecision(2)
+						<< (m_successRate[i]) << "%"
+						<< "\n  Reward: ";
+					m_reward[i].ResourcePrint();
+					std::cout << "\n";
+			}
+		}
+
 	}
 }

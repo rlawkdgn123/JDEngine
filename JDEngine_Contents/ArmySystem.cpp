@@ -4,12 +4,12 @@
 
 namespace JDGameSystem {
 
-	void ArmySystem::InitUnitTypes() // 병력 정보 초기화. (타입, 자원, 전투력)
+	void ArmySystem::InitSordierTypes() // 병력 정보 초기화. (타입, 자원, 전투력)
 	{
-		m_unitTypes[static_cast<int>(UnitType::Novice)] =
-			UnitTypeData(UnitType::Novice, Resource(200.f, 50.f, 0.f), 10);
-		m_unitTypes[static_cast<int>(UnitType::Expert)] =
-			UnitTypeData(UnitType::Expert, Resource(100.f, 0.f, 50.f), 20);
+		m_SordierTypes[static_cast<int>(SordierType::Novice)] =
+			SordierTypeData(SordierType::Novice, Resource(200.f, 50.f, 0.f), 10);
+		m_SordierTypes[static_cast<int>(SordierType::Expert)] =
+			SordierTypeData(SordierType::Expert, Resource(100.f, 0.f, 50.f), 20);
 	}
 
 	/*void ArmySystem::SetUnitCounts(const UnitCounts& army)
@@ -35,7 +35,7 @@ namespace JDGameSystem {
 		rs.SetCurPopulation(curPopulation + num);
 	}
 
-	bool ArmySystem::RecruitUnits(UnitType type) // 병력 모집.
+	bool ArmySystem::RecruitUnits(SordierType type) // 병력 모집.
 	{
 		auto& rs = ResourceSystem::Instance();
 
@@ -62,10 +62,10 @@ namespace JDGameSystem {
 			return false;
 		}
 
-		const UnitTypeData& unitType = m_unitTypes[idx];
+		const SordierTypeData& SordierType = m_SordierTypes[idx];
 
 		// 필요 자원.
-		const Resource needResource = unitType.GetRecruitCost();
+		const Resource needResource = SordierType.GetRecruitCost();
 
 		// 자원이 충분한지 검사.
 		if (!(haveResource.m_food >= needResource.m_food &&
@@ -94,7 +94,7 @@ namespace JDGameSystem {
 		for (int i = 0; i < 2; ++i)
 		{
 			int unitCount = m_unitCounts.counts[i];
-			int unitPower = m_unitTypes[i].GetPower();
+			int unitPower = m_SordierTypes[i].GetPower();
 			totalPower += unitCount * unitPower;
 		}
 

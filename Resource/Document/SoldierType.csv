@@ -1,0 +1,43 @@
+,,
+자원,Novice,Expert
+Food,200,100
+Wood,50,0
+Mineral,0,50
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+"병종 정보 파싱
+struct ExpeditionInfo { // 원정 정보. 
+	Resource m_cost;           // 필요 자원.
+	int m_point;               // 원정 포인트.
+	float m_successRate;       // 추가 보상 확률.
+	Resource m_reward;         // 추가 보상.
+} 
+",,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+"Resource : (float, float, float)",,
+,,
+,,
+,,
+,,
+,,
+,,

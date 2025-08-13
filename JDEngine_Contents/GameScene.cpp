@@ -24,7 +24,7 @@ namespace JDScene {
 
     // TestScene
     void GameScene::OnEnter() {
-        system("cls");
+        //system("cls");
         using namespace JDGameObject;
         using namespace JDComponent;
         using JDScene::GameScene;
@@ -648,6 +648,12 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().ResolveExpedition();
                 SafeDestroy(m_expeditionObject);
                 UpdateAwayPointUI();
+
+                if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
+                    m_awayButton->SetSize({ 125.f, 35.0f });
+                }
+
                 std::cout << "[GameScene] 원정 끝." << std::endl;
             }
         }
@@ -3181,7 +3187,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Novice);
+                m_playerArmy.RecruitUnits(JDGameSystem::SordierType::Novice);
                 UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
@@ -3290,7 +3296,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                m_playerArmy.RecruitUnits(JDGameSystem::UnitType::Expert);
+                m_playerArmy.RecruitUnits(JDGameSystem::SordierType::Expert);
                 UpdateAttackPowerText();
                 std::cout << "Player Power: " << m_playerArmy.CalculateTotalPower() << std::endl;
             });
@@ -3410,7 +3416,12 @@ namespace JDScene {
                 ShowAwayPopup();
 
                 m_awayPopupInfo->SetText(L"초급 원정");
-                m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
+                if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
+                }
+                else {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
+                }
 
                 m_awayStar01->SetTextureName("Art_Expedition_Level_Empty");
                 m_awayStar02->SetTextureName("Art_Expedition_Level_Empty");
@@ -3451,7 +3462,12 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
-                m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)");
+                if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
+                }
+                else {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv02)");
+                }
 
                 m_awayStar01->SetTextureName("Art_Expedition_Level_Empty");
                 m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
@@ -3491,7 +3507,12 @@ namespace JDScene {
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
-                m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
+                if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
+                }
+                else {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
+                }
 
                 m_awayStar01->SetTextureName("Art_Expedition_Level_Full");
                 m_awayStar02->SetTextureName("Art_Expedition_Level_Full");
@@ -3666,6 +3687,11 @@ namespace JDScene {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)_mouseover");
                 }
 
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Cannot)")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)_mouseover");
+                }
+
                 m_awayButton->SetSize({ 135.f, 47.0f });
             });
 
@@ -3688,6 +3714,11 @@ namespace JDScene {
                 else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv03)_mouseover")
                 {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
+                }
+
+                else if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Cannot)_mouseover")
+                {
+                    m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
                 }
 
                 m_awayButton->SetSize({ 125.f, 35.0f });

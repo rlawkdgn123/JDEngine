@@ -13,6 +13,9 @@ void DataTableManager::Initalize()
     ParseLumberMillTable();
     ParseMineTable();
     ParseHouseTable();
+    ParseSoldierTypeTable();
+    ParseWaveTable();
+    ParseExpeditionTable();
 }
 bool DataTableManager::LoadCSV(const std::string& name, const std::string& filePath)
 {
@@ -564,17 +567,242 @@ void DataTableManager::ParseBuildingTable(BuildingStats& stats, JDGlobal::Conten
 }
 */
 
-void DataTableManager::ParseCatTable()
+
+void DataTableManager::ParseSoldierTypeTable()
 {
+    std::cout << "데이터 파싱 진입 - SoldierType" << std::endl;
+    const std::string& csv = GetCSV("SoldierType");
+    std::istringstream stream(csv);
+    std::string dataLine;
+    int linesParsed = 0; // 파싱된 행의 수를 세는 변수
+
+    // 'Food' 행을 찾을 때까지 헤더와 빈 줄을 건너뜁니다.
+    do {
+        if (!std::getline(stream, dataLine)) {
+            throw std::runtime_error("[ParseStartResourceTable] 파일에서 유효한 데이터 행을 찾을 수 없습니다.");
+        }
+    } while (JDUtil::trim(dataLine).rfind("Food", 0) != 0);
+
+    // Food, Wood, Mineral 3개의 데이터 행을 순차적으로 파싱합니다.
+    int linesToParse = 3;
+    while (linesParsed < linesToParse && !dataLine.empty())
+    {
+        std::vector<std::string> tokens;
+        std::istringstream lineStream(dataLine);
+        std::string cell;
+
+        while (std::getline(lineStream, cell, ',')) {
+            tokens.push_back(JDUtil::trim(cell));
+        }
+
+        // CSV 포맷 오류: 열 개수가 부족한지 확인
+        if (tokens.size() < 3) {
+            throw std::runtime_error("[ParseStartResourceTable] CSV 포맷 오류 : 열 개수 부족");
+        }
+
+        std::cout << "[DEBUG] 자원 데이터 줄: \"" << dataLine << "\"" << std::endl;
+
+        const std::string& resourceName = tokens[0];
+        auto toInt = [](const std::string& s) { return std::stoi(s); };
+
+        if (resourceName == "Food") {
+            m_soldierTypeTable.m_novice.m_food = toInt(tokens[1]);
+            m_soldierTypeTable.m_expert.m_food = toInt(tokens[2]);
+        }
+        else if (resourceName == "Wood") {
+            m_soldierTypeTable.m_novice.m_wood = toInt(tokens[1]);
+            m_soldierTypeTable.m_expert.m_wood = toInt(tokens[2]);
+        }
+        else if (resourceName == "Mineral") {
+            m_soldierTypeTable.m_novice.m_mineral = toInt(tokens[1]);
+            m_soldierTypeTable.m_expert.m_mineral = toInt(tokens[2]);
+        }
+
+        linesParsed++;
+
+        // 다음 데이터 행을 읽습니다. (마지막 행이 아니면)
+        if (linesParsed < linesToParse) {
+            if (!std::getline(stream, dataLine)) {
+                throw std::runtime_error("[ParseStartResourceTable] 예상보다 데이터 행이 적습니다.");
+            }
+        }
+    }
+
+    if (linesParsed < linesToParse) {
+        throw std::runtime_error("[ParseStartResourceTable] 예상보다 데이터 행이 적습니다.");
+    }
 }
 
-void DataTableManager::ParseArmyTable()
+void DataTableManager::ParseWaveTable()
 {
+    std::cout << "[DEBUG] 데이터 파싱 진입 - Wave" << std::endl;
+    const std::string& csv = GetCSV("Wave");
+    std::istringstream stream(csv);
+    std::string dataLine;
+
+    int linesToParse = 3; // Novice, Expert, Day 총 3개의 데이터 행을 파싱
+    int linesParsed = 0;
+
+    // 파일의 모든 행을 순차적으로 읽음
+    while (linesParsed < linesToParse && std::getline(stream, dataLine))
+    {
+        std::cout << "[DEBUG] 읽은 CSV 행: \"" << dataLine << "\"" << std::endl;
+
+        std::vector<std::string> tokens;
+        std::istringstream lineStream(dataLine);
+        std::string cell;
+
+        // 쉼표로 각 셀을 분리
+        while (std::getline(lineStream, cell, ',')) {
+            tokens.push_back(JDUtil::trim(cell));
+        }
+
+        // 빈 줄 또는 첫 번째 셀이 빈 행은 스킵
+        if (tokens.empty() || tokens[0].empty()) {
+            std::cout << "[DEBUG] 빈 행 스킵" << std::endl;
+            continue;
+        }
+
+        const std::string& rowName = tokens[0];
+        std::cout << "[DEBUG] 현재 행 이름: " << rowName << std::endl;
+
+        auto toInt = [](const std::string& s) { return std::stoi(s); };
+
+        if (rowName == "Novice") {
+            if (tokens.size() < MAX_GAME_WAVE_COUNT + 1) {
+                throw std::runtime_error("[ParseWaveTable] CSV 포맷 오류 : Novice 열 개수 부족");
+            }
+            for (int wave = 0; wave < MAX_GAME_WAVE_COUNT; ++wave) {
+                m_waveTable.m_novice[wave] = toInt(tokens[1 + wave]);
+                std::cout << "[DEBUG] Novice[" << wave << "] = " << m_waveTable.m_novice[wave] << std::endl;
+            }
+            linesParsed++;
+            std::cout << "[DEBUG] Novice 행 파싱 완료" << std::endl;
+        }
+        else if (rowName == "Expert") {
+            if (tokens.size() < MAX_GAME_WAVE_COUNT + 1) {
+                throw std::runtime_error("[ParseWaveTable] CSV 포맷 오류 : Expert 열 개수 부족");
+            }
+            for (int wave = 0; wave < MAX_GAME_WAVE_COUNT; ++wave) {
+                m_waveTable.m_expert[wave] = toInt(tokens[1 + wave]);
+                std::cout << "[DEBUG] Expert[" << wave << "] = " << m_waveTable.m_expert[wave] << std::endl;
+            }
+            linesParsed++;
+            std::cout << "[DEBUG] Expert 행 파싱 완료" << std::endl;
+        }
+        else if (rowName == "Day") {
+            if (tokens.size() < MAX_GAME_WAVE_COUNT + 1) {
+                throw std::runtime_error("[ParseWaveTable] CSV 포맷 오류 : Day 열 개수 부족");
+            }
+            for (int wave = 0; wave < MAX_GAME_WAVE_COUNT; ++wave) {
+                m_waveTable.m_day[wave] = toInt(tokens[1 + wave]);
+                std::cout << "[DEBUG] Day[" << wave << "] = " << m_waveTable.m_day[wave] << std::endl;
+            }
+            linesParsed++;
+            std::cout << "[DEBUG] Day 행 파싱 완료" << std::endl;
+        }
+        else {
+            std::cerr << "[WARNING] 알 수 없는 행 발견: " << rowName << ". 해당 줄을 건너뜁니다." << std::endl;
+        }
+    }
+
+    if (linesParsed < linesToParse) {
+        throw std::runtime_error("[ParseWaveTable] 예상보다 데이터 행이 적습니다.");
+    }
+
+    std::cout << "[DEBUG] 모든 Wave 데이터 파싱 완료" << std::endl;
 }
 
-void DataTableManager::ParseEnemyTable()
+
+void DataTableManager::ParseExpeditionTable()
 {
+    std::cout << "[DEBUG] 데이터 파싱 진입 - ExpeditionReward" << std::endl;
+    const std::string& csv = GetCSV("ExpeditionReward");
+    std::istringstream stream(csv);
+    std::string dataLine;
+
+    constexpr int N = MAX_GAME_EXPEDITION_TYPE; // CSV는 Expedition1..N, 그리고 Expedition1_reward..N_reward
+    bool gotFood = false, gotWood = false, gotMineral = false, gotPoint = false, gotSuccess = false;
+
+    auto toInt = [](const std::string& s) {
+        std::string t = JDUtil::trim(s);
+        return t.empty() ? 0 : std::stoi(t);
+        };
+    auto toFloat = [](const std::string& s) {
+        std::string t = JDUtil::trim(s);
+        return t.empty() ? 0.f : std::stof(t);
+        };
+
+    while (std::getline(stream, dataLine))
+    {
+        std::vector<std::string> tokens;
+        std::istringstream lineStream(dataLine);
+        std::string cell;
+        while (std::getline(lineStream, cell, ',')) tokens.push_back(JDUtil::trim(cell));
+
+        if (tokens.empty() || tokens[0].empty()) continue;
+
+        const std::string& row = tokens[0];
+        const int have = static_cast<int>(tokens.size()) - 1;
+
+        auto parseResourceRow = [&](auto setCost, auto setReward) {
+            // 필요 최소: 앞 N(비용) + 뒤 N(보상) = 2N
+            if (have < 2 * N) {
+                throw std::runtime_error("[ParseExpeditionTable] CSV 포맷 오류 : " + row + " 열 개수 부족");
+            }
+            for (int i = 0; i < N; ++i) {
+                setCost(i, toInt(tokens[1 + i]));
+                setReward(i, toInt(tokens[1 + N + i]));
+            }
+            };
+
+        if (row == "Food") {
+            parseResourceRow(
+                [&](int i, int v) { m_expeditionTable.m_cost[i].m_food = v; },
+                [&](int i, int v) { m_expeditionTable.m_reward[i].m_food = v; }
+            );
+            gotFood = true;
+        }
+        else if (row == "Wood") {
+            parseResourceRow(
+                [&](int i, int v) { m_expeditionTable.m_cost[i].m_wood = v; },
+                [&](int i, int v) { m_expeditionTable.m_reward[i].m_wood = v; }
+            );
+            gotWood = true;
+        }
+        else if (row == "Mineral") {
+            parseResourceRow(
+                [&](int i, int v) { m_expeditionTable.m_cost[i].m_mineral = v; },
+                [&](int i, int v) { m_expeditionTable.m_reward[i].m_mineral = v; }
+            );
+            gotMineral = true;
+        }
+        else if (row == "Point") {
+            if (have < N) {
+                throw std::runtime_error("[ParseExpeditionTable] CSV 포맷 오류 : Point 열 개수 부족");
+            }
+            for (int i = 0; i < N; ++i) m_expeditionTable.m_point[i] = toInt(tokens[1 + i]);
+            gotPoint = true;
+        }
+        else if (row == "SuccessRate") {
+            if (have < N) {
+                throw std::runtime_error("[ParseExpeditionTable] CSV 포맷 오류 : SuccessRate 열 개수 부족");
+            }
+            for (int i = 0; i < N; ++i) {
+                // 퍼센트(10,15,25) 그대로 저장하려면 그대로, 확률(0.10f 등)로 쓰려면 /100.f
+                m_expeditionTable.m_successRate[i] = toFloat(tokens[1 + i]); // 필요시 /100.f
+            }
+            gotSuccess = true;
+        }
+        // 그 외 라벨은 무시
+    }
+
+    if (!(gotFood && gotWood && gotMineral && gotPoint && gotSuccess))
+        throw std::runtime_error("[ParseExpeditionTable] 필요한 행(Food/Wood/Mineral/Point/SuccessRate)을 모두 찾지 못했습니다.");
+
+    std::cout << "[DEBUG] ExpeditionReward 파싱 완료" << std::endl;
 }
+
 
 void DataTableManager::PrintAllTable()
 {
@@ -588,6 +816,15 @@ void DataTableManager::PrintAllTable()
     m_lumberMillTable.PrintStats();
     m_mineTable.PrintStats();
     m_houseTable.PrintStats();
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+    m_soldierTypeTable.PrintStats();
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+    m_waveTable.PrintStats();
+    cout << "=========================================" << endl;
+    cout << "=========================================" << endl;
+    m_expeditionTable.PrintStats();
     cout << "=========================================" << endl;
     cout << "=========================================" << endl;
 

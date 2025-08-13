@@ -76,6 +76,7 @@ namespace JDScene {
         // 원정대 생성.
         void CreateExpedition();
 
+
         bool IsEnemySpawned(int day) const {
             return std::find(m_showedDays.begin(), m_showedDays.end(), day) != m_showedDays.end();
         }

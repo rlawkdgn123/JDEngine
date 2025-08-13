@@ -1,30 +1,45 @@
 #include "pch.h"
 #include "WaveManager.h"
+#include "DataTableManager.h"
 
 void WaveManager::LoadStageWaves()
 {
+    m_wavesTable = DataTableManager::Instance().GetWaveTableInfo();
     m_waves.clear();
     m_currDay = 1;
 
     switch (m_currStage) {
-    case 1: { // 아직 스테이지 1밖에 없음.
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {1, 0} }, 300 });  
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 1} }, 500 });  
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {3, 0} }, 800 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 3} }, 1000 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {8, 0} }, 1300 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 5} }, 1500 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {13, 0} }, 1800 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 7} }, 2000 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {16, 0} }, 2300 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 9} }, 2500 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {20, 0} }, 2800 });
-        //m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 11} }, 3000 });
+    case 1: { // 아직 스테이지 1밖에 없음..
+        /*m_waves.push_back({ JDGameSystem::UnitCounts{ {1, 0} }, 300 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 1} }, 500 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {3, 0} }, 800 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 3} }, 1000 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {8, 0} }, 1300 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 5} }, 1500 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {13, 0} }, 1800 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 7} }, 2000 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {16, 0} }, 2300 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 9} }, 2500 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {20, 0} }, 2800 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 11} }, 3000 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 4 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 94 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 104 });
         m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 114 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 124 });
+        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 3000 });*/
+        for (int i = 0; i < JDGlobal::Contents::MAX_GAME_WAVE_COUNT; ++i)
+        {
+            // 병사 수
+            JDGameSystem::UnitCounts units{
+                { m_wavesTable.m_novice[i], m_wavesTable.m_expert[i] }
+            };
+
+            // 날짜
+            int day = m_wavesTable.m_day[i];
+
+            // 웨이브 데이터 추가
+            m_waves.push_back({ units, day });
+        }
 
         break;
     }

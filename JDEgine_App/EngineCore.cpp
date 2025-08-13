@@ -2815,6 +2815,14 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] Art_Expedition_Button(Lv03)_mouseover 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Cannot)", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Cannot).png"))    // 원정 못감.
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Cannot) 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("Art_Expedition_Button(Cannot)_mouseover", L"../Resource/BATTLE/Expedition/Art_Expedition_Button(Cannot)_mouseover.png"))
+    {
+        std::cout << "[ERROR] Art_Expedition_Button(Cannot)_mouseover 텍스처 로드 실패" << std::endl;
+    }
 
 
     // 별

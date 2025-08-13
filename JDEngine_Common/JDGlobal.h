@@ -115,6 +115,8 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_GRID_COL = 4;
 		constexpr int MAX_GAME_GRID_ROW = 6;
 		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_ROW;
+		constexpr int MAX_GAME_WAVE_COUNT = 12;
+		constexpr int MAX_GAME_EXPEDITION_TYPE = 3;
 		constexpr int RESOURCE_COUNT = 3;
 
 		struct Resource {
@@ -279,7 +281,7 @@ namespace JDGlobal {
 			Back
 		};
 
-		enum class UnitType : int // 병사 종류.
+		enum class SordierType : int // 병사 종류.
 		{
 			Novice = 0, // 견습냥이.
 			Expert, // 숙련냥이
@@ -296,63 +298,44 @@ namespace JDGlobal {
 			DIRECTION_MAX
 		};
 
-		struct UnitCounts { // 병사 수 정보. 
-			std::array<int, 2> counts{};
 
-			int& operator[](UnitType type) {
-				return counts[static_cast<int>(type)];
-			}
-
-			const int& operator[](UnitType type) const {
-				return counts[static_cast<int>(type)];
-			}
-
-			UnitCounts& operator+=(const UnitCounts& other) {
-				for (int i = 0; i < 2; ++i) {
-					counts[i] += other.counts[i];
-				}
-				return *this;
-			}
-
-			int Total() const {
-				int sum = 0;
-				for (int n : counts) sum += n;
-				return sum;
-			}
-		};
-
-		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
+		class SordierTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
 		public:
-			UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
-				: m_unitType(type), m_recruitCost(cost), m_power(power) {
+			SordierTypeData(SordierType type = SordierType::Novice, Resource cost = {}, int power = 0)
+				: m_SordierType(type), m_recruitCost(cost), m_power(power) {
 			}
 
-			UnitType GetUnitType() const { return m_unitType; }
+			SordierType GetSordierType() const { return m_SordierType; }
 			Resource GetRecruitCost() const { return m_recruitCost; }
 			int GetPower() const { return m_power; }
 
 		private:
-			UnitType m_unitType;
+			SordierType m_SordierType;
 			Resource m_recruitCost;
 			int m_power;
 		};
 
-		struct WaveData { // 웨이브 데이터.
-			UnitCounts enemyUnits;
-			int day;
+		struct SordierTypeStats { // 병종 정보.
+			Resource m_novice;
+			Resource m_expert;
+			void PrintStats();
 		};
 
-		struct ExpeditionInfo { // 원정 정보. 
-			ExpeditionInfo() = default;
-			ExpeditionInfo(Resource cost, int point, float successRate, Resource reward)
-				: m_cost(cost), m_point(point), m_successRate(successRate), m_reward(reward) {
-			}
-
-			Resource m_cost;           // 필요 자원.
-			int m_point;               // 원정 포인트.
-			float m_successRate;       // 추가 보상 확률.
-			Resource m_reward;         // 추가 보상. 
+		struct WaveStats { // 웨이브 정보.
+			int m_novice[MAX_GAME_WAVE_COUNT];
+			int m_expert[MAX_GAME_WAVE_COUNT];
+			int m_day[MAX_GAME_WAVE_COUNT];
+			void PrintStats();
 		};
+
+		struct ExpeditionStats { // 원정 레벨 정보.
+			Resource m_cost[MAX_GAME_EXPEDITION_TYPE];
+			int m_point[MAX_GAME_EXPEDITION_TYPE];
+			float m_successRate[MAX_GAME_EXPEDITION_TYPE];
+			Resource m_reward[MAX_GAME_EXPEDITION_TYPE];
+			void PrintStats();
+		};
+		
 		
 		// 사용안함
 		struct WorkerStats {

@@ -45,6 +45,8 @@ namespace JDScene {
 
         void Render(float deltaTime) override;
 
+        void FinalizeGameScene();   // 게임 씬 정리
+
         void ProcessDayTimer(float deltaTime);
         void ProcessBattle(float deltaTime);
         void BattleReward();

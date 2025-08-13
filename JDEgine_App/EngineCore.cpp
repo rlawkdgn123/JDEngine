@@ -2761,6 +2761,12 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
     }
 
+    // 웨이브
+    if (!AssetManager::Instance().LoadTexture("ART_Monster001", L"../Resource/BATTLE/ART_Monster001.png"))
+    {
+        std::cout << "[ERROR] ART_Monster001 텍스처 로드 실패" << std::endl;
+    }
+
 #pragma endregion
     
     // 초급, 중급, 상급

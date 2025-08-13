@@ -782,7 +782,7 @@ namespace JDScene {
 
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
-                    m_awayButton->SetSize({ 125.f, 35.0f });
+                    m_awayButton->SetSize({ 135.5f, 47.0f });
                 }
 
                 std::cout << "[GameScene] 원정 끝." << std::endl;
@@ -3997,6 +3997,7 @@ namespace JDScene {
                 {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
                 }
+
                 m_awayButton->SetSize({ 135.5f, 47.0f });
 
             });

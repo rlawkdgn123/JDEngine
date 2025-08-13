@@ -223,8 +223,6 @@ namespace JDScene {
             }
         }
 
-        
-
         if(ResolveGameEnding()) return; // 엔딩 관리.
 
         // 화면 크기(파티클 off-screen 처리용)
@@ -443,6 +441,8 @@ namespace JDScene {
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
 
         // 화면 크기
         auto sz = ctx->GetSize();
@@ -1706,18 +1706,17 @@ namespace JDScene {
         switch (catType)
         {
         case JDGlobal::Contents::CatType::Kone:
-            m_catEffctImage->SetTextureName("ART_CostWood01");
+            m_catEffctImage->SetTextureName("ART_CostMineral01");
             break;
         case JDGlobal::Contents::CatType::Navi:
             m_catEffctImage->SetTextureName("ART_CostFood01");
             break;
         case JDGlobal::Contents::CatType::Felis:
-            m_catEffctImage->SetTextureName("ART_CostMineral01");
+            m_catEffctImage->SetTextureName("ART_CostWood01");
             break;
         default:
             break;
         }
-        
     }
 
     void GameScene::CloseCatInfo()
@@ -2452,6 +2451,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
                 SetTimeScale(0.0f);
             });
 
@@ -2481,6 +2481,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
                 SetTimeScale(1.0f);
             });
 
@@ -2506,9 +2507,11 @@ namespace JDScene {
         m_speedButton->SetPosition({ 842.f, 473.f });
 
         // 스피드 버튼 클릭하면 실행될 이벤트
-        m_speedButton->AddOnClick("Quit Game", [this]()
+        m_speedButton->AddOnClick("ChangeTimeScale", [this]()
             {
                 if (isOpenOption) { return; }
+
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
 
                 if (GetTimeScale() == 2.0f) {
                     SetTimeScale(4.0f);
@@ -2546,7 +2549,7 @@ namespace JDScene {
         m_optionButton->AddOnClick("Show Option", [this]()
             {
                 if (isOpenOption) { return; }
-
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
                 ShowOptionUI();
             });
 
@@ -2669,7 +2672,7 @@ namespace JDScene {
         m_costImage = CreateUIObject<Image>(L"UI_BuildCostImage");
         m_costImage->SetTextureName("ART_CostWood01");
         m_costImage->SetSizeToOriginal();
-        m_costImage->SetPosition({ -84, -412 });
+        m_costImage->SetPosition({ -85, -412 });
         m_costImage->SetAnchor({ 1.0f, 0.0f });
         m_costImage->SetScale({ 0.4f, 0.4f });
 
@@ -2732,6 +2735,7 @@ namespace JDScene {
                                 cout << "건축 실패! 자원이 모자랍니다!" << endl;
                                 return;
                             }
+                            AudioManager::Instance().PlaySFX("SFX_Building_Build", &sfxChannel);
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2835,6 +2839,8 @@ namespace JDScene {
                                 cout << "건축 실패! 자원이 모자랍니다!" << endl;
                                 return;
                             }
+
+                            AudioManager::Instance().PlaySFX("SFX_Building_Build", &sfxChannel);
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2935,6 +2941,7 @@ namespace JDScene {
                                 cout << "건축 실패! 자원이 모자랍니다!" << endl;
                                 return;
                             }
+                            AudioManager::Instance().PlaySFX("SFX_Building_Build", &sfxChannel);
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -3036,6 +3043,7 @@ namespace JDScene {
                                 cout << "건축 실패! 자원이 모자랍니다!" << endl;
                                 return;
                             }
+                            AudioManager::Instance().PlaySFX("SFX_Building_Build", &sfxChannel);
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -3220,6 +3228,7 @@ namespace JDScene {
                             Building* building = dynamic_cast<Building*>(grid->GetBuilding());
 
                             if (building) {
+                                AudioManager::Instance().PlaySFX("SFX_Cat_Put", &sfxChannel);
                                 building->ChangeCat(CatType::Kone);
                                 building->PrintCat();
                             }
@@ -3289,6 +3298,7 @@ namespace JDScene {
                             Building* building = dynamic_cast<Building*>(grid->GetBuilding());
 
                             if (building) {
+                                AudioManager::Instance().PlaySFX("SFX_Cat_Put", &sfxChannel);
                                 building->ChangeCat(CatType::Navi);
                             }
 
@@ -3357,6 +3367,7 @@ namespace JDScene {
                             Building* building = dynamic_cast<Building*>(grid->GetBuilding());
 
                             if (building) {
+                                AudioManager::Instance().PlaySFX("SFX_Cat_Put", &sfxChannel);
                                 building->ChangeCat(CatType::Felis);
                             }
 
@@ -4176,6 +4187,8 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
+                AudioManager::Instance().PlaySFX("SFX_Battle_Expedition", &sfxChannel);
+
                 // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
                 if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv01)_mouseover")
                 {
@@ -4200,6 +4213,8 @@ namespace JDScene {
         m_awayButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
 
                 // TODO 초중급 나눠야하는데 우선 이미지로 판별할까?
                 if (m_awayButton->GetTextureName() == "Art_Expedition_Button(Lv01)")
@@ -5015,12 +5030,12 @@ namespace JDScene {
             m_expertCatButton->SetTextureName("ART_RecruitFelis02");
             break;
         case CatType::Navi:
-            m_trainerCatButton->SetTextureName("ART_RecruitKone01");
-            m_expertCatButton->SetTextureName("ART_RecruitKone02");
-            break;
-        case CatType::Kone:
             m_trainerCatButton->SetTextureName("ART_RecruitNavi01");
             m_expertCatButton->SetTextureName("ART_RecruitNavi02");
+            break;
+        case CatType::Kone:
+            m_trainerCatButton->SetTextureName("ART_RecruitKone01");
+            m_expertCatButton->SetTextureName("ART_RecruitKone01");
             break;
         default:
             break;
@@ -5834,7 +5849,10 @@ namespace JDScene {
             // 리트라이 버튼 클릭하면 실행될 이벤트
             m_selecRetry->AddOnClick("Quit Game", [this]()
                 {
+                    AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+
                     if (isOpenOption) { return; }
+
                     SceneManager::Instance().ChangeScene("GameScene");
                 });
 
@@ -5872,6 +5890,7 @@ namespace JDScene {
             m_selecGoMenu->AddOnClick("Quit Game", [this]()
                 {
                     if (isOpenOption) { return; }
+                    AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
                     SceneManager::Instance().ChangeScene("TitleScene");
                 });
 

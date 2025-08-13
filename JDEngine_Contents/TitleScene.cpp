@@ -65,7 +65,7 @@ namespace JDScene {
     void TitleScene::CreateTitleScene()
     {
 
-        // ShowCursor(FALSE);
+        ShowCursor(FALSE);
         // UI
         ////////////////////////////////////////////////////////////////////////////////
 

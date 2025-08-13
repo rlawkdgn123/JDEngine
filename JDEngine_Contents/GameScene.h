@@ -70,8 +70,8 @@ namespace JDScene {
         GameObjectBase* CreateStructure(const std::wstring& name, JDGlobal::Base::GameTag tag,
             const Vector2F& pos, const std::string& textureName); // 구조물.
 
-        GameObjectBase* CreateUIButton(const std::wstring& name, const Vector2F& pos,
-            const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // 버튼.
+        //GameObjectBase* CreateUIButton(const std::wstring& name, const Vector2F& pos,
+        //    const std::string& textureName, const std::string& clickEventName, std::function<void()> callback); // 버튼.
 
         // 원정대 생성.
         void CreateExpedition();
@@ -167,7 +167,6 @@ namespace JDScene {
         const float m_battleTime = 2.0f;
         float m_btlElapsedTime = 0.0f;
 
-
         JDGameObject::GameObjectBase* m_targetEnemy = nullptr;       // 처음 선택된 적.
         JDGameObject::GameObjectBase* m_playerObject = nullptr;      // 처음 아군.
         JDGameObject::GameObjectBase* m_barracksObject = nullptr;    // 아군 병영.
@@ -202,6 +201,30 @@ namespace JDScene {
         void SpawnNextWaveIndicator(int wavePower);
         void AdvanceNextWaveIndicators(); // 현재 날짜 기준으로 nextMoveDay를 지난 것만 이동
         std::vector<NextWaveIndicator> m_nextWaveIndicators;
+
+        ///////////////////////////////////////////////////////////////////////////////
+        // 전투 아군 적군 관리용. 추가 부분.
+       
+        std::vector<JDGameObject::GameObjectBase*> m_players;
+        std::vector<JDGameObject::GameObjectBase*> m_enemies;
+
+        void RegisterUnit(JDGlobal::Base::GameTag tag, JDGameObject::GameObjectBase* obj);
+        void UnregisterUnit(JDGameObject::GameObjectBase* obj);
+
+        struct Attachment {
+            JDGameObject::GameObjectBase* follower{ nullptr };
+            JDGameObject::GameObjectBase* host{ nullptr };
+            Vector2F offset{ 0,0 };
+        };
+        std::vector<Attachment> m_attachments;
+
+        JDGameObject::GameObjectBase* AttachObject(JDGameObject::GameObjectBase* follower,
+            JDGameObject::GameObjectBase* host,
+            Vector2F offset);
+        void UpdateAttachments(float dt);
+        void DetachByHost(JDGameObject::GameObjectBase* host);
+
+        JDGameObject::GameObjectBase* CreateHeadMarker(JDGameObject::GameObjectBase* host);
         ///////////////////////////////////////////////////////////////////////////////
 
         // 맵 생성 변수

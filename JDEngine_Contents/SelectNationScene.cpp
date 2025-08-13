@@ -124,10 +124,10 @@ namespace JDScene {
         // 국가 설명 텍스트
         m_nationDescText = CreateUIObject<Text>(L"NationDesc_Text");
         m_nationDescText->SetText(L"국가 설명");
-        m_nationDescText->SetTextFormatName("Sebang_58");
+        m_nationDescText->SetTextFormatName("Sebang_54");
         m_nationDescText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
         m_nationDescText->SetSize({ 1600, 300 });
-        m_nationDescText->SetPosition({ 0, -320 });
+        m_nationDescText->SetPosition({ 0, -340 });
 
         // 국가 효과 텍스트
         m_nationEffectText = CreateUIObject<Text>(L"NationEffect_Text");
@@ -197,7 +197,7 @@ namespace JDScene {
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
-            m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
@@ -215,8 +215,8 @@ namespace JDScene {
         m_naviImageButton = CreateUIObject<Button>(L"Navi_Image");
         m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseout");
         m_naviImageButton->SetText(L"");
-        m_naviImageButton->SetSize({ 495, 585 });
-        m_naviImageButton->SetPosition({ -505, 123 });
+        m_naviImageButton->SetSize({ 493, 560 });
+        m_naviImageButton->SetPosition({ -505, 109 });
         m_naviImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
@@ -256,8 +256,8 @@ namespace JDScene {
         m_felisImageButton = CreateUIObject<Button>(L"Felis_Image");
         m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseout");
         m_felisImageButton->SetText(L"");
-        m_felisImageButton->SetSize({ 495, 585 });
-        m_felisImageButton->SetPosition({ 0, 123 });
+        m_felisImageButton->SetSize({ 492, 588 });
+        m_felisImageButton->SetPosition({ 0.0f, 121.5f });
         m_felisImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
@@ -297,8 +297,8 @@ namespace JDScene {
         m_koneImageButton = CreateUIObject<Button>(L"Kone_Image");
         m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
         m_koneImageButton->SetText(L"");
-        m_koneImageButton->SetSize({ 495, 585 });
-        m_koneImageButton->SetPosition({ 505, 123 });
+        m_koneImageButton->SetSize({ 493, 560 });
+        m_koneImageButton->SetPosition({ 505, 109 });
         m_koneImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
@@ -357,27 +357,29 @@ namespace JDScene {
         }
 
         // 나비, 펠리스, 코네
-        bool m_hoveredCharacter[static_cast<int>(CatType::CatTypeMAX)] = { false, false, false };
+        for (int i = 0; i < static_cast<int>(CatType::CatTypeMAX); i++)
+        {
+            m_hoveredCharacter[i] = false;
+        }
 
         // 국가 설명 이미지, 텍스트
-        Image* m_nationDescImage = nullptr;
-        Text* m_nationDescText = nullptr;
-        Text* m_nationEffectText = nullptr;
+        m_nationDescImage = nullptr;
+        m_nationDescText = nullptr;
+        m_nationEffectText = nullptr;
 
         // 선택된 국가 타이틀 텍스트를 담은 이미지
-        Image* m_titleTextImage = nullptr;
+        m_titleTextImage = nullptr;
 
-
-        Button* m_naviImageButton = nullptr;        // 나비 이미지 버튼
-        Button* m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
-        Button* m_koneImageButton = nullptr;        // 코네 이미지 버튼
+        m_naviImageButton = nullptr;        // 나비 이미지 버튼
+        m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
+        m_koneImageButton = nullptr;        // 코네 이미지 버튼
 
         // 클릭한 고양이 국가 ( 기본값 )
         CatType m_selectedNation = CatType::CatTypeMAX;
 
         // 초임 집사, 경험있는 집사 선택 버튼
-        Button* m_newCatParentButton = nullptr;
-        Button* m_experiencedCatParentButton = nullptr;
+        // m_newCatParentButton = nullptr;
+        m_experiencedCatParentButton = nullptr;
     }
 
     void SelectNationScene::InitSound()
@@ -487,7 +489,7 @@ namespace JDScene {
                 m_nationDescText->SetText(L"국가 설명");
                 m_nationEffectText->SetText(L"");
 
-                m_nationDescText->SetTextFormatName("Sebang_58");
+                m_nationDescText->SetTextFormatName("Sebang_54");
             }
 
             break;
@@ -659,7 +661,7 @@ namespace JDScene {
                         m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
 
                         m_nationDescText->SetText(L"국가 설명");
-                        m_nationDescText->SetTextFormatName("Sebang_50");
+                        m_nationDescText->SetTextFormatName("Sebang_54");
 
                         ClearHoveredCharacter();
                         m_titleTextImage->SetTextureName("ART_Q_1");

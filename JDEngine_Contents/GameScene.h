@@ -12,6 +12,7 @@
 #include "BuildSystem.h"
 #include "ArmySystem.h"
 #include "WaveManager.h"
+#include "Animation.h"
 
 using namespace JDGameObject::Content;
 class GameTimer;
@@ -44,6 +45,8 @@ namespace JDScene {
         void LateUpdate(float deltaTime) override;
 
         void Render(float deltaTime) override;
+
+        void FinalizeGameScene();   // 게임 씬 정리
 
         void ProcessDayTimer(float deltaTime);
         void ProcessBattle(float deltaTime);
@@ -207,6 +210,8 @@ namespace JDScene {
         bool CheckEnding(); // 기본 엔딩 조건.
         bool ResolveGameEnding(); // 엔딩 분기 처리.
 
+        bool m_isEnding = false;
+
         ///////////////////////////////////////////////////////////////////////////////
         // 전투 아군 적군 관리용. 추가 부분.
        
@@ -310,6 +315,8 @@ namespace JDScene {
         GameObject* m_barrackMaxText = nullptr;
         GameObject* m_attackPowerText = nullptr;
 
+        //엔딩UI
+        void CreateEndingUI();
         ////////////////////////////////////////////////////////////////////////////////
 
         // 그리드와 상호작용 중 인지 확인하기 위한 플래그
@@ -497,5 +504,63 @@ namespace JDScene {
         // UI 개발용 필터
         void CreateFillter();
         Image* m_fillter = nullptr;
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //엔딩 UI
+        enum class EndingType { None, Bad, Good };
+
+        void StartEnding(EndingType type);
+
+        static inline float Clamp01(float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); }
+
+        static float EaseOutBack(float t, float overshoot = 0.7f) {
+            t = Clamp01(t);
+            t -= 1.0f;
+            return t * t * ((overshoot + 1.0f) * t + overshoot) + 1.0f;
+        }
+
+        static float EaseOutElasticSmall(float t) {
+            t = Clamp01(t);
+            if (t == 0.f || t == 1.f) return t;
+            // 강도/주기 약하게(살짝만 튀게)
+            const float p = 0.30f;                 // period (작을수록 잔진동 짧음)
+            return std::pow(2.f, -10.f * t) * std::sin((t - p * 0.25f) * (2.f * 3.14159265f) / p) + 1.f;
+        }
+
+        static float EaseOutCubic(float t) {
+            t = (t < 0.f) ? 0.f : (t > 1.f ? 1.f : t);
+            return 1.f - (1.f - t) * (1.f - t) * (1.f - t);
+        }
+
+        EndingType m_endingType = EndingType::None;
+        JDComponent::AnimationRender* m_spearAnim = nullptr;
+
+        bool     m_endAnimStarted = false;
+        bool     m_endAnimDone = false;
+        float    m_endAnimTime = 0.0f;
+        float    m_endAnimDur = 0.1f;   // 내려오는 시간(초)
+
+        // 딜레이(초)
+        float m_delayEnd = 0.00f;
+        float m_delayRetry = 0.00f;
+        float m_delayMenu = 0.00f;
+
+        // 지속시간(초) — 작을수록 더 빠름, 클수록 더 느림
+        float m_durEnd = 1.0f;
+        float m_durRetry = 1.0f;
+        float m_durMenu = 1.0f;
+
+        Vector2F m_endStartPos, m_endTargetPos;
+        Vector2F m_retryStartPos, m_retryTargetPos;  // 좌측 버튼
+        Vector2F m_menuStartPos, m_menuTargetPos;   // 우측 버튼
+
+        Image* m_endingUI = nullptr;
+        Image* m_retry = nullptr;
+        Image* m_goMenu = nullptr;
+
+        Button* m_selecRetry = nullptr;
+        Button* m_selecGoMenu = nullptr;
+
+        GameObject* m_spear = nullptr;
     };
 }

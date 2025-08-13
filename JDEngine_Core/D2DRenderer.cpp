@@ -25,6 +25,10 @@ void D2DRenderer::Initialize(HWND hwnd)
     m_wicFactory = wicFactory;
 
     m_camera = std::make_unique<Camera>();
+
+    /*ID2D1DeviceContext* ctx = GetD2DContext();
+    ctx->SetUnitMode(D2D1_UNIT_MODE_DIPS);
+    ctx->SetDpi(96.0f, 96.0f);*/
 }
 
 void D2DRenderer::Uninitialize()
@@ -219,7 +223,7 @@ void D2DRenderer::SetTransform(const D2D1_MATRIX_3X2_F tm)
 void D2DRenderer::RenderBegin()
 {
     m_d2dContext->BeginDraw();
-    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White)); // 배경을 흰색으로 초기화
+    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::WhiteSmoke)); // 배경을 흰색으로 초기화
 }
 
 void D2DRenderer::RenderEnd(bool bPresent)
@@ -288,7 +292,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
         // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
         anim->Render(ctx, finalTransform);
-        return;
+        //return;
     }
 
     // 5) 애니메이션이 없으면 기존 스프라이트 렌더러 호출
@@ -576,7 +580,10 @@ void D2DRenderer::CreateWriteResource()
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 50.0f, "Sebang_50");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 54.0f, "Sebang_54");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 58.0f, "Sebang_58");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 14.0f, "Sebang_Bold_14");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 22.0f, "Sebang_Bold_22");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 20.0f, "Sebang_Bold_20");

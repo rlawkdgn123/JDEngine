@@ -157,7 +157,7 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    SceneManager::Instance().ChangeScene("TitleScene");
+     SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
@@ -1931,7 +1931,10 @@ void EngineCore::LoadResources()
 {
 
 #pragma region Asset_Exam
-
+    if (!AssetManager::Instance().LoadTexture("Art_Opacity", L"../Resource/BATTLE/Art_Opacity.png"))
+    {
+        std::cout << "[ERROR] Art_Opacity 텍스처 로드 실패" << std::endl;
+    }
     // 예시 파일 Exam
     ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("TITLE_Exam", L"../Resource/TITLE_Exam.png"))
@@ -2761,6 +2764,39 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
     }
 
+    // 웨이브
+    if (!AssetManager::Instance().LoadTexture("ART_Monster001", L"../Resource/BATTLE/ART_Monster001.png"))
+    {
+        std::cout << "[ERROR] ART_Monster001 텍스처 로드 실패" << std::endl;
+    if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU02", L"../Resource/BATTLE/ART_BACK_TO_MENU02.png"))
+    {
+        std::cout << "[ERROR] ART_BACK_TO_MENU02 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU01", L"../Resource/BATTLE/ART_BACK_TO_MENU01.png"))
+    {
+        std::cout << "[ERROR] ART_BACK_TO_MENU01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RETRY02", L"../Resource/BATTLE/ART_RETRY02.png"))
+    {
+        std::cout << "[ERROR] ART_RETRY02 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RETRY01", L"../Resource/BATTLE/ART_RETRY01.png"))
+    {
+        std::cout << "[ERROR] ART_RETRY01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_BadEnd01", L"../Resource/BATTLE/ART_BadEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_BadEnd01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_GoodEnd01", L"../Resource/BATTLE/ART_GoodEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_GoodEnd01 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_NomalEnd01", L"../Resource/BATTLE/ART_NomalEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_NomalEnd01 텍스처 로드 실패" << std::endl;
+    }
+
 #pragma endregion
     
     // 초급, 중급, 상급
@@ -2837,10 +2873,22 @@ void EngineCore::LoadResources()
 
 
     // Patikle Resource
-    ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
     {
-        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] blossom 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("leaf", L"../Resource/Patikle/ART_LeefParticle01.png"))
+    {
+        std::cout << "[ERROR] leaf 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("wave", L"../Resource/Patikle/ART_PondParticle01.png"))
+    {
+        std::cout << "[ERROR] wave 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("smoke", L"../Resource/Patikle/smoke_particle.png"))
+    {
+        std::cout << "[ERROR] smoke 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
     {

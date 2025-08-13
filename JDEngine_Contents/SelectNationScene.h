@@ -54,8 +54,7 @@ namespace JDScene {
 
     private:
         FMOD::Channel* m_hoverSfxChannel = nullptr;
-        FMOD::Channel* bgmChannel = nullptr;
-        FMOD::Channel* sfxChannel = nullptr;
+
         // 나비, 펠리스, 코네
         bool m_hoveredCharacter[static_cast<int>(CatType::CatTypeMAX)] = { false, false, false };
 

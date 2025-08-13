@@ -1,0 +1,72 @@
+{ "frames": [
+   {
+    "filename": "Rat_1 0.png",
+    "frame": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   },
+   {
+    "filename": "Rat_1 1.png",
+    "frame": { "x": 132, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   },
+   {
+    "filename": "Rat_1 2.png",
+    "frame": { "x": 264, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   },
+   {
+    "filename": "Rat_1 3.png",
+    "frame": { "x": 396, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   },
+   {
+    "filename": "Rat_1 4.png",
+    "frame": { "x": 528, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   },
+   {
+    "filename": "Rat_1 5.png",
+    "frame": { "x": 660, "y": 0, "w": 132, "h": 129 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 132, "h": 129 },
+    "sourceSize": { "w": 132, "h": 129 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-x64",
+  "image": "Rat_1-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 792, "h": 129 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

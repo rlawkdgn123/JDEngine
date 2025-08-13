@@ -9,24 +9,7 @@ void WaveManager::LoadStageWaves()
     m_currDay = 1;
 
     switch (m_currStage) {
-    case 1: { // 아직 스테이지 1밖에 없음..
-        /*m_waves.push_back({ JDGameSystem::UnitCounts{ {1, 0} }, 300 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 1} }, 500 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {3, 0} }, 800 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 3} }, 1000 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {8, 0} }, 1300 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 5} }, 1500 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {13, 0} }, 1800 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 7} }, 2000 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {16, 0} }, 2300 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 9} }, 2500 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {20, 0} }, 2800 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {0, 11} }, 3000 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 4 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 94 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 104 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 114 });
-        m_waves.push_back({ JDGameSystem::UnitCounts{ {10, 0} }, 3000 });*/
+    case 1: {
         for (int i = 0; i < JDGlobal::Contents::MAX_GAME_WAVE_COUNT; ++i)
         {
             // 병사 수
@@ -73,14 +56,14 @@ GameDate WaveManager::GetConvertedDate() const
 {
     const int daysPerMonth = 30; 
     const int monthsPerYear = 12;
-    const int daysPerYear = daysPerMonth * monthsPerYear;  // 360일.
+    const int daysPerYear = daysPerMonth * monthsPerYear;  // 360??
 
     int totalDays = m_currDay - 1;
 
     GameDate date;
     date.year = totalDays / daysPerYear + 1; 
     date.month = (totalDays % daysPerYear) / daysPerMonth + 1; 
-    date.day = (totalDays % daysPerMonth) + 1;  // 1년 1월 1일부터 시작.
+    date.day = (totalDays % daysPerMonth) + 1;  // 1??1??1?쇰????쒖옉.
 
     return date;
 }

@@ -44,6 +44,7 @@ namespace JDGameSystem {
 	public:
 		void InitGradesInfo(); // 원정 정보 초기화.
 		ExpeditionInfo GetExpeditionInfo(ExpeditionGrade grade) const; // 원정 정보 가져오기.
+		ExpeditionGrade GetExpeditionGrade() const { return m_nowExpeditionGrade; } // 현재 원정 등급.
 		bool SendExpedition(ExpeditionGrade grade); // 원정 보낼 수 있는지 검사하고 자원 소모.
 		bool RollBonusReward(float successRate) const; // 추가 보상 얻을 수 있는지.
 		void RollBonusType(); // 랜덤 보상 종류 결정.

@@ -1,5 +1,6 @@
 #pragma once
 #include "Grid.h"
+#include "BoxCollider.h"
 
 namespace JDGameObject { namespace Content { class Grid; } }
 
@@ -18,6 +19,7 @@ public:
 	}
 public:
 
+	void UpdateTextureObj(JDComponent::ColliderBase* selectedCol);
 	void SetStartGridMat(int sRow, int sCol, int eRow, int eCol) { 
 		m_startRows = sRow; m_startCols = sCol;
 		m_endRows = eRow; m_endCols = eCol;

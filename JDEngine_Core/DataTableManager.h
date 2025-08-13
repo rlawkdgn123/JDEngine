@@ -23,9 +23,13 @@ public:
         population = m_startResourceTable.m_population;
     }
     void GetFishingSpotTable(BuildingStats& table) { table = m_fishingSpotTable; }
+    BuildingStats GetFishingSpotTableInfo() const { return m_fishingSpotTable; }
     void GetLumberMillTable(BuildingStats& table) { table = m_lumberMillTable; }
-    void GetMineTable(BuildingStats& table) { table = m_mineTable; }
+    BuildingStats GetLumbermillTableInfo() { return m_lumberMillTable; }
+    void GetMineTable(BuildingStats& table) const { table = m_mineTable; }
+    BuildingStats GetMineTableInfo() { return m_mineTable; }
     void GetHouseTable(HouseStats& table) { table = m_houseTable; }
+    HouseStats GetHouseTableInfo() const { return m_houseTable; }
 
     // CSV Parsing
     bool LoadCSV(const std::string& name, const std::string& filePath);

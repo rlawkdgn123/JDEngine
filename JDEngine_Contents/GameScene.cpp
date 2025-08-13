@@ -1337,6 +1337,7 @@ namespace JDScene {
         }
     }
 
+
     void GameScene::InitGridCreateMenu()
     {
         // 기본 UI 보이기
@@ -1527,7 +1528,7 @@ namespace JDScene {
     }
 
     //void GameScene::ShowBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
-    void GameScene::ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
+    void GameScene::ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText)
     {
         ChangeGridCreateInfo(buildType, costText, effectText);
 
@@ -1538,6 +1539,24 @@ namespace JDScene {
         m_effectInfoText->SetActive(true);
         m_effectText->SetActive(true);
         m_effctImage->SetActive(true);
+
+        m_effectText->SetText(effectText);
+
+        switch (buildType) {
+        case BuildingType::House:
+            m_effctImage->SetTextureName("ART_CostPop01");
+            break;
+        case BuildingType::FishingSpot:
+            m_effctImage->SetTextureName("ART_CostFood01");
+            break;
+        case BuildingType::LumberMill:
+            m_effctImage->SetTextureName("ART_CostWood01");
+            break;
+        case BuildingType::Mine:
+            m_effctImage->SetTextureName("ART_CostMineral01");
+            break;
+        }
+        
     }
 
     void GameScene::CloseGridCreateInfo()
@@ -1555,7 +1574,7 @@ namespace JDScene {
         m_effctImage->SetActive(false);
     }
 
-    void GameScene::ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText)
+    void GameScene::ShowCatInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText)
     {
         ChangeUpgradeInfo(catType, costText, effectText);
 
@@ -1566,6 +1585,25 @@ namespace JDScene {
         m_catEffectInfoText->SetActive(true);
         m_catEffectText->SetActive(true);
         m_catEffctImage->SetActive(true);
+
+        m_catCostText->SetText(costText);
+        m_catEffectText->SetText(effectText);
+
+        switch (catType)
+        {
+        case JDGlobal::Contents::CatType::Kone:
+            m_catEffctImage->SetTextureName("ART_CostWood01");
+            break;
+        case JDGlobal::Contents::CatType::Navi:
+            m_catEffctImage->SetTextureName("ART_CostFood01");
+            break;
+        case JDGlobal::Contents::CatType::Felis:
+            m_catEffctImage->SetTextureName("ART_CostMineral01");
+            break;
+        default:
+            break;
+        }
+        
     }
 
     void GameScene::CloseCatInfo()
@@ -1582,7 +1620,7 @@ namespace JDScene {
         m_catEffctImage->SetActive(false);
     }
 
-    void GameScene::ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText)
+    void GameScene::ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText)
     {
         switch (catType)
         {
@@ -1877,7 +1915,7 @@ namespace JDScene {
     }
 
     // void GameScene::ChangeBuildInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
-    void GameScene::ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText)
+    void GameScene::ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText)
     {
         switch (buildType)
         {
@@ -2109,6 +2147,21 @@ namespace JDScene {
         m_maxPopText->SetSize({ 300, 100 });
         m_maxPopText->SetPosition({ -775, 510 });
 
+        // 인구 자원 버튼 마우스를 올리면 실행될 이벤트
+        m_buttonPop->AddOnEnter("Highlight On", [this]()
+            {
+                cout << "호버버버법버버버버버버벗" << endl;
+                m_PopulationUI->SetActive(true);
+                m_PopulationText->SetActive(true);
+            });
+
+        // 인구 자원 버튼 마우스가 벗어나면 실행될 이벤트
+        m_buttonPop->AddOnExit("Highlight Off", [this]()
+            {
+                m_PopulationUI->SetActive(false);
+                m_PopulationText->SetActive(false);
+            });
+
         ////////////////////////////////////////////////////////////////////////////////
 
         // 식량
@@ -2135,6 +2188,19 @@ namespace JDScene {
         m_resFoodText->SetSize({ 300, 100 });
         m_resFoodText->SetPosition({ -568, 510 });
 
+        // 식량 자원 버튼 마우스를 올리면 실행될 이벤트
+        m_buttonFood->AddOnEnter("Highlight On", [this]()
+            {
+                m_FoodUI->SetActive(true);
+                m_FoodText->SetActive(true);
+            });
+
+        // 식량 자원 버튼 마우스가 벗어나면 실행될 이벤트
+        m_buttonFood->AddOnExit("Highlight Off", [this]()
+            {
+                m_FoodUI->SetActive(false);
+                m_FoodText->SetActive(false);
+            });
         ////////////////////////////////////////////////////////////////////////////////
 
         // 목재
@@ -2161,6 +2227,20 @@ namespace JDScene {
         m_resWoodText->SetSize({ 300, 100 });
         m_resWoodText->SetPosition({ -362, 510 });
 
+        // 목재 자원 버튼 마우스를 올리면 실행될 이벤트
+        m_buttonWood->AddOnEnter("Highlight On", [this]()
+            {
+                m_WoodUI->SetActive(true);
+                m_WoodText->SetActive(true);
+            });
+
+        // 목재 자원 버튼 마우스가 벗어나면 실행될 이벤트
+        m_buttonWood->AddOnExit("Highlight Off", [this]()
+            {
+                m_WoodUI->SetActive(false);
+                m_WoodText->SetActive(false);
+            });
+
         ////////////////////////////////////////////////////////////////////////////////
 
         // 광물
@@ -2186,6 +2266,20 @@ namespace JDScene {
         m_resMineralText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
         m_resMineralText->SetSize({ 300, 100 });
         m_resMineralText->SetPosition({ -161, 510 });
+
+        // 광물 자원 버튼 마우스를 올리면 실행될 이벤트
+        m_buttonMineral->AddOnEnter("Highlight On", [this]()
+            {
+                m_MineralUI->SetActive(true);
+                m_MineralText->SetActive(true);
+            });
+
+        // 광물 자원 버튼 마우스가 벗어나면 실행될 이벤트
+        m_buttonMineral->AddOnExit("Highlight Off", [this]()
+            {
+                m_MineralUI->SetActive(false);
+                m_MineralText->SetActive(false);
+            });
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -2515,6 +2609,15 @@ namespace JDScene {
                     // 그리드 건물 유무 확인
                     if (grid) {
                         if (!grid->HasBuilding() && grid->IsOccupied()) { // 그리드가 빌딩이 없고, 점유중이면
+                            ResourceSystem& resourceSystem = ResourceSystem::Instance();
+                            auto nextUpgradeCost = m_dataTableManager->GetHouseTableInfo().m_upgradeCost[0]; // 레벨업 비용
+                            // 자원 부족 여부 체크
+                            if (resourceSystem.GetTotalResource().m_food < nextUpgradeCost.m_food ||
+                                resourceSystem.GetTotalResource().m_wood < nextUpgradeCost.m_wood ||
+                                resourceSystem.GetTotalResource().m_mineral < nextUpgradeCost.m_mineral) {
+                                cout << "건축 실패! 자원이 모자랍니다!" << endl;
+                                return;
+                            }
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2523,6 +2626,8 @@ namespace JDScene {
                             return;
                         }
                     }
+
+
                     //콜라이더 월드 위치 및 스케일 가져와서 이미지에 적용
                     Vector2F tileWorldPos = m_selectedCollider->GetOwner()
                         ->GetComponent<Transform>()->GetWorldPosition();
@@ -2566,7 +2671,8 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::House, "50", "1/초");
+                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::House, to_wstring(m_dataTableManager->GetHouseTableInfo().m_upgradeCost[0].m_wood),
+                    to_wstring(m_dataTableManager->GetHouseTableInfo().m_initPopulation[0]));
             });
 
         // 주거지 버튼 마우스가 벗어나면 실행될 이벤트
@@ -2606,6 +2712,15 @@ namespace JDScene {
                     // 그리드 건물 유무 확인
                     if (grid) {
                         if (!grid->HasBuilding() && grid->IsOccupied()) { // 그리드가 빌딩이 없고, 점유중이면
+                            ResourceSystem& resourceSystem = ResourceSystem::Instance();
+                            auto nextUpgradeCost = m_dataTableManager->GetFishingSpotTableInfo().m_upgradeCost[0]; // 레벨업 비용
+                            // 자원 부족 여부 체크
+                            if (resourceSystem.GetTotalResource().m_food < nextUpgradeCost.m_food ||
+                                resourceSystem.GetTotalResource().m_wood < nextUpgradeCost.m_wood ||
+                                resourceSystem.GetTotalResource().m_mineral < nextUpgradeCost.m_mineral) {
+                                cout << "건축 실패! 자원이 모자랍니다!" << endl;
+                                return;
+                            }
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2657,7 +2772,8 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::FishingSpot, "40", "2/초");
+                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::FishingSpot, to_wstring(m_dataTableManager->GetFishingSpotTableInfo().m_upgradeCost[0].m_wood),
+                    to_wstring(m_dataTableManager->GetFishingSpotTableInfo().m_resourceGenPerSec[0].m_food)+L"/초");
             });
 
         // 낚시터 버튼 마우스가 벗어나면 실행될 이벤트
@@ -2696,6 +2812,15 @@ namespace JDScene {
                     // 그리드 건물 유무 확인
                     if (grid) {
                         if (!grid->HasBuilding() && grid->IsOccupied()) { // 그리드가 빌딩이 없고, 점유중이면
+                            ResourceSystem& resourceSystem = ResourceSystem::Instance();
+                            auto nextUpgradeCost = m_dataTableManager->GetLumbermillTableInfo().m_upgradeCost[0]; // 레벨업 비용
+                            // 자원 부족 여부 체크
+                            if (resourceSystem.GetTotalResource().m_food < nextUpgradeCost.m_food ||
+                                resourceSystem.GetTotalResource().m_wood < nextUpgradeCost.m_wood ||
+                                resourceSystem.GetTotalResource().m_mineral < nextUpgradeCost.m_mineral) {
+                                cout << "건축 실패! 자원이 모자랍니다!" << endl;
+                                return;
+                            }
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2747,7 +2872,8 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::LumberMill, "30", "3/초");
+                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::LumberMill, to_wstring(m_dataTableManager->GetLumbermillTableInfo().m_upgradeCost[0].m_wood),
+                    to_wstring(m_dataTableManager->GetLumbermillTableInfo().m_resourceGenPerSec[0].m_wood) + L"/초");
             });
 
         // 제재소 버튼 마우스가 벗어나면 실행될 이벤트
@@ -2787,6 +2913,15 @@ namespace JDScene {
                     // 그리드 건물 유무 확인
                     if (grid) {
                         if (!grid->HasBuilding() && grid->IsOccupied()) { // 그리드가 빌딩이 없고, 점유중이면
+                            ResourceSystem& resourceSystem = ResourceSystem::Instance();
+                            auto nextUpgradeCost = m_dataTableManager->GetMineTableInfo().m_upgradeCost[0]; // 레벨업 비용
+                            // 자원 부족 여부 체크
+                            if (resourceSystem.GetTotalResource().m_food < nextUpgradeCost.m_food ||
+                                resourceSystem.GetTotalResource().m_wood < nextUpgradeCost.m_wood ||
+                                resourceSystem.GetTotalResource().m_mineral < nextUpgradeCost.m_mineral) {
+                                cout << "건축 실패! 자원이 모자랍니다!" << endl;
+                                return;
+                            }
                             grid->SetHasBuilding(true);
                         }
                         else {
@@ -2838,7 +2973,8 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::Mine, "20", "4/초");
+                ShowGridCreateInfo(JDGlobal::Contents::BuildingType::Mine, to_wstring(m_dataTableManager->GetMineTableInfo().m_upgradeCost[0].m_wood),
+                    to_wstring(m_dataTableManager->GetMineTableInfo().m_resourceGenPerSec[0].m_mineral) + L"/초");
             });
 
         // 광산 버튼 마우스가 벗어나면 실행될 이벤트
@@ -2993,7 +3129,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowCatInfo(JDGlobal::Contents::CatType::Kone, "50", "1/초");
+                ShowCatInfo(JDGlobal::Contents::CatType::Kone, L"1", L"+"+to_wstring(JDGlobal::Contents::CatResourceBonus().KoneBonus.m_mineral) + L"%");
             });
 
         // 코네 선택 버튼 마우스가 벗어나면 실행될 이벤트
@@ -3061,7 +3197,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowCatInfo(JDGlobal::Contents::CatType::Navi, "50", "1/초");
+                ShowCatInfo(JDGlobal::Contents::CatType::Navi, L"1", L"+" + to_wstring(JDGlobal::Contents::CatResourceBonus().NaviBonus.m_food) + L"%");
             });
 
         // 나비냥 선택 버튼 마우스가 벗어나면 실행될 이벤트
@@ -3129,7 +3265,7 @@ namespace JDScene {
             {
                 if (isOpenOption) { return; }
 
-                ShowCatInfo(JDGlobal::Contents::CatType::Felis, "50", "1/초");
+                ShowCatInfo(JDGlobal::Contents::CatType::Felis, L"1", L"+" + to_wstring(JDGlobal::Contents::CatResourceBonus().FelisBonus.m_wood) + L"%");
             });
 
         // 펠리스 선택 버튼 마우스가 벗어나면 실행될 이벤트
@@ -4027,6 +4163,112 @@ namespace JDScene {
 
 #pragma endregion
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // 자원 상세 페이지 UI
+
+        auto& rs = ResourceSystem::Instance();
+
+        Vector2F buttonPos;
+        Vector2F offset = Vector2F{ -105, 110 };
+        Vector2F uiPos;
+        ////////////////////////////////////////////////////////////////////////////////
+
+        m_PopulationUI = CreateUIObject<Image>(L"UI_PopulationInfo");
+        m_PopulationUI->SetTextureName("ART_Information_Box_Expedition");
+        m_PopulationUI->SetSize({ 280, 150 });
+
+        buttonPos = m_buttonPop->GetPosition();
+        uiPos = buttonPos - offset;
+
+        m_PopulationUI->SetPosition({ uiPos.x , uiPos.y });
+        m_PopulationUI->SetAnchor({ 1.0f, 0.0f });
+        m_PopulationUI->SetActive(false);
+
+        m_PopulationText = CreateUIObject<Text>(L"UI_PopulationInfoText");
+        m_PopulationText->SetText(L"N  인구 자원은 다음과 같이 계산됩니다 :");
+        m_PopulationText->SetTextFormatName("Sebang_16");
+        m_PopulationText->SetColor(D2D1::ColorF(0x2F3315));
+        m_PopulationText->SetSize({ 300, 50 });
+        m_PopulationText->SetPosition(m_PopulationUI->GetComponent<RectTransform>()->GetPosition());
+        m_PopulationText->SetActive(false);
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        m_FoodUI = CreateUIObject<Image>(L"UI_FoodInfo");
+        m_FoodUI->SetTextureName("ART_Information_Box_Expedition");
+        m_FoodUI->SetSize({ 280, 150 });
+
+        buttonPos = m_buttonFood->GetPosition();
+        uiPos = buttonPos - offset;
+
+        m_FoodUI->SetPosition({ uiPos.x , uiPos.y });
+        m_FoodUI->SetAnchor({ 1.0f, 0.0f });
+        m_FoodUI->SetActive(false);
+
+        m_FoodText = CreateUIObject<Text>(L"UI_FoodInfoText");
+        m_FoodText->SetText(L"N 식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
+            L"낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
+        m_FoodText->SetTextFormatName("Sebang_16");
+        m_FoodText->SetColor(D2D1::ColorF(0x2F3315));
+        m_FoodText->SetSize({ 300, 50 });
+        m_FoodText->SetPosition(m_FoodUI->GetComponent<RectTransform>()->GetPosition());
+        m_FoodText->SetActive(false);
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        m_WoodUI = CreateUIObject<Image>(L"UI_WoodInfo");
+        m_WoodUI->SetTextureName("ART_Information_Box_Expedition");
+        m_WoodUI->SetSize({280, 150});
+        
+        buttonPos = m_buttonWood->GetPosition();
+        uiPos = buttonPos - offset;
+
+        m_WoodUI->SetPosition({ uiPos.x , uiPos.y });
+        m_WoodUI->SetAnchor({ 1.0f, 0.0f });
+        m_WoodUI->SetActive(false);
+
+        m_WoodText = CreateUIObject<Text>(L"UI_WoodInfoText");
+        m_WoodText->SetText(L"N 목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
+            L"제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
+        m_WoodText->SetTextFormatName("Sebang_16");
+        m_WoodText->SetColor(D2D1::ColorF(0x2F3315));
+        m_WoodText->SetSize({ 300, 50 });
+        m_WoodText->SetPosition(m_WoodUI->GetComponent<RectTransform>()->GetPosition());
+        m_WoodText->SetActive(false);
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        m_MineralUI = CreateUIObject<Image>(L"UI_MineralInfo");
+        m_MineralUI->SetTextureName("ART_Information_Box_Expedition");
+        m_MineralUI->SetSize({ 280, 150 });
+
+        buttonPos = m_buttonMineral->GetPosition();
+        uiPos = buttonPos - offset;
+
+        m_MineralUI->SetPosition({ uiPos.x , uiPos.y });
+        m_MineralUI->SetAnchor({ 1.0f, 0.0f });
+        m_MineralUI->SetActive(false);
+
+        m_MineralText = CreateUIObject<Text>(L"UI_MineralInfoText");
+        m_MineralText->SetText(L"N 광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
+           L"광산 건물 초당 생산량("+to_wstring(rs.GetResourcePerSec().m_mineral) +
+            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
+            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
+            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
+        m_MineralText->SetTextFormatName("Sebang_16");
+        m_MineralText->SetColor(D2D1::ColorF(0x2F3315));
+        m_MineralText->SetSize({ 300, 50 });
+        m_MineralText->SetPosition(m_MineralUI->GetComponent<RectTransform>()->GetPosition());
+        m_MineralText->SetActive(false);
+
+        ////////////////////////////////////////////////////////////////////////////////
+
         //// 4) 그리드 클릭하면 나오는 메뉴
         //m_Menu = CreateUIObject<Image>(L"MenuBackground");
 
@@ -4144,6 +4386,8 @@ namespace JDScene {
         //        x += gap;
         //    }
         //}
+
+
 
         // 기본 UI 보이기
         // TODO : 함수명 맞추기

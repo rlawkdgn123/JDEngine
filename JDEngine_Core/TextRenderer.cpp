@@ -21,8 +21,7 @@ namespace JDComponent {
     void TextRenderer::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
     {
         // SetActive가 false면 리턴
-        if (!m_Owner || !m_Owner->IsActive())
-            return;
+        if (!m_Owner || !m_Owner->IsActive()) return;
 
         // 1. 월드 변환 행렬 설정
         context->SetTransform(worldTransform);

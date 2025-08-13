@@ -100,6 +100,7 @@ namespace JDScene {
 
         // 자원 UI 업데이트
         void UpdateResourceUI();
+        void ShowResourceInfo(JDGlobal::Contents::ResourceType resourceType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 1. 건설 UI
@@ -107,10 +108,10 @@ namespace JDScene {
         void ShowGridCreateMenu();
         void CloseGridCreateMenu();
 
-        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText);
         void CloseGridCreateInfo();
 
-        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::string costText, std::string effectText);
+        void ChangeGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 2. 업그레이드 UI
@@ -120,9 +121,9 @@ namespace JDScene {
         void CloseGridSettingMenu();
 
         // 업그레이드 UI 
-        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void ShowCatInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText);
         void CloseCatInfo();
-        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::string costText, std::string effectText);
+        void ChangeUpgradeInfo(JDGlobal::Contents::CatType catType, std::wstring costText, std::wstring effectText);
 
         ////////////////////////////////////////////////////////////////////////////////
         // 3. 징병 UI
@@ -567,6 +568,24 @@ namespace JDScene {
 
         GameObject* m_spear = nullptr;
 
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 인구 UI
+        Image* m_PopulationUI = nullptr;
+        Text* m_PopulationText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 음식 UI
+        Image* m_FoodUI = nullptr;
+        Text* m_FoodText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 목재 UI
+        Image* m_WoodUI = nullptr;
+        Text* m_WoodText = nullptr;
+        ////////////////////////////////////////////////////////////////////////////////
+        //자원 - 광물 UI
+        Image* m_MineralUI = nullptr;
+        Text* m_MineralText = nullptr;
+        
+        ////////////////////////////////////////////////////////////////////////////////
         void RenderCursor(Vector2F mouseClientPos,
             float scale = 1.0f, float alpha = 1.0f);
 

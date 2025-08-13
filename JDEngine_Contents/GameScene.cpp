@@ -64,10 +64,10 @@ namespace JDScene {
         m_date = WaveManager::Instance().GetConvertedDate();
 
         // 자원 세팅.
-        auto& rs = ResourceSystem::Instance();
+       /* auto& rs = ResourceSystem::Instance();
         rs.SetTotalResource(Resource(1000, 1000, 1000));
         rs.SetMaxPopulation(500);
-        rs.SetCurPopulation(100);
+        rs.SetCurPopulation(100);*/
 
         m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
@@ -98,6 +98,19 @@ namespace JDScene {
         if (bgmChannel) {
             bgmChannel->stop(); // FMOD에서 채널을 멈춤
             bgmChannel = nullptr; // 포인터도 초기화 (안전)
+        }
+
+        // 선택된 오브젝트 포인터 초기화
+        SetSelectedObject(nullptr);
+
+        // 오브젝트 제거
+        for (const auto& gameObject : m_gameObjects)
+        {
+            DestroyObject(gameObject.get());
+        }
+        for (const auto& uiObject : m_uiObjects)
+        {
+            DestroyObject(uiObject.get());
         }
 
         FinalizeGameScene();
@@ -2227,7 +2240,7 @@ namespace JDScene {
         m_buildTypeText = CreateUIObject<Text>(L"UI_BuildTypeText");
         m_buildTypeText->SetText(L"광산");
         m_buildTypeText->SetTextFormatName("Sebang_Bold_24");
-        m_buildTypeText->SetColor(D2D1::ColorF(0x69512C));
+        m_buildTypeText->SetColor(D2D1::ColorF(0x2F3315));
         m_buildTypeText->SetSize({ 300, 100 });
         m_buildTypeText->SetPosition({ -63.8f, -385.5f });
 
@@ -2235,7 +2248,7 @@ namespace JDScene {
         m_costInfoText = CreateUIObject<Text>(L"UI_BuildCostInfoText");
         m_costInfoText->SetText(L"코스트 :");
         m_costInfoText->SetTextFormatName("Sebang_22");
-        m_costInfoText->SetColor(D2D1::ColorF(0x69512C));
+        m_costInfoText->SetColor(D2D1::ColorF(0x2F3315));
         m_costInfoText->SetSize({ 300, 100 });
         m_costInfoText->SetPosition({ -126, -435 });
 
@@ -2246,7 +2259,7 @@ namespace JDScene {
         m_costText = CreateUIObject<Text>(L"UI_BuildCostText");
         m_costText->SetText(to_wstring(stat.m_upgradeCost[0].m_wood));
         m_costText->SetTextFormatName("Sebang_22");
-        m_costText->SetColor(D2D1::ColorF(0x69512C));
+        m_costText->SetColor(D2D1::ColorF(0x2F3315));
         m_costText->SetSize({ 300, 100 });
         m_costText->SetPosition({ 2, -432 });
 
@@ -2261,14 +2274,14 @@ namespace JDScene {
         m_effectInfoText = CreateUIObject<Text>(L"UI_BuildEffectInfoText");
         m_effectInfoText->SetText(L"효과 :");
         m_effectInfoText->SetTextFormatName("Sebang_22");
-        m_effectInfoText->SetColor(D2D1::ColorF(0x69512C));
+        m_effectInfoText->SetColor(D2D1::ColorF(0x2F3315));
         m_effectInfoText->SetSize({ 300, 100 });
         m_effectInfoText->SetPosition({ -126, -479 });
 
         m_effectText = CreateUIObject<Text>(L"UI_BuildEffectText");
         m_effectText->SetText(L"/초");
         m_effectText->SetTextFormatName("Sebang_22");
-        m_effectText->SetColor(D2D1::ColorF(0x69512C));
+        m_effectText->SetColor(D2D1::ColorF(0x2F3315));
         m_effectText->SetSize({ 300, 100 });
         m_effectText->SetPosition({ 2, -478 });
 
@@ -3400,7 +3413,7 @@ namespace JDScene {
         m_awayBeginner = CreateUIObject<Button>(L"UI_AwayBeginnerButton");
         m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level");
         m_awayBeginner->SetText(L"");
-        m_awayBeginner->SetSize({ 174.8f, 33.0f });
+        m_awayBeginner->SetSize({ 183.f, 42.f });
         m_awayBeginner->SetPosition({ 760, -425 });
 
         // 원정 초급 버튼 클릭하면 실행될 이벤트
@@ -3425,7 +3438,7 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level_mouseover");
-                m_awayBeginner->SetSize({ 183.f, 42.f });
+                m_awayBeginner->SetSize({ 171.f, 30.f });
             });
 
         // 원정 초급 버튼 마우스가 벗어나면 실행될 이벤트
@@ -3434,7 +3447,7 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayBeginner->SetTextureName("Art_Expedition_Button(Lv01)_Level");
-                m_awayBeginner->SetSize({ 174.8f, 33.0f });
+                m_awayBeginner->SetSize({ 183.f, 42.f });
             });
 
         // 중급 Button
@@ -3442,7 +3455,7 @@ namespace JDScene {
         m_awayIntermediate = CreateUIObject<Button>(L"UI_AwayIntermediate");
         m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level");
         m_awayIntermediate->SetText(L"");
-        m_awayIntermediate->SetSize({ 174.8f, 33.0f });
+        m_awayIntermediate->SetSize({ 183.f, 42.f });
         m_awayIntermediate->SetPosition({ 760, -463 });
 
         // 원정 중급 버튼 클릭하면 실행될 이벤트
@@ -3466,7 +3479,7 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level_mouseover");
-                m_awayIntermediate->SetSize({ 183.f, 42.f });
+                m_awayIntermediate->SetSize({ 171.f, 30.f });
             });
 
         // 원정 중급 버튼 마우스가 벗어나면 실행될 이벤트
@@ -3475,14 +3488,14 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayIntermediate->SetTextureName("Art_Expedition_Button(Lv02)_Level");
-                m_awayIntermediate->SetSize({ 174.8f, 33.0f });
+                m_awayIntermediate->SetSize({ 183.f, 42.f });
             });
 
         // 상급 Button
         m_awayAdvanced = CreateUIObject<Button>(L"UI_AwayAdvanced");
         m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level");
         m_awayAdvanced->SetText(L"");
-        m_awayAdvanced->SetSize({ 174.8f, 33.0f });
+        m_awayAdvanced->SetSize({ 183.f, 42.f });
         m_awayAdvanced->SetPosition({ 760, -500 });
 
         // 원정 상급 버튼 클릭하면 실행될 이벤트
@@ -3506,7 +3519,7 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level_mouseover");
-                m_awayAdvanced->SetSize({ 183.f, 42.f });
+                m_awayAdvanced->SetSize({ 171.f, 30.f });
                  
             });
 
@@ -3516,7 +3529,7 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 m_awayAdvanced->SetTextureName("Art_Expedition_Button(Lv03)_Level");
-                m_awayAdvanced->SetSize({ 174.8f, 33.0f });
+                m_awayAdvanced->SetSize({ 183.f, 42.f });
 
             });
 
@@ -3572,7 +3585,7 @@ namespace JDScene {
         m_awayCostText02->SetTextFormatName("Sebang_16");
         m_awayCostText02->SetColor(D2D1::ColorF(0x2F3315));
         m_awayCostText02->SetSize({ 50, 100 });
-        m_awayCostText02->SetPosition({ 822, -70 });
+        m_awayCostText02->SetPosition({ 820, -70 });
 
         // 원정 코스트 _ 03 ( 이미지 & 텍스트 )
         m_awayCostImage03 = CreateUIObject<Image>(L"UI_AwayCostImage03");
@@ -3619,7 +3632,7 @@ namespace JDScene {
         m_awayButton = CreateUIObject<Button>(L"UI_AwayButton");
         m_awayButton->SetTextureName("Art_Expedition_Button(Lv01)");
         m_awayButton->SetText(L"");
-        m_awayButton->SetSize({ 125.f, 35.0f });
+        m_awayButton->SetSize({ 135.5f, 47.0f });
         m_awayButton->SetPosition({ 768, -216 });
 
         // 병력 보내기 버튼 클릭하면 실행될 이벤트
@@ -3668,7 +3681,7 @@ namespace JDScene {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)_mouseover");
                 }
 
-                m_awayButton->SetSize({ 135.f, 47.0f });
+                m_awayButton->SetSize({ 123.5f, 35.0f });
             });
 
         // 병력 보내기 버튼 마우스가 벗어나면 실행될 이벤트
@@ -3692,7 +3705,7 @@ namespace JDScene {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Lv03)");
                 }
 
-                m_awayButton->SetSize({ 125.f, 35.0f });
+                m_awayButton->SetSize({ 135.5f, 47.0f });
             });
 
         // 병력 보내기 팝업 별 이미지

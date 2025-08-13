@@ -215,8 +215,8 @@ namespace JDScene {
         m_naviImageButton = CreateUIObject<Button>(L"Navi_Image");
         m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseout");
         m_naviImageButton->SetText(L"");
-        m_naviImageButton->SetSize({ 495, 585 });
-        m_naviImageButton->SetPosition({ -505, 123 });
+        m_naviImageButton->SetSize({ 493, 560 });
+        m_naviImageButton->SetPosition({ -505, 109 });
         m_naviImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
@@ -256,8 +256,8 @@ namespace JDScene {
         m_felisImageButton = CreateUIObject<Button>(L"Felis_Image");
         m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseout");
         m_felisImageButton->SetText(L"");
-        m_felisImageButton->SetSize({ 495, 585 });
-        m_felisImageButton->SetPosition({ 0, 123 });
+        m_felisImageButton->SetSize({ 492, 588 });
+        m_felisImageButton->SetPosition({ 0.0f, 121.5f });
         m_felisImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
@@ -297,8 +297,8 @@ namespace JDScene {
         m_koneImageButton = CreateUIObject<Button>(L"Kone_Image");
         m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
         m_koneImageButton->SetText(L"");
-        m_koneImageButton->SetSize({ 495, 585 });
-        m_koneImageButton->SetPosition({ 505, 123 });
+        m_koneImageButton->SetSize({ 493, 560 });
+        m_koneImageButton->SetPosition({ 505, 109 });
         m_koneImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트

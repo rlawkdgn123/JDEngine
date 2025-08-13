@@ -29,8 +29,8 @@ namespace JDGameObject {
         {
             // 고양이가 배치되어 있다면, 관련된 모든 자원 효과를 제거합니다.
             if (m_cat != CatType::None) {
-                // 인구 감소
-                m_resourceSystem->AddCurPopulation(-1);
+                // 인구 증가
+                m_resourceSystem->AddCurPopulation(1);
 
                 // 고양이 보너스 제거
                 auto bonus = JDGlobal::Contents::CatResourceBonus();
@@ -67,7 +67,7 @@ namespace JDGameObject {
             if (oldCat != CatType::None) {
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceSubPerSec[m_curLevel]);
-                m_resourceSystem->AddCurPopulation(-1);
+                m_resourceSystem->AddCurPopulation(1);
             }
 
             // 새로운 상태에 따른 초당 자원량 변경
@@ -86,7 +86,7 @@ namespace JDGameObject {
 
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceSubPerSec[m_curLevel]);
-                m_resourceSystem->AddCurPopulation(1);
+                m_resourceSystem->AddCurPopulation(-1);
             }
 
             //디버그

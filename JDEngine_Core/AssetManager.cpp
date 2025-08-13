@@ -115,6 +115,50 @@ void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadAnimationRender("ART_SpearSprite01", L"../Resource/Animation/ART_SpearSprite01.json")) {
         std::cout << "[ERROR] ART_SpearSprite01 애니 로드 실패!" << std::endl;
     }
+
+    
+    // Patikle Resource
+      ////////////////////////////////////////////////////////////////////////////////
+    if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
+    {
+        std::cout << "[ERROR] blossom 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("leaf", L"../Resource/Patikle/ART_LeefParticle01.png"))
+    {
+        std::cout << "[ERROR] leaf 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("wave", L"../Resource/Patikle/ART_PondParticle01.png"))
+    {
+        std::cout << "[ERROR] wave 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("smoke", L"../Resource/Patikle/smoke_particle.png"))
+    {
+        std::cout << "[ERROR] smoke 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("dust2", L"../Resource/Dust2.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    //if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
+    //{
+    //    std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    //}
+    if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
+    {
+        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Patikle/ART_Cursor01.png"))
+    {
+        std::cout << "[ERROR] mouse 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("click", L"../Resource/Patikle/ART_Cursor01_Click.png"))
+    {
+        std::cout << "[ERROR] click 텍스처 로드 실패" << std::endl;
+    }
 }
 
 bool AssetManager::LoadTexture(const std::string& name, const std::wstring& filePath)

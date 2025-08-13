@@ -90,6 +90,13 @@ namespace JDScene {
         UpdateAwayPointUI();
         CreateEndingUI();
         ChangeAwayCatImage();
+
+        //마우스커서 생성초기화
+        m_mouse = CreateUIObject<Image>(L"mouse");
+        m_mouse->SetTextureName("mouse");
+        m_mouse->SetPivot({ 0.5,0.5 });
+        m_mouse->SetSizeToOriginal();
+        m_mouse->SetActive(true);
     }
 
     void GameScene::OnLeave() {
@@ -121,7 +128,7 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
-
+        MouseUpdate();
         // 애니 진행
         if (m_endAnimStarted) {
 
@@ -520,7 +527,7 @@ namespace JDScene {
     {
         auto* battleObj = CreateGameObject<Player>(L"battleObj");
         battleObj->SetTag(JDGlobal::Base::GameTag::BattleAnim);
-        battleObj->AddComponent<Editor_Clickable>();
+        battleObj->AddComponent<Editor_Clickable>();//여기요
         battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
 
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
@@ -1063,6 +1070,29 @@ namespace JDScene {
             }
         }*/
     }
+
+    void GameScene::MouseUpdate() {
+
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+
+        MouseState ms = InputManager::Instance().GetMouseState();
+        Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
+
+        if (auto* rtf = m_mouse->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+            rtf->SetPosition({ mousePos.x,mousePos.y });
+        }
+
+        bool pressed = ms.leftPressed;     // 네 입력 시스템에 맞게: leftDown/leftUp이 있으면 엣지로 써도 됨
+        if (pressed != m_prevLeftPressed) {
+            if (auto* img = m_mouse->GetComponent<UI_ImageComponent>()) {
+                img->SetTextureName(pressed ? "click" : "mouse"); // 클릭/기본
+            }
+            m_mouse->SetSizeToOriginal(); // 이미지 바꾼 뒤 원본 크기 재적용(필요시)
+            m_prevLeftPressed = pressed;
+        }
+    };
 
     JDGameObject::GameObjectBase* GameScene::CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag, JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName)
     {

@@ -38,6 +38,8 @@ namespace JDScene {
 
         LogicUpdate();                        // 씬 로직 업데이트
         ClickUpdate();                        // 클릭 업데이트
+        MouseUpdate();                        // 마우스 커서 업데이트
+        
     }
 
     void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
@@ -196,6 +198,7 @@ namespace JDScene {
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
+            
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
             });
@@ -221,7 +224,7 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_naviImageButton->AddOnClick("Load GameScene", []() {
-
+            SceneManager::Instance().ChangeScene("GameScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -262,7 +265,7 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_felisImageButton->AddOnClick("Load GameScene", []() {
-
+            SceneManager::Instance().ChangeScene("GameScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -303,7 +306,7 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_koneImageButton->AddOnClick("Load GameScene", []() {
-
+            SceneManager::Instance().ChangeScene("GameScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
@@ -333,6 +336,12 @@ namespace JDScene {
         //kone_Text->SetPosition({ -522, 32 });
 
         ////////////////////////////////////////////////////////////////////////////////
+        //마우스커서 생성초기화
+        m_mouse = CreateUIObject<Image>(L"mouse");
+        m_mouse->SetTextureName("mouse");
+        m_mouse->SetPivot({ 0.5,0.5 });
+        m_mouse->SetSizeToOriginal();
+        m_mouse->SetActive(true);
     }
 
     void SelectNationScene::FinalizeSelectNationScene()
@@ -709,6 +718,28 @@ namespace JDScene {
             }
         }
     }
+
+    void SelectNationScene::MouseUpdate() {
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+
+        MouseState ms = InputManager::Instance().GetMouseState();
+        Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
+
+        if (auto* rtf = m_mouse->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+            rtf->SetPosition({ mousePos.x,mousePos.y });
+        }
+
+        bool pressed = ms.leftPressed;     // 네 입력 시스템에 맞게: leftDown/leftUp이 있으면 엣지로 써도 됨
+        if (pressed != m_prevLeftPressed) {
+            if (auto* img = m_mouse->GetComponent<UI_ImageComponent>()) {
+                img->SetTextureName(pressed ? "click" : "mouse"); // 클릭/기본
+            }
+            m_mouse->SetSizeToOriginal(); // 이미지 바꾼 뒤 원본 크기 재적용(필요시)
+            m_prevLeftPressed = pressed;
+        }
+    };
 
     void SelectNationScene::ParticleUpdate(float deltaTime)
     {

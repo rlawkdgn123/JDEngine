@@ -157,11 +157,11 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-     SceneManager::Instance().ChangeScene("TitleScene");
+    // SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
-    // SceneManager::Instance().ChangeScene("SelectNationScene");
+     SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
@@ -215,7 +215,7 @@ void EngineCore::Run()
             {
                 continue; // InputManager가 처리했으면 여기서 끝냅니다.
             }
-
+            InputManager::Instance().BeginFrame();
             // 위에서 아무도 처리하지 않은 메시지는 Windows의 기본 방식으로 처리합니다.
             // WM_CHAR와 같은 메시지 생성을 위해 필수적입니다.
             TranslateMessage(&msg);
@@ -2872,40 +2872,7 @@ void EngineCore::LoadResources()
         }
 
 
-        // Patikle Resource
-       ////////////////////////////////////////////////////////////////////////////////
-        if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
-        {
-            std::cout << "[ERROR] blossom 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("leaf", L"../Resource/Patikle/ART_LeefParticle01.png"))
-        {
-            std::cout << "[ERROR] leaf 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("wave", L"../Resource/Patikle/ART_PondParticle01.png"))
-        {
-            std::cout << "[ERROR] wave 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("smoke", L"../Resource/Patikle/smoke_particle.png"))
-        {
-            std::cout << "[ERROR] smoke 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
-        {
-            std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("dust2", L"../Resource/Dust2.png"))
-        {
-            std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
-        {
-            std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
-        }
-        if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
-        {
-            std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
-        }
+       
 
         // TEST Resource
         ////////////////////////////////////////////////////////////////////////////////

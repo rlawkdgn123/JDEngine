@@ -73,7 +73,6 @@ void FMODSystem::PlayOneShot(const std::string& filepath, FMOD::ChannelGroup* gr
     if (outChannel) {
         *outChannel = channel;
     }
-    std::cout << "장후";
     //if (sound) sound->release();
 
     // NOTE: sound 포인터는 이후 해제하거나

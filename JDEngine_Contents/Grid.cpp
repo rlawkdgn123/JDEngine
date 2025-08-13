@@ -2,12 +2,13 @@
 #include "framework.h"
 #include "House.h"
 #include "Building.h"
-#include "Grid.h"
 #include "ResourceSystem.h"
 #include "SceneBase.h"
+#include "BoxCollider.h"
+#include "Grid.h"
 
 using namespace std;
-
+using Vec2 = JDComponent::D2DTM::Transform::Vec2;
 namespace JDGameObject {
     namespace Content {
 
@@ -27,7 +28,10 @@ namespace JDGameObject {
             // 시너지 처리를 한 후 고양이를 업데이트
             if (auto building = dynamic_cast<Building*>(m_buildingRaw)) {
                 if (m_cat == building->GetCatType()) return;  // 이전 고양이랑 같으면
-                else ChangeCatType(building->GetCatType());
+                else {
+                    ChangeCatType(building->GetCatType());
+                    ChangeCatTexture();
+                }
             }
         }
 
@@ -120,37 +124,43 @@ namespace JDGameObject {
         {
             // 그리드의 위치와 크기값 가져오기
             // 콜라이더 크기값
+            auto tr = this->GetComponent<JDComponent::Transform>();
+            if (!tr) { cout << "[Grid::CreateTextureObj] Transform 컴포넌트 없음!!" << endl; return false; }
+            auto boxCol = this->GetComponent<JDComponent::BoxCollider>();
+            if (!boxCol) { cout << "[Grid::CreateTextureObj] BoxCollider 컴포넌트 없음!!" << endl; return false; }
             
+            Vec2 bottom_Left{ (tr->GetWorldPosition().x - boxCol->GetQuarterSize().x), tr->GetWorldPosition().y - boxCol->GetQuarterSize().y };
+            Vec2 bottom_Right{ (tr->GetWorldPosition().x + boxCol->GetQuarterSize().x), tr->GetWorldPosition().y - boxCol->GetQuarterSize().y };
             /////
             // 고양이 텍스쳐
-            m_catTextureObj = scene.CreateGameObject<GameObject>(L"GameUI_Cat");
+            m_catTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_Cat"+this->GetName()));
             m_catTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_catTextureObj->AddComponent<Editor_Clickable>();
-            m_catTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Stiker01", RenderLayerInfo{ SortingLayer::Building, 1 });
+            m_catTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Stiker01", RenderLayerInfo{ SortingLayer::Grid, 1 });
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
-            m_catTextureObj->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
-            m_catTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ 166, 80 });
+            m_catTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(bottom_Right + Vec2{ 4.8f,-13.f });
+            m_catTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ boxCol->GetQuarterSize().x, boxCol->GetQuarterSize().y });
             m_catTextureObj->SetActive(false);
 
             if (!m_catTextureObj) return false;
 
             /////
             // 건물 레벨 텍스처
-            m_levelTextureObj = scene.CreateGameObject<GameObject>(L"GameUI_LevelTexture");
+            m_levelTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_LevelTexture" + this->GetName()));
             m_levelTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_levelTextureObj->AddComponent<Editor_Clickable>();
-            m_levelTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Building_Level", RenderLayerInfo{ SortingLayer::Building, 3 });
+            m_levelTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Building_Level", RenderLayerInfo{ SortingLayer::Grid, 2 });
             m_levelTextureObj->AddComponent<JDComponent::TextRenderer>(
                 L"1",
                 D2D1::SizeF(100.f, 100.f),
-                RenderLayerInfo{ SortingLayer::Building, 4 }
+                RenderLayerInfo{ SortingLayer::Grid, 2 }
             );
             m_levelTextureObj->GetComponent<JDComponent::TextRenderer>()->SetTextFormatName("Sebang_12");
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
-            m_levelTextureObj->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
-            m_levelTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ 166, 80 });
+            m_levelTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(bottom_Left + Vec2{-16.6f,-17.1f});
+            m_levelTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ boxCol->GetQuarterSize().x, boxCol->GetQuarterSize().y });
             m_levelTextureObj->GetComponent<JDComponent::TextRenderer>()->SetText(L"1");
             m_levelTextureObj->SetActive(false);
 
@@ -158,28 +168,28 @@ namespace JDGameObject {
 
             /////
             // 인접효과 화살표
-            m_synergyEffectTextureObj = scene.CreateGameObject<GameObject>(L"GameUI_SynergyEffect");
+            m_synergyEffectTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_SynergyEffect" + this->GetName()));
             m_synergyEffectTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_synergyEffectTextureObj->AddComponent<Editor_Clickable>();
-            m_synergyEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Up5", RenderLayerInfo{ SortingLayer::Building, 2 });
+            m_synergyEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("ART_Up5", RenderLayerInfo{ SortingLayer::Grid, 3 });
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
-            m_synergyEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
-            m_synergyEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ 166, 80 });
+            m_synergyEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(bottom_Right+ Vec2{14.7f, -14.3f});
+            m_synergyEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ boxCol->GetQuarterSize().x + 0.5f, boxCol->GetQuarterSize().y + 0.5f });
             m_synergyEffectTextureObj->SetActive(false);
 
             if (!m_synergyEffectTextureObj) return false;
 
             /////
             // 그리드 선택 텍스쳐
-            m_selectEffectTextureObj = scene.CreateGameObject<GameObject>(L"GameUI_SelectEffect");
+            m_selectEffectTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_SelectEffect" + this->GetName()));
             m_selectEffectTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_selectEffectTextureObj->AddComponent<Editor_Clickable>();
-            m_selectEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke01", RenderLayerInfo{ SortingLayer::Grid, 2 });
+            m_selectEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke01", RenderLayerInfo{ SortingLayer::Grid, 4 });
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
-            m_selectEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
-            m_selectEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ 166, 80 });
+            m_selectEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(tr->GetWorldPosition());
+            m_selectEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ boxCol->GetSize().x * 1.03f, boxCol->GetSize().y * 1.03f });
             m_selectEffectTextureObj->SetActive(false);
             
             if (!m_selectEffectTextureObj) return false;
@@ -187,14 +197,14 @@ namespace JDGameObject {
             /////
             // 그리드 확장 가능 텍스쳐
             m_expendEffectTextureObj;
-            m_expendEffectTextureObj = scene.CreateGameObject<GameObject>(L"GameUI_ExpendEffect");
+            m_expendEffectTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_ExpendEffect" + this->GetName()));
             m_expendEffectTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_expendEffectTextureObj->AddComponent<Editor_Clickable>();
-            m_expendEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke01", RenderLayerInfo{ SortingLayer::Grid, 1 });
+            m_expendEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke01", RenderLayerInfo{ SortingLayer::Grid, 5 });
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
-            m_expendEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition({ -211, 276 });
-            m_expendEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ 166, 80 });
+            m_expendEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(tr->GetWorldPosition());
+            m_expendEffectTextureObj->GetComponent<JDComponent::TextureRenderer>()->SetSize({ boxCol->GetSize().x * 1.03f, boxCol->GetSize().y * 1.03f });
             m_expendEffectTextureObj->SetActive(false);
 
             if (!m_expendEffectTextureObj) return false;

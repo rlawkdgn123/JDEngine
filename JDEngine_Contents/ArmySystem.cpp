@@ -1,15 +1,22 @@
 #include "pch.h"
 #include "ArmySystem.h"
 #include "ResourceSystem.h"
+#include "DataTableManager.h"
 
 namespace JDGameSystem {
 
 	void ArmySystem::InitSordierTypes() // 병력 정보 초기화. (타입, 자원, 전투력)
 	{
-		m_SordierTypes[static_cast<int>(SordierType::Novice)] =
+		/*m_SordierTypes[static_cast<int>(SordierType::Novice)] =
 			SordierTypeData(SordierType::Novice, Resource(200.f, 50.f, 0.f), 10);
 		m_SordierTypes[static_cast<int>(SordierType::Expert)] =
-			SordierTypeData(SordierType::Expert, Resource(100.f, 0.f, 50.f), 20);
+			SordierTypeData(SordierType::Expert, Resource(100.f, 0.f, 50.f), 20);*/
+		m_sordierTypeTable = DataTableManager::Instance().GetSordierTypeTableInfo();
+
+		m_SordierTypes[static_cast<int>(SordierType::Novice)] =
+			SordierTypeData(SordierType::Novice, m_sordierTypeTable.m_novice, m_sordierTypeTable.m_novicePow);
+		m_SordierTypes[static_cast<int>(SordierType::Expert)] =
+			SordierTypeData(SordierType::Expert, m_sordierTypeTable.m_expert, m_sordierTypeTable.m_expertPow);
 	}
 
 	/*void ArmySystem::SetUnitCounts(const UnitCounts& army)

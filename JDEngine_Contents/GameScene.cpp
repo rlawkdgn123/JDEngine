@@ -64,10 +64,10 @@ namespace JDScene {
         m_date = WaveManager::Instance().GetConvertedDate();
 
         // 자원 세팅.
-       /* auto& rs = ResourceSystem::Instance();
+        auto& rs = ResourceSystem::Instance();
         rs.SetTotalResource(Resource(1000, 1000, 1000));
         rs.SetMaxPopulation(500);
-        rs.SetCurPopulation(100);*/
+        rs.SetCurPopulation(100);
 
         m_playerArmy.OverrideUnitCounts({ 100, 100 });
 

@@ -619,6 +619,12 @@ namespace JDScene {
         //bgmSlider->SetBackgroundImage("VOLUME_LINE_1");
         //bgmSlider->SetFillImage("VOLUME_LINE_2");
         //bgmSlider->SetHandleImage("VOLUME_CAT_2");
+
+        m_mouse = CreateUIObject<Image>(L"mouse");
+        m_mouse->SetTextureName("mouse");
+        m_mouse->SetPivot({ 0.5,0.5 });
+        m_mouse->SetSizeToOriginal();
+        m_mouse->SetActive(true);
     }
 
     void TitleScene::FinalizeTitleScene()
@@ -806,15 +812,20 @@ namespace JDScene {
         // 1) 마우스 파티클 업데이트 & Emit
         {
             MouseState ms = InputManager::Instance().GetMouseState();
-            Vector2F mousePos{ (float)ms.pos.x, (float)ms.pos.y };
+            Vector2F mousePos{ (float)ms.pos.x - screenW * 0.5f, (float)(screenH - ms.pos.y) - screenH * 0.5f };
+            
+            if (auto* rtf = m_mouse->GetComponent<JDComponent::D2DTM::RectTransform>()) {
+                rtf->SetPosition({ mousePos.x,mousePos.y });
+            }
 
-            m_mouseParticles->Update(deltaTime, mousePos);
-            m_mouseParticles->Emit(
-                mousePos,
-                /*count=*/30,
-                D2D1::ColorF(0.0f, 0.0f, 1.0f, 1.0f),
-                /*scale=*/2.5f
-            );
+            bool pressed = ms.leftPressed;     // 네 입력 시스템에 맞게: leftDown/leftUp이 있으면 엣지로 써도 됨
+            if (pressed != m_prevLeftPressed) {
+                if (auto* img = m_mouse->GetComponent<UI_ImageComponent>()) {
+                    img->SetTextureName(pressed ? "click" : "mouse"); // 클릭/기본
+                }
+                m_mouse->SetSizeToOriginal(); // 이미지 바꾼 뒤 원본 크기 재적용(필요시)
+                m_prevLeftPressed = pressed;
+            }
         }
 
         // 2) 벚꽃 낙하 파티클 스폰 & 업데이트
@@ -938,8 +949,8 @@ namespace JDScene {
 
         if (m_mouseParticles) m_mouseParticles->RenderGlow(ctx);
         if (m_sakuraParticles) m_sakuraParticles->Render(ctx);
-        if (m_dustParticles) m_dustParticles->RenderDust(ctx);
-        if (m_dust2Particles) m_dust2Particles->RenderDust2(ctx);
+        //if (m_dustParticles) m_dustParticles->RenderDust(ctx);
+        //if (m_dust2Particles) m_dust2Particles->RenderDust2(ctx);
         if (m_sparkleParticles) m_sparkleParticles->RenderSparkle(ctx);
 
         ctx->SetTransform(old);

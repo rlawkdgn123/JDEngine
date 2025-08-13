@@ -583,8 +583,8 @@ void DataTableManager::ParseSoldierTypeTable()
         }
     } while (JDUtil::trim(dataLine).rfind("Food", 0) != 0);
 
-    // Food, Wood, Mineral 3개의 데이터 행을 순차적으로 파싱합니다.
-    int linesToParse = 3;
+    // Food, Wood, Mineral, Power 4개의 데이터 행을 순차적으로 파싱합니다.
+    int linesToParse = 4;
     while (linesParsed < linesToParse && !dataLine.empty())
     {
         std::vector<std::string> tokens;
@@ -616,6 +616,10 @@ void DataTableManager::ParseSoldierTypeTable()
         else if (resourceName == "Mineral") {
             m_soldierTypeTable.m_novice.m_mineral = toInt(tokens[1]);
             m_soldierTypeTable.m_expert.m_mineral = toInt(tokens[2]);
+        }
+        else if (resourceName == "Power") { // 추가
+            m_soldierTypeTable.m_novicePow = toInt(tokens[1]);
+            m_soldierTypeTable.m_expertPow = toInt(tokens[2]);
         }
 
         linesParsed++;

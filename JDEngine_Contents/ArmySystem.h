@@ -35,6 +35,8 @@ namespace JDGameSystem {
 
     class ArmySystem {
     public:
+        using SordierTypeStats = JDGlobal::Contents::SordierTypeStats;
+    public:
         ArmySystem() { InitSordierTypes(); }
         ~ArmySystem() = default;
 
@@ -54,6 +56,7 @@ namespace JDGameSystem {
 
     private:
         std::array<SordierTypeData, 2> m_SordierTypes; // 병종 정보 저장용.
+        SordierTypeStats m_sordierTypeTable;
         UnitCounts m_unitCounts;
     };
 }

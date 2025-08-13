@@ -73,6 +73,7 @@ namespace JDScene {
         float m_sakuraEmissionRate = 1.5f;//초당 생성 갯수
         float m_sakuraEmitAccumulator = 0.0f;
 
+        Image* m_mouse = nullptr;
         ////////////////////////////////////////////////////////////////////////////////
         // 옵션창
 

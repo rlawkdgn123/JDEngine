@@ -157,11 +157,11 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-     SceneManager::Instance().ChangeScene("TitleScene");
+    // SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
     // SceneManager::Instance().ChangeScene("TutorialScene");
-    // SceneManager::Instance().ChangeScene("SelectNationScene");
+     SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
     //SceneManager::Instance().ChangeScene("TestScene01");
@@ -215,7 +215,7 @@ void EngineCore::Run()
             {
                 continue; // InputManager가 처리했으면 여기서 끝냅니다.
             }
-
+            InputManager::Instance().BeginFrame();
             // 위에서 아무도 처리하지 않은 메시지는 Windows의 기본 방식으로 처리합니다.
             // WM_CHAR와 같은 메시지 생성을 위해 필수적입니다.
             TranslateMessage(&msg);

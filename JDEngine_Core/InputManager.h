@@ -60,6 +60,11 @@ public:
 		return false;
 	}
 
+	void BeginFrame() {
+		m_CurMouse.leftClicked = false;
+		m_CurMouse.rightClicked = false;
+		m_CurMouse.delta = { 0, 0 }; // 이번 프레임 델타 누적 안 쓰면 0으로 시작
+	}
 protected:
 
 	void HandleMsgKeyDown(WPARAM wParam, LPARAM lParam); // 눌렀을 때

@@ -1087,11 +1087,9 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] Art_Expedition_Level_Full 텍스처 로드 실패" << std::endl;
     }
-
-
+    
     // Patikle Resource
-    ////////////////////////////////////////////////////////////////////////////////
-
+      ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
     {
         std::cout << "[ERROR] blossom 텍스처 로드 실패" << std::endl;
@@ -1116,33 +1114,16 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
-    {
-        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
-    }
+
+    //if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Mouse.png"))
+    //{
+    //    std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+    //}
+
     if (!AssetManager::Instance().LoadTexture("spakle", L"../Resource/Spakle.png"))
     {
         std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
     }
-
-    // TEST Resource
-    ////////////////////////////////////////////////////////////////////////////////
-
-    if (!AssetManager::Instance().LoadTexture("house", L"../Resource/house.png"))
-    {
-        std::cout << "[ERROR] house 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("house2", L"../Resource/house2.png"))
-    {
-        std::cout << "[ERROR] house2 텍스처 로드 실패" << std::endl;
-    }
-
-    if (!AssetManager::Instance().LoadTexture("Menu", L"../Resource/Menu.png"))
-    {
-        std::cout << "[ERROR] Menu 텍스처 로드 실패" << std::endl;
-    }
-
 
     // TEST Resource
     ////////////////////////////////////////////////////////////////////////////////
@@ -1171,6 +1152,14 @@ void AssetManager::TextureSetUp() {
     if (!AssetManager::Instance().LoadAnimationRender("GrayBird", L"../Resource/Animation/graybirdsheet.json"))
     {
         std::cout << "[ERROR] 애니메이션 로드 실패!" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("mouse", L"../Resource/Patikle/ART_Cursor01.png"))
+    {
+        std::cout << "[ERROR] mouse 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("click", L"../Resource/Patikle/ART_Cursor01_Click.png"))
+    {
+        std::cout << "[ERROR] click 텍스처 로드 실패" << std::endl;
     }
 }
 

@@ -476,7 +476,7 @@ namespace JDScene {
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
             if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {//여기요
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
-                SpawnWaveEnemy({ 1010.0f, 230.0f });
+                SpawnWaveEnemy({ 1010.0f, 270.0f });
                 AddEnemyDay(warningDay);
                 AudioManager::Instance().ChangeBGM("BGM_Battle", 1.25f);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
@@ -548,7 +548,9 @@ namespace JDScene {
         auto* battleObj = CreateGameObject<Player>(L"battleObj");
         battleObj->SetTag(JDGlobal::Base::GameTag::BattleAnim);
         battleObj->AddComponent<Editor_Clickable>();//여기요
-        battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        battleObj->GetComponent<Transform>()->SetScale({ 0.5f, 0.5f });
+        //battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        battleObj->AddComponent<JDComponent::AnimationRender>("ART_Battle_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 10 });
 
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
         auto size = bitmap->GetSize();
@@ -658,7 +660,7 @@ namespace JDScene {
                 if (!enemyTm) continue;
                 Vector2F diffPos = enemyTm->GetPosition() - transform->GetPosition();
 
-                if (diffPos.Length() <= 10.0f) {
+                if (diffPos.Length() <= 20.0f) {
                     Vector2F pPos = transform->GetPosition();
                     Vector2F ePos = enemyTm->GetPosition();
                     Vector2F mid = { (pPos.x + ePos.x) * 0.5f, (pPos.y + ePos.y) * 0.5f };
@@ -686,7 +688,7 @@ namespace JDScene {
             // 전투 오브젝트가 없고, 일반 아군이면 후퇴 상태로 전환
             if (!m_battleObject && objPtr != m_playerObject) {
                 if (!m_barracksObject) continue;
-                auto* texRenderer = objPtr->GetComponent<TextureRenderer>();
+                auto* texRenderer = objPtr->GetComponent<JDComponent::AnimationRender>();
                 if (texRenderer) {
                     texRenderer->SetFlipX(true); // 좌우 반전!
                 }
@@ -957,7 +959,7 @@ namespace JDScene {
                             std::cout << "[DEBUG] right ID: " << id << std::endl;
 
                             m_selectedCollider = collider;
-
+                            if (m_isBarracksSelected) SetBarracksSelected(false);
                             //auto* boxCol = static_cast<JDComponent::BoxCollider*>(collider);
 
                             if (grid->IsOccupied()) {
@@ -1164,6 +1166,8 @@ namespace JDScene {
 
     JDGameObject::GameObjectBase* GameScene::CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag, JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName)
     {
+        using JDGlobal::Contents::CatType;
+
         auto* obj = CreateGameObject<Soldier>((tag == JDGlobal::Base::GameTag::Player) ? L"playerObj" : L"enemyObj");
         obj->SetUnitCounts(units);
 
@@ -1172,7 +1176,42 @@ namespace JDScene {
 
         obj->SetTag(tag);
         obj->SetState(state);
-        obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::Cat, 1 });
+        //obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::Cat, 1 });
+        CatType nation = ResourceSystem::Instance().GetNation();
+        const int novice = units[JDGlobal::Contents::SordierType::Novice];
+        const int expert = units[JDGlobal::Contents::SordierType::Expert];
+        const bool useExpert = (expert >= novice);
+        
+        if (tag == JDGlobal::Base::GameTag::Player) {
+            if (nation == CatType::Felis) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_FelisAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_FelisNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+            else if (nation == CatType::Kone) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_KoneAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_KoneNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+            else if (nation == CatType::Navi) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_NaviAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_NaviNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+        }
+        else if (tag == JDGlobal::Base::GameTag::Enemy) {
+            if (nation == CatType::Felis) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_KoneAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_KoneNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+            else if (nation == CatType::Kone) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_NaviAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_NaviNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+            else if (nation == CatType::Navi) {
+                if (useExpert) obj->AddComponent<JDComponent::AnimationRender>("ART_FelisAdv_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+                else obj->AddComponent<JDComponent::AnimationRender>("ART_FelisNov_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+            }
+        }
+        
+        
 
         auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
         Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
@@ -1184,7 +1223,7 @@ namespace JDScene {
 
         if (tag == JDGlobal::Base::GameTag::Enemy) {
             obj->AddComponent<Editor_Clickable>();
-            if (auto* tr = obj->GetComponent<TextureRenderer>()) tr->SetFlipX(true);
+            if (auto* tr = obj->GetComponent<JDComponent::AnimationRender>()) tr->SetFlipX(true);
         }
 
         // 진영 컨테이너 등록
@@ -1232,11 +1271,24 @@ namespace JDScene {
 
     void GameScene::CreateExpedition()
     {
+        using JDGlobal::Contents::CatType;
+        
         auto* obj = CreateGameObject<Soldier>(L"playerObj");
 
         obj->SetTag(JDGlobal::Base::GameTag::Player);
         obj->SetState(JDGlobal::Contents::State::Idle);
-        obj->AddComponent<JDComponent::TextureRenderer>("ART_NaviAdv_Sprite01", RenderLayerInfo{ SortingLayer::Cat, 1 });
+        // obj->AddComponent<JDComponent::TextureRenderer>("ART_NaviAdv_Sprite01", RenderLayerInfo{ SortingLayer::Cat, 1 });
+
+        CatType nation = ResourceSystem::Instance().GetNation();
+        if (nation == CatType::Felis) {
+            obj->AddComponent<JDComponent::AnimationRender>("ART_FelisEx_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+        }
+        else if (nation == CatType::Kone) {
+            obj->AddComponent<JDComponent::AnimationRender>("ART_KoneEx_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+        }
+        else if (nation == CatType::Navi) {
+            obj->AddComponent<JDComponent::AnimationRender>("ART_NaviEx_Sprite01", 1.0f, RenderLayerInfo{ SortingLayer::Cat, 1 });
+        }
 
         obj->GetComponent<Transform>()->SetPosition(Vector2F{-158.0f, 30.0f});
         obj->AddComponent<JDComponent::SFX>("Step");
@@ -3610,7 +3662,7 @@ namespace JDScene {
         m_trainerCatRecruitInfo->SetPosition({ 14, -462 });
 
         m_trainerCatRecruitText = CreateUIObject<Text>(L"UI_TrainerCatRecruitText");
-        m_trainerCatRecruitText->SetText(L"10");
+        m_trainerCatRecruitText->SetText(L"1");
         m_trainerCatRecruitText->SetTextFormatName("Sebang_16");
         m_trainerCatRecruitText->SetColor(D2D1::ColorF(0x2F3315));
         m_trainerCatRecruitText->SetSize({ 50, 100 });
@@ -3719,7 +3771,7 @@ namespace JDScene {
         m_expertCatRecruitInfo->SetPosition({ 372, -462 });
 
         m_expertCatRecruitText = CreateUIObject<Text>(L"UI_ExpertCatRecruitText");
-        m_expertCatRecruitText->SetText(L"10");
+        m_expertCatRecruitText->SetText(L"1");
         m_expertCatRecruitText->SetTextFormatName("Sebang_16");
         m_expertCatRecruitText->SetColor(D2D1::ColorF(0x2F3315));
         m_expertCatRecruitText->SetSize({ 50, 100 });
@@ -3734,7 +3786,7 @@ namespace JDScene {
         m_expertCatPowerInfo->SetPosition({ 362, -500 });
 
         m_expertCatPowerText = CreateUIObject<Text>(L"UI_ExpertCatPowerText");
-        m_expertCatPowerText->SetText(L"10");
+        m_expertCatPowerText->SetText(L"20");
         m_expertCatPowerText->SetTextFormatName("Sebang_16");
         m_expertCatPowerText->SetColor(D2D1::ColorF(0x2F3315));
         m_expertCatPowerText->SetSize({ 50, 100 });
@@ -4715,8 +4767,8 @@ namespace JDScene {
             auto half = col->GetHalfSize();
             offset.y = -half.y; 
         }
-        AttachObject(imageGO, host, offset + Vector2F{ 0, 30.0f });
-        AttachObject(txtGO, host, offset + Vector2F{ 0, 15.0f });
+        AttachObject(imageGO, host, offset + Vector2F{ 0, 15.0f });
+        AttachObject(txtGO, host, offset + Vector2F{ 0, 0.0f });
 
         return txtGO; 
     }

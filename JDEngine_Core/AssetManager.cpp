@@ -513,6 +513,16 @@ void AssetManager::TextureSetUp() {
         std::cout << "[ERROR] Frame 1 텍스처 로드 실패" << std::endl;
     }
 
+    // 전투중.
+    if (!AssetManager::Instance().LoadAnimationRender("ART_Battle_Sprite01", L"../Resource/BATTLE/ART_Battle_Sprite01.json"))
+    {
+        std::cout << "[ERROR] ART_Battle_Sprite01 애니메이션 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Battle_Sprite01", L"../Resource/BATTLE/ART_Battle_Sprite01.png"))
+    {
+        std::cout << "[ERROR] ART_Battle_Sprite01 텍스처 로드 실패" << std::endl;
+    }
+
 #pragma endregion
 
 

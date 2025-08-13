@@ -579,7 +579,10 @@ namespace JDScene {
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
-        m_closeOption->AddOnEnter("Highlight On", [this]() {
+        m_closeOption->AddOnEnter("Highlight On", [this]() 
+            {
+            AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
             // 텍스트 변경
             m_closeOption->SetTextureName("ART_Back01_mouseover");
             });

@@ -17,9 +17,11 @@ namespace JDGameObject {
             // 설치 자원량 빼기
             m_resourceSystem->AddTotalResource(-m_stats.m_upgradeCost[m_curLevel]);
             wcout << this->GetName() + L" 건설 및 자원(Wood) 소모량 : " + to_wstring(m_stats.m_upgradeCost[m_curLevel].m_wood) << endl;
+
             // 시작할 때 고양이가 있다면, 고양이 자원 보너스 주기
             ChangeCat(m_cat);
         }
+
         void Building::Update(float deltaTime)
         {
             __super::Update(deltaTime);
@@ -29,7 +31,7 @@ namespace JDGameObject {
         {
             // 고양이가 배치되어 있다면, 관련된 모든 자원 효과를 제거합니다.
             if (m_cat != CatType::None) {
-                // 인구 증가
+                // 인구 회복 (고양이 제거 시)
                 m_resourceSystem->AddCurPopulation(1);
 
                 // 고양이 보너스 제거
@@ -67,13 +69,15 @@ namespace JDGameObject {
             if (oldCat != CatType::None) {
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceSubPerSec[m_curLevel]);
+                // 고양이 제거 시 인구 회복
                 m_resourceSystem->AddCurPopulation(1);
             }
 
             // 새로운 상태에 따른 초당 자원량 변경
             if (newCat != CatType::None) { // 새 고양이 타입이 None이 아니라면
-                if (m_resourceSystem->GetCurPopulation() >= m_resourceSystem->GetMaxPopulation()) {
-                    std::cout << "인구 초과로 고양이 배치 실패!" << std::endl;
+                // 남은 인구(cur)가 1 이상인지 확인 (0 이하이면 배치 불가)
+                if (m_resourceSystem->GetCurPopulation() <= 0) {
+                    std::cout << "인구 부족으로 고양이 배치 실패!" << std::endl;
                     // 실패 시 이전 상태의 보너스를 다시 적용하고 함수 종료
                     switch (oldCat) {
                     case CatType::Felis: m_resourceSystem->AddResourceBonus(bonus.FelisBonus); break;
@@ -86,11 +90,11 @@ namespace JDGameObject {
 
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceGenPerSec[m_curLevel]);
                 m_resourceSystem->AddResourcePerSec(m_stats.m_resourceSubPerSec[m_curLevel]);
+                // 고양이 배치 시 인구 차감
                 m_resourceSystem->AddCurPopulation(-1);
             }
 
             //디버그
-              // 상태 갱신 전에 디버그 로그 출력
             auto CatTypeToString = [](CatType cat) -> const char* {
                 switch (cat) {
                 case CatType::None:  return "None";
@@ -104,12 +108,9 @@ namespace JDGameObject {
             std::cout << "Building cat type changed from " << CatTypeToString(oldCat)
                 << " to " << CatTypeToString(newCat) << std::endl;
 
-
-
             // 모든 적용 성공 시에만 상태 갱신
             m_cat = newCat;
 
-            
             return true;
         }
 
@@ -117,13 +118,13 @@ namespace JDGameObject {
         bool Building::LevelUp()
         {
             if (m_curLevel >= JDGlobal::Contents::MAX_GAME_LEVEL - 1) { cout << "레벨 최대치!!" << endl; return false; }
-            
+
             if (m_resourceSystem->GetTotalResource().m_food < m_stats.m_upgradeCost[m_curLevel + 1].m_food) { cout << "레벨 업 실패! 업그레이드 자원이 모자랍니다! - food" << endl; return false; }
             else if (m_resourceSystem->GetTotalResource().m_wood < m_stats.m_upgradeCost[m_curLevel + 1].m_wood) { cout << "레벨 업 실패! 업그레이드 자원이 모자랍니다! - wood" << endl; return false; }
             else if (m_resourceSystem->GetTotalResource().m_mineral < m_stats.m_upgradeCost[m_curLevel + 1].m_mineral) { cout << "레벨 업 실패! 업그레이드 자원이 모자랍니다! - mineral" << endl; return false; }
 
             // 레벨업 자원 소모
-           m_resourceSystem->AddTotalResource(-m_stats.m_upgradeCost[m_curLevel + 1]);
+            m_resourceSystem->AddTotalResource(-m_stats.m_upgradeCost[m_curLevel + 1]);
 
             wcout << this->GetName()
                 << L" - Level Up!! " << (m_curLevel + 1)
@@ -156,14 +157,15 @@ namespace JDGameObject {
 
             return true;
         }
+
         void Building::PrintCat()
         {
             switch (m_cat) {
             case CatType::Felis: cout << "Felis" << endl; break;
-            case CatType::Navi:   cout << "Navi" << endl; break;
-            case CatType::Kone:   cout << "Kone" << endl; break;
-            case CatType::None:   cout << "None" << endl; break;
-            default:           cout << "Default" << endl; break;
+            case CatType::Navi:  cout << "Navi" << endl; break;
+            case CatType::Kone:  cout << "Kone" << endl; break;
+            case CatType::None:  cout << "None" << endl; break;
+            default:              cout << "Default" << endl; break;
             }
         }
     }

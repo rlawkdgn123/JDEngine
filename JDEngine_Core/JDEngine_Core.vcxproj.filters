@@ -175,6 +175,9 @@
     <ClInclude Include="TextRenderer.h">
       <Filter>Component\SpriteRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="CameraFader.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneManager.cpp">

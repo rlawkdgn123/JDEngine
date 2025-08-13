@@ -20,6 +20,7 @@ namespace JDGameObject {
             cout << "하우스 쓰따뜨" << endl;
             m_resourceSystem->AddTotalResource(-m_stats.m_upgradeCost[m_curLevel]); // 건축 시 초기 비용을 차감
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[0]); // 초기 인구수 증가량 (레벨 0의 인구수)을 적용
+            m_resourceSystem->AddCurPopulation(m_stats.m_initPopulation[0]);
             cout << m_stats.m_initPopulation[0] << endl;
             cout << m_resourceSystem->GetMaxPopulation() << endl;
             m_resourceSystem->AddResourcePerSec(m_stats.m_resourceSubPerSec[0]); // 초당 자원 소모량(유지비)을 적용합니다.
@@ -40,6 +41,7 @@ namespace JDGameObject {
             // 건물 파괴 시 현재 레벨의 유지비를 복구하고, 최대 인구수를 감소
             m_resourceSystem->AddResourcePerSec(-m_stats.m_resourceSubPerSec[m_curLevel]); // 초당 소모량 복구하기
             m_resourceSystem->AddMaxPopulation(-m_stats.m_initPopulation[m_curLevel]); // 인구수 줄이기}
+            m_resourceSystem->AddCurPopulation(-m_stats.m_initPopulation[m_curLevel]);
         }
 
         bool House::LevelUp()
@@ -72,6 +74,7 @@ namespace JDGameObject {
 
             // 현재 레벨과 다음 레벨의 인구수 차이만큼 최대 인구수를 조절합니다.
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[m_curLevel + 1] - m_stats.m_initPopulation[m_curLevel]);
+            m_resourceSystem->AddCurPopulation(m_stats.m_initPopulation[m_curLevel + 1] - m_stats.m_initPopulation[m_curLevel]);
 
             ++m_curLevel;
 
@@ -87,6 +90,7 @@ namespace JDGameObject {
 
             // 현재 레벨과 이전 레벨의 인구수 차이만큼 최대 인구수를 조절
             m_resourceSystem->AddMaxPopulation(m_stats.m_initPopulation[m_curLevel - 1] - m_stats.m_initPopulation[m_curLevel]);
+            m_resourceSystem->AddCurPopulation(m_stats.m_initPopulation[m_curLevel - 1] - m_stats.m_initPopulation[m_curLevel]);
 
             --m_curLevel;
             return true;

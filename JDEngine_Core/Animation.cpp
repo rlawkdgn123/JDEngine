@@ -36,7 +36,7 @@ void AnimationRender::Update(float dt)
                 break;
             default: break; // Once, IntroThenLoop, IntroThenLoopRange는 아래에서 처리
             }
-            };
+        };
 
         bool atLast = (m_currentFrame + 1 > lastIdx);
 
@@ -71,6 +71,7 @@ void AnimationRender::Update(float dt)
 
 void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
 {
+            
     if (!GetEnabled()) return;
 
     auto clip = AssetManager::Instance().GetAnimationRender(m_clipName);

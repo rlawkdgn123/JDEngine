@@ -53,14 +53,28 @@ namespace JDGameSystem {
 
 	public:
 		void Clear() {
+			// 1) 데이터테이블에서 시작 자원과 최대 인구를 가져오기
 			DataTableManager::Instance().GetStartResourcesTable(m_totalResource, m_maxPopulation);
-			//m_totalResource.Clear();			// 누적 자원
-			m_totalResourcePerSec.Clear();     // 총 생산 자원 (보너스 적용)
-			m_resourcePerSec.Clear();		    // 기본 초당 자원
-			m_resourceBonus.Clear();		    // % 자원 보너스 (예: 10 = 10%)
-			m_synergyBonus.Clear();		    // % 시너지 보너스
-			//m_maxPopulation = 10;		    // 최대 인구수
-			m_curPopulation = 0;		    // 현재 인구수
+			// 2) 초당 자원/보너스 초기화
+			m_nation = CatType::None;
+			m_nationBonus.Clear();
+			m_totalResourcePerSec.Clear();
+			m_resourcePerSec.Clear();
+			m_resourceBonus.Clear();
+			m_synergyBonus.Clear();
+
+			// 3) 현재 인구 안전 초기화
+			// 기존 curPopulation이 0이 아니라면 차감/증가 방식으로 조정
+			int curPop = m_curPopulation;
+			if (curPop > 0) {
+				AddCurPopulation(-curPop); // 남은 인구가 있으면 차감
+			}
+			else if (curPop < 0) {
+				AddCurPopulation(-curPop); // 음수면 보정
+			}
+			// 이렇게 하면 직접 덮어쓰지 않고, 싱글톤 로직을 거쳐 안전하게 0으로 초기화됨
+
+			m_secondTimer = 0.0f; // 타이머 초기화
 		}
 
 		void Update(float deltaTime) {

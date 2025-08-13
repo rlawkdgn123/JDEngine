@@ -71,7 +71,7 @@ namespace JDScene {
         rs.SetMaxPopulation(500);
         rs.SetCurPopulation(100);*/
 
-        //m_playerArmy.OverrideUnitCounts({ 100, 100 });
+        // m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
         // 병영.
         m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -197.f, 144.f }, "ART_Barracks02_mouse_over");
@@ -688,6 +688,8 @@ namespace JDScene {
                 }
 
                 objPtr->SetState(JDGlobal::Contents::State::Idle);
+                objPtr->GetComponent<JDComponent::AnimationRender>()->SetClipName("ART_Battle_Sprite01");
+                objPtr->GetComponent<Transform>()->SetScale({ 0.5f, 0.5f });
 
                 auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
                     [&](auto& a) { return a.enemy == objPtr; });
@@ -1467,6 +1469,9 @@ namespace JDScene {
             L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
             L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
             L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
+
+        m_expandCountText->SetText(to_wstring(m_buildSystem->GetChoiceCount()));
+        m_expandCountInfoText->SetText(L"전투에서 승리하면 얻는 보상으로, 미점유 지역을 클릭하여 영토를 확장할 수 있습니다.");
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -2471,12 +2476,37 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        Button* m_buttonExpand = nullptr;           // 확장 UI
-        Text* m_expandCountText = nullptr;           // 확장 선택권 보유량
+        // 확장
+        m_buttonExpand = CreateUIObject<Button>(L"UI_ExpandCount");
+        m_buttonExpand->SetText(L"");
+        m_buttonExpand->SetTextureName("ART_RESCoin01");
+        m_buttonExpand->SetSize({ 160.0f, 69.f });
+        m_buttonExpand->SetPosition({ -47.f, 491.f });
+        m_buttonExpand->SetAnchor({ 0.0f, 1.0f });
 
-        // 설명 팝업
-        Image* m_expandCountUI = nullptr;
-        Text* m_expandCountInfoText = nullptr;
+        // 확장 텍스트
+        m_expandCountText = CreateUIObject<Text>(L"UI_ExpandCountText");
+        m_expandCountText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_mineral));
+        m_expandCountText->SetTextFormatName("Sebang_22");
+        m_expandCountText->SetColor(D2D1::ColorF(0x2F3315));
+        m_expandCountText->SetSize({ 300, 100 });
+        m_expandCountText->SetPosition({ -20.f, 489.0f });
+
+        // 확장 선택권 버튼 마우스를 올리면 실행될 이벤트
+        m_buttonExpand->AddOnEnter("Highlight On", [this]()
+            {
+                m_expandCountUI->SetActive(true);
+                m_expandCountInfoText->SetActive(true);
+            });
+
+        // 확장 선택권 버튼 마우스가 벗어나면 실행될 이벤트
+        m_buttonExpand->AddOnExit("Highlight Off", [this]()
+            {
+                m_expandCountUI->SetActive(false);
+                m_expandCountInfoText->SetActive(false);
+            });
+
+        ////////////////////////////////////////////////////////////////////////////////
 
         // 1) [상단] 몬스터 웨이브
         m_monsterWaveBackground = CreateUIObject<Image>(L"UI_MonWaveBackground");
@@ -4385,7 +4415,7 @@ namespace JDScene {
 
         m_PopulationUI = CreateUIObject<Image>(L"UI_PopulationInfo");
         m_PopulationUI->SetTextureName("ART_Information_Box_Expedition");
-        m_PopulationUI->SetSize({ 280, 150 });
+        m_PopulationUI->SetSize({ 300, 150 });
 
         buttonPos = m_buttonPop->GetPosition();
         uiPos = buttonPos - offset;
@@ -4406,7 +4436,7 @@ namespace JDScene {
 
         m_FoodUI = CreateUIObject<Image>(L"UI_FoodInfo");
         m_FoodUI->SetTextureName("ART_Information_Box_Expedition");
-        m_FoodUI->SetSize({ 280, 150 });
+        m_FoodUI->SetSize({ 300, 150 });
 
         buttonPos = m_buttonFood->GetPosition();
         uiPos = buttonPos - offset;
@@ -4431,7 +4461,7 @@ namespace JDScene {
 
         m_WoodUI = CreateUIObject<Image>(L"UI_WoodInfo");
         m_WoodUI->SetTextureName("ART_Information_Box_Expedition");
-        m_WoodUI->SetSize({280, 150});
+        m_WoodUI->SetSize({ 300, 150});
         
         buttonPos = m_buttonWood->GetPosition();
         uiPos = buttonPos - offset;
@@ -4456,7 +4486,7 @@ namespace JDScene {
 
         m_MineralUI = CreateUIObject<Image>(L"UI_MineralInfo");
         m_MineralUI->SetTextureName("ART_Information_Box_Expedition");
-        m_MineralUI->SetSize({ 280, 150 });
+        m_MineralUI->SetSize({ 300, 150 });
 
         buttonPos = m_buttonMineral->GetPosition();
         uiPos = buttonPos - offset;
@@ -4479,6 +4509,27 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        m_expandCountUI = CreateUIObject<Image>(L"UI_ExpandInfo");
+        m_expandCountUI->SetTextureName("ART_Information_Box_Expedition");
+        m_expandCountUI->SetSize({ 300, 150 });
+
+        buttonPos = m_buttonExpand->GetPosition();
+        uiPos = buttonPos - offset;
+
+        m_expandCountUI->SetPosition({ uiPos.x , uiPos.y });
+        m_expandCountUI->SetAnchor({ 1.0f, 0.0f });
+        m_expandCountUI->SetActive(false);
+
+        m_expandCountInfoText = CreateUIObject<Text>(L"UI_ExpandInfoText");
+        m_expandCountInfoText->SetText(L"영토 확장권");
+        m_expandCountInfoText->SetTextFormatName("Sebang_16");
+        m_expandCountInfoText->SetColor(D2D1::ColorF(0x2F3315));
+        m_expandCountInfoText->SetSize({ 160, 50 });
+        m_expandCountInfoText->SetPosition(m_expandCountUI->GetComponent<RectTransform>()->GetPosition());
+        m_expandCountInfoText->SetActive(false);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // 
         //// 4) 그리드 클릭하면 나오는 메뉴
         //m_Menu = CreateUIObject<Image>(L"MenuBackground");
 

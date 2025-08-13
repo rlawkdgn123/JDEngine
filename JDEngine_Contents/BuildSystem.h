@@ -9,7 +9,7 @@ class BuildSystem
 public:
 	BuildSystem() : m_areaWidth(515.0f), m_areaHeight(760.0f),
 		m_startCols(1), m_padding(10.0f), m_startRows(1),
-		m_endCols(3), m_endRows(3), m_choiceCount(4),
+		m_endCols(3), m_endRows(3), m_choiceCount(0),
 		m_totalRows(6), m_totalCols(4)
 	{
 		m_expandedCount = (m_endCols - m_startCols + 1) * (m_endRows - m_startRows + 1);

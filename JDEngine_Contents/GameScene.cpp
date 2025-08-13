@@ -40,7 +40,7 @@ namespace JDScene {
         CreateGameMap();
         CreateBarrackUI();
         CreateOptionUI();
-        // CreateFillter();
+        //CreateFillter();
 
         //// 1) 배경
         //auto battleMap = CreateUIObject<Image>(L"BATTLE_MAP");
@@ -72,7 +72,7 @@ namespace JDScene {
         m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
         // 병영.
-        m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -210.0f, 75.0f }, "house");
+        m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -197.f, 144.f }, "ART_Barracks02_mouse_over");
 
         // 성벽.
         // m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -300.0f, 75.0f }, "house");
@@ -103,6 +103,8 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
+  
+        if(ResolveGameEnding()) return; // 엔딩 관리.
 
         UpdateResourceUI();
 
@@ -237,6 +239,7 @@ namespace JDScene {
             }
         }
 
+        ShowClickedBarrackObj();
     }
 
     void GameScene::FixedUpdate(float fixedDeltaTime) {
@@ -465,6 +468,12 @@ namespace JDScene {
             Vector2F diffPos = m_wallPos - transform->GetPosition();
 
             if (diffPos.Length() <= 10.0f) {
+                if (m_playerArmy.GetTotalUnits() > 0) {
+                    m_targetEnemy = objPtr;
+                    SpawnPlayerArmy(m_wallPos);
+                    continue;
+                }
+
                 objPtr->SetState(JDGlobal::Contents::State::Idle);
 
                 auto it = std::find_if(m_attackers.begin(), m_attackers.end(),
@@ -552,9 +561,10 @@ namespace JDScene {
                 if (texRenderer) {
                     texRenderer->SetFlipX(true); // 좌우 반전!
                 }
-                auto* barracksTm = m_barracksObject->GetComponent<Transform>();
+                /*auto* barracksTm = m_barracksObject->GetComponent<Transform>();
                 if (!barracksTm) continue;
-                Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();
+                Vector2F diffPos = barracksTm->GetPosition() - transform->GetPosition();*/
+                Vector2F diffPos = m_wallPos - transform->GetPosition();
 
                 if (diffPos.Length() <= 10.0f) {
                     auto* soldier = dynamic_cast<JDGameObject::Content::Soldier*>(objPtr);
@@ -578,14 +588,17 @@ namespace JDScene {
 
             if (objPtr->GetState() == JDGlobal::Contents::State::Back) {
                 // 병영 방향으로 후퇴
-                if (m_barracksObject) {
+                /*if (m_barracksObject) {
                     auto* barracksTm = m_barracksObject->GetComponent<Transform>();
                     if (barracksTm) {
                         Vector2F diff = barracksTm->GetPosition() - transform->GetPosition();
                         direction = diff.Normalized();
                         moveSpeed = backSpeed;
                     }
-                }
+                }*/
+                Vector2F diff = m_wallPos - transform->GetPosition();
+                direction = diff.Normalized();
+                moveSpeed = backSpeed;
             }
             else if (objPtr == m_playerObject && m_targetEnemy) {
                 // 적 유닛 방향으로 이동
@@ -723,6 +736,7 @@ namespace JDScene {
             {
                 auto& uiObj = m_uiObjects[i];
                 if (!uiObj) continue;
+                if (!uiObj->IsActive()) continue;
 
                 auto clickable = uiObj->GetComponent<Editor_Clickable>();
                 if (clickable && clickable->IsHit(screenMousePos))
@@ -827,6 +841,9 @@ namespace JDScene {
                                     cout << "확장 불가능한 미점유 지역입니다." << endl;
                                 }
                             }
+
+                            if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 그리드 하나를 클릭했으니 병영이 켜져있다면 병영 끄기. 
+                            break;
                         }
 
                         // 태그 기반 처리
@@ -837,11 +854,12 @@ namespace JDScene {
                         bool isEnemyTag = (tag == JDGlobal::Base::GameTag::Enemy);
 
                         if (tag == JDGlobal::Base::GameTag::Barracks) {
-                            m_isBarracksSelected = !m_isBarracksSelected;
+                            SetBarracksSelected(!m_isBarracksSelected);
+                            //m_isBarracksSelected = !m_isBarracksSelected;
                             std::cout << "[GameScene] 병영 클릭. 선택 상태: " << m_isBarracksSelected << std::endl;
 
                             // UI 로직
-                            if (m_isBarracksSelected)
+                            /*if (m_isBarracksSelected)
                             {
                                 isAway = true;
                                 ShowAwayMenu();
@@ -850,18 +868,18 @@ namespace JDScene {
                             {
                                 isAway = false;
                                 CloseAwayMenu();
-                            }
+                            }*/
                         }
                         else if (m_isBarracksSelected && !m_battleObject && (isEnemyTag && !m_targetEnemy) && m_playerArmy.GetTotalUnits() > 0) {
                             m_targetEnemy = gameObj;
-                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
-                            SpawnPlayerArmy(pos);
+                            //Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(m_wallPos);
                             //m_isBarracksSelected = false;
                             std::cout << "[GameScene] 병영 클릭 -> 적 클릭." << std::endl;
                         }
                         else if (m_isBarracksSelected && tag == JDGlobal::Base::GameTag::BattleAnim && m_playerArmy.GetTotalUnits() > 0) {
-                            Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
-                            SpawnPlayerArmy(pos);
+                            //Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
+                            SpawnPlayerArmy(m_wallPos);
                             //m_isBarracksSelected = false;
                             std::cout << "[GameScene] 병영 클릭 -> 전투중 클릭." << std::endl;
                         }
@@ -898,9 +916,9 @@ namespace JDScene {
                     CloseGridCreateMenu();
                     CloseGridSettingMenu();
                     CloseAwayMenu();
-
-                    m_isBarracksSelected = false;
                 }
+
+                if (m_isBarracksSelected) SetBarracksSelected(false);
             }
         }
         /*if (state.rightClicked)
@@ -981,9 +999,12 @@ namespace JDScene {
         obj->SetTag(tag);
         obj->AddComponent<Editor_Clickable>();
         obj->AddComponent<JDComponent::TextureRenderer>(textureName, RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        obj->GetComponent<JDComponent::TextureRenderer>()->SetSize({177, 157}); // 어차피 병영만 이 함수 쓰니까. 걍 써..
 
-        auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
-        Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+        //auto bitmap = static_cast<ID2D1Bitmap*>(AssetManager::Instance().GetTexture(textureName));
+        //Vector2F size = { bitmap->GetSize().width / 2.0f, bitmap->GetSize().height / 2.0f };
+        //Vector2F size = { 175 / 2.0f, 280 / 2.0f };
+        Vector2F size = { 177 / 2.0f, 157 / 2.0f };
 
         obj->AddComponent<JDComponent::BoxCollider>(size);
         obj->GetComponent<JDComponent::BoxCollider>()->SetOpen(true);
@@ -1011,8 +1032,7 @@ namespace JDScene {
         obj->SetState(JDGlobal::Contents::State::Idle);
         obj->AddComponent<JDComponent::TextureRenderer>("f1", RenderLayerInfo{ SortingLayer::Cat, 1 });
 
-        Vector2F pos = m_barracksObject->GetComponent<Transform>()->GetPosition();
-        obj->GetComponent<Transform>()->SetPosition(pos);
+        obj->GetComponent<Transform>()->SetPosition(Vector2F{-158.0f, 30.0f});
         obj->AddComponent<JDComponent::SFX>("Step");
 
         m_expeditionObject = obj;
@@ -1756,12 +1776,12 @@ namespace JDScene {
         map_barrack01TR->SetPosition(Vector2F{ -135.f, 190.f });
 
         // 배럭 02
-        auto* map_barrack02 = CreateGameObject<GameObject>(L"Map_Barrack02");
-        map_barrack02->AddComponent<Transform>();
-        auto map_barrack02Texture = map_barrack02->AddComponent<TextureRenderer>("ART_Barracks02", RenderLayerInfo{ SortingLayer::BackGround, 1 });
-        map_barrack02Texture->SetSize({ 175, 280 });
-        auto map_barrack02TR = map_barrack02->GetComponent<Transform>();
-        map_barrack02TR->SetPosition(Vector2F{ -196.5f, 80.0f });
+        //auto* map_barrack02 = CreateGameObject<GameObject>(L"Map_Barrack02");
+        //map_barrack02->AddComponent<Transform>();
+        //auto map_barrack02Texture = map_barrack02->AddComponent<TextureRenderer>("ART_Barracks02", RenderLayerInfo{ SortingLayer::BackGround, 1 });
+        //map_barrack02Texture->SetSize({ 175, 280 });
+        //auto map_barrack02TR = map_barrack02->GetComponent<Transform>();
+        //map_barrack02TR->SetPosition(Vector2F{ -196.5f, 80.0f });
 
         // 그리드
         // =====================================================================
@@ -3991,6 +4011,48 @@ namespace JDScene {
         m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
     }
 
+    bool GameScene::CheckEnding()
+    {
+        // 남은 웨이브가 없는지.
+        bool noWavesLeft = (WaveManager::Instance().GetRemainingWaves() == 0);
+
+        // 현재 전투 오브젝트가 없는지.
+        bool noBattle = (m_battleObject == nullptr);
+
+        // 공격 중인 적이 없는지.
+        bool noAttackers = m_attackers.empty();
+
+        // 살아있는 적 유닛이 전혀 없는지.
+        bool noEnemiesAlive = true;
+        for (auto* enemy : m_enemies) {
+            if (enemy && enemy->IsActive()) {
+                noEnemiesAlive = false;
+                break;
+            }
+        }
+
+        // 모든 조건이 충족되면 엔딩.
+        return (noWavesLeft && noBattle && noAttackers && noEnemiesAlive);
+    }
+
+    bool GameScene::ResolveGameEnding()
+    {
+        if (m_wallHealth == 0) {
+            std::cout << "[GameScene] 배드엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            return true;
+        }
+        else if (CheckEnding()) {
+            if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                std::cout << "[GameScene] 굿엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            }
+            else {
+                std::cout << "[GameScene] 엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            }
+            return true;
+        }
+        return false;
+    }
+
     void GameScene::RegisterUnit(JDGlobal::Base::GameTag tag, JDGameObject::GameObjectBase* obj)
     {
         if (!obj) return;
@@ -4061,7 +4123,19 @@ namespace JDScene {
         using namespace JDGameObject;
         using namespace JDComponent;
 
-        auto* txtGO = CreateGameObject<GameObject>(L"HeadText");
+        auto* imageGO = CreateGameObject<GameObject>(L"MarkImage");
+        imageGO->SetTag(JDGlobal::Base::GameTag::None);
+        if (host->GetTag() == JDGlobal::Base::GameTag::Enemy) {
+            imageGO->AddComponent<JDComponent::TextureRenderer>("ART_Enemy_Mark", RenderLayerInfo{ SortingLayer::BackGround, 5 });
+        }
+        else if (host->GetTag() == JDGlobal::Base::GameTag::Player) {
+            imageGO->AddComponent<JDComponent::TextureRenderer>("ART_Player_Mark", RenderLayerInfo{ SortingLayer::BackGround, 5 });
+        }
+
+        auto imgRender = imageGO->GetComponent<JDComponent::TextureRenderer>();
+        imgRender->SetSize({ 100, 50 });
+
+        auto* txtGO = CreateGameObject<GameObject>(L"PowerText");
         txtGO->SetTag(JDGlobal::Base::GameTag::None);
         auto* tr = txtGO->AddComponent<JDComponent::TextRenderer>(
             L"",                                 // 초기 텍스트
@@ -4078,10 +4152,10 @@ namespace JDScene {
         if (auto* col = host->GetComponent<JDComponent::BoxCollider>())
         {
             auto half = col->GetHalfSize();
-            offset.y = -half.y - 12.0f; 
+            offset.y = -half.y; 
         }
-
-        AttachObject(txtGO, host, offset);
+        AttachObject(imageGO, host, offset + Vector2F{ 0, 30.0f });
+        AttachObject(txtGO, host, offset + Vector2F{ 0, 15.0f });
 
         return txtGO; 
     }
@@ -4193,6 +4267,36 @@ namespace JDScene {
         auto attackPowerTextRender = m_attackPowerText->GetComponent<JDComponent::TextRenderer>();
         if (!attackPowerTextRender) return;
         attackPowerTextRender->SetText(std::to_wstring(m_playerArmy.CalculateTotalPower()));
+    }
+
+    void GameScene::ShowClickedBarrackObj()
+    {
+        if (!m_barracksObject) return;
+
+        auto btr = m_barracksObject->GetComponent<TextureRenderer>();
+        if (!btr) return;
+
+        if (m_isBarracksSelected)
+        {
+            btr->SetTextureName("ART_Barracks02_mouse_over");
+        }
+        else
+        {
+            btr->SetTextureName("ART_Barracks02_mouseout_");
+        }
+    }
+
+    void GameScene::SetBarracksSelected(bool on)
+    {
+        m_isBarracksSelected = on;
+        if (on) {
+            isAway = true;
+            ShowAwayMenu();
+        }
+        else {
+            isAway = false;
+            CloseAwayMenu();
+        }
     }
 
     void GameScene::ChangeAwayCatImage()
@@ -4638,7 +4742,7 @@ namespace JDScene {
     {
         // 2) 필터
         m_fillter = CreateUIObject<Image>(L"Fillter_Image");
-        m_fillter->SetTextureName("BATTLE_MAP_3_Exam");
+        m_fillter->SetTextureName("ART_BattleMap01_Example");
         m_fillter->SetColor(D2D1::ColorF(D2D1::ColorF::White, 0.65f));
 
         auto cam = D2DRenderer::Instance().GetCamera();

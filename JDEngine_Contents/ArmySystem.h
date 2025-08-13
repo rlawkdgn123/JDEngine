@@ -46,9 +46,9 @@ namespace JDGameSystem {
 
         // void SetUnitCounts(const UnitCounts& army); // 인구 수 변화 있음. 일단 필요 없어 보여서 주석처리.
         void OverrideUnitCounts(const UnitCounts& army) { m_unitCounts = army; } // 인구 수 변화 없음.
+        static void BringbackPopulation(int num); // 현재 인구 수 되돌리기.
 
         bool RecruitUnits(UnitType type);
-        bool DecreaseUnitCount();
 
         int CalculateTotalPower() const;
 

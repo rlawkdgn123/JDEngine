@@ -1958,9 +1958,9 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] BATTLE_MAP_Exam 텍스처 로드 실패" << std::endl;
     }
-    if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_1_Exam", L"../Resource/BATTLE_MAP_1_Exam.png"))
+    if (!AssetManager::Instance().LoadTexture("ART_BattleMap01_Example", L"../Resource/BATTLE/ART_BattleMap01_Example.png"))
     {
-        std::cout << "[ERROR] BATTLE_MAP_1_Exam 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] ART_BattleMap01_Example 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("BATTLE_MAP_2_Exam", L"../Resource/BATTLE_MAP_2_Exam.png"))
     {
@@ -2333,6 +2333,14 @@ void EngineCore::LoadResources()
     {
         std::cout << "[ERROR] ART_Barracks02 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks02_mouse_over", L"../Resource/BATTLE/ART_Barracks02_mouse_over.png"))
+    {
+        std::cout << "[ERROR] ART_Barracks02_mouse_over 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Barracks02_mouseout_", L"../Resource/BATTLE/ART_Barracks02_mouseout_.png"))
+    {
+        std::cout << "[ERROR] ART_Barracks02_mouseout_ 텍스처 로드 실패" << std::endl;
+    }
 
 
     if (!AssetManager::Instance().LoadTexture("ART_BuffFelis", L"../Resource/BATTLE/ART_BuffFelis.png"))
@@ -2473,6 +2481,14 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Monster04 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("ART_Monster05", L"../Resource/BATTLE/ART_Monster05.png"))
+    {
+        std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Enemy_Mark", L"../Resource/BATTLE/ART_Enemy_Mark.png"))
+    {
+        std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_Player_Mark", L"../Resource/BATTLE/ART_Player_Mark.png"))
     {
         std::cout << "[ERROR] ART_Monster05 텍스처 로드 실패" << std::endl;
     }

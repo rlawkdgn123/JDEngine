@@ -202,6 +202,10 @@ namespace JDScene {
         void AdvanceNextWaveIndicators(); // 현재 날짜 기준으로 nextMoveDay를 지난 것만 이동
         std::vector<NextWaveIndicator> m_nextWaveIndicators;
 
+        //엔딩 관련 함수.
+        bool CheckEnding(); // 기본 엔딩 조건.
+        bool ResolveGameEnding(); // 엔딩 분기 처리.
+
         ///////////////////////////////////////////////////////////////////////////////
         // 전투 아군 적군 관리용. 추가 부분.
        

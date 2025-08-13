@@ -39,6 +39,8 @@ public:
     const WaveData* GetWave(int day) const;
     GameDate GetConvertedDate() const;
     int GetWaveEnemyPower() const;
+    int GetTotalWaves() const { return static_cast<int>(m_waves.size()); } // 총 웨이브 수.
+    int GetRemainingWaves() const; // 남은 웨이브 수.
 
     void SetCurrDay(int day) { m_currDay = day; }
     void SetCurrStage(int stage) { m_currStage = stage;  m_currDay = 1; }

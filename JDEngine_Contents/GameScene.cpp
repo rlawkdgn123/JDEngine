@@ -95,6 +95,8 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
+  
+        if(ResolveGameEnding()) return; // 엔딩 관리.
 
         UpdateResourceUI();
 
@@ -3721,6 +3723,48 @@ namespace JDScene {
             });
 
         m_nextWaveIndicators.erase(eraseBeg, m_nextWaveIndicators.end());
+    }
+
+    bool GameScene::CheckEnding()
+    {
+        // 남은 웨이브가 없는지.
+        bool noWavesLeft = (WaveManager::Instance().GetRemainingWaves() == 0);
+
+        // 현재 전투 오브젝트가 없는지.
+        bool noBattle = (m_battleObject == nullptr);
+
+        // 공격 중인 적이 없는지.
+        bool noAttackers = m_attackers.empty();
+
+        // 살아있는 적 유닛이 전혀 없는지.
+        bool noEnemiesAlive = true;
+        for (auto* enemy : m_enemies) {
+            if (enemy && enemy->IsActive()) {
+                noEnemiesAlive = false;
+                break;
+            }
+        }
+
+        // 모든 조건이 충족되면 엔딩.
+        return (noWavesLeft && noBattle && noAttackers && noEnemiesAlive);
+    }
+
+    bool GameScene::ResolveGameEnding()
+    {
+        if (m_wallHealth == 0) {
+            std::cout << "[GameScene] 배드엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            return true;
+        }
+        else if (CheckEnding()) {
+            if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
+                std::cout << "[GameScene] 굿엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            }
+            else {
+                std::cout << "[GameScene] 엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            }
+            return true;
+        }
+        return false;
     }
 
     void GameScene::RegisterUnit(JDGlobal::Base::GameTag tag, JDGameObject::GameObjectBase* obj)

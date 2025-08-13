@@ -26,6 +26,15 @@ namespace JDGameSystem {
 		m_unitCounts = army;
 	}*/
 
+	void ArmySystem::BringbackPopulation(int num)
+	{
+		auto& rs = ResourceSystem::Instance();
+		const int curPopulation = rs.GetCurPopulation();
+
+		// 현재 인구로 되돌리기.
+		rs.SetCurPopulation(curPopulation + num);
+	}
+
 	bool ArmySystem::RecruitUnits(UnitType type) // 병력 모집.
 	{
 		auto& rs = ResourceSystem::Instance();
@@ -76,20 +85,6 @@ namespace JDGameSystem {
 		++m_unitCounts[type];
 
 		return true;
-	}
-
-	bool ArmySystem::DecreaseUnitCount() // 병력 원정 보내기용.
-	{
-		if (m_unitCounts[UnitType::Novice] > 0) { // 견습냥이가 있다면 견습냥이에서 한 마리를 줄이고, 
-			m_unitCounts[UnitType::Novice] -= 1;
-			return true;
-		}
-		else if (m_unitCounts[UnitType::Expert] > 0) { // 견습냥이가 없고 숙련냥이가 있다면 숙련냥이 한 마리를 줄임.
-			m_unitCounts[UnitType::Expert] -= 1;
-			return true;
-		}
-
-		return false;
 	}
 
 	int ArmySystem::CalculateTotalPower() const // 총 전투력 계산.

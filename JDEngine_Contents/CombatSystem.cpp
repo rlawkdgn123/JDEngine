@@ -118,6 +118,9 @@ namespace JDGameSystem {
 		int w_n_loss_my = std::min(W_n_my, N_loss_my);
 		int w_e_loss_my = std::max(0, N_loss_my - W_n_my);
 
+		// 죽은 병사만큼 현재 인구 되돌리기.
+		ArmySystem::BringbackPopulation(w_n_loss_my + w_e_loss_my);
+
 		outPlayerResult[UnitType::Novice] = std::max(0, playerUnits[UnitType::Novice] - w_n_loss_my);
 		outPlayerResult[UnitType::Expert] = std::max(0, playerUnits[UnitType::Expert] - w_e_loss_my);
 
@@ -128,7 +131,13 @@ namespace JDGameSystem {
 		outEnemyResult[UnitType::Novice] = std::max(0, enemyUnits[UnitType::Novice] - w_n_loss_enemy);
 		outEnemyResult[UnitType::Expert] = std::max(0, enemyUnits[UnitType::Expert] - w_e_loss_enemy);
 
-		if (R_my < 1.0f) return false;
-		else             return true;
+		if (R_my < 1.0f) { 
+			std::cout << "[CombatSystem] 졌음." << std::endl;
+			return false; 
+		}
+		else { 
+			std::cout << "[CombatSystem] 이김." << std::endl;
+			return true; 
+		}
 	}
 }

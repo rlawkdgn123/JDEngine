@@ -355,6 +355,8 @@ namespace JDScene {
 
         ////////////////////////////////////////////////////////////////////////////////
 
+        void ChangeSettingCatImage();
+
         // 2. 업그레이드 Info
         // 고양이 배치
         Text* m_catTypeText = nullptr;
@@ -394,7 +396,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         Button* m_trainerCatButton = nullptr;
-        Text* m_trainerCatName = nullptr;
+        //Text* m_trainerCatName = nullptr;
 
         Text* m_trainerCatCostInfo = nullptr;
         Image* m_trainerCatCostImage01 = nullptr;
@@ -411,7 +413,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         Button* m_expertCatButton = nullptr;
-        Text* m_expertCatName = nullptr;
+        //Text* m_expertCatName = nullptr;
 
         Text* m_expertCatCostInfo = nullptr;
         Image* m_expertCatCostImage01 = nullptr;
@@ -512,6 +514,8 @@ namespace JDScene {
 
         void StartEnding(EndingType type);
 
+        bool m_endingBGMFired = false;
+
         static inline float Clamp01(float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); }
 
         static float EaseOutBack(float t, float overshoot = 0.7f) {
@@ -580,5 +584,15 @@ namespace JDScene {
         //자원 - 광물 UI
         Image* m_MineralUI = nullptr;
         Text* m_MineralText = nullptr;
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 4.0f, 4.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
     };
 }

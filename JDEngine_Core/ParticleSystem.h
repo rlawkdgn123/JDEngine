@@ -372,11 +372,12 @@ public:
     }
 
     void Render(ID2D1DeviceContext7* ctx) {
+        if (!particleBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
 
         for (auto& p : particles) {
-            if (!particleBitmap) continue;
+            
             auto rot = D2D1::Matrix3x2F::Rotation(p.rotation, { p.pos.x, p.pos.y });
             ctx->SetTransform(rot * oldTM);
             float half = p.size * p.imageScale * 0.5f;

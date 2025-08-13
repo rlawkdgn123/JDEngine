@@ -324,6 +324,8 @@ namespace JDGlobal {
 		struct SordierTypeStats { // 병종 정보.
 			Resource m_novice;
 			Resource m_expert;
+			int m_novicePow;
+			int m_expertPow;
 			void PrintStats();
 		};
 

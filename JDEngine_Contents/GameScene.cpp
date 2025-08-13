@@ -64,10 +64,10 @@ namespace JDScene {
         m_date = WaveManager::Instance().GetConvertedDate();
 
         // 자원 세팅.
-       /* auto& rs = ResourceSystem::Instance();
+        auto& rs = ResourceSystem::Instance();
         rs.SetTotalResource(Resource(1000, 1000, 1000));
         rs.SetMaxPopulation(500);
-        rs.SetCurPopulation(100);*/
+        rs.SetCurPopulation(100);
 
         m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
@@ -81,7 +81,7 @@ namespace JDScene {
         m_isEnding = false;
 
         /////////////////////////////////////////////////////////////////////////////
-        AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
+        AudioManager::Instance().PlayBGM("BGM_Play", &bgmChannel);
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
 
         DateUIUpdate();
@@ -90,6 +90,7 @@ namespace JDScene {
         UpdateAwayPointUI();
         CreateEndingUI();
         ChangeAwayCatImage();
+        ChangeSettingCatImage();
     }
 
     void GameScene::OnLeave() {
@@ -121,6 +122,12 @@ namespace JDScene {
 
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
+
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+        MouseState ms = InputManager::Instance().GetMouseState();
+        mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
 
         // 애니 진행
         if (m_endAnimStarted) {
@@ -358,10 +365,30 @@ namespace JDScene {
         {
             D2DRenderer::Instance().RenderUIObject(*uiObj);
         }
+
+        // 화면 크기
+        auto sz = ctx->GetSize();
+
+        // UI 설정값
+        D2D1_SIZE_F   size = { 500.f, 74.f };
+        D2D1_POINT_2F anchor = { 1.f, 1.f };       // 우하단
+        D2D1_POINT_2F pos = { 330.f, 485.f };   // 앵커 기준 오프셋(픽셀)
+        D2D1_POINT_2F pivot = { 0.5f, 0.5f };     // 이미지 중심 기준(필요에 맞게 조정)
+
+        // 앵커 지점의 스크린 좌표(픽셀)
+        D2D1_POINT_2F anchorPt = { sz.width * anchor.x, sz.height * anchor.y };
+
+        // 최종 스크린 좌표 = 앵커 지점 + 오프셋
+        D2D1_POINT_2F screenPos = { anchorPt.x + pos.x, anchorPt.y + pos.y };
+
+        m_fader.FadeIn(0.1f, 0.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+        // 페이드 렌더 (그 영역만 덮기)
+        m_fader.Update(deltaTime);
+        m_fader.RenderRegionAt(ctx, screenPos, size, pivot);
         // 카메라 뷰가 걸려 있는 상태이므로, 
         // 페이드를 스크린 공간에서 그리려면 Transform을 초기화
         
-        m_fader.Render(ctx, { (float)screenW, (float)screenH });
+        //m_fader.Render(ctx, { (float)screenW, (float)screenH });
 
         for (auto& obj : m_gameObjects) {
             auto name = obj->GetName(); // std::wstring / std::wstring_view 가정
@@ -421,6 +448,8 @@ namespace JDScene {
         }
 
         m_buildSystem->UpdateTextureObj(m_selectedCollider);
+
+        RenderCursor(mouseClientPos, 1.0f, 1.0f);
     }
     void GameScene::ProcessDayTimer(float deltaTime)
     {
@@ -448,10 +477,11 @@ namespace JDScene {
             std::cout << "[GameScene] 날짜 증가: " << currDay << std::endl;
 
             // 웨이브가 있는 경우, 아직 화면에 나타나지 않았으면 생성.
-            if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {
+            if (WaveManager::Instance().GetWave(warningDay) && !IsEnemySpawned(warningDay)) {//여기요
                 m_enemyArmy.OverrideUnitCounts(WaveManager::Instance().GetWave(warningDay)->enemyUnits);
                 SpawnWaveEnemy({ 1010.0f, 230.0f });
                 AddEnemyDay(warningDay);
+                AudioManager::Instance().ChangeBGM("BGM_Battle", 1.25f);
                 std::cout << "[GameScene] 적 스폰됨." << std::endl;
             }
         }
@@ -489,11 +519,11 @@ namespace JDScene {
         if (enemyResult.Total() > 0) {
             auto* enemyObj = CreateSoldierUnit(enemyResult, JDGlobal::Base::GameTag::Enemy,
                 JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "ART_NaviAdv_Sprite01");
-
         }
 
         m_btlElapsedTime = 0.0f;
-        SafeDestroy(m_battleObject);
+        SafeDestroy(m_battleObject);//여기요
+        AudioManager::Instance().ChangeBGM("BGM_Play", 1.25f);
         std::cout << "[GameScene] 전투 끝." << std::endl;
     }
     void GameScene::BattleReward()
@@ -520,7 +550,7 @@ namespace JDScene {
     {
         auto* battleObj = CreateGameObject<Player>(L"battleObj");
         battleObj->SetTag(JDGlobal::Base::GameTag::BattleAnim);
-        battleObj->AddComponent<Editor_Clickable>();
+        battleObj->AddComponent<Editor_Clickable>();//여기요
         battleObj->AddComponent<JDComponent::TextureRenderer>("Test", RenderLayerInfo{ SortingLayer::BackGround, 1 });
 
         auto bitmap = static_cast<ID2D1Bitmap*> (AssetManager::Instance().GetTexture("Test"));
@@ -753,10 +783,26 @@ namespace JDScene {
 
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
-                    m_awayButton->SetSize({ 125.f, 35.0f });
+                    m_awayButton->SetSize({ 135.5f, 47.0f });
                 }
 
                 std::cout << "[GameScene] 원정 끝." << std::endl;
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                int rate = expeditionSystem.GetExpeditionInfo(expeditionSystem.GetExpeditionGrade()).m_successRate;
+
+                JDGameSystem::ExpeditionSystem::Instance().RollBonusType();
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
             }
         }
         else {
@@ -921,11 +967,13 @@ namespace JDScene {
                                 if (grid->HasBuilding()) {
                                     cout << "HasBuilding() : True" << endl;
                                     isGridSetting = true;
+                                    if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 다른걸 클릭했으니 병영이 켜져있다면 병영 끄기. 
                                     ShowGridSettingMenu();
                                 }
                                 else {
                                     cout << "HasBuilding() : False" << endl;
                                     isGridBuild = true;
+                                    if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 다른걸 클릭했으니 병영이 켜져있다면 병영 끄기. 
                                     ShowGridCreateMenu();
                                 }
                             }
@@ -950,7 +998,6 @@ namespace JDScene {
                                 }
                             }
 
-                            if (m_isBarracksSelected) SetBarracksSelected(false); // 이미 그리드 하나를 클릭했으니 병영이 켜져있다면 병영 끄기. 
                             break;
                         }
 
@@ -1062,6 +1109,60 @@ namespace JDScene {
                 }
             }
         }*/
+    }
+
+    void GameScene::RenderCursor(Vector2F mouseClientPos, float scale, float alpha)
+    {
+        auto* ctx = D2DRenderer::Instance().GetD2DContext();
+        if (!ctx) return;
+
+        // 입력 상태
+        MouseState ms = InputManager::Instance().GetMouseState();
+
+        // 사용할 비트맵 선택 + 폴백
+        ID2D1Bitmap* bmp = nullptr;
+        if (ms.leftPressed && g_cursorDownBmp)
+            bmp = g_cursorDownBmp;
+        else
+            bmp = g_cursorBmp;
+
+        if (!bmp) return; // 두 비트맵 다 없으면 종료
+
+        // 현재 선택된 비트맵의 픽셀 크기 사용 (g_cursorPx에 의존 X)
+        const auto px = bmp->GetPixelSize();
+        if (px.width == 0 || px.height == 0) return;
+
+        // 뷰/월드 영향 제거
+        D2D1_MATRIX_3X2_F oldTM;
+        ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // 화면 고정 커서 위치 계산 (mouseClientPos가 DIP인지 픽셀인지 일관성 유지)
+        const float w = px.width * scale;
+        const float h = px.height * scale;
+
+        const float offsetX = -18.0f; // 왼쪽으로 이동
+        const float offsetY = -30.0f; // 위로 이동
+
+        const D2D1_RECT_F dest = {
+            mouseClientPos.x - g_hotspot.x * scale + offsetX,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY,
+            mouseClientPos.x - g_hotspot.x * scale + offsetX + w,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY + h
+        };
+
+        const D2D1_RECT_F src = { 0, 0, (float)px.width, (float)px.height };
+
+        // 커서 그리기 — 반드시 선택된 bmp로!
+        ctx->DrawBitmap(
+            bmp,
+            dest,
+            alpha,
+            D2D1_INTERPOLATION_MODE_LINEAR,
+            &src
+        );
+
+        ctx->SetTransform(oldTM);
     }
 
     JDGameObject::GameObjectBase* GameScene::CreateSoldierUnit(const JDGameSystem::UnitCounts& units, JDGlobal::Base::GameTag tag, JDGlobal::Contents::State state, const Vector2F& pos, const std::string& textureName)
@@ -1545,7 +1646,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(false);
-        m_trainerCatName->SetActive(false);
+        //m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
         m_trainerCatCostImage01->SetActive(false);
@@ -1562,7 +1663,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(false);
-        m_expertCatName->SetActive(false);
+        //m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
         m_expertCatCostImage01->SetActive(false);
@@ -1622,7 +1723,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(true);
-        m_trainerCatName->SetActive(true);
+        //m_trainerCatName->SetActive(true);
 
         m_trainerCatCostInfo->SetActive(true);
         m_trainerCatCostImage01->SetActive(true);
@@ -1639,7 +1740,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(true);
-        m_expertCatName->SetActive(true);
+        //m_expertCatName->SetActive(true);
 
         m_expertCatCostInfo->SetActive(true);
         m_expertCatCostImage01->SetActive(true);
@@ -1698,7 +1799,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(false);
-        m_trainerCatName->SetActive(false);
+        //m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
         m_trainerCatCostImage01->SetActive(false);
@@ -1715,7 +1816,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(false);
-        m_expertCatName->SetActive(false);
+        //m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
         m_expertCatCostImage01->SetActive(false);
@@ -2034,7 +2135,7 @@ namespace JDScene {
         m_curPopText = CreateUIObject<Text>(L"UI_CurPopText");
         m_curPopText->SetText(std::to_wstring(ResourceSystem::Instance().GetCurPopulation()));
         m_curPopText->SetTextFormatName("Sebang_22");
-        m_curPopText->SetColor(D2D1::ColorF(0x69512C));
+        m_curPopText->SetColor(D2D1::ColorF(0x2F3315));
         m_curPopText->SetSize({ 300, 100 });
         m_curPopText->SetPosition({ -832, 489 });
 
@@ -2075,7 +2176,7 @@ namespace JDScene {
         m_curFoodText = CreateUIObject<Text>(L"UI_CurFoodText");
         m_curFoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_food));
         m_curFoodText->SetTextFormatName("Sebang_22");
-        m_curFoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curFoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_curFoodText->SetSize({ 300, 100 });
         m_curFoodText->SetPosition({ -628, 489 });
 
@@ -2114,7 +2215,7 @@ namespace JDScene {
         m_curWoodText = CreateUIObject<Text>(L"UI_CurWoodText");
         m_curWoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_wood));
         m_curWoodText->SetTextFormatName("Sebang_22");
-        m_curWoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curWoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_curWoodText->SetSize({ 300, 100 });
         m_curWoodText->SetPosition({ -420, 489 });
 
@@ -2154,7 +2255,7 @@ namespace JDScene {
         m_curMineralText = CreateUIObject<Text>(L"UI_CurMineralText");
         m_curMineralText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_mineral));
         m_curMineralText->SetTextFormatName("Sebang_22");
-        m_curMineralText->SetColor(D2D1::ColorF(0x69512C));
+        m_curMineralText->SetColor(D2D1::ColorF(0x2F3315));
         m_curMineralText->SetSize({ 300, 100 });
         m_curMineralText->SetPosition({ -222.5f, 489.0f });
 
@@ -2447,38 +2548,39 @@ namespace JDScene {
         m_costText->SetText(to_wstring(stat.m_upgradeCost[0].m_wood));
         m_costText->SetTextFormatName("Sebang_22");
         m_costText->SetColor(D2D1::ColorF(0x2F3315));
-        m_costText->SetSize({ 300, 100 });
-        m_costText->SetPosition({ 2, -432 });
+        m_costText->SetSize({ 120, 50 });
+        m_costText->SetPosition({ 2, -435 });
 
         // 코스트 이미지
         m_costImage = CreateUIObject<Image>(L"UI_BuildCostImage");
         m_costImage->SetTextureName("ART_CostWood01");
-        m_costImage->SetSize({ 50, 36 });
-        m_costImage->SetPosition({ -52, -428 });
+        m_costImage->SetSizeToOriginal();
+        m_costImage->SetPosition({ -84, -412 });
         m_costImage->SetAnchor({ 1.0f, 0.0f });
+        m_costImage->SetScale({ 0.4f, 0.4f });
 
         // 효과 텍스트
         m_effectInfoText = CreateUIObject<Text>(L"UI_BuildEffectInfoText");
         m_effectInfoText->SetText(L"효과 :");
         m_effectInfoText->SetTextFormatName("Sebang_22");
         m_effectInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_effectInfoText->SetSize({ 300, 100 });
-        m_effectInfoText->SetPosition({ -126, -479 });
+        m_effectInfoText->SetSize({ 120, 50 });
+        m_effectInfoText->SetPosition({ -126, -478 });
 
         m_effectText = CreateUIObject<Text>(L"UI_BuildEffectText");
         m_effectText->SetText(L"/초");
         m_effectText->SetTextFormatName("Sebang_22");
         m_effectText->SetColor(D2D1::ColorF(0x2F3315));
-        m_effectText->SetSize({ 300, 100 });
-        m_effectText->SetPosition({ 2, -478 });
+        m_effectText->SetSize({ 150, 50 });
+        m_effectText->SetPosition({ 5, -478 });
 
         // 효과 이미지
         m_effctImage = CreateUIObject<Image>(L"UI_BuildEffctImage");
         m_effctImage->SetTextureName("ART_CostFood01");
         m_effctImage->SetSizeToOriginal();
-        m_effctImage->SetPosition({ -83, -461 });
+        m_effctImage->SetPosition({ -85, -456 });
         m_effctImage->SetAnchor({ 1.0f, 0.0f });
-        m_effctImage->SetScale({ 0.5f, 0.5f });
+        m_effctImage->SetScale({ 0.4f, 0.4f });
 
         ////////////////////////////////////////
         // 건설 UI _ 주거지
@@ -2487,7 +2589,7 @@ namespace JDScene {
         m_buildHouse->SetTextureName("ART_BuildCabin01");
         m_buildHouse->SetText(L"");
         m_buildHouse->SetSize({ 166.f, 166.f });
-        m_buildHouse->SetPosition({ 200.f, -430.f });
+        m_buildHouse->SetPosition({ 186.f, -430.f });
 
         // 주거지 버튼 클릭하면 실행될 이벤트
         m_buildHouse->AddOnClick("Clicked House", [this]()
@@ -2589,7 +2691,7 @@ namespace JDScene {
         m_buildFishingspot->SetTextureName("ART_BuildFishing01");
         m_buildFishingspot->SetText(L"");
         m_buildFishingspot->SetSize({ 166.f, 166.f });
-        m_buildFishingspot->SetPosition({ 400.f, -430.f });
+        m_buildFishingspot->SetPosition({ 397.3f, -430.f });
 
         // 낚시터 버튼 클릭하면 실행될 이벤트
         m_buildFishingspot->AddOnClick("Clicked FishingSpot", [this]()
@@ -2690,7 +2792,7 @@ namespace JDScene {
         m_buildRumbermill->SetTextureName("ART_BuildLumbermill01");
         m_buildRumbermill->SetText(L"");
         m_buildRumbermill->SetSize({ 166.f, 166.f });
-        m_buildRumbermill->SetPosition({ 600.f, -430.f });
+        m_buildRumbermill->SetPosition({ 608.6f, -430.f });
 
         // 제재소 버튼 클릭하면 실행될 이벤트
         m_buildRumbermill->AddOnClick("Clicked LumberMill", [this]()
@@ -2790,7 +2892,7 @@ namespace JDScene {
         m_buildMine->SetTextureName("ART_BuildMine01");
         m_buildMine->SetText(L"");
         m_buildMine->SetSize({ 166.f, 166.f });
-        m_buildMine->SetPosition({ 800.f, -430.f });
+        m_buildMine->SetPosition({ 820.f, -430.f });
 
         // 광산 버튼 클릭하면 실행될 이벤트
         m_buildMine->AddOnClick("Clicked Mine", [this]()
@@ -2915,7 +3017,7 @@ namespace JDScene {
         m_catTypeText->SetTextFormatName("Sebang_Bold_24");
         m_catTypeText->SetColor(D2D1::ColorF(0x2F3315));
         m_catTypeText->SetSize({ 300, 100 });
-        m_catTypeText->SetPosition({ -63.8f, -385.5f });
+        m_catTypeText->SetPosition({ -62.f, -385.5f });
 
         // 고양이 배치 코스트 텍스트
         m_catCostInfoText = CreateUIObject<Text>(L"UI_CatCostInfoText");
@@ -2927,40 +3029,41 @@ namespace JDScene {
 
         m_catCostText = CreateUIObject<Text>(L"UI_CatCostText");
         m_catCostText->SetText(L"50");
-        m_catCostText->SetTextFormatName("Sebang_20");
+        m_catCostText->SetTextFormatName("Sebang_22");
         m_catCostText->SetColor(D2D1::ColorF(0x2F3315));
-        m_catCostText->SetSize({ 300, 100 });
-        m_catCostText->SetPosition({ 2, -432 });
+        m_catCostText->SetSize({ 120, 50 });
+        m_catCostText->SetPosition({ 2, -435 });
 
         // 코스트 이미지
         m_catCostImage = CreateUIObject<Image>(L"UI_CatCostImage");
-        m_catCostImage->SetTextureName("ART_CostPop01");
-        m_catCostImage->SetSize({ 50, 36 });
-        m_catCostImage->SetPosition({ -52, -428 });
+        m_catCostImage->SetTextureName("ART_CostWood01");
+        m_catCostImage->SetSizeToOriginal();
+        m_catCostImage->SetPosition({ -84, -412 });
         m_catCostImage->SetAnchor({ 1.0f, 0.0f });
+        m_catCostImage->SetScale({ 0.4f, 0.4f });
 
         // 고양이 효과 텍스트
         m_catEffectInfoText = CreateUIObject<Text>(L"UI_CatEffectInfoText");
         m_catEffectInfoText->SetText(L"효과 :");
         m_catEffectInfoText->SetTextFormatName("Sebang_22");
         m_catEffectInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_catEffectInfoText->SetSize({ 300, 100 });
-        m_catEffectInfoText->SetPosition({ -126, -479 });
+        m_catEffectInfoText->SetSize({ 120, 50 });
+        m_catEffectInfoText->SetPosition({ -126, -478 });
 
         m_catEffectText = CreateUIObject<Text>(L"UI_CatEffectText");
-        m_catEffectText->SetText(L"/초");
-        m_catEffectText->SetTextFormatName("Sebang_20");
+        m_catEffectText->SetText(L"1/초");
+        m_catEffectText->SetTextFormatName("Sebang_22");
         m_catEffectText->SetColor(D2D1::ColorF(0x2F3315));
-        m_catEffectText->SetSize({ 300, 100 });
-        m_catEffectText->SetPosition({ 2, -478 });
+        m_catEffectText->SetSize({ 150, 50 });
+        m_catEffectText->SetPosition({ 5, -478 });
 
         // 고양이 효과 이미지
         m_catEffctImage = CreateUIObject<Image>(L"UI_CatEffctImage");
         m_catEffctImage->SetTextureName("ART_CostFood01");
         m_catEffctImage->SetSizeToOriginal();
-        m_catEffctImage->SetPosition({ -83, -461 });
+        m_catEffctImage->SetPosition({ -85, -456 });
         m_catEffctImage->SetAnchor({ 1.0f, 0.0f });
-        m_catEffctImage->SetScale({ 0.5f, 0.5f });
+        m_catEffctImage->SetScale({ 0.4f, 0.4f });
 
 
         ////////////////////////////////////////
@@ -3183,22 +3286,22 @@ namespace JDScene {
         m_builtTypeText->SetText(L"업그레이드");
         m_builtTypeText->SetTextFormatName("Sebang_Bold_24");
         m_builtTypeText->SetColor(D2D1::ColorF(0x2F3315));
-        m_builtTypeText->SetSize({ 300, 100 });
-        m_builtTypeText->SetPosition({ 757.f, -385.5f });
+        m_builtTypeText->SetSize({ 120, 50 });
+        m_builtTypeText->SetPosition({ 764.0f, -389.f });
 
         // 건물 업그레이드 코스트
         m_upgradeCostInfoText = CreateUIObject<Text>(L"UI_UpgradeCostInfoText");
         m_upgradeCostInfoText->SetText(L"코스트 :");
         m_upgradeCostInfoText->SetTextFormatName("Sebang_22");
         m_upgradeCostInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeCostInfoText->SetSize({ 300, 100 });
+        m_upgradeCostInfoText->SetSize({ 120, 50 });
         m_upgradeCostInfoText->SetPosition({ 697, -435 });
 
         m_upgradeCostText = CreateUIObject<Text>(L"UI_UpgradeCostText");
         m_upgradeCostText->SetText(L"50");
-        m_upgradeCostText->SetTextFormatName("Sebang_20");
+        m_upgradeCostText->SetTextFormatName("Sebang_22");
         m_upgradeCostText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeCostText->SetSize({ 300, 100 });
+        m_upgradeCostText->SetSize({ 120, 50 });
         m_upgradeCostText->SetPosition({ 824.5, -432 });
 
        
@@ -3241,18 +3344,18 @@ namespace JDScene {
         // 업그레이드 코스트 이미지
         m_upgradeCostImage = CreateUIObject<Image>(L"UI_UpgradeCostImage");
         m_upgradeCostImage->SetTextureName("ART_CostWood01");
-        m_upgradeCostImage->SetSize({ 50, 36 });
-        m_upgradeCostImage->SetPosition({ 778, -430 });
+        m_upgradeCostImage->SetSizeToOriginal();
+        m_upgradeCostImage->SetPosition({ 740, -412 });
         m_upgradeCostImage->SetAnchor({ 1.0f, 0.0f });
+        m_upgradeCostImage->SetScale({ 0.4f, 0.4f });
 
         // 업그레이드 효과 텍스트
         m_upgradeEffectInfoText = CreateUIObject<Text>(L"UI_UpgradeEffectInfoText");
         m_upgradeEffectInfoText->SetText(L"효과 :");
         m_upgradeEffectInfoText->SetTextFormatName("Sebang_22");
         m_upgradeEffectInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeEffectInfoText->SetSize({ 300, 100 });
+        m_upgradeEffectInfoText->SetSize({ 120, 50 });
         m_upgradeEffectInfoText->SetPosition({ 702, -479 });
-
 
         m_upgradeEffectText = CreateUIObject<Text>(L"UI_UpgradeEffectText");
         switch (buldingType) {
@@ -3264,7 +3367,7 @@ namespace JDScene {
         
         m_upgradeEffectText->SetTextFormatName("Sebang_20");
         m_upgradeEffectText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeEffectText->SetSize({ 300, 100 });
+        m_upgradeEffectText->SetSize({ 150, 50 });
         m_upgradeEffectText->SetPosition({ 827, -478 });
 
         // 업그레이드 효과 이미지
@@ -3277,9 +3380,9 @@ namespace JDScene {
         }
         
         m_upgradeEffctImage->SetSizeToOriginal();
-        m_upgradeEffctImage->SetPosition({ 754, -460 });
+        m_upgradeEffctImage->SetPosition({ 740, -456 });
         m_upgradeEffctImage->SetAnchor({ 1.0f, 0.0f });
-        m_upgradeEffctImage->SetScale({ 0.5f, 0.5f });
+        m_upgradeEffctImage->SetScale({ 0.4f, 0.4f });
        
 
         ////////////////////////////////////////
@@ -3337,12 +3440,16 @@ namespace JDScene {
         m_downgradeButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_downgradeButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.75f));
             });
 
         // 다운그레이드 버튼 마우스가 벗어나면 실행될 이벤트
         m_downgradeButton->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_downgradeButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
         //////////
@@ -3383,12 +3490,19 @@ namespace JDScene {
         m_upgradeButton->AddOnEnter("Highlight On", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_upgradeButton->SetTextureName("ART_Upgrade02");
+                m_upgradeButton->SetSize({ 88.f, 72.f });
             });
 
         // 업그레이드 버튼 마우스가 벗어나면 실행될 이벤트
         m_upgradeButton->AddOnExit("Highlight Off", [this]()
             {
                 if (isOpenOption) { return; }
+
+                m_upgradeButton->SetTextureName("ART_Upgrade01");
+                m_upgradeButton->SetSize({ 56.f, 40.f });
+
             });
 
 #pragma endregion
@@ -3415,8 +3529,8 @@ namespace JDScene {
         // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
         m_trainerCatButton = CreateUIObject<Button>(L"UI_TrainerCatButton");
         //m_trainerCatButton->SetTextureName("ART_RecruitCat03");
-        m_trainerCatButton->SetSize({ 128, 139 });
-        m_trainerCatButton->SetPosition({ -111, -405 });
+        m_trainerCatButton->SetSize({ 145, 191 });
+        m_trainerCatButton->SetPosition({ -110, -425 });
         m_trainerCatButton->SetAnchor({ 1.0f, 0.0f });
         m_trainerCatButton->SetScale({ 1.f, 1.f });
 
@@ -3446,12 +3560,12 @@ namespace JDScene {
                 m_trainerCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
-        m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
-        m_trainerCatName->SetText(L"견습냥이");
-        m_trainerCatName->SetTextFormatName("Sebang_Bold_30");
-        m_trainerCatName->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatName->SetSize({ 300, 100 });
-        m_trainerCatName->SetPosition({ -100, -503 });
+        //m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
+        //m_trainerCatName->SetText(L"견습냥이");
+        //m_trainerCatName->SetTextFormatName("Sebang_Bold_30");
+        //m_trainerCatName->SetColor(D2D1::ColorF(0x2F3315));
+        //m_trainerCatName->SetSize({ 300, 100 });
+        //m_trainerCatName->SetPosition({ -100, -503 });
 
         // 견습냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
         m_trainerCatCostInfo = CreateUIObject<Text>(L"UI_TrainerCatCostInfoText");
@@ -3463,31 +3577,31 @@ namespace JDScene {
 
         m_trainerCatCostImage01 = CreateUIObject<Image>(L"UI_TrainerCatCostImage01");
         m_trainerCatCostImage01->SetTextureName("ART_CostFood01");
-        m_trainerCatCostImage01->SetSizeToOriginal();
-        m_trainerCatCostImage01->SetScale({ 0.5f, 0.5f });
-        m_trainerCatCostImage01->SetPosition({ 48, -361 });
+        m_trainerCatCostImage01->SetSize({ 116, 74});
+        m_trainerCatCostImage01->SetScale({ 0.4f, 0.4f });
+        m_trainerCatCostImage01->SetPosition({ 37, -356 });
         m_trainerCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_trainerCatCostText01 = CreateUIObject<Text>(L"UI_TrainerCatCostText01");
-        m_trainerCatCostText01->SetText(L"x200");
+        m_trainerCatCostText01->SetText(L"200");
         m_trainerCatCostText01->SetTextFormatName("Sebang_16");
         m_trainerCatCostText01->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatCostText01->SetSize({ 50, 100 });
-        m_trainerCatCostText01->SetPosition({ 117, -376 });
+        m_trainerCatCostText01->SetSize({ 50, 50 });
+        m_trainerCatCostText01->SetPosition({ 117, -378 });
 
         // 견습냥이 코스트 _ 02 ( 이미지 & 텍스트 )
         m_trainerCatCostImage02 = CreateUIObject<Image>(L"UI_TrainerCatCostImage02");
         m_trainerCatCostImage02->SetTextureName("ART_CostWood01");
-        m_trainerCatCostImage02->SetSizeToOriginal();
-        m_trainerCatCostImage02->SetScale({ 0.5f, 0.5f });
-        m_trainerCatCostImage02->SetPosition({ 48, -404 });
+        m_trainerCatCostImage02->SetSize({ 108, 76 });
+        m_trainerCatCostImage02->SetScale({ 0.4f, 0.4f });
+        m_trainerCatCostImage02->SetPosition({ 37, -400 });
         m_trainerCatCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_trainerCatCostText02 = CreateUIObject<Text>(L"UI_TrainerCatCostText02");
-        m_trainerCatCostText02->SetText(L"x50");
+        m_trainerCatCostText02->SetText(L"50");
         m_trainerCatCostText02->SetTextFormatName("Sebang_16");
         m_trainerCatCostText02->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatCostText02->SetSize({ 50, 100 });
+        m_trainerCatCostText02->SetSize({ 50, 50 });
         m_trainerCatCostText02->SetPosition({ 117, -422 });
 
         // 견습냥이 모집병력 Info & Text
@@ -3524,8 +3638,8 @@ namespace JDScene {
         // 징병 _ 숙련냥이 이미지
         m_expertCatButton = CreateUIObject<Button>(L"UI_ExpertCatButton");
         //m_expertCatButton->SetTextureName("ART_RecruitCat03");
-        m_expertCatButton->SetSize({ 128, 139 });
-        m_expertCatButton->SetPosition({ 245, -405 });
+        m_expertCatButton->SetSize({ 145, 191 });
+        m_expertCatButton->SetPosition({ 248, -425 });
         m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
         m_expertCatButton->SetScale({ 1.f, 1.f });
 
@@ -3555,12 +3669,12 @@ namespace JDScene {
                 m_expertCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
-        m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
-        m_expertCatName->SetText(L"숙련냥이");
-        m_expertCatName->SetTextFormatName("Sebang_Bold_30");
-        m_expertCatName->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatName->SetSize({ 300, 100 });
-        m_expertCatName->SetPosition({ 258, -503 });
+        //m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
+        //m_expertCatName->SetText(L"숙련냥이");
+        //m_expertCatName->SetTextFormatName("Sebang_Bold_30");
+        //m_expertCatName->SetColor(D2D1::ColorF(0x2F3315));
+        //m_expertCatName->SetSize({ 300, 100 });
+        //m_expertCatName->SetPosition({ 258, -503 });
 
         // 숙련냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
         m_expertCatCostInfo = CreateUIObject<Text>(L"UI_ExpertCatCostInfoText");
@@ -3572,31 +3686,31 @@ namespace JDScene {
 
         m_expertCatCostImage01 = CreateUIObject<Image>(L"UI_ExpertCatCostImage01");
         m_expertCatCostImage01->SetTextureName("ART_CostFood01");
-        m_expertCatCostImage01->SetSizeToOriginal();
-        m_expertCatCostImage01->SetScale({ 0.5f, 0.5f });
-        m_expertCatCostImage01->SetPosition({ 406, -361 });
+        m_expertCatCostImage01->SetSize({116, 74});
+        m_expertCatCostImage01->SetScale({ 0.4f, 0.4f });
+        m_expertCatCostImage01->SetPosition({ 396, -356 });
         m_expertCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_expertCatCostText01 = CreateUIObject<Text>(L"UI_ExpertCatCostText01");
-        m_expertCatCostText01->SetText(L"x100");
+        m_expertCatCostText01->SetText(L"100");
         m_expertCatCostText01->SetTextFormatName("Sebang_16");
         m_expertCatCostText01->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatCostText01->SetSize({ 50, 100 });
-        m_expertCatCostText01->SetPosition({ 476, -376 });
+        m_expertCatCostText01->SetSize({ 50, 50 });
+        m_expertCatCostText01->SetPosition({ 476, -378 });
 
         // 숙련냥이 코스트 _ 02 ( 이미지 & 텍스트 )
         m_expertCatCostImage02 = CreateUIObject<Image>(L"UI_ExpertCatCostImage02");
         m_expertCatCostImage02->SetTextureName("ART_CostMineral01");
         m_expertCatCostImage02->SetSizeToOriginal();
-        m_expertCatCostImage02->SetScale({ 0.5f, 0.5f });
-        m_expertCatCostImage02->SetPosition({ 406, -404 });
+        m_expertCatCostImage02->SetScale({ 0.4f, 0.4f });
+        m_expertCatCostImage02->SetPosition({ 396, -404 });
         m_expertCatCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_expertCatCostText02 = CreateUIObject<Text>(L"UI_ExpertCatCostText02");
-        m_expertCatCostText02->SetText(L"x50");
+        m_expertCatCostText02->SetText(L"50");
         m_expertCatCostText02->SetTextFormatName("Sebang_16");
         m_expertCatCostText02->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatCostText02->SetSize({ 50, 100 });
+        m_expertCatCostText02->SetSize({ 50, 50 });
         m_expertCatCostText02->SetPosition({ 476, -422 });
 
         // 숙련냥이 모집병력 Info & Text
@@ -3651,6 +3765,27 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Beginner).m_successRate;
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
 
                 m_awayPopupInfo->SetText(L"초급 원정");
@@ -3698,6 +3833,27 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Intermediate).m_successRate;
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"중급 원정");
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
@@ -3743,6 +3899,28 @@ namespace JDScene {
                 if (isOpenOption) { return; }
 
                 JDGameSystem::ExpeditionSystem::Instance().RollBonusType(); // 랜덤 보상 종류 결정.
+                int idx = JDGameSystem::ExpeditionSystem::Instance().GetRandomResourceIndex();
+                std::wstring bonusName;
+                switch (idx) {
+                case 0: bonusName = L"식량"; break;
+                case 1: bonusName = L"목재"; break;
+                case 2: bonusName = L"광물"; break;
+                default: bonusName = L"알 수 없음"; break;
+                }
+
+                auto& expeditionSystem = JDGameSystem::ExpeditionSystem::Instance();
+                auto cost = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_cost;
+                int point = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_point;
+                int rate = expeditionSystem.GetExpeditionInfo(JDGameSystem::ExpeditionGrade::Higher).m_successRate;
+
+
+                m_awayCostText01->SetText(std::to_wstring(cost.m_food));
+                m_awayCostText02->SetText(std::to_wstring(cost.m_wood));
+                m_awayCostText03->SetText(std::to_wstring(cost.m_mineral));
+
+                m_awayAwardText01->SetText(std::to_wstring(point) + L" 원정포인트");
+                m_awayAwardText02->SetText(std::to_wstring(rate) + L"% 확률로 " + bonusName + L" 추가 보상");
+
                 ShowAwayPopup();
                 m_awayPopupInfo->SetText(L"상급 원정");
                 if (JDGameSystem::ExpeditionSystem::Instance().ReachedTheGoal()) {
@@ -3869,7 +4047,7 @@ namespace JDScene {
         m_awayAwardText02->SetTextFormatName("Sebang_20");
         m_awayAwardText02->SetColor(D2D1::ColorF(0x2F3315));
         m_awayAwardText02->SetSize({ 300, 50 });
-        m_awayAwardText02->SetPosition({ 770, -162 });
+        m_awayAwardText02->SetPosition({ 760, -162 });
 
         /////
         // 병력 보내기 Button
@@ -3956,6 +4134,7 @@ namespace JDScene {
                 {
                     m_awayButton->SetTextureName("Art_Expedition_Button(Cannot)");
                 }
+
                 m_awayButton->SetSize({ 135.5f, 47.0f });
 
             });
@@ -4328,7 +4507,7 @@ namespace JDScene {
 
         auto* text = CreateUIObject<Text>(L"UI_NextWavePowerText");
         text->SetText(std::to_wstring(wavePower));
-        text->SetColor(D2D1::ColorF(0x69512C));
+        text->SetColor(D2D1::ColorF(0x2F3315));
         text->SetSize({ 60, 45 });
         //text->SetAnchor({ 1.0f, 0.0f });
         text->SetTextFormatName("Sebang_Bold_14");
@@ -4684,6 +4863,32 @@ namespace JDScene {
         }
     }
 
+    void GameScene::ChangeSettingCatImage()
+    {
+        CatType catType = ResourceSystem::Instance().GetNation();
+        std::cout << static_cast<int>(catType) << std::endl;
+
+        switch (catType) {
+        case CatType::Felis:
+            m_naviSetButton->SetTextureName("ART_RepCatNavi01_mouseout");
+            m_felisSetButton->SetTextureName("ART_RepCatFelis01_mouseout");
+            m_koneSetButton->SetTextureName("ART_RepCatKone01_mouseout");
+            break;
+        case CatType::Navi:
+            m_naviSetButton->SetTextureName("ART_UniteCatNavi01_mouseout");
+            m_felisSetButton->SetTextureName("ART_UniteCatFelis01_mouseout");
+            m_koneSetButton->SetTextureName("ART_UniteCatKone01_mouseout");
+            break;
+        case CatType::Kone:
+            m_naviSetButton->SetTextureName("ART_EmpCatNavi01_mouseout");
+            m_felisSetButton->SetTextureName("ART_EmpCatFelis01_mouseout");
+            m_koneSetButton->SetTextureName("ART_EmpCatKone01_mouseout");
+            break;
+        default:
+            break;
+        }
+    }
+
     void GameScene::ChangeAwayCatImage()
     {
 
@@ -4692,23 +4897,20 @@ namespace JDScene {
 
         switch (catType) {
         case CatType::Felis:
-            m_trainerCatButton->SetTextureName("Norway_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Norway_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitFelis01");
+            m_expertCatButton->SetTextureName("ART_RecruitFelis02");
             break;
         case CatType::Navi:
-            m_trainerCatButton->SetTextureName("Scottish_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Scottish_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitKone01");
+            m_expertCatButton->SetTextureName("ART_RecruitKone02");
             break;
         case CatType::Kone:
-            m_trainerCatButton->SetTextureName("Russ_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Russ_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitNavi01");
+            m_expertCatButton->SetTextureName("ART_RecruitNavi02");
             break;
         default:
             break;
-        } 
-
-        m_trainerCatButton->SetSizeToOriginal();
-        m_expertCatButton->SetSizeToOriginal();
+        }
     }
 
     void GameScene::CreateOptionUI()
@@ -5334,7 +5536,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton = nullptr;
-        m_trainerCatName = nullptr;
+        //m_trainerCatName = nullptr;
 
         m_trainerCatCostInfo = nullptr;
         m_trainerCatCostImage01 = nullptr;
@@ -5351,7 +5553,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton = nullptr;
-        m_expertCatName = nullptr;
+        //m_expertCatName = nullptr;
 
         m_expertCatCostInfo = nullptr;
         m_expertCatCostImage01 = nullptr;
@@ -5627,5 +5829,23 @@ namespace JDScene {
         m_endingUI->SetPosition(m_endStartPos);
         m_retry->SetPosition(m_retryStartPos);
         m_goMenu->SetPosition(m_menuStartPos);
+
+        if (!m_endingBGMFired)
+        {
+            const float kFade = 1.25f; // 원하는 페이드 시간
+            switch (type)
+            {
+            case EndingType::Bad:
+                AudioManager::Instance().ChangeBGM("BGM_End_Bad", kFade);
+                break;
+            case EndingType::Good:
+                AudioManager::Instance().ChangeBGM("BGM_End_Good", kFade);
+                break;
+            case EndingType::None:
+                AudioManager::Instance().ChangeBGM("BGM_End_Neutral", kFade);
+                break;
+            }
+            m_endingBGMFired = true;
+        }
     }
 }

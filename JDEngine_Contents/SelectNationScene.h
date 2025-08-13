@@ -53,8 +53,8 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
 
     private:
-        FMOD::Channel* m_hoverSfxChannel = nullptr;
-
+        //FMOD::Channel* bgmChannel = nullptr;
+        FMOD::Channel* sfxChannel = nullptr;
         // 나비, 펠리스, 코네
         bool m_hoveredCharacter[static_cast<int>(CatType::CatTypeMAX)] = { false, false, false };
 
@@ -76,6 +76,15 @@ namespace JDScene {
         // 초임 집사, 경험있는 집사 선택 버튼
         // Button* m_newCatParentButton = nullptr;      // (튜토리얼 로직 변경에 따라서 사용하지 않게되었음.)
         Button* m_experiencedCatParentButton = nullptr;
+        //마우스커서
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 4.0f, 4.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
     };
 }
 

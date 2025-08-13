@@ -1,10 +1,12 @@
 #pragma once
 #include "ArmySystem.h"
 
-struct WaveData {
-    JDGameSystem::UnitCounts enemyUnits;
-    int day;
-};
+using WaveData = JDGlobal::Contents::WaveData;
+
+//struct WaveData {
+//    JDGameSystem::UnitCounts enemyUnits;
+//    int day;
+//};
 
 struct GameDate { // m_currDay를 게임 속 날짜로 바꿔 전달하기 용.
     int year;

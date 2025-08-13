@@ -382,11 +382,11 @@ namespace JDScene {
 
         if (playerResult.Total() > 0) {
             auto* playerObj = CreateSoldierUnit(playerResult, JDGlobal::Base::GameTag::Player,
-                JDGlobal::Contents::State::Back, m_battleObject->GetComponent<Transform>()->GetPosition(), "f1");
+                JDGlobal::Contents::State::Back, m_battleObject->GetComponent<Transform>()->GetPosition(), "ART_NaviAdv_Sprite01");
         }
         if (enemyResult.Total() > 0) {
             auto* enemyObj = CreateSoldierUnit(enemyResult, JDGlobal::Base::GameTag::Enemy,
-                JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "f1");
+                JDGlobal::Contents::State::Move, m_battleObject->GetComponent<Transform>()->GetPosition(), "ART_NaviAdv_Sprite01");
 
         }
 
@@ -402,14 +402,14 @@ namespace JDScene {
     void GameScene::SpawnWaveEnemy(const Vector2F& pos)
     {
         auto* enemyObj = CreateSoldierUnit(m_enemyArmy.GetUnitCounts(), JDGlobal::Base::GameTag::Enemy,
-            JDGlobal::Contents::State::Move, pos, "f1");
+            JDGlobal::Contents::State::Move, pos, "ART_NaviAdv_Sprite01");
 
         m_enemyArmy.OverrideUnitCounts({ 0, 0 });
     }
     void GameScene::SpawnPlayerArmy(const Vector2F& pos)
     {
         auto* playerObj = CreateSoldierUnit(m_playerArmy.GetUnitCounts(), JDGlobal::Base::GameTag::Player,
-            JDGlobal::Contents::State::Move, pos, "f1");
+            JDGlobal::Contents::State::Move, pos, "ART_NaviAdv_Sprite01");
         m_playerArmy.OverrideUnitCounts({ 0, 0 });
         UpdateAttackPowerText();
         if (!m_playerObject && !m_battleObject) m_playerObject = playerObj;
@@ -1030,7 +1030,7 @@ namespace JDScene {
 
         obj->SetTag(JDGlobal::Base::GameTag::Player);
         obj->SetState(JDGlobal::Contents::State::Idle);
-        obj->AddComponent<JDComponent::TextureRenderer>("f1", RenderLayerInfo{ SortingLayer::Cat, 1 });
+        obj->AddComponent<JDComponent::TextureRenderer>("ART_NaviAdv_Sprite01", RenderLayerInfo{ SortingLayer::Cat, 1 });
 
         obj->GetComponent<Transform>()->SetPosition(Vector2F{-158.0f, 30.0f});
         obj->AddComponent<JDComponent::SFX>("Step");

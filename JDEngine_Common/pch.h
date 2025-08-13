@@ -29,6 +29,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
+#include <array>
 
 #define _USE_MATH_DEFINES
 

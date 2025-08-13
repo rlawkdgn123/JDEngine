@@ -57,7 +57,7 @@ namespace JDGameSystem {
 
 		// 모집하는 병종.
 		const int idx = static_cast<int>(type);
-		if (idx < 0 || idx >= UnitTypeCount) {
+		if (idx < 0 || idx >= 2) {
 			std::cout << "[ArmySystem] invalid unit type" << std::endl;
 			return false;
 		}
@@ -91,7 +91,7 @@ namespace JDGameSystem {
 	{
 		int totalPower = 0;
 
-		for (int i = 0; i < UnitTypeCount; ++i)
+		for (int i = 0; i < 2; ++i)
 		{
 			int unitCount = m_unitCounts.counts[i];
 			int unitPower = m_unitTypes[i].GetPower();

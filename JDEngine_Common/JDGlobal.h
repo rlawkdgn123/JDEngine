@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "framework.h"
+#include <array>
 
 namespace JDMath = JDGlobal::Math;
 namespace JDGlobal {
@@ -295,6 +296,31 @@ namespace JDGlobal {
 			DIRECTION_MAX
 		};
 
+		struct UnitCounts { // 병사 수 정보. 
+			std::array<int, 2> counts{};
+
+			int& operator[](UnitType type) {
+				return counts[static_cast<int>(type)];
+			}
+
+			const int& operator[](UnitType type) const {
+				return counts[static_cast<int>(type)];
+			}
+
+			UnitCounts& operator+=(const UnitCounts& other) {
+				for (int i = 0; i < 2; ++i) {
+					counts[i] += other.counts[i];
+				}
+				return *this;
+			}
+
+			int Total() const {
+				int sum = 0;
+				for (int n : counts) sum += n;
+				return sum;
+			}
+		};
+
 		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
 		public:
 			UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
@@ -309,6 +335,23 @@ namespace JDGlobal {
 			UnitType m_unitType;
 			Resource m_recruitCost;
 			int m_power;
+		};
+
+		struct WaveData { // 웨이브 데이터.
+			UnitCounts enemyUnits;
+			int day;
+		};
+
+		struct ExpeditionInfo { // 원정 정보. 
+			ExpeditionInfo() = default;
+			ExpeditionInfo(Resource cost, int point, float successRate, Resource reward)
+				: m_cost(cost), m_point(point), m_successRate(successRate), m_reward(reward) {
+			}
+
+			Resource m_cost;           // 필요 자원.
+			int m_point;               // 원정 포인트.
+			float m_successRate;       // 추가 보상 확률.
+			Resource m_reward;         // 추가 보상. 
 		};
 		
 		// 사용안함

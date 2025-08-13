@@ -43,6 +43,8 @@ namespace JDScene {
         Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
         MouseState ms = InputManager::Instance().GetMouseState();
         mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
+
+        UpdatePage();
     }
 
     void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
@@ -97,18 +99,21 @@ namespace JDScene {
 
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        back_Button->AddOnClick("Load TitleScene", []() {
+        back_Button->AddOnClick("Load TitleScene", [this]() {
+            if (isOpening) { return; }
             SceneManager::Instance().ChangeScene("TitleScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         back_Button->AddOnEnter("Highlight On", [this, back_Button]() {
+            if (isOpening) { return; }
             // 텍스트 변경
             back_Button->SetTextureName("ART_Back02_mouseover");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         back_Button->AddOnExit("Highlight Off", [this, back_Button]() {
+            if (isOpening) { return; }
             // 텍스트 변경
             back_Button->SetTextureName("ART_Back02_mouseout");
             });
@@ -196,6 +201,7 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_experiencedCatParentButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
             // TODO : 게임 씬으로 이동
             AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             ResourceSystem::Instance().SetNation(m_selectedNation);
@@ -205,6 +211,7 @@ namespace JDScene {
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
+            if (isOpening) { return; }
             AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
@@ -212,6 +219,7 @@ namespace JDScene {
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_experiencedCatParentButton->AddOnExit("Highlight Off", [this]() {
+            if (isOpening) { return; }
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseout");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
             });
@@ -231,12 +239,15 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_naviImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
             AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_naviImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
                 AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
 
                 if (m_selectedNation == CatType::CatTypeMAX)
@@ -249,6 +260,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_naviImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseout");
@@ -274,12 +287,15 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_felisImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
             AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_felisImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
                 AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
 
                 if (m_selectedNation == CatType::CatTypeMAX)
@@ -292,6 +308,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_felisImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseout");
@@ -317,12 +335,15 @@ namespace JDScene {
 
         // 1. OnClick: 클릭하면 실행될 이벤트
         m_koneImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
             AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_koneImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
                 AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
 
                 if (m_selectedNation == CatType::CatTypeMAX)
@@ -335,6 +356,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_koneImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
@@ -349,6 +372,107 @@ namespace JDScene {
         //kone_Text->SetPosition({ -522, 32 });
 
         ////////////////////////////////////////////////////////////////////////////////
+
+        openingCut = CreateUIObject<Image>(L"OpeningCut");
+        openingCut->SetTextureName("Opening_Exam01");
+
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+
+            // 화면 크기로 설정
+            openingCut->SetSize(Vector2F{ screenWidth, screenHeight });
+            openingCut->SetPosition({ 0.0f, 0.0f });
+            openingCut->SetPivot({ 0.5f, 0.5f });
+        }
+
+        // 이전 버튼
+        prevButton = CreateUIObject<Button>(L"PrevButton");
+        prevButton->SetTextureName("ART_SelectKone01_mouseout");
+        prevButton->SetText(L"");
+        prevButton->SetSize({ 100, 168 });
+        prevButton->SetPosition({ -658, 0 });
+        prevButton->SetScale({ 1.f, 1.f });
+        prevButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        prevButton->AddOnClick("On Click", [this]() 
+            {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            pageCount = 0;
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        prevButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        prevButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 다음 버튼
+        nextButton = CreateUIObject<Button>(L"NextButton");
+        nextButton->SetTextureName("redbird1");
+        nextButton->SetText(L"");
+        nextButton->SetSize({ 100, 168 });
+        nextButton->SetPosition({ 658, 0 });
+        nextButton->SetScale({ 1.f, 1.f });
+        nextButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        nextButton->AddOnClick("On Click", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+                if (pageCount == 1) { CloseOpeningCut(); }
+                pageCount++;
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        nextButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+                std::cout << pageCount;
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        nextButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 스킵 버튼
+        skipButton = CreateUIObject<Button>(L"SkipButton");
+        skipButton->SetTextureName("redbird1");
+        skipButton->SetText(L"");
+        skipButton->SetSize({ 250, 95 });
+        skipButton->SetPosition({ 815, -367 });
+        skipButton->SetScale({ 1.f, 1.f });
+        skipButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        skipButton->AddOnClick("On Click", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+                CloseOpeningCut();
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        skipButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        skipButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
     }
 
     void SelectNationScene::FinalizeSelectNationScene()
@@ -360,8 +484,12 @@ namespace JDScene {
             sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
         }
 
-        
-
+        isOpening = true;
+        pageCount = 0;
+        openingCut = nullptr;
+        prevButton = nullptr;
+        nextButton = nullptr;
+        skipButton = nullptr;
 
         // 선택된 오브젝트 포인터 초기화
         SetSelectedObject(nullptr);
@@ -814,6 +942,7 @@ namespace JDScene {
 
     void SelectNationScene::RenderParticle()
     {
+
     }
 
     void SelectNationScene::ClearHoveredCharacter()
@@ -822,5 +951,25 @@ namespace JDScene {
         {
             m_hoveredCharacter[i] = false;
         }
+    }
+
+    void SelectNationScene::UpdatePage()
+    {
+        if (pageCount == 0) {
+            openingCut->SetTextureName("Opening_Exam01");
+        }
+        else
+        {
+            openingCut->SetTextureName("Opening_Exam02");
+        }
+    }
+
+    void SelectNationScene::CloseOpeningCut()
+    {
+        isOpening = false;
+        openingCut->SetActive(false);
+        prevButton->SetActive(false);
+        nextButton->SetActive(false);
+        skipButton->SetActive(false);
     }
 }

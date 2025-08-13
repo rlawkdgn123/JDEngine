@@ -71,7 +71,7 @@ namespace JDScene {
         rs.SetMaxPopulation(500);
         rs.SetCurPopulation(100);*/
 
-        m_playerArmy.OverrideUnitCounts({ 100, 100 });
+        //m_playerArmy.OverrideUnitCounts({ 100, 100 });
 
         // 병영.
         m_barracksObject = CreateStructure(L"barracksObj", JDGlobal::Base::GameTag::Barracks, { -197.f, 144.f }, "ART_Barracks02_mouse_over");

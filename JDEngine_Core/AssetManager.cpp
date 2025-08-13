@@ -175,6 +175,16 @@ void AssetManager::TextureSetUp() {
         std::cout << "[ERROR] UI_Exam 텍스처 로드 실패" << std::endl;
     }
 
+    if (!AssetManager::Instance().LoadTexture("Opening_Exam01", L"../Resource/Opening_Exam01.png"))
+    {
+        std::cout << "[ERROR] Opening_Exam01 텍스처 로드 실패" << std::endl;
+    }
+
+    if (!AssetManager::Instance().LoadTexture("Opening_Exam02", L"../Resource/Opening_Exam02.png"))
+    {
+        std::cout << "[ERROR] Opening_Exam02 텍스처 로드 실패" << std::endl;
+    }
+
 #pragma endregion
 
 #pragma region Asset_TITLE

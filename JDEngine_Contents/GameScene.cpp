@@ -1537,7 +1537,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(false);
-        m_trainerCatName->SetActive(false);
+        //m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
         m_trainerCatCostImage01->SetActive(false);
@@ -1554,7 +1554,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(false);
-        m_expertCatName->SetActive(false);
+        //m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
         m_expertCatCostImage01->SetActive(false);
@@ -1614,7 +1614,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(true);
-        m_trainerCatName->SetActive(true);
+        //m_trainerCatName->SetActive(true);
 
         m_trainerCatCostInfo->SetActive(true);
         m_trainerCatCostImage01->SetActive(true);
@@ -1631,7 +1631,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(true);
-        m_expertCatName->SetActive(true);
+        //m_expertCatName->SetActive(true);
 
         m_expertCatCostInfo->SetActive(true);
         m_expertCatCostImage01->SetActive(true);
@@ -1690,7 +1690,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton->SetActive(false);
-        m_trainerCatName->SetActive(false);
+        //m_trainerCatName->SetActive(false);
 
         m_trainerCatCostInfo->SetActive(false);
         m_trainerCatCostImage01->SetActive(false);
@@ -1707,7 +1707,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton->SetActive(false);
-        m_expertCatName->SetActive(false);
+        //m_expertCatName->SetActive(false);
 
         m_expertCatCostInfo->SetActive(false);
         m_expertCatCostImage01->SetActive(false);
@@ -2026,7 +2026,7 @@ namespace JDScene {
         m_curPopText = CreateUIObject<Text>(L"UI_CurPopText");
         m_curPopText->SetText(std::to_wstring(ResourceSystem::Instance().GetCurPopulation()));
         m_curPopText->SetTextFormatName("Sebang_22");
-        m_curPopText->SetColor(D2D1::ColorF(0x69512C));
+        m_curPopText->SetColor(D2D1::ColorF(0x2F3315));
         m_curPopText->SetSize({ 300, 100 });
         m_curPopText->SetPosition({ -832, 489 });
 
@@ -2052,7 +2052,7 @@ namespace JDScene {
         m_curFoodText = CreateUIObject<Text>(L"UI_CurFoodText");
         m_curFoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_food));
         m_curFoodText->SetTextFormatName("Sebang_22");
-        m_curFoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curFoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_curFoodText->SetSize({ 300, 100 });
         m_curFoodText->SetPosition({ -628, 489 });
 
@@ -2078,7 +2078,7 @@ namespace JDScene {
         m_curWoodText = CreateUIObject<Text>(L"UI_CurWoodText");
         m_curWoodText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_wood));
         m_curWoodText->SetTextFormatName("Sebang_22");
-        m_curWoodText->SetColor(D2D1::ColorF(0x69512C));
+        m_curWoodText->SetColor(D2D1::ColorF(0x2F3315));
         m_curWoodText->SetSize({ 300, 100 });
         m_curWoodText->SetPosition({ -420, 489 });
 
@@ -2104,7 +2104,7 @@ namespace JDScene {
         m_curMineralText = CreateUIObject<Text>(L"UI_CurMineralText");
         m_curMineralText->SetText(to_wstring(ResourceSystem::Instance().GetTotalResource().m_mineral));
         m_curMineralText->SetTextFormatName("Sebang_22");
-        m_curMineralText->SetColor(D2D1::ColorF(0x69512C));
+        m_curMineralText->SetColor(D2D1::ColorF(0x2F3315));
         m_curMineralText->SetSize({ 300, 100 });
         m_curMineralText->SetPosition({ -222.5f, 489.0f });
 
@@ -3077,22 +3077,22 @@ namespace JDScene {
         m_builtTypeText->SetText(L"업그레이드");
         m_builtTypeText->SetTextFormatName("Sebang_Bold_24");
         m_builtTypeText->SetColor(D2D1::ColorF(0x2F3315));
-        m_builtTypeText->SetSize({ 300, 100 });
-        m_builtTypeText->SetPosition({ 757.f, -385.5f });
+        m_builtTypeText->SetSize({ 120, 50 });
+        m_builtTypeText->SetPosition({ 765.f, -390.f });
 
         // 건물 업그레이드 코스트
         m_upgradeCostInfoText = CreateUIObject<Text>(L"UI_UpgradeCostInfoText");
         m_upgradeCostInfoText->SetText(L"코스트 :");
         m_upgradeCostInfoText->SetTextFormatName("Sebang_22");
         m_upgradeCostInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeCostInfoText->SetSize({ 300, 100 });
+        m_upgradeCostInfoText->SetSize({ 120, 50 });
         m_upgradeCostInfoText->SetPosition({ 697, -435 });
 
         m_upgradeCostText = CreateUIObject<Text>(L"UI_UpgradeCostText");
         m_upgradeCostText->SetText(L"50");
         m_upgradeCostText->SetTextFormatName("Sebang_20");
         m_upgradeCostText->SetColor(D2D1::ColorF(0x2F3315));
-        m_upgradeCostText->SetSize({ 300, 100 });
+        m_upgradeCostText->SetSize({ 120, 50 });
         m_upgradeCostText->SetPosition({ 824.5, -432 });
 
        
@@ -3309,8 +3309,8 @@ namespace JDScene {
         // 징병 _ 견습냥이 ( 이미지 & 텍스트 )
         m_trainerCatButton = CreateUIObject<Button>(L"UI_TrainerCatButton");
         //m_trainerCatButton->SetTextureName("ART_RecruitCat03");
-        m_trainerCatButton->SetSize({ 128, 139 });
-        m_trainerCatButton->SetPosition({ -111, -405 });
+        m_trainerCatButton->SetSize({ 145, 191 });
+        m_trainerCatButton->SetPosition({ -110, -425 });
         m_trainerCatButton->SetAnchor({ 1.0f, 0.0f });
         m_trainerCatButton->SetScale({ 1.f, 1.f });
 
@@ -3340,12 +3340,12 @@ namespace JDScene {
                 m_trainerCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
-        m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
-        m_trainerCatName->SetText(L"견습냥이");
-        m_trainerCatName->SetTextFormatName("Sebang_Bold_30");
-        m_trainerCatName->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatName->SetSize({ 300, 100 });
-        m_trainerCatName->SetPosition({ -100, -503 });
+        //m_trainerCatName = CreateUIObject<Text>(L"UI_TrainerCatNameText");
+        //m_trainerCatName->SetText(L"견습냥이");
+        //m_trainerCatName->SetTextFormatName("Sebang_Bold_30");
+        //m_trainerCatName->SetColor(D2D1::ColorF(0x2F3315));
+        //m_trainerCatName->SetSize({ 300, 100 });
+        //m_trainerCatName->SetPosition({ -100, -503 });
 
         // 견습냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
         m_trainerCatCostInfo = CreateUIObject<Text>(L"UI_TrainerCatCostInfoText");
@@ -3357,31 +3357,31 @@ namespace JDScene {
 
         m_trainerCatCostImage01 = CreateUIObject<Image>(L"UI_TrainerCatCostImage01");
         m_trainerCatCostImage01->SetTextureName("ART_CostFood01");
-        m_trainerCatCostImage01->SetSizeToOriginal();
-        m_trainerCatCostImage01->SetScale({ 0.5f, 0.5f });
-        m_trainerCatCostImage01->SetPosition({ 48, -361 });
+        m_trainerCatCostImage01->SetSize({ 116, 74});
+        m_trainerCatCostImage01->SetScale({ 0.4f, 0.4f });
+        m_trainerCatCostImage01->SetPosition({ 37, -356 });
         m_trainerCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_trainerCatCostText01 = CreateUIObject<Text>(L"UI_TrainerCatCostText01");
-        m_trainerCatCostText01->SetText(L"x200");
+        m_trainerCatCostText01->SetText(L"200");
         m_trainerCatCostText01->SetTextFormatName("Sebang_16");
         m_trainerCatCostText01->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatCostText01->SetSize({ 50, 100 });
-        m_trainerCatCostText01->SetPosition({ 117, -376 });
+        m_trainerCatCostText01->SetSize({ 50, 50 });
+        m_trainerCatCostText01->SetPosition({ 117, -378 });
 
         // 견습냥이 코스트 _ 02 ( 이미지 & 텍스트 )
         m_trainerCatCostImage02 = CreateUIObject<Image>(L"UI_TrainerCatCostImage02");
         m_trainerCatCostImage02->SetTextureName("ART_CostWood01");
-        m_trainerCatCostImage02->SetSizeToOriginal();
-        m_trainerCatCostImage02->SetScale({ 0.5f, 0.5f });
-        m_trainerCatCostImage02->SetPosition({ 48, -404 });
+        m_trainerCatCostImage02->SetSize({ 108, 76 });
+        m_trainerCatCostImage02->SetScale({ 0.4f, 0.4f });
+        m_trainerCatCostImage02->SetPosition({ 37, -400 });
         m_trainerCatCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_trainerCatCostText02 = CreateUIObject<Text>(L"UI_TrainerCatCostText02");
-        m_trainerCatCostText02->SetText(L"x50");
+        m_trainerCatCostText02->SetText(L"50");
         m_trainerCatCostText02->SetTextFormatName("Sebang_16");
         m_trainerCatCostText02->SetColor(D2D1::ColorF(0x2F3315));
-        m_trainerCatCostText02->SetSize({ 50, 100 });
+        m_trainerCatCostText02->SetSize({ 50, 50 });
         m_trainerCatCostText02->SetPosition({ 117, -422 });
 
         // 견습냥이 모집병력 Info & Text
@@ -3418,8 +3418,8 @@ namespace JDScene {
         // 징병 _ 숙련냥이 이미지
         m_expertCatButton = CreateUIObject<Button>(L"UI_ExpertCatButton");
         //m_expertCatButton->SetTextureName("ART_RecruitCat03");
-        m_expertCatButton->SetSize({ 128, 139 });
-        m_expertCatButton->SetPosition({ 245, -405 });
+        m_expertCatButton->SetSize({ 145, 191 });
+        m_expertCatButton->SetPosition({ 248, -425 });
         m_expertCatButton->SetAnchor({ 1.0f, 0.0f });
         m_expertCatButton->SetScale({ 1.f, 1.f });
 
@@ -3449,12 +3449,12 @@ namespace JDScene {
                 m_expertCatButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 1.f));
             });
 
-        m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
-        m_expertCatName->SetText(L"숙련냥이");
-        m_expertCatName->SetTextFormatName("Sebang_Bold_30");
-        m_expertCatName->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatName->SetSize({ 300, 100 });
-        m_expertCatName->SetPosition({ 258, -503 });
+        //m_expertCatName = CreateUIObject<Text>(L"UI_ExpertCatNameText");
+        //m_expertCatName->SetText(L"숙련냥이");
+        //m_expertCatName->SetTextFormatName("Sebang_Bold_30");
+        //m_expertCatName->SetColor(D2D1::ColorF(0x2F3315));
+        //m_expertCatName->SetSize({ 300, 100 });
+        //m_expertCatName->SetPosition({ 258, -503 });
 
         // 숙련냥이 코스트 _ 01 ( Info & 이미지 & 텍스트 )
         m_expertCatCostInfo = CreateUIObject<Text>(L"UI_ExpertCatCostInfoText");
@@ -3466,31 +3466,31 @@ namespace JDScene {
 
         m_expertCatCostImage01 = CreateUIObject<Image>(L"UI_ExpertCatCostImage01");
         m_expertCatCostImage01->SetTextureName("ART_CostFood01");
-        m_expertCatCostImage01->SetSizeToOriginal();
-        m_expertCatCostImage01->SetScale({ 0.5f, 0.5f });
-        m_expertCatCostImage01->SetPosition({ 406, -361 });
+        m_expertCatCostImage01->SetSize({116, 74});
+        m_expertCatCostImage01->SetScale({ 0.4f, 0.4f });
+        m_expertCatCostImage01->SetPosition({ 396, -356 });
         m_expertCatCostImage01->SetAnchor({ 1.0f, 0.0f });
 
         m_expertCatCostText01 = CreateUIObject<Text>(L"UI_ExpertCatCostText01");
-        m_expertCatCostText01->SetText(L"x100");
+        m_expertCatCostText01->SetText(L"100");
         m_expertCatCostText01->SetTextFormatName("Sebang_16");
         m_expertCatCostText01->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatCostText01->SetSize({ 50, 100 });
-        m_expertCatCostText01->SetPosition({ 476, -376 });
+        m_expertCatCostText01->SetSize({ 50, 50 });
+        m_expertCatCostText01->SetPosition({ 476, -378 });
 
         // 숙련냥이 코스트 _ 02 ( 이미지 & 텍스트 )
         m_expertCatCostImage02 = CreateUIObject<Image>(L"UI_ExpertCatCostImage02");
         m_expertCatCostImage02->SetTextureName("ART_CostMineral01");
         m_expertCatCostImage02->SetSizeToOriginal();
-        m_expertCatCostImage02->SetScale({ 0.5f, 0.5f });
-        m_expertCatCostImage02->SetPosition({ 406, -404 });
+        m_expertCatCostImage02->SetScale({ 0.4f, 0.4f });
+        m_expertCatCostImage02->SetPosition({ 396, -404 });
         m_expertCatCostImage02->SetAnchor({ 1.0f, 0.0f });
 
         m_expertCatCostText02 = CreateUIObject<Text>(L"UI_ExpertCatCostText02");
-        m_expertCatCostText02->SetText(L"x50");
+        m_expertCatCostText02->SetText(L"50");
         m_expertCatCostText02->SetTextFormatName("Sebang_16");
         m_expertCatCostText02->SetColor(D2D1::ColorF(0x2F3315));
-        m_expertCatCostText02->SetSize({ 50, 100 });
+        m_expertCatCostText02->SetSize({ 50, 50 });
         m_expertCatCostText02->SetPosition({ 476, -422 });
 
         // 숙련냥이 모집병력 Info & Text
@@ -4114,7 +4114,7 @@ namespace JDScene {
 
         auto* text = CreateUIObject<Text>(L"UI_NextWavePowerText");
         text->SetText(std::to_wstring(wavePower));
-        text->SetColor(D2D1::ColorF(0x69512C));
+        text->SetColor(D2D1::ColorF(0x2F3315));
         text->SetSize({ 60, 45 });
         //text->SetAnchor({ 1.0f, 0.0f });
         text->SetTextFormatName("Sebang_Bold_14");
@@ -4478,23 +4478,20 @@ namespace JDScene {
 
         switch (catType) {
         case CatType::Felis:
-            m_trainerCatButton->SetTextureName("Norway_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Norway_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitFelis01");
+            m_expertCatButton->SetTextureName("ART_RecruitFelis02");
             break;
         case CatType::Navi:
-            m_trainerCatButton->SetTextureName("Scottish_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Scottish_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitKone01");
+            m_expertCatButton->SetTextureName("ART_RecruitKone02");
             break;
         case CatType::Kone:
-            m_trainerCatButton->SetTextureName("Russ_nov_Frame 1");
-            m_expertCatButton->SetTextureName("Russ_ex_Frame 1");
+            m_trainerCatButton->SetTextureName("ART_RecruitNavi01");
+            m_expertCatButton->SetTextureName("ART_RecruitNavi02");
             break;
         default:
             break;
-        } 
-
-        m_trainerCatButton->SetSizeToOriginal();
-        m_expertCatButton->SetSizeToOriginal();
+        }
     }
 
     void GameScene::CreateOptionUI()
@@ -5120,7 +5117,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         m_trainerCatButton = nullptr;
-        m_trainerCatName = nullptr;
+        //m_trainerCatName = nullptr;
 
         m_trainerCatCostInfo = nullptr;
         m_trainerCatCostImage01 = nullptr;
@@ -5137,7 +5134,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         m_expertCatButton = nullptr;
-        m_expertCatName = nullptr;
+        //m_expertCatName = nullptr;
 
         m_expertCatCostInfo = nullptr;
         m_expertCatCostImage01 = nullptr;

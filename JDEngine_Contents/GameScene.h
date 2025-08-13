@@ -394,7 +394,7 @@ namespace JDScene {
         /////
         // 견습 냥이
         Button* m_trainerCatButton = nullptr;
-        Text* m_trainerCatName = nullptr;
+        //Text* m_trainerCatName = nullptr;
 
         Text* m_trainerCatCostInfo = nullptr;
         Image* m_trainerCatCostImage01 = nullptr;
@@ -411,7 +411,7 @@ namespace JDScene {
         /////
         // 숙련 냥이
         Button* m_expertCatButton = nullptr;
-        Text* m_expertCatName = nullptr;
+        //Text* m_expertCatName = nullptr;
 
         Text* m_expertCatCostInfo = nullptr;
         Image* m_expertCatCostImage01 = nullptr;

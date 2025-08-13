@@ -158,10 +158,10 @@ bool EngineCore::Initialize()
 
     // SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
 
-    SceneManager::Instance().ChangeScene("TitleScene");
+    // SceneManager::Instance().ChangeScene("TitleScene");
     // SceneManager::Instance().ChangeScene("TestScene01");
     // SceneManager::Instance().ChangeScene("GameScene");
-    // SceneManager::Instance().ChangeScene("TutorialScene");
+     SceneManager::Instance().ChangeScene("TutorialScene");
     // SceneManager::Instance().ChangeScene("SelectNationScene");
 
     //SceneManager::Instance().RegisterScene(make_unique< JDScene::TestScene>(JDGlobal::Core::SceneType::SCENE_TEST, "TestScene01"));
@@ -2612,8 +2612,26 @@ void EngineCore::LoadResources()
         std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
     }
 
-    
-
+    if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU02", L"../Resource/BATTLE/ART_BACK_TO_MENU02.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_BACK_TO_MENU01", L"../Resource/BATTLE/ART_BACK_TO_MENU01.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RETRY02", L"../Resource/BATTLE/ART_RETRY02.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_RETRY01", L"../Resource/BATTLE/ART_RETRY01.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("ART_BadEnd01", L"../Resource/BATTLE/ART_BadEnd01.png"))
+    {
+        std::cout << "[ERROR] ART_Building_Level 텍스처 로드 실패" << std::endl;
+    }
 #pragma endregion
 
 
@@ -2651,10 +2669,22 @@ void EngineCore::LoadResources()
 
 
     // Patikle Resource
-    ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
     if (!AssetManager::Instance().LoadTexture("blossom", L"../Resource/Patikle/ART_Flower01.png"))
     {
-        std::cout << "[ERROR] SETTING_ICON 텍스처 로드 실패" << std::endl;
+        std::cout << "[ERROR] blossom 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("leaf", L"../Resource/Patikle/ART_LeefParticle01.png"))
+    {
+        std::cout << "[ERROR] leaf 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("wave", L"../Resource/Patikle/ART_PondParticle01.png"))
+    {
+        std::cout << "[ERROR] wave 텍스처 로드 실패" << std::endl;
+    }
+    if (!AssetManager::Instance().LoadTexture("smoke", L"../Resource/Patikle/smoke_particle.png"))
+    {
+        std::cout << "[ERROR] smoke 텍스처 로드 실패" << std::endl;
     }
     if (!AssetManager::Instance().LoadTexture("dust", L"../Resource/Dust.png"))
     {

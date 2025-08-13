@@ -71,6 +71,9 @@ namespace JDScene {
         // 성벽.
         // m_wallObject = CreateStructure(L"wallObj", JDGlobal::Base::GameTag::Wall, { -300.0f, 75.0f }, "house");
 
+        // 엔딩 여부.
+        m_isEnding = false;
+
         /////////////////////////////////////////////////////////////////////////////
         AudioManager::Instance().PlayBGM("BGM_Battle", &bgmChannel);
         // AudioManager::Instance().PlayBGM("BGM_Fiield", &bgmChannel);
@@ -96,6 +99,10 @@ namespace JDScene {
     void GameScene::Update(float deltaTime) {
         SceneBase::Update(deltaTime);
   
+        if (m_isEnding) {
+            //엔딩 
+        }
+
         if(ResolveGameEnding()) return; // 엔딩 관리.
 
         UpdateResourceUI();
@@ -3589,7 +3596,7 @@ namespace JDScene {
         }
 
         // 3) m_emptyButtons 상태 확인
-        std::cout << "[DEBUG] m_emptyButtons.size(): " << m_gridCreateButtons.size() << std::endl;
+        //std::cout << "[DEBUG] m_emptyButtons.size(): " << m_gridCreateButtons.size() << std::endl;
         for (size_t i = 0; i < m_gridCreateButtons.size(); ++i)
         {
             auto* btn = m_gridCreateButtons[i];
@@ -3751,8 +3758,11 @@ namespace JDScene {
 
     bool GameScene::ResolveGameEnding()
     {
+        if (m_isEnding) return true; // 엔딩을 한번 실행했으면 끝.
+
         if (m_wallHealth == 0) {
             std::cout << "[GameScene] 배드엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            m_isEnding = true;
             return true;
         }
         else if (CheckEnding()) {
@@ -3762,6 +3772,8 @@ namespace JDScene {
             else {
                 std::cout << "[GameScene] 엔딩이다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             }
+            m_isEnding = true;
+
             return true;
         }
         return false;

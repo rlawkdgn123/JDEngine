@@ -206,6 +206,8 @@ namespace JDScene {
         bool CheckEnding(); // 기본 엔딩 조건.
         bool ResolveGameEnding(); // 엔딩 분기 처리.
 
+        bool m_isEnding = false;
+
         ///////////////////////////////////////////////////////////////////////////////
         // 전투 아군 적군 관리용. 추가 부분.
        

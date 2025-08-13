@@ -29,9 +29,9 @@ namespace JDScene {
 		m_gameObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
 		m_objectCount++;
 
-		std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;
+		//std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;
 
-		std::wcout << L"CreateGameObj Name :" << ptr->GetName() << L"\nCreateGameObj id :" << ptr->GetID() << std::endl;
+		//std::wcout << L"CreateGameObj Name :" << ptr->GetName() << L"\nCreateGameObj id :" << ptr->GetID() << std::endl;
 		ptr->Awake();
 		ptr->Start();
 
@@ -50,9 +50,9 @@ namespace JDScene {
 		m_uiObjects.emplace_back(std::move(obj)); // unique타입이기 때문에 매개변수 gameObject를 forward를 통한 이전
 		m_objectCount++;
 
-		std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;
+		//std::wcout << L"ptr->GetName().empty()? : " << ptr->GetName().empty() << std::endl;
 
-		std::wcout << L"CreateGameObj Name :" << ptr->GetName() << L"\nCreateGameObj id :" << ptr->GetID() << std::endl;
+		//std::wcout << L"CreateGameObj Name :" << ptr->GetName() << L"\nCreateGameObj id :" << ptr->GetID() << std::endl;
 		ptr->Awake();
 		ptr->Start();
 

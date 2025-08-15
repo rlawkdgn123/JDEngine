@@ -53,7 +53,7 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
         // 파티클
 
-        FMOD::Channel* bgmChannel = nullptr;
+        //FMOD::Channel* bgmChannel = nullptr;
         FMOD::Channel* sfxChannel = nullptr;
 
         std::unique_ptr<ParticleSystem> m_mouseParticles;
@@ -73,6 +73,14 @@ namespace JDScene {
         float m_sakuraEmissionRate = 1.5f;//초당 생성 갯수
         float m_sakuraEmitAccumulator = 0.0f;
 
+        void RenderCursor(Vector2F mouseClientPos,
+            float scale = 1.0f, float alpha = 1.0f);
+
+        Vector2F mouseClientPos;
+        D2D1_SIZE_U  g_cursorPx = {};
+        Vector2F g_hotspot = { 0.0f, 0.0f };
+        ID2D1Bitmap* g_cursorBmp = AssetManager::Instance().GetTexture("mouse");
+        ID2D1Bitmap* g_cursorDownBmp = AssetManager::Instance().GetTexture("click");
         ////////////////////////////////////////////////////////////////////////////////
         // 옵션창
 
@@ -83,6 +91,7 @@ namespace JDScene {
         Image* m_optionControl = nullptr;
         Image* m_optionCredit = nullptr;
 
+        // 옵션 닫기 버튼
         Button* m_closeOption = nullptr;
 
         // 옵션 선택 실제 버튼
@@ -90,10 +99,10 @@ namespace JDScene {
         Button* m_selectControl = nullptr;
         Button* m_selectCredit = nullptr;
 
-        // 옵션 선택 더미 이미지
-        Image* m_selectVolumeDummy = nullptr;
-        Image* m_selectControlDummy = nullptr;
-        Image* m_selectCreditDummy = nullptr;
+        // 옵션 선택 더미 텍스트
+        Text* m_selectVolumeDummyText = nullptr;
+        Text* m_selectControlDummyText = nullptr;
+        Text* m_selectCreditDummyText = nullptr;
 
         // 볼륨 선택 슬라이더
         Slider* m_masterSlider = nullptr;

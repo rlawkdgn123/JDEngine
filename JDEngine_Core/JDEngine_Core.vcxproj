@@ -151,6 +151,7 @@
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraFader.h" />
     <ClInclude Include="CircleCollider.h" />
     <ClInclude Include="ColliderBase.h" />
     <ClInclude Include="Component.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SFX.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UIObject.h" />
     <ClInclude Include="UI_ButtonComponent.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="RectTransform.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UI_ButtonComponent.cpp" />
     <ClCompile Include="UI_ImageComponent.cpp" />

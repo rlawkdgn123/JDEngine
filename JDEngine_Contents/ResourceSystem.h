@@ -11,6 +11,9 @@ namespace JDGameSystem {
 	public:
 		using Resource = JDGlobal::Contents::Resource;
 		using StartResources = JDGlobal::Contents::StartResources;
+		using CatType = JDGlobal::Contents::CatType;
+		using NationBonus = JDGlobal::Contents::NationBonus;
+
 		static ResourceSystem& Instance()
 		{
 			static ResourceSystem instance;
@@ -50,15 +53,30 @@ namespace JDGameSystem {
 
 	public:
 		void Clear() {
+			// 1) 데이터테이블에서 시작 자원과 최대 인구를 가져오기
 			DataTableManager::Instance().GetStartResourcesTable(m_totalResource, m_maxPopulation);
-			//m_totalResource.Clear();			// 누적 자원
-			m_totalResourcePerSec.Clear();     // 총 생산 자원 (보너스 적용)
-			m_resourcePerSec.Clear();		    // 기본 초당 자원
-			m_resourceBonus.Clear();		    // % 자원 보너스 (예: 10 = 10%)
-			m_synergyBonus.Clear();		    // % 시너지 보너스
-			//m_maxPopulation = 10;		    // 최대 인구수
-			m_curPopulation = 0;		    // 현재 인구수
+			// 2) 초당 자원/보너스 초기화
+			m_nation = CatType::None;
+			m_nationBonus.Clear();
+			m_totalResourcePerSec.Clear();
+			m_resourcePerSec.Clear();
+			m_resourceBonus.Clear();
+			m_synergyBonus.Clear();
+
+			// 3) 현재 인구 안전 초기화
+			// 기존 curPopulation이 0이 아니라면 차감/증가 방식으로 조정
+			int curPop = m_curPopulation;
+			if (curPop > 0) {
+				AddCurPopulation(-curPop); // 남은 인구가 있으면 차감
+			}
+			else if (curPop < 0) {
+				AddCurPopulation(-curPop); // 음수면 보정
+			}
+			// 이렇게 하면 직접 덮어쓰지 않고, 싱글톤 로직을 거쳐 안전하게 0으로 초기화됨
+
+			m_secondTimer = 0.0f; // 타이머 초기화
 		}
+
 		void Update(float deltaTime) {
 			m_secondTimer += deltaTime; // 누적 시간을 더해줍니다.
 			UpdateTotalResourcePerSec(); // 초당 자원량을 먼저 계산합니다.
@@ -66,20 +84,25 @@ namespace JDGameSystem {
 			if (m_secondTimer >= 1.0f) // 1초 이상 누적되었는지 확인합니다.
 			{
 				// 1초 누적 후 처리할 로직
-				// ... (예: 로그 출력)
-				std::cout << "1초가 지났읍니다..." << std::endl;
+				//std::cout << "1초가 지났읍니다..." << std::endl;
 
-				// 초당 자원량을 한 번만 누적시킵니다.
+				// 초당 자원량을 한 번만 누적
 				m_totalResource += m_totalResourcePerSec;
 				ClampResourceToLimits(m_totalResource);
 
-				// 누적 시간에서 1초를 빼고 남은 시간을 보존합니다.
-				// 예를 들어 1.5초가 누적되었다면 0.5초가 남게 됩니다.
+				// 누적 시간에서 1초를 빼고 남은 시간을 보존
+				// 예를 들어 1.5초가 누적되었다면 0.5초가 남게 됨
 				m_secondTimer -= 1.0f;
 			}
 		}
 
 		void UpdateTotalResourcePerSec() {
+
+			Resource nationBonus = Resource{
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_food) * static_cast<float>(m_nationBonus.m_food) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_wood) * static_cast<float>(m_nationBonus.m_wood) / 100.f)),
+				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_mineral) * static_cast<float>(m_nationBonus.m_mineral) / 100.f)),
+			};
 			Resource resourceBonus = Resource{
 				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_food) * static_cast<float>(m_resourceBonus.m_food) / 100.f)),
 				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_wood) * static_cast<float>(m_resourceBonus.m_wood) / 100.f)),
@@ -90,13 +113,14 @@ namespace JDGameSystem {
 				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_wood) * static_cast<float>(m_synergyBonus.m_wood) / 100.f)),
 				static_cast<int>(std::round(static_cast<float>(m_resourcePerSec.m_mineral) * static_cast<float>(m_synergyBonus.m_mineral) / 100.f)),
 			};
-			m_totalResourcePerSec = (m_resourcePerSec + resourceBonus + synergyBonus);
+			m_totalResourcePerSec = (m_resourcePerSec + nationBonus + resourceBonus + synergyBonus);
 		}
 
 		// Getters
 		const Resource& GetTotalResourcePerSec() { return m_totalResourcePerSec; }
 		const Resource& GetTotalResource() const { return m_totalResource; }
 		const Resource& GetResourcePerSec() const { return m_resourcePerSec; }
+		const Resource& GetNationBonus() { return m_nationBonus; }
 		const Resource& GetResourceBonus() const { return m_resourceBonus; }
 		const Resource& GetSynergyBonus() const { return m_synergyBonus; }
 		const int& GetMaxPopulation() const { return m_maxPopulation; }
@@ -110,6 +134,7 @@ namespace JDGameSystem {
 			m_totalResource = value;
 			ClampResourceToLimits(m_totalResource);
 		}
+
 		void AddTotalResource(const Resource& value) {
 			m_totalResource += value;
 			ClampResourceToLimits(m_totalResource);
@@ -117,7 +142,9 @@ namespace JDGameSystem {
 
 		void SetResourceBonus(const Resource& value) {
 			m_resourceBonus = ClampBonus(value);
-		}void AddResourceBonus(const Resource& value) {
+		}
+		
+		void AddResourceBonus(const Resource& value) {
 			m_resourceBonus += value;
 			m_resourceBonus = ClampBonus(m_resourceBonus);
 		}
@@ -125,22 +152,45 @@ namespace JDGameSystem {
 		void SetSynergyBonus(const Resource& value) {
 			m_synergyBonus = ClampBonus(value);
 		}
+
 		void AddSynergyBonus(const Resource& value) {
 			m_synergyBonus += value;
 			m_synergyBonus = ClampBonus(m_synergyBonus);
 		}
+
 		void SetMaxPopulation(const int& value);
 		void AddMaxPopulation(const int& value);
 		void SetCurPopulation(const int& value);
 		void AddCurPopulation(const int& value);
 
+		CatType GetNation() { return m_nation; }
+		void SetNation(CatType nation) {
+			m_nation = nation; // 현재 국가 저장
+
+			NationBonus bonus; // 구조체 인스턴스 생성
+
+			switch (m_nation) {
+			case CatType::Felis:
+				m_nationBonus = bonus.FelisBonus;
+				break;
+			case CatType::Navi:
+				m_nationBonus = bonus.NaviBonus;
+				break;
+			case CatType::Kone:
+				m_nationBonus = bonus.KoneBonus;
+				break;
+			}
+		}
 	private:
+		CatType m_nation;
+		
 		Resource m_totalResource;			// 누적 자원
 		Resource m_totalResourcePerSec;     // 총 생산 자원 (보너스 적용)
 		Resource m_resourcePerSec;		    // 기본 초당 자원
-		Resource m_resourceBonus;		    // % 자원 보너스 (예: 10 = 10%)
+		Resource m_nationBonus;				// % 국가 보너스 (예: 10 = 10%)
+		Resource m_resourceBonus;		    // % 자원 보너스 
 		Resource m_synergyBonus;		    // % 시너지 보너스
-		int m_maxPopulation = 10;		    // 최대 인구수
+		int m_maxPopulation = 0;		    // 최대 인구수
 		int m_curPopulation = 0;		    // 현재 인구수
 
 		float m_secondTimer;

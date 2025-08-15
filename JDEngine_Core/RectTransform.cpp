@@ -11,11 +11,11 @@ namespace JDComponent {
         void RectTransform::UpdateMatrices()
         {
             // 앵커 적용이 안된 렉트트랜스폼
-            
-            std::cout << "m_scale = (" << m_scale.x << ", " << m_scale.y << ")\n";
+  
+            /*std::cout << "m_scale = (" << m_scale.x << ", " << m_scale.y << ")\n";
             std::cout << "m_rotation = " << m_rotation << " degrees\n";
             std::cout << "m_position = (" << m_position.x << ", " << m_position.y << ")\n";
-            std::cout << "m_pivot = (" << m_pivot.x << ", " << m_pivot.y << ")\n";
+            std::cout << "m_pivot = (" << m_pivot.x << ", " << m_pivot.y << ")\n";*/
 
             // 1. 올바른 피벗 픽셀 오프셋 계산
             Vector2F pivotOffset = { m_pivot.x * m_size.x, m_pivot.y * m_size.y };

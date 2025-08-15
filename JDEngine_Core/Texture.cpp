@@ -7,11 +7,20 @@ using namespace JDComponent;
 
 void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F worldTransform)
 {
+    if (!m_Owner || !m_Owner->IsActive()) return;
+
+    if (!GetEnabled()) return;
     // AssetManager에서 ID2D1Bitmap1*으로 받아옵니다.
     auto bitmap = static_cast<ID2D1Bitmap1*>(
         AssetManager::Instance().GetTexture(m_textureName)
         );
     if (!bitmap) return;
+
+    /*auto px = bitmap->GetPixelSize();
+    float w = static_cast<float>(px.width);
+    float h = static_cast<float>(px.height);*/
+
+    //D2D1_RECT_F destRect = D2D1::RectF(-w * 0.5f, h * 0.5f, w * 0.5f, -h * 0.5f);
 
     D2D1_RECT_F destRect = D2D1::RectF(
         -m_size.width * 0.5f,   // left
@@ -19,6 +28,7 @@ void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F
         m_size.width * 0.5f,    // right
         -m_size.height * 0.5f   // bottom
     );
+
 
     D2D1_MATRIX_3X2_F flipMatrix = D2D1::Matrix3x2F::Identity();
     if (m_flipX) {

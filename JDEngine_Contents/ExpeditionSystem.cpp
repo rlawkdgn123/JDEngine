@@ -1,16 +1,29 @@
 #include "pch.h"
 #include "ExpeditionSystem.h"
 #include "ResourceSystem.h"
+#include "DataTableManager.h"
 #include <random>
 
 namespace JDGameSystem {
 	void ExpeditionSystem::InitGradesInfo() { // 원정 정보 초기화.
-		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Beginner)] =
+		/*m_expeditionGrades[static_cast<int>(ExpeditionGrade::Beginner)] =
 			ExpeditionInfo(Resource(50.f, 50.f, 50.f), 10, 10.f, Resource(55.f, 55.f, 55.f));
 		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Intermediate)] =
 			ExpeditionInfo(Resource(100.f, 100.f, 100.f), 25, 15.f, Resource(150.f, 150.f, 150.f));
 		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Higher)] =
-			ExpeditionInfo(Resource(150.f, 150.f, 150.f), 40, 20.f, Resource(250.f, 250.f, 250.f));
+			ExpeditionInfo(Resource(150.f, 150.f, 150.f), 40, 20.f, Resource(250.f, 250.f, 250.f));*/
+
+		m_expeditionTable = DataTableManager::Instance().GetExpeditionTableInfo();
+
+		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Beginner)] =
+			ExpeditionInfo(m_expeditionTable.m_cost[0], m_expeditionTable.m_point[0], 
+				m_expeditionTable.m_successRate[0], m_expeditionTable.m_reward[0]);
+		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Intermediate)] =
+			ExpeditionInfo(m_expeditionTable.m_cost[1], m_expeditionTable.m_point[1],
+				m_expeditionTable.m_successRate[1], m_expeditionTable.m_reward[1]);
+		m_expeditionGrades[static_cast<int>(ExpeditionGrade::Higher)] =
+			ExpeditionInfo(m_expeditionTable.m_cost[2], m_expeditionTable.m_point[2],
+				m_expeditionTable.m_successRate[2], m_expeditionTable.m_reward[2]);
 	}
 
 	ExpeditionInfo ExpeditionSystem::GetExpeditionInfo(ExpeditionGrade grade) const { // 원정 정보 가져오기.
@@ -72,10 +85,18 @@ namespace JDGameSystem {
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> dist(0.0f, 100.0f);
-
 		float randValue = dist(gen);
 
 		return randValue < successRate;
+	}
+
+	void ExpeditionSystem::RollBonusType() {
+		// 자원 중 하나만 선택해서 보상.
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int> dist(0, 2);
+		m_randomResourceIndex = dist(gen);
+		std::cout << "[ExpeditionSystem] 랜덤보상 종류 : " << m_randomResourceIndex << std::endl;
 	}
 
 	void ExpeditionSystem::ResolveExpedition() {
@@ -88,19 +109,15 @@ namespace JDGameSystem {
 		m_expeditionPoints = std::min(m_goalPoints, m_expeditionPoints + expeditionInfo.m_point); // 원정 포인트 더하기.
 		m_expeditionActive = true; // 다시 원정 갈 수 있게.
 
+		//RollBonusType(); // 랜덤 보상 다시 정해주기.
+
 		if (!RollBonusReward(expeditionInfo.m_successRate)) { // 확률을 뚫지 못하면 끝.
 			std::cout << "[ExpeditionSystem] 확률을 뚫지 못함." << std::endl;
 			return;
 		}
 
-		// 자원 중 하나만 선택해서 보상.
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> dist(0, 2);
-		int randomResourceIndex = dist(gen);
-
 		Resource reward = {0, 0, 0};
-		switch (randomResourceIndex) { // 랜덤 자원 하나만 더해줄거임.
+		switch (m_randomResourceIndex) { // 랜덤 자원 하나만 더해줄거임.
 		case 0:
 			reward.m_food = expeditionInfo.m_reward.m_food;
 			break;

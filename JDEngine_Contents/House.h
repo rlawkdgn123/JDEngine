@@ -34,6 +34,9 @@ namespace JDGameObject {
 
             bool LevelUp();
             bool LevelDown();
+            int GetLevel() { return m_curLevel; }
+            const JDGlobal::Contents::HouseStats& GetHouseStats() const { return m_stats; }
+
         protected:
             JDGlobal::Contents::HouseStats m_stats;
             int m_curLevel = 0;

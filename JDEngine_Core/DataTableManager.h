@@ -7,6 +7,11 @@ public:
     using BuildingStats = JDGlobal::Contents::BuildingStats;
     using HouseStats = JDGlobal::Contents::HouseStats;
     using Resource = JDGlobal::Contents::Resource;
+    using StartResources = JDGlobal::Contents::StartResources;
+    using SordierTypeStats = JDGlobal::Contents::SordierTypeStats;
+    using WaveStats = JDGlobal::Contents::WaveStats;
+    using ExpeditionStats = JDGlobal::Contents::ExpeditionStats;
+    
 public:
     static DataTableManager& Instance()
     {
@@ -23,9 +28,20 @@ public:
         population = m_startResourceTable.m_population;
     }
     void GetFishingSpotTable(BuildingStats& table) { table = m_fishingSpotTable; }
+    BuildingStats GetFishingSpotTableInfo() const { return m_fishingSpotTable; }
     void GetLumberMillTable(BuildingStats& table) { table = m_lumberMillTable; }
-    void GetMineTable(BuildingStats& table) { table = m_mineTable; }
+    BuildingStats GetLumbermillTableInfo() { return m_lumberMillTable; }
+    void GetMineTable(BuildingStats& table) const { table = m_mineTable; }
+    BuildingStats GetMineTableInfo() { return m_mineTable; }
     void GetHouseTable(HouseStats& table) { table = m_houseTable; }
+    HouseStats GetHouseTableInfo() const { return m_houseTable; }
+
+    void GetSordierTypeTable(SordierTypeStats& table) { table = m_soldierTypeTable; }
+    SordierTypeStats GetSordierTypeTableInfo() const { return m_soldierTypeTable; }
+    void GetWaveTable(WaveStats& table) { table = m_waveTable; }
+    WaveStats GetWaveTableInfo() const { return m_waveTable; }
+    void GetExpeditionTable(ExpeditionStats& table) { table = m_expeditionTable; }
+    ExpeditionStats GetExpeditionTableInfo() const { return m_expeditionTable; }
 
     // CSV Parsing
     bool LoadCSV(const std::string& name, const std::string& filePath);
@@ -42,9 +58,10 @@ private:
     void ParseLumberMillTable();
     void ParseMineTable();
     void ParseHouseTable();
-    void ParseCatTable();       // 운영용 고양이 스탯 테이블
-    void ParseArmyTable();      // 전투용 고양이 스탯 테이블
-    void ParseEnemyTable();     // 적 스탯 & 물량 테이블
+    void ParseSoldierTypeTable(); // 고양이 병종 테이블
+    void ParseWaveTable();       // 적 웨이브당 병력 테이블
+    void ParseExpeditionTable(); // 원정 보상 테이블
+
     
 private:
     // string은 RAII가 이미 적용되어 있으므로, smart_ptr을 적용시킬 필요가 없다.
@@ -54,8 +71,11 @@ private:
     BuildingStats m_lumberMillTable;
     BuildingStats m_mineTable;
     HouseStats m_houseTable;
+    SordierTypeStats m_soldierTypeTable;
+    WaveStats m_waveTable;
+    ExpeditionStats m_expeditionTable; // 원정 레벨 정보.
 
-    JDGlobal::Contents::StartResources m_startResourceTable;
+    StartResources m_startResourceTable;
 
     DataTableManager() = default;
     ~DataTableManager() = default;

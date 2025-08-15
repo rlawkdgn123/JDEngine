@@ -25,6 +25,10 @@ void D2DRenderer::Initialize(HWND hwnd)
     m_wicFactory = wicFactory;
 
     m_camera = std::make_unique<Camera>();
+
+    /*ID2D1DeviceContext* ctx = GetD2DContext();
+    ctx->SetUnitMode(D2D1_UNIT_MODE_DIPS);
+    ctx->SetDpi(96.0f, 96.0f);*/
 }
 
 void D2DRenderer::Uninitialize()
@@ -219,7 +223,7 @@ void D2DRenderer::SetTransform(const D2D1_MATRIX_3X2_F tm)
 void D2DRenderer::RenderBegin()
 {
     m_d2dContext->BeginDraw();
-    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White)); // 배경을 흰색으로 초기화
+    m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::WhiteSmoke)); // 배경을 흰색으로 초기화
 }
 
 void D2DRenderer::RenderEnd(bool bPresent)
@@ -264,6 +268,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     // 2) 애니메이션과 스프라이트 컴포넌트 검사
     auto anim = obj.GetComponent<AnimationRender>();
     auto spr = obj.GetComponent<TextureRenderer>();
+    auto text = obj.GetComponent<TextRenderer>();
 
     // 3) 최종 렌더링을 위한 행렬 계산
     //    순서: 오브젝트의 월드 행렬 -> 카메라 적용 -> 화면 중앙으로 이동
@@ -287,7 +292,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
         // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
         anim->Render(ctx, finalTransform);
-        return;
+        //return;
     }
 
     // 5) 애니메이션이 없으면 기존 스프라이트 렌더러 호출
@@ -295,6 +300,13 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     {
         ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
         spr->Render(ctx, finalTransform);
+    }
+
+    // 6) TextRenderer가 있으면 렌더러 호출
+    if (text)
+    {
+        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        text->Render(ctx, finalTransform);
     }
 }
 
@@ -557,21 +569,35 @@ void D2DRenderer::CreateWriteResource()
     // 4. 시스템 폰트 및 커스텀 폰트 등록
     // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
 
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 10.0f, "Sebang_10");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 12.0f, "Sebang_12");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 14.0f, "Sebang_14");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 16.0f, "Sebang_16");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 22.0f, "Sebang_22");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 18.0f, "Sebang_18");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 20.0f, "Sebang_20");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 21.0f, "Sebang_21");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 22.0f, "Sebang_22");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 50.0f, "Sebang_50");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 54.0f, "Sebang_54");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 58.0f, "Sebang_58");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 14.0f, "Sebang_Bold_14");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 22.0f, "Sebang_Bold_22");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 20.0f, "Sebang_Bold_20");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 28.0f, "Sebang_Bold_28");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 30.0f, "Sebang_Bold_30");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 32.0f, "Sebang_Bold_32");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 34.0f, "Sebang_Bold_34");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 36.0f, "Sebang_Bold_36");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 37.0f, "Sebang_Bold_37");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 38.0f, "Sebang_Bold_38");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 44.0f, "Sebang_Bold_44");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 46.0f, "Sebang_Bold_46");
+    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 50.0f, "Sebang_Bold_50");
     CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 58.0f, "Sebang_Bold_58");
     CreateFormatFromFile(L"../Resource/FONT/Pinkfong Baby Shark Font_ Bold.otf", 40.0f, "Pinkfong_Bold_40");
 }

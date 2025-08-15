@@ -1,0 +1,45 @@
+,,,,,,
+자원,Expedition1,Expedition2,Expedition3,Expedition1_reward,Expedition2_reward,Expedition3_reward
+Food,50,100,150,55,150,250
+Wood,50,100,150,55,150,250
+Mineral,50,100,150,55,150,250
+Point,10,25,40,0,0,0
+SuccessRate,10,15,25,0,0,0
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+"원정 정보 파싱
+struct ExpeditionInfo { // 원정 정보. 
+	Resource m_cost;           // 필요 자원.
+	int m_point;               // 원정 포인트.
+	float m_successRate;       // 추가 보상 확률.
+	Resource m_reward;         // 추가 보상.
+} 
+",,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+"Resource : (float, float, float)",,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,

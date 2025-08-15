@@ -44,14 +44,14 @@ namespace JDGameSystem {
 
 		UnitCounts counts = player.GetUnitCounts();
 
-		int W_n = counts[UnitType::Novice];
-		//int W_e = counts[UnitType::Expert];
+		int W_n = counts[SordierType::Novice];
+		//int W_e = counts[SordierType::Expert];
 
 		int w_n_loss = std::min(W_n, N_loss);
 		int w_e_loss = std::max(0, N_loss - W_n);
 
-		counts[UnitType::Novice] -= w_n_loss;
-		counts[UnitType::Expert] -= w_e_loss;
+		counts[SordierType::Novice] -= w_n_loss;
+		counts[SordierType::Expert] -= w_e_loss;
 
 		// 손실 출력 (디버깅용)
 		//int prevTotalPower = player.CalculateTotalPower();
@@ -64,7 +64,7 @@ namespace JDGameSystem {
 		//std::cout << "[CombatSystem] 전투력 손실: " << diffTotalPower << std::endl;
 	}
 
-	void CombatSystem::ResolveBattle(const UnitCounts& playerUnits, int playerPower,
+	bool CombatSystem::ResolveBattle(const UnitCounts& playerUnits, int playerPower,
 		                             const UnitCounts& enemyUnits, int enemyPower,
 		                             UnitCounts& outPlayerResult, UnitCounts& outEnemyResult) {
 		// 총 공격력.
@@ -74,13 +74,13 @@ namespace JDGameSystem {
 		if (P_enemy <= 0.0f) { // 0 이하 나누기 방지.
 			outPlayerResult = playerUnits;
 			std::cout << "[CombatSystem] Invalid enemy TotalPower." << P_enemy <<std::endl;
-			return;
+			return false;
 		}
 
 		if (P_my <= 0.0f) { // 0 이하 나누기 방지.
 			outEnemyResult = enemyUnits;
 			std::cout << "[CombatSystem] Invalid player TotalPower." << std::endl;
-			return;
+			return false;
 		}
 
 		// 우세도 계산.
@@ -114,19 +114,30 @@ namespace JDGameSystem {
 		N_loss_my = JDMath::Clamp(N_loss_my + randVal, 0, N_my);
 
 		// 결과.
-		int W_n_my = playerUnits[UnitType::Novice];
+		int W_n_my = playerUnits[SordierType::Novice];
 		int w_n_loss_my = std::min(W_n_my, N_loss_my);
 		int w_e_loss_my = std::max(0, N_loss_my - W_n_my);
 
-		outPlayerResult[UnitType::Novice] = std::max(0, playerUnits[UnitType::Novice] - w_n_loss_my);
-		outPlayerResult[UnitType::Expert] = std::max(0, playerUnits[UnitType::Expert] - w_e_loss_my);
+		// 죽은 병사만큼 현재 인구 되돌리기.
+		ArmySystem::BringbackPopulation(w_n_loss_my + w_e_loss_my);
 
-		int W_n_enemy = enemyUnits[UnitType::Novice];
+		outPlayerResult[SordierType::Novice] = std::max(0, playerUnits[SordierType::Novice] - w_n_loss_my);
+		outPlayerResult[SordierType::Expert] = std::max(0, playerUnits[SordierType::Expert] - w_e_loss_my);
+
+		int W_n_enemy = enemyUnits[SordierType::Novice];
 		int w_n_loss_enemy = std::min(W_n_enemy, N_loss_enemy);
 		int w_e_loss_enemy = std::max(0, N_loss_enemy - W_n_enemy);
 
-		outEnemyResult[UnitType::Novice] = std::max(0, enemyUnits[UnitType::Novice] - w_n_loss_enemy);
-		outEnemyResult[UnitType::Expert] = std::max(0, enemyUnits[UnitType::Expert] - w_e_loss_enemy);
+		outEnemyResult[SordierType::Novice] = std::max(0, enemyUnits[SordierType::Novice] - w_n_loss_enemy);
+		outEnemyResult[SordierType::Expert] = std::max(0, enemyUnits[SordierType::Expert] - w_e_loss_enemy);
 
+		if (R_my < 1.0f) { 
+			std::cout << "[CombatSystem] 졌음." << std::endl;
+			return false; 
+		}
+		else { 
+			std::cout << "[CombatSystem] 이김." << std::endl;
+			return true; 
+		}
 	}
 }

@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "pch.h"
 #include "framework.h"
+#include <array>
 
 namespace JDMath = JDGlobal::Math;
-namespace JDGlobal {	
+namespace JDGlobal {
 	namespace Base {
 
 		// 인게임 식별용 태그 (현재는 태그 임의)
@@ -28,10 +29,12 @@ namespace JDGlobal {
 		enum class SortingLayer : int {
 			None,
 			BackGround,
+			Grid,
 			Building,
 			Cat,
+			Front,
 		};
-		
+
 		struct RenderLayerInfo {
 			SortingLayer sortingLayer;
 			int orderInLayer = 0;
@@ -112,7 +115,10 @@ namespace JDGlobal {
 		constexpr int MAX_GAME_GRID_COL = 4;
 		constexpr int MAX_GAME_GRID_ROW = 6;
 		constexpr int MAX_GAME_GRID_MAT = MAX_GAME_GRID_COL * MAX_GAME_GRID_ROW;
+		constexpr int MAX_GAME_WAVE_COUNT = 12;
+		constexpr int MAX_GAME_EXPEDITION_TYPE = 3;
 		constexpr int RESOURCE_COUNT = 3;
+
 
 		struct Resource {
 
@@ -214,26 +220,66 @@ namespace JDGlobal {
 			Mine,
 			Lab
 		};
-		
-		
+
+		enum class ResourceType : int {
+			food = 0,
+			wood,
+			mineral,
+			Population,
+		};
 
 		struct Cats {
 			int Felis;
 			int Navi;
 			int Kone;
-			inline int GetAllCats() {return (Felis + Navi + Kone);}
+			inline int GetAllCats() { return (Felis + Navi + Kone); }
+		};
+
+		struct CatSynergyBonus {
+			CatSynergyBonus()
+				: FelisBonus{ 0,10,0 },
+				NaviBonus{ 10,0,0 },
+				KoneBonus{ 0,0,10 },
+				FelisPenalty{ 0,-10,0 },
+				NaviPenalty{ -10,0,0 },
+				KonePenalty{ 0,0,-10 }
+			{}
+
+			Resource FelisBonus;
+			Resource FelisPenalty;
+
+			Resource NaviBonus;
+			Resource NaviPenalty;
+
+			Resource KoneBonus;
+			Resource KonePenalty;
 		};
 
 		struct CatResourceBonus {
 			CatResourceBonus()
-				: FelisBonus( 10,0,0 ),
-				NaviBonus( 0, 10, 0),
-				KoneBonus(0, 0, 10) {}
-
+				: FelisBonus(0, 10, 0),
+				NaviBonus(10, 0, 0),
+				KoneBonus(0, 0, 10) {
+			}
 			Resource FelisBonus;
 			Resource NaviBonus;
 			Resource KoneBonus;
 		};
+
+		struct NationBonus {
+			NationBonus()
+				: FelisBonus(0, 10, 0),
+				NaviBonus(10, 0, 0),
+				KoneBonus(0, 0, 10) {
+			}
+
+			Resource FelisBonus;
+			Resource NaviBonus;
+			Resource KoneBonus;
+			void PrintBonus();
+		};
+
+
 
 		enum class State { // 상태.
 			Idle,
@@ -241,28 +287,63 @@ namespace JDGlobal {
 			Back
 		};
 
-		enum class UnitType : int // 병사 종류.
+		enum class SordierType : int // 병사 종류.
 		{
 			Novice = 0, // 견습냥이.
 			Expert, // 숙련냥이
 			Count
 		};
 
-		class UnitTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
+		// 방향 (0:상,1:하,2:좌,3:우)
+		enum class Direction : int
+		{
+			North = 0,
+			South,
+			West,
+			East,
+			DIRECTION_MAX
+		};
+
+
+		class SordierTypeData { // 병사 종류 별 데이터. 타입, 필요 자원, 전투력 정보.
 		public:
-			UnitTypeData(UnitType type = UnitType::Novice, Resource cost = {}, int power = 0)
-				: m_unitType(type), m_recruitCost(cost), m_power(power) {
+			SordierTypeData(SordierType type = SordierType::Novice, Resource cost = {}, int power = 0)
+				: m_SordierType(type), m_recruitCost(cost), m_power(power) {
 			}
 
-			UnitType GetUnitType() const { return m_unitType; }
+			SordierType GetSordierType() const { return m_SordierType; }
 			Resource GetRecruitCost() const { return m_recruitCost; }
 			int GetPower() const { return m_power; }
 
 		private:
-			UnitType m_unitType;
+			SordierType m_SordierType;
 			Resource m_recruitCost;
 			int m_power;
 		};
+
+		struct SordierTypeStats { // 병종 정보.
+			Resource m_novice;
+			Resource m_expert;
+			int m_novicePow;
+			int m_expertPow;
+			void PrintStats();
+		};
+
+		struct WaveStats { // 웨이브 정보.
+			int m_novice[MAX_GAME_WAVE_COUNT];
+			int m_expert[MAX_GAME_WAVE_COUNT];
+			int m_day[MAX_GAME_WAVE_COUNT];
+			void PrintStats();
+		};
+
+		struct ExpeditionStats { // 원정 레벨 정보.
+			Resource m_cost[MAX_GAME_EXPEDITION_TYPE];
+			int m_point[MAX_GAME_EXPEDITION_TYPE];
+			float m_successRate[MAX_GAME_EXPEDITION_TYPE];
+			Resource m_reward[MAX_GAME_EXPEDITION_TYPE];
+			void PrintStats();
+		};
+		
 		
 		// 사용안함
 		struct WorkerStats {
@@ -294,6 +375,8 @@ namespace JDGlobal {
 			int m_population;
 			void PrintResources();
 		};
+
+		
 
 	}
 }

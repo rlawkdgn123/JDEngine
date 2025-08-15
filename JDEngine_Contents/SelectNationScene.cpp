@@ -38,6 +38,13 @@ namespace JDScene {
 
         LogicUpdate();                        // 씬 로직 업데이트
         ClickUpdate();                        // 클릭 업데이트
+        float screenW = JDGlobal::Window::WindowSize::Instance().GetWidth();
+        float screenH = JDGlobal::Window::WindowSize::Instance().GetHeight();
+        Vector2F centerPos{ screenW * 0.5f, screenH * 0.5f };
+        MouseState ms = InputManager::Instance().GetMouseState();
+        mouseClientPos = Vector2F(ms.pos.x, ms.pos.y);
+
+        UpdatePage();
     }
 
     void SelectNationScene::FixedUpdate(float fixedDeltaTime) {
@@ -53,6 +60,7 @@ namespace JDScene {
     void SelectNationScene::Render(float deltaTime) {
 
         RenderSelectNationScene(deltaTime);    // 씬 렌더
+        RenderCursor(mouseClientPos, 1.0f, 1.0f); //마우스커서
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -84,27 +92,30 @@ namespace JDScene {
 
         // 뒤로가기 버튼
         auto back_Button = CreateUIObject<Button>(L"Back_Button");
-        back_Button->SetTextureName("ART_Back01_mouseout");
+        back_Button->SetTextureName("ART_Back02_mouseout");
         back_Button->SetText(L"");
         back_Button->SetSize({ 66, 60 });
         back_Button->SetPosition({ -887, 450 });
 
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        back_Button->AddOnClick("Load TitleScene", []() {
+        back_Button->AddOnClick("Load TitleScene", [this]() {
+            if (isOpening) { return; }
             SceneManager::Instance().ChangeScene("TitleScene");
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         back_Button->AddOnEnter("Highlight On", [this, back_Button]() {
+            if (isOpening) { return; }
             // 텍스트 변경
-            back_Button->SetTextureName("ART_Back01_mouseover");
+            back_Button->SetTextureName("ART_Back02_mouseover");
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         back_Button->AddOnExit("Highlight Off", [this, back_Button]() {
+            if (isOpening) { return; }
             // 텍스트 변경
-            back_Button->SetTextureName("ART_Back01_mouseout");
+            back_Button->SetTextureName("ART_Back02_mouseout");
             });
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -112,8 +123,9 @@ namespace JDScene {
         // 타이틀 텍스트 이미지
         m_titleTextImage = CreateUIObject<Image>(L"TitleText_Image");
         m_titleTextImage->SetTextureName("ART_Q_1");
-        m_titleTextImage->SetSize({ 725, 68 });
-        m_titleTextImage->SetPosition({ -400, 456 });
+        m_titleTextImage->SetSizeToOriginal();
+        m_titleTextImage->SetScale({ 0.5f, 0.5f });
+        m_titleTextImage->SetPosition({ -766, 485 });
 
         // 국가 설명 이미지
         m_nationDescImage = CreateUIObject<Image>(L"NationDesc_Image");
@@ -124,10 +136,10 @@ namespace JDScene {
         // 국가 설명 텍스트
         m_nationDescText = CreateUIObject<Text>(L"NationDesc_Text");
         m_nationDescText->SetText(L"국가 설명");
-        m_nationDescText->SetTextFormatName("Sebang_58");
+        m_nationDescText->SetTextFormatName("Sebang_54");
         m_nationDescText->SetColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
         m_nationDescText->SetSize({ 1600, 300 });
-        m_nationDescText->SetPosition({ 0, -320 });
+        m_nationDescText->SetPosition({ 0, -340 });
 
         // 국가 효과 텍스트
         m_nationEffectText = CreateUIObject<Text>(L"NationEffect_Text");
@@ -141,6 +153,8 @@ namespace JDScene {
         // 초임 집사 선택 버튼
         ////////////////////////////////////////////////////////////////////////////////
 
+        // 2025.08.12 튜토리얼을 게임씬에 팝업 형식으로 띄워서
+        /*
         m_newCatParentButton = CreateUIObject<Button>(L"newCatParent_Button");
         m_newCatParentButton->SetTextureName("ART_CHAT_mouseout");
         m_newCatParentButton->SetSize({ 1536, 150 });
@@ -151,7 +165,9 @@ namespace JDScene {
         m_newCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_newCatParentButton->AddOnClick("Load GameScene", []() {
+        m_newCatParentButton->AddOnClick("Load GameScene", [this]() {
+            // TODO : 게임 씬으로 이동
+            ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("TutorialScene");
             });
 
@@ -166,6 +182,7 @@ namespace JDScene {
             m_newCatParentButton->SetTextureName("ART_CHAT_mouseout");
             m_newCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
             });
+        */
 
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -175,26 +192,34 @@ namespace JDScene {
         m_experiencedCatParentButton = CreateUIObject<Button>(L"experiencedCatParnet_Button");
         m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseout");
         m_experiencedCatParentButton->SetSize({ 1536, 150 });
-        m_experiencedCatParentButton->SetPosition({ 0, -420 });
+        m_experiencedCatParentButton->SetPosition({ 0, -360 });
 
-        m_experiencedCatParentButton->SetText(L"경험있는 집사 입니다.");
+        // m_experiencedCatParentButton->SetText(L"경험있는 집사 입니다.");
+        m_experiencedCatParentButton->SetText(L"게임 시작");
         m_experiencedCatParentButton->SetTextFormatName("Sebang_40");
         m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_experiencedCatParentButton->AddOnClick("Load GameScene", []() {
+        m_experiencedCatParentButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
             // TODO : 게임 씬으로 이동
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            ResourceSystem::Instance().SetNation(m_selectedNation);
             SceneManager::Instance().ChangeScene("GameScene");
+            AudioManager::Instance().StopBGM();
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_experiencedCatParentButton->AddOnEnter("Highlight On", [this]() {
+            if (isOpening) { return; }
+            AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseover");
-            m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(D2D1::ColorF::Black));
+            m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0x263E38));
             });
 
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_experiencedCatParentButton->AddOnExit("Highlight Off", [this]() {
+            if (isOpening) { return; }
             m_experiencedCatParentButton->SetTextureName("ART_CHAT_mouseout");
             m_experiencedCatParentButton->SetTextColor(D2D1::ColorF(0.839f, 0.741f, 0.580f));
             });
@@ -208,18 +233,23 @@ namespace JDScene {
         m_naviImageButton = CreateUIObject<Button>(L"Navi_Image");
         m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseout");
         m_naviImageButton->SetText(L"");
-        m_naviImageButton->SetSize({ 495, 585 });
-        m_naviImageButton->SetPosition({ -505, 123 });
+        m_naviImageButton->SetSize({ 493, 560 });
+        m_naviImageButton->SetPosition({ -505, 109 });
         m_naviImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_naviImageButton->AddOnClick("Load GameScene", []() {
-
+        m_naviImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_naviImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseover");
@@ -230,6 +260,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_naviImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_naviImageButton->SetTextureName("ART_SelectNavi01_mouseout");
@@ -249,18 +281,23 @@ namespace JDScene {
         m_felisImageButton = CreateUIObject<Button>(L"Felis_Image");
         m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseout");
         m_felisImageButton->SetText(L"");
-        m_felisImageButton->SetSize({ 495, 585 });
-        m_felisImageButton->SetPosition({ 0, 123 });
+        m_felisImageButton->SetSize({ 492, 588 });
+        m_felisImageButton->SetPosition({ 0.0f, 121.5f });
         m_felisImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_felisImageButton->AddOnClick("Load GameScene", []() {
-
+        m_felisImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_felisImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseover");
@@ -271,6 +308,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_felisImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_felisImageButton->SetTextureName("ART_SelectFelis01_mouseout");
@@ -290,18 +329,23 @@ namespace JDScene {
         m_koneImageButton = CreateUIObject<Button>(L"Kone_Image");
         m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
         m_koneImageButton->SetText(L"");
-        m_koneImageButton->SetSize({ 495, 585 });
-        m_koneImageButton->SetPosition({ 505, 123 });
+        m_koneImageButton->SetSize({ 493, 560 });
+        m_koneImageButton->SetPosition({ 505, 109 });
         m_koneImageButton->SetScale({ 1.f, 1.f });
 
         // 1. OnClick: 클릭하면 실행될 이벤트
-        m_koneImageButton->AddOnClick("Load GameScene", []() {
-
+        m_koneImageButton->AddOnClick("On Click", [this]() {
+            if (isOpening) { return; }
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
             });
 
         // 2. OnEnter: 마우스를 올리면 텍스처 변경
         m_koneImageButton->AddOnEnter("Highlight On", [this]()
             {
+                if (isOpening) { return; }
+
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_koneImageButton->SetTextureName("ART_SelectKone01_mouseover");
@@ -312,6 +356,8 @@ namespace JDScene {
         // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
         m_koneImageButton->AddOnExit("Highlight Off", [this]()
             {
+                if (isOpening) { return; }
+
                 if (m_selectedNation == CatType::CatTypeMAX)
                 {
                     m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
@@ -326,15 +372,124 @@ namespace JDScene {
         //kone_Text->SetPosition({ -522, 32 });
 
         ////////////////////////////////////////////////////////////////////////////////
+
+        openingCut = CreateUIObject<Image>(L"OpeningCut");
+        openingCut->SetTextureName("Opening_Exam01");
+
+        if (cam)
+        {
+            float screenWidth = static_cast<float>(cam->GetScreenWidth());
+            float screenHeight = static_cast<float>(cam->GetScreenHeight());
+
+            // 화면 크기로 설정
+            openingCut->SetSize(Vector2F{ screenWidth, screenHeight });
+            openingCut->SetPosition({ 0.0f, 0.0f });
+            openingCut->SetPivot({ 0.5f, 0.5f });
+        }
+
+        // 이전 버튼
+        prevButton = CreateUIObject<Button>(L"PrevButton");
+        prevButton->SetTextureName("ART_SelectKone01_mouseout");
+        prevButton->SetText(L"");
+        prevButton->SetSize({ 100, 168 });
+        prevButton->SetPosition({ -658, 0 });
+        prevButton->SetScale({ 1.f, 1.f });
+        prevButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        prevButton->AddOnClick("On Click", [this]() 
+            {
+            AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+            pageCount = 0;
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        prevButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        prevButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 다음 버튼
+        nextButton = CreateUIObject<Button>(L"NextButton");
+        nextButton->SetTextureName("redbird1");
+        nextButton->SetText(L"");
+        nextButton->SetSize({ 100, 168 });
+        nextButton->SetPosition({ 658, 0 });
+        nextButton->SetScale({ 1.f, 1.f });
+        nextButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        nextButton->AddOnClick("On Click", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+                if (pageCount == 1) { CloseOpeningCut(); }
+                pageCount++;
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        nextButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+                std::cout << pageCount;
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        nextButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
+        // 스킵 버튼
+        skipButton = CreateUIObject<Button>(L"SkipButton");
+        skipButton->SetTextureName("redbird1");
+        skipButton->SetText(L"");
+        skipButton->SetSize({ 250, 95 });
+        skipButton->SetPosition({ 815, -367 });
+        skipButton->SetScale({ 1.f, 1.f });
+        skipButton->SetTextureColor(D2D1::ColorF(D2D1::ColorF::White, 0.f));
+
+        // 1. OnClick: 클릭하면 실행될 이벤트
+        skipButton->AddOnClick("On Click", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Click", &sfxChannel);
+                CloseOpeningCut();
+            });
+
+        // 2. OnEnter: 마우스를 올리면 텍스처 변경
+        skipButton->AddOnEnter("Highlight On", [this]()
+            {
+                AudioManager::Instance().PlaySFX("SFX_Button_Hover", &sfxChannel);
+            });
+
+        // 3. OnExit: 마우스가 벗어나면 원래 텍스처로 복원
+        skipButton->AddOnExit("Highlight Off", [this]()
+            {
+
+            });
+
     }
 
     void SelectNationScene::FinalizeSelectNationScene()
     {
         // 효과음 재생 중이면 정지
-        if (m_hoverSfxChannel)
+        if (sfxChannel)
         {
-            m_hoverSfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
+            //sfxChannel->stop();        // 사운드 정지
+            sfxChannel = nullptr;      // 포인터를 다시 nullptr로 초기화 (중요!)
         }
+
+        isOpening = true;
+        pageCount = 0;
+        openingCut = nullptr;
+        prevButton = nullptr;
+        nextButton = nullptr;
+        skipButton = nullptr;
 
         // 선택된 오브젝트 포인터 초기화
         SetSelectedObject(nullptr);
@@ -350,27 +505,29 @@ namespace JDScene {
         }
 
         // 나비, 펠리스, 코네
-        bool m_hoveredCharacter[static_cast<int>(CatType::CatTypeMAX)] = { false, false, false };
+        for (int i = 0; i < static_cast<int>(CatType::CatTypeMAX); i++)
+        {
+            m_hoveredCharacter[i] = false;
+        }
 
         // 국가 설명 이미지, 텍스트
-        Image* m_nationDescImage = nullptr;
-        Text* m_nationDescText = nullptr;
-        Text* m_nationEffectText = nullptr;
+        m_nationDescImage = nullptr;
+        m_nationDescText = nullptr;
+        m_nationEffectText = nullptr;
 
         // 선택된 국가 타이틀 텍스트를 담은 이미지
-        Image* m_titleTextImage = nullptr;
+        m_titleTextImage = nullptr;
 
-
-        Button* m_naviImageButton = nullptr;        // 나비 이미지 버튼
-        Button* m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
-        Button* m_koneImageButton = nullptr;        // 코네 이미지 버튼
+        m_naviImageButton = nullptr;        // 나비 이미지 버튼
+        m_felisImageButton = nullptr;       // 펠리스 이미지 버튼
+        m_koneImageButton = nullptr;        // 코네 이미지 버튼
 
         // 클릭한 고양이 국가 ( 기본값 )
         CatType m_selectedNation = CatType::CatTypeMAX;
 
         // 초임 집사, 경험있는 집사 선택 버튼
-        Button* m_newCatParentButton = nullptr;
-        Button* m_experiencedCatParentButton = nullptr;
+        // m_newCatParentButton = nullptr;
+        m_experiencedCatParentButton = nullptr;
     }
 
     void SelectNationScene::InitSound()
@@ -385,6 +542,7 @@ namespace JDScene {
 
     void SelectNationScene::LogicUpdate()
     {
+        // 국가 설명
         switch (m_selectedNation)
         {
         case CatType::Navi:
@@ -394,7 +552,7 @@ namespace JDScene {
             // 나비, 펠리스, 코네 국가 선택
             ////////////////////////////////////////////////////////////////////////////////
 
-            m_newCatParentButton->SetActive(true);
+            //m_newCatParentButton->SetActive(true);
             m_experiencedCatParentButton->SetActive(true);
 
             m_nationDescImage->SetActive(false);
@@ -411,7 +569,7 @@ namespace JDScene {
 
             ////////////////////////////////////////////////////////////////////////////////
 
-            m_newCatParentButton->SetActive(false);
+            //m_newCatParentButton->SetActive(false);
             m_experiencedCatParentButton->SetActive(false);
 
             m_nationDescImage->SetActive(true);
@@ -479,9 +637,26 @@ namespace JDScene {
                 m_nationDescText->SetText(L"국가 설명");
                 m_nationEffectText->SetText(L"");
 
-                m_nationDescText->SetTextFormatName("Sebang_58");
+                m_nationDescText->SetTextFormatName("Sebang_54");
             }
 
+            break;
+        }
+
+        // 게임 시작 멘트
+        switch (m_selectedNation)
+        {
+        case CatType::Navi:
+            m_experiencedCatParentButton->SetText(L"나비 공화국의 자유로운 신 개척지의 질서를 확립할 행정관입니다.");
+            break;
+        case CatType::Felis:
+            m_experiencedCatParentButton->SetText(L"펠리스 연합왕국의 방패로 변경을 수호할 기사단장입니다.");
+            break;
+        case CatType::Kone:
+            m_experiencedCatParentButton->SetText(L"코네 제국의 강철 같은 규율로 최전선을 지휘할 백부장입니다.");
+            break;
+        default:
+            m_experiencedCatParentButton->SetText(L"게임 시작");
             break;
         }
     }
@@ -530,7 +705,7 @@ namespace JDScene {
                     // SelectNationScene 로직
                     ////////////////////////////////////////////////////////////////////////////////
 
-                    if (GetSelectedObject() == m_newCatParentButton || GetSelectedObject() == m_experiencedCatParentButton)
+                    if (GetSelectedObject() == m_experiencedCatParentButton)
                     {
                         break;
                     }
@@ -561,10 +736,10 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Navi)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_4");
+                            m_titleTextImage->SetTextureName("ART_Q_3");
                         }
                     }
-                    
+
                     // 펠릭스 이미지가 클릭되었음.
                     else if (GetSelectedObject() == m_felisImageButton)
                     {
@@ -591,7 +766,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Felis)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_3");
+                            m_titleTextImage->SetTextureName("ART_Q_2");
                         }
                     }
 
@@ -621,7 +796,7 @@ namespace JDScene {
                             ClearHoveredCharacter();
                             m_hoveredCharacter[static_cast<int>(CatType::Kone)] = true;
 
-                            m_titleTextImage->SetTextureName("ART_Q_2");
+                            m_titleTextImage->SetTextureName("ART_Q_4");
                         }
                     }
 
@@ -634,7 +809,7 @@ namespace JDScene {
                         m_koneImageButton->SetTextureName("ART_SelectKone01_mouseout");
 
                         m_nationDescText->SetText(L"국가 설명");
-                        m_nationDescText->SetTextFormatName("Sebang_50");
+                        m_nationDescText->SetTextFormatName("Sebang_54");
 
                         ClearHoveredCharacter();
                         m_titleTextImage->SetTextureName("ART_Q_1");
@@ -683,6 +858,60 @@ namespace JDScene {
         }
     }
 
+    void SelectNationScene::RenderCursor(Vector2F mouseClientPos, float scale, float alpha)
+    {
+        auto* ctx = D2DRenderer::Instance().GetD2DContext();
+        if (!ctx) return;
+
+        // 입력 상태
+        MouseState ms = InputManager::Instance().GetMouseState();
+
+        // 사용할 비트맵 선택 + 폴백
+        ID2D1Bitmap* bmp = nullptr;
+        if (ms.leftPressed && g_cursorDownBmp)
+            bmp = g_cursorDownBmp;
+        else
+            bmp = g_cursorBmp;
+
+        if (!bmp) return; // 두 비트맵 다 없으면 종료
+
+        // 현재 선택된 비트맵의 픽셀 크기 사용 (g_cursorPx에 의존 X)
+        const auto px = bmp->GetPixelSize();
+        if (px.width == 0 || px.height == 0) return;
+
+        // 뷰/월드 영향 제거
+        D2D1_MATRIX_3X2_F oldTM;
+        ctx->GetTransform(&oldTM);
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+
+        // 화면 고정 커서 위치 계산 (mouseClientPos가 DIP인지 픽셀인지 일관성 유지)
+        const float w = px.width * scale;
+        const float h = px.height * scale;
+
+        const float offsetX = -18.0f; // 왼쪽으로 이동
+        const float offsetY = -30.0f; // 위로 이동
+
+        const D2D1_RECT_F dest = {
+            mouseClientPos.x - g_hotspot.x * scale + offsetX,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY,
+            mouseClientPos.x - g_hotspot.x * scale + offsetX + w,
+            mouseClientPos.y - g_hotspot.y * scale + offsetY + h
+        };
+
+        const D2D1_RECT_F src = { 0, 0, (float)px.width, (float)px.height };
+
+        // 커서 그리기 — 반드시 선택된 bmp로!
+        ctx->DrawBitmap(
+            bmp,
+            dest,
+            alpha,
+            D2D1_INTERPOLATION_MODE_LINEAR,
+            &src
+        );
+
+        ctx->SetTransform(oldTM);
+    }
+
     void SelectNationScene::ParticleUpdate(float deltaTime)
     {
     }
@@ -713,6 +942,7 @@ namespace JDScene {
 
     void SelectNationScene::RenderParticle()
     {
+
     }
 
     void SelectNationScene::ClearHoveredCharacter()
@@ -721,5 +951,25 @@ namespace JDScene {
         {
             m_hoveredCharacter[i] = false;
         }
+    }
+
+    void SelectNationScene::UpdatePage()
+    {
+        if (pageCount == 0) {
+            openingCut->SetTextureName("Opening_Exam01");
+        }
+        else
+        {
+            openingCut->SetTextureName("Opening_Exam02");
+        }
+    }
+
+    void SelectNationScene::CloseOpeningCut()
+    {
+        isOpening = false;
+        openingCut->SetActive(false);
+        prevButton->SetActive(false);
+        nextButton->SetActive(false);
+        skipButton->SetActive(false);
     }
 }

@@ -1,11 +1,11 @@
-// pch.h: ¹Ì¸® ÄÄÆÄÀÏµÈ Çì´õ ÆÄÀÏÀÔ´Ï´Ù.
-// ¾Æ·¡ ³ª¿­µÈ ÆÄÀÏÀº ÇÑ ¹ø¸¸ ÄÄÆÄÀÏµÇ¾úÀ¸¸ç, ÇâÈÄ ºôµå¿¡ ´ëÇÑ ºôµå ¼º´ÉÀ» Çâ»óÇÕ´Ï´Ù.
-// ÄÚµå ÄÄÆÄÀÏ ¹× ¿©·¯ ÄÚµå °Ë»ö ±â´ÉÀ» Æ÷ÇÔÇÏ¿© IntelliSense ¼º´É¿¡µµ ¿µÇâÀ» ¹ÌÄ¨´Ï´Ù.
-// ±×·¯³ª ¿©±â¿¡ ³ª¿­µÈ ÆÄÀÏÀº ºôµå °£ ¾÷µ¥ÀÌÆ®µÇ´Â °æ¿ì ¸ðµÎ ´Ù½Ã ÄÄÆÄÀÏµË´Ï´Ù.
-// ¿©±â¿¡ ÀÚÁÖ ¾÷µ¥ÀÌÆ®ÇÒ ÆÄÀÏÀ» Ãß°¡ÇÏÁö ¸¶¼¼¿ä. ±×·¯¸é ¼º´ÉÀÌ ÀúÇÏµË´Ï´Ù.
+ï»¿// pch.h: ë¯¸ë¦¬ ì»´íŒŒì¼ëœ í—¤ë” íŒŒì¼ìž…ë‹ˆë‹¤.
+// ì•„ëž˜ ë‚˜ì—´ëœ íŒŒì¼ì€ í•œ ë²ˆë§Œ ì»´íŒŒì¼ë˜ì—ˆìœ¼ë©°, í–¥í›„ ë¹Œë“œì— ëŒ€í•œ ë¹Œë“œ ì„±ëŠ¥ì„ í–¥ìƒí•©ë‹ˆë‹¤.
+// ì½”ë“œ ì»´íŒŒì¼ ë° ì—¬ëŸ¬ ì½”ë“œ ê²€ìƒ‰ ê¸°ëŠ¥ì„ í¬í•¨í•˜ì—¬ IntelliSense ì„±ëŠ¥ì—ë„ ì˜í–¥ì„ ë¯¸ì¹©ë‹ˆë‹¤.
+// ê·¸ëŸ¬ë‚˜ ì—¬ê¸°ì— ë‚˜ì—´ëœ íŒŒì¼ì€ ë¹Œë“œ ê°„ ì—…ë°ì´íŠ¸ë˜ëŠ” ê²½ìš° ëª¨ë‘ ë‹¤ì‹œ ì»´íŒŒì¼ë©ë‹ˆë‹¤.
+// ì—¬ê¸°ì— ìžì£¼ ì—…ë°ì´íŠ¸í•  íŒŒì¼ì„ ì¶”ê°€í•˜ì§€ ë§ˆì„¸ìš”. ê·¸ëŸ¬ë©´ ì„±ëŠ¥ì´ ì €í•˜ë©ë‹ˆë‹¤.
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN             // °ÅÀÇ »ç¿ëµÇÁö ¾Ê´Â ³»¿ëÀ» Windows Çì´õ¿¡¼­ Á¦¿ÜÇÕ´Ï´Ù.
+#define WIN32_LEAN_AND_MEAN             // ê±°ì˜ ì‚¬ìš©ë˜ì§€ ì•ŠëŠ” ë‚´ìš©ì„ Windows í—¤ë”ì—ì„œ ì œì™¸í•©ë‹ˆë‹¤.
 
 #ifndef PCH_H
 #define PCH_H
@@ -14,7 +14,7 @@
 #define VC_EXTRALEAN
 #endif
 
-// ¿©±â¿¡ ¹Ì¸® ÄÄÆÄÀÏÇÏ·Á´Â Çì´õ Ãß°¡
+// ì—¬ê¸°ì— ë¯¸ë¦¬ ì»´íŒŒì¼í•˜ë ¤ëŠ” í—¤ë” ì¶”ê°€
 
 // Windows
 #include <windows.h>
@@ -32,15 +32,15 @@
 #include <vector>
 #include <string>
 
-// COM ¹× DirectX ÀÎÅÍÆäÀÌ½º
+// COM ë° DirectX ì¸í„°íŽ˜ì´ìŠ¤
 #include <wrl/client.h>              // ComPtr
 #include <d3d11.h>                   // Direct3D 11
-#include <dxgi1_6.h>                 // DXGI 1.6 (Windows 10 ÀÌ»ó ÃÖ½Å ½º¿ÒÃ¼ÀÎ)
-#include <d2d1_3.h>                  // Direct2D 1.3 (ID2D1Factory4)
-#include <d2d1_3helper.h>            // D2D1::Helper Å¬·¡½ºµé
-#include <dwrite_3.h>                // DirectWrite (ÃÖ½Å ÅØ½ºÆ® ¿£Áø)
-#include <wincodec.h>                // WIC (ÀÌ¹ÌÁö ·Îµù)
-#include <d2d1effects.h>             // ÀÌÆåÆ®
+#include <dxgi1_6.h>                 // DXGI 1.6 (Windows 10 ì´ìƒ ìµœì‹  ìŠ¤ì™‘ì²´ì¸)
+#include <d2d1_1.h>                  // Direct2D 1.3 (ID2D1Factory4)
+#include <d2d1helper.h>            // D2D1::Helper í´ëž˜ìŠ¤ë“¤
+#include <dwrite.h>                // DirectWrite (ìµœì‹  í…ìŠ¤íŠ¸ ì—”ì§„)
+#include <wincodec.h>                // WIC (ì´ë¯¸ì§€ ë¡œë”©)
+#include <d2d1effects.h>             // ì´íŽ™íŠ¸
 #include <d2d1effecthelpers.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -49,12 +49,12 @@
 
 #include <stdexcept>
 
-// DirectX °³¹ß¿¡¼­ ÀÚÁÖ ¾²ÀÌ´Â HRESULT ±â¹Ý ¿À·ù Ã³¸®¸¦ °£ÆíÇÏ°Ô ¿¹¿Ü(Exception)·Î ÀüÈ¯ÇÏ±â À§ÇÑ µµ¿ì¹Ì(Helper)
+// DirectX ê°œë°œì—ì„œ ìžì£¼ ì“°ì´ëŠ” HRESULT ê¸°ë°˜ ì˜¤ë¥˜ ì²˜ë¦¬ë¥¼ ê°„íŽ¸í•˜ê²Œ ì˜ˆì™¸(Exception)ë¡œ ì „í™˜í•˜ê¸° ìœ„í•œ ë„ìš°ë¯¸(Helper)
 //https://github.com/Microsoft/DirectXTK/wiki/throwIfFailed
 namespace DX
 {
     // Helper class for COM exceptions
-    class com_exception : public std::exception // excption ¿À·ùÄÚµå Ãß°¡ (What()À» ¿À¹ö¶óÀÌµå ÇÔ)
+    class com_exception : public std::exception // excption ì˜¤ë¥˜ì½”ë“œ ì¶”ê°€ (What()ì„ ì˜¤ë²„ë¼ì´ë“œ í•¨)
     {
     public:
         com_exception(HRESULT hr) : result(hr) {}
@@ -84,3 +84,4 @@ namespace DX
 #define _CRTDBG_MAP_ALLOC
 
 #endif //PCH_H
+

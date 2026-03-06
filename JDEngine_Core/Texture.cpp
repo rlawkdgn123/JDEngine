@@ -5,7 +5,7 @@
 
 using namespace JDComponent;
 
-void TextureRenderer::Render(ID2D1DeviceContext7* /*context*/, D2D1_MATRIX_3X2_F worldTransform)
+void TextureRenderer::Render(ID2D1DeviceContext* /*context*/, D2D1_MATRIX_3X2_F worldTransform)
 {
     if (!m_Owner || !m_Owner->IsActive()) return;
 
@@ -69,3 +69,4 @@ D2D1_SIZE_F TextureRenderer::GetOriginalTextureSize() const
     }
     return { 0, 0 }; // 텍스처가 없으면 0,0 반환
 }
+

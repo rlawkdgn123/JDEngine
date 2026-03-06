@@ -18,7 +18,7 @@ namespace JDComponent {
     {
     }
 
-    void TextRenderer::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
+    void TextRenderer::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform)
     {
         // SetActive가 false면 리턴
         if (!m_Owner || !m_Owner->IsActive()) return;
@@ -68,3 +68,4 @@ namespace JDComponent {
         return nullptr;
     }
 }
+

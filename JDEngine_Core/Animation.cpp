@@ -69,7 +69,7 @@ void AnimationRender::Update(float dt)
 }
 
 
-void AnimationRender::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform)
+void AnimationRender::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform)
 {
             
     if (!GetEnabled()) return;

@@ -4,7 +4,7 @@
 
 namespace JDComponent {
 
-    void UI_TextComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F renderTransform)
+    void UI_TextComponent::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F renderTransform)
     {
         if (m_text.empty()) return;
 

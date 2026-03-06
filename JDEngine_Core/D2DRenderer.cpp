@@ -253,7 +253,7 @@ void D2DRenderer::RenderEnd(bool bPresent)
 //        {
 //            worldMatrix = worldMatrix * m_camera->GetViewMatrix();
 //        }
-//        ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+//        ID2D1DeviceContext* context = D2DRenderer::Instance().GetD2DContext();
 //        renderer->Render(context, worldMatrix);
 //    }
 //}
@@ -290,7 +290,7 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
         anim->Update(dt);
 
         // 실제 렌더 호출 (AnimationRender::Render 안에서 DrawBitmap을 처리)
-        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        ID2D1DeviceContext* ctx = Instance().GetD2DContext();
         anim->Render(ctx, finalTransform);
         //return;
     }
@@ -298,14 +298,14 @@ void D2DRenderer::RenderGameObject(const GameObject& obj, float dt)
     // 5) 애니메이션이 없으면 기존 스프라이트 렌더러 호출
     if (spr)
     {
-        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        ID2D1DeviceContext* ctx = Instance().GetD2DContext();
         spr->Render(ctx, finalTransform);
     }
 
     // 6) TextRenderer가 있으면 렌더러 호출
     if (text)
     {
-        ID2D1DeviceContext7* ctx = Instance().GetD2DContext();
+        ID2D1DeviceContext* ctx = Instance().GetD2DContext();
         text->Render(ctx, finalTransform);
     }
 }
@@ -324,7 +324,7 @@ void D2DRenderer::RenderUIObject(const UIObject& uiObj)
     auto imageComponent = uiObj.GetComponent<UI_ImageComponent>();
     auto textComponent = uiObj.GetComponent<UI_TextComponent>();
 
-    ID2D1DeviceContext7* context = D2DRenderer::Instance().GetD2DContext();
+    ID2D1DeviceContext* context = D2DRenderer::Instance().GetD2DContext();
 
     D2D1_MATRIX_3X2_F originalTransform;
     context->GetTransform(&originalTransform);
@@ -406,9 +406,9 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     DX::ThrowIfFailed(hr);
 
-    // 3. ID2D1Factory4 생성
+    // 3. ID2D1Factory1 생성 (구형 Windows 호환)
     D2D1_FACTORY_OPTIONS opts = {};
-    ComPtr<ID2D1Factory8> d2dFactory;
+    ComPtr<ID2D1Factory1> d2dFactory;
 
 #if defined(_DEBUG)
     opts.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
@@ -416,25 +416,25 @@ void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
     hr = D2D1CreateFactory(
         D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        __uuidof(ID2D1Factory8),
+        __uuidof(ID2D1Factory1),
         &opts,
         reinterpret_cast<void**>(d2dFactory.GetAddressOf()));
 
     DX::ThrowIfFailed(hr);
 
-    // 4. ID2D1Device4 생성
+    // 4. ID2D1Device 생성
     ComPtr<ID2D1Device> baseDevice;
     hr = d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
 
     DX::ThrowIfFailed(hr);
 
-    ComPtr<ID2D1Device7> d2dDevice;
+    ComPtr<ID2D1Device> d2dDevice;
     hr = baseDevice.As(&d2dDevice);
 
     DX::ThrowIfFailed(hr);
 
-    // 5. ID2D1DeviceContext7 생성
-    ComPtr<ID2D1DeviceContext7> d2dContext;//
+    // 5. ID2D1DeviceContext 생성
+    ComPtr<ID2D1DeviceContext> d2dContext;//
     hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dContext);
 
     DX::ThrowIfFailed(hr);
@@ -497,28 +497,41 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
-    // 1. 최신 DirectWrite 팩토리(IDWriteFactory8)를 직접 생성합니다.
+    // 1. 하위 호환 DirectWrite 팩토리 생성
     HRESULT hr = DWriteCreateFactory(
         DWRITE_FACTORY_TYPE_SHARED,
-        __uuidof(IDWriteFactory8),
+        __uuidof(IDWriteFactory),
         reinterpret_cast<IUnknown**>(m_writeFactory.GetAddressOf())
     );
     DX::ThrowIfFailed(hr);
 
-    // 2. 텍스트 포맷 생성 헬퍼 람다
-    //    이 람다는 폰트 컬렉션을 인자로 받아 해당 컬렉션에서 폰트를 찾습니다.
     auto CreateFormat = [&](
         const std::wstring& fontFamilyName,
-        IDWriteFontCollection* fontCollection, // 시스템 폰트는 NULL, 커스텀 폰트는 컬렉션 전달
         float fontSize,
+        DWRITE_FONT_WEIGHT fontWeight,
         const std::string& formatKey)
         {
             ComPtr<IDWriteTextFormat> format = nullptr;
-            DX::ThrowIfFailed(m_writeFactory->CreateTextFormat(
+            hr = m_writeFactory->CreateTextFormat(
                 fontFamilyName.c_str(),
-                fontCollection,
-                DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-                DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ko-kr", &format));
+                nullptr,
+                fontWeight, DWRITE_FONT_STYLE_NORMAL,
+                DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ko-kr", &format);
+
+            if (FAILED(hr))
+            {
+                // 요청 폰트를 찾지 못하면 시스템 기본 한글 폰트로 대체
+                hr = m_writeFactory->CreateTextFormat(
+                    L"Malgun Gothic",
+                    nullptr,
+                    fontWeight, DWRITE_FONT_STYLE_NORMAL,
+                    DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ko-kr", &format);
+            }
+
+            if (FAILED(hr))
+            {
+                return;
+            }
 
             format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
             format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -526,80 +539,41 @@ void D2DRenderer::CreateWriteResource()
             m_textFormats[formatKey] = format;
         };
 
-    // 3. 외부 폰트 파일을 로드하여 컬렉션을 만들고, 그 안에서 포맷을 생성하는 헬퍼 람다
-    auto CreateFormatFromFile = [&](
-        const std::wstring& fontFilePath,
-        float fontSize,
-        const std::string& formatKey)
-        {
-            // --- 이 부분이 잘 동작하던 이전 코드의 핵심 로직입니다 ---
-            ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-            DX::ThrowIfFailed(m_writeFactory->CreateFontSetBuilder(&fontSetBuilder));
+    // 기본 포맷(없으면 DrawMessage 기본 경로가 비게 됨)
+    CreateFormat(L"Malgun Gothic", 14.0f, DWRITE_FONT_WEIGHT_NORMAL, "MalgunGothic_14");
 
-            ComPtr<IDWriteFontFile> fontFile;
-            hr = m_writeFactory->CreateFontFileReference(fontFilePath.c_str(), nullptr, &fontFile);
-            if (FAILED(hr)) {
-                std::wcout << L"[ERROR] Font file not found: " << fontFilePath << std::endl;
-                return;
-            }
-            DX::ThrowIfFailed(fontSetBuilder->AddFontFile(fontFile.Get()));
-
-            ComPtr<IDWriteFontSet> fontSet;
-            DX::ThrowIfFailed(fontSetBuilder->CreateFontSet(&fontSet));
-
-            // 폰트 컬렉션을 지역 변수로 생성 (이 함수 안에서만 사용)
-            ComPtr<IDWriteFontCollection1> localFontCollection;
-            DX::ThrowIfFailed(m_writeFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &localFontCollection));
-
-            // 폰트 컬렉션에서 "패밀리 이름"을 동적으로 가져오기
-            ComPtr<IDWriteFontFamily> fontFamily;
-            DX::ThrowIfFailed(localFontCollection->GetFontFamily(0, &fontFamily));
-            ComPtr<IDWriteLocalizedStrings> familyNames;
-            DX::ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
-            UINT32 length = 0;
-            DX::ThrowIfFailed(familyNames->GetStringLength(0, &length));
-
-            std::wstring dynamicFontName(length, L'\0');
-            DX::ThrowIfFailed(familyNames->GetString(0, &dynamicFontName[0], length + 1));
-
-            // 동적으로 얻은 폰트 이름과 로컬 컬렉션으로 TextFormat 생성
-            CreateFormat(dynamicFontName, localFontCollection.Get(), fontSize, formatKey);
-        };
-
-    // 4. 시스템 폰트 및 커스텀 폰트 등록
-    // CreateFormat(L"맑은 고딕", 16.0f, "MalgunGothic_16", NULL); // 시스템 폰트
-
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 10.0f, "Sebang_10");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 12.0f, "Sebang_12");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 14.0f, "Sebang_14");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 16.0f, "Sebang_16");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 18.0f, "Sebang_18");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 20.0f, "Sebang_20");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 21.0f, "Sebang_21");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 22.0f, "Sebang_22");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 24.0f, "Sebang_24");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 32.0f, "Sebang_32");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 40.0f, "Sebang_40");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 50.0f, "Sebang_50");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 54.0f, "Sebang_54");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF.otf", 58.0f, "Sebang_58");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 14.0f, "Sebang_Bold_14");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 24.0f, "Sebang_Bold_24");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 22.0f, "Sebang_Bold_22");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 20.0f, "Sebang_Bold_20");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 28.0f, "Sebang_Bold_28");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 30.0f, "Sebang_Bold_30");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 32.0f, "Sebang_Bold_32");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 34.0f, "Sebang_Bold_34");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 36.0f, "Sebang_Bold_36");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 37.0f, "Sebang_Bold_37");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 38.0f, "Sebang_Bold_38");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 40.0f, "Sebang_Bold_40");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 44.0f, "Sebang_Bold_44");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 46.0f, "Sebang_Bold_46");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 50.0f, "Sebang_Bold_50");
-    CreateFormatFromFile(L"../Resource/FONT/SEBANG Gothic OTF Bold.otf", 58.0f, "Sebang_Bold_58");
-    CreateFormatFromFile(L"../Resource/FONT/Pinkfong Baby Shark Font_ Bold.otf", 40.0f, "Pinkfong_Bold_40");
+    // 기존 키 호환을 위해 동일 키를 유지합니다.
+    CreateFormat(L"SEBANG Gothic OTF", 10.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_10");
+    CreateFormat(L"SEBANG Gothic OTF", 12.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_12");
+    CreateFormat(L"SEBANG Gothic OTF", 14.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_14");
+    CreateFormat(L"SEBANG Gothic OTF", 16.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_16");
+    CreateFormat(L"SEBANG Gothic OTF", 18.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_18");
+    CreateFormat(L"SEBANG Gothic OTF", 20.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_20");
+    CreateFormat(L"SEBANG Gothic OTF", 21.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_21");
+    CreateFormat(L"SEBANG Gothic OTF", 22.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_22");
+    CreateFormat(L"SEBANG Gothic OTF", 24.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_24");
+    CreateFormat(L"SEBANG Gothic OTF", 32.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_32");
+    CreateFormat(L"SEBANG Gothic OTF", 40.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_40");
+    CreateFormat(L"SEBANG Gothic OTF", 50.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_50");
+    CreateFormat(L"SEBANG Gothic OTF", 54.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_54");
+    CreateFormat(L"SEBANG Gothic OTF", 58.0f, DWRITE_FONT_WEIGHT_NORMAL, "Sebang_58");
+    CreateFormat(L"SEBANG Gothic OTF", 14.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_14");
+    CreateFormat(L"SEBANG Gothic OTF", 24.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_24");
+    CreateFormat(L"SEBANG Gothic OTF", 22.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_22");
+    CreateFormat(L"SEBANG Gothic OTF", 20.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_20");
+    CreateFormat(L"SEBANG Gothic OTF", 28.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_28");
+    CreateFormat(L"SEBANG Gothic OTF", 30.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_30");
+    CreateFormat(L"SEBANG Gothic OTF", 32.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_32");
+    CreateFormat(L"SEBANG Gothic OTF", 34.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_34");
+    CreateFormat(L"SEBANG Gothic OTF", 36.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_36");
+    CreateFormat(L"SEBANG Gothic OTF", 37.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_37");
+    CreateFormat(L"SEBANG Gothic OTF", 38.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_38");
+    CreateFormat(L"SEBANG Gothic OTF", 40.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_40");
+    CreateFormat(L"SEBANG Gothic OTF", 44.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_44");
+    CreateFormat(L"SEBANG Gothic OTF", 46.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_46");
+    CreateFormat(L"SEBANG Gothic OTF", 50.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_50");
+    CreateFormat(L"SEBANG Gothic OTF", 58.0f, DWRITE_FONT_WEIGHT_BOLD, "Sebang_Bold_58");
+    CreateFormat(L"Pinkfong Baby Shark Font", 40.0f, DWRITE_FONT_WEIGHT_BOLD, "Pinkfong_Bold_40");
 }
 
 void D2DRenderer::ReleaseRenderTargets()

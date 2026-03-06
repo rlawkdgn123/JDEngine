@@ -22,7 +22,7 @@ namespace JDComponent
         {
         }
 
-        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
+        void Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform);
 
         void Update(float dt) override;
         void OnEvent(const std::string& ev) override {}
@@ -93,3 +93,4 @@ namespace JDComponent
         uint32_t m_loopEnd = 0;
     };
 }
+

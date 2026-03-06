@@ -21,7 +21,7 @@ namespace JDComponent {
         TextureRenderer() = delete;
 
     public:
-        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
+        void Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform);
 
         void        SetTextureName(const std::string& name) { m_textureName = name; }
         std::string GetTextureName() const { return m_textureName; }

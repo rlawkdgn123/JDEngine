@@ -38,7 +38,7 @@ namespace JDComponent {
         return Vector2F{};
     }
 
-    void UI_ImageComponent::Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F renderTransform)
+    void UI_ImageComponent::Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F renderTransform)
     {
         if (!m_Owner || !m_Owner->IsActive())
             return;
@@ -69,3 +69,4 @@ namespace JDComponent {
         );
     }
 }
+

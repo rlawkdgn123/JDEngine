@@ -1,5 +1,5 @@
-#pragma once
-#include <d2d1_3.h>
+ï»¿#pragma once
+#include <d2d1_1.h>
 #include <wrl/client.h>
 #include <algorithm>
 
@@ -16,16 +16,16 @@ public:
     {
     }
 
-    // °ËÁ¤¡ætoColor (from ÇöÀç ¾ËÆÄ ¡æ toAlpha)
+    // ê²€ì •â†’toColor (from í˜„ì¬ ì•ŒíŒŒ â†’ toAlpha)
     void FadeIn(float duration, float toAlpha, D2D1_COLOR_F toColor) {
         StartFade(duration, m_currentAlpha, toAlpha, m_currentColor, toColor);
     }
-    // Åõ¸í(¶Ç´Â ÇöÀçÄÃ·¯)¡ætoColor (from ÇöÀç ¾ËÆÄ ¡æ toAlpha)
+    // íˆ¬ëª…(ë˜ëŠ” í˜„ì¬ì»¬ëŸ¬)â†’toColor (from í˜„ì¬ ì•ŒíŒŒ â†’ toAlpha)
     void FadeOut(float duration, float toAlpha, D2D1_COLOR_F toColor) {
         StartFade(duration, m_currentAlpha, toAlpha, m_currentColor, toColor);
     }
 
-    // fromAlpha¡ætoAlpha, fromColor¡ætoColor
+    // fromAlphaâ†’toAlpha, fromColorâ†’toColor
     void Fade(float duration,
         float fromAlpha, D2D1_COLOR_F fromColor,
         float toAlpha, D2D1_COLOR_F toColor)
@@ -33,7 +33,7 @@ public:
         StartFade(duration, fromAlpha, toAlpha, fromColor, toColor);
     }
 
-    // ¸Å ÇÁ·¹ÀÓ(ÃÊ ´ÜÀ§) È£Ãâ
+    // ë§¤ í”„ë ˆì„(ì´ˆ ë‹¨ìœ„) í˜¸ì¶œ
     void Update(float dt) {
         if (m_state == State::None)
             return;
@@ -43,22 +43,22 @@ public:
             m_state = State::None;
         }
         float t = (m_duration > 0.f) ? (m_elapsed / m_duration) : 1.f;
-        // ¼±Çü º¸°£
+        // ì„ í˜• ë³´ê°„
         m_currentAlpha = m_startAlpha + (m_targetAlpha - m_startAlpha) * t;
-        // »ö»óµµ º¸°£
+        // ìƒ‰ìƒë„ ë³´ê°„
         m_currentColor.r = m_startColor.r + (m_targetColor.r - m_startColor.r) * t;
         m_currentColor.g = m_startColor.g + (m_targetColor.g - m_startColor.g) * t;
         m_currentColor.b = m_startColor.b + (m_targetColor.b - m_startColor.b) * t;
     }
 
-    // È­¸é ÀüÃ¼¿¡ ÄÃ·¯ »ç°¢Çü µ¤¾î ±×¸®±â
-    void Render(ID2D1DeviceContext7* ctx, D2D1_SIZE_F screenSize) {
+    // í™”ë©´ ì „ì²´ì— ì»¬ëŸ¬ ì‚¬ê°í˜• ë®ì–´ ê·¸ë¦¬ê¸°
+    void Render(ID2D1DeviceContext* ctx, D2D1_SIZE_F screenSize) {
         if (m_state == State::None && m_currentAlpha <= 0.f)
             return;
         if (m_currentAlpha <= 0.f)
             return;
 
-        // ºê·¯½Ã »ı¼º/¾÷µ¥ÀÌÆ®
+        // ë¸ŒëŸ¬ì‹œ ìƒì„±/ì—…ë°ì´íŠ¸
         static Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
         D2D1_COLOR_F color = {
             m_currentColor.r,
@@ -73,7 +73,7 @@ public:
             brush->SetColor(color);
         }
 
-        // ÀüÃ¼ È­¸é µ¤±â
+        // ì „ì²´ í™”ë©´ ë®ê¸°
         D2D1_RECT_F rect = D2D1::RectF(0.f, 0.f, screenSize.width, screenSize.height);
         ctx->FillRectangle(rect, brush.Get());
     }
@@ -82,21 +82,21 @@ public:
         return m_state != State::None;
     }
 
-    // 1) ½ºÅ©¸° ÁÂÇ¥ÀÇ »ç°¢Çü¸¸ ÆäÀÌµå (ÄÁÅØ½ºÆ® Æ®·£½ºÆû = Identity °¡Á¤)
-    void RenderRect(ID2D1DeviceContext7* ctx, D2D1_RECT_F rect) {
+    // 1) ìŠ¤í¬ë¦° ì¢Œí‘œì˜ ì‚¬ê°í˜•ë§Œ í˜ì´ë“œ (ì»¨í…ìŠ¤íŠ¸ íŠ¸ëœìŠ¤í¼ = Identity ê°€ì •)
+    void RenderRect(ID2D1DeviceContext* ctx, D2D1_RECT_F rect) {
         if ((m_state == State::None && m_currentAlpha <= 0.f) || m_currentAlpha <= 0.f) return;
         EnsureBrush(ctx);
 
-        // ÇöÀç ÄÃ·¯/¾ËÆÄ Àû¿ë
+        // í˜„ì¬ ì»¬ëŸ¬/ì•ŒíŒŒ ì ìš©
         m_brush->SetColor(D2D1::ColorF(m_currentColor.r, m_currentColor.g, m_currentColor.b, m_currentAlpha));
         ctx->FillRectangle(rect, m_brush.Get());
     }
 
-    // 2) (pos, size, pivot)·Î ¿µ¿ª ÁöÁ¤ÇØ¼­ ÆäÀÌµå
-    //    pos: ±âÁØÁ¡(º¸Åë ¿ÀºêÁ§Æ®ÀÇ ¿ùµå/½ºÅ©¸° À§Ä¡), 
-    //    size: ÇÈ¼¿ Å©±â, 
-    //    pivot: [0..1], (0.5,0.5=Áß½É) 
-    void RenderRegionAt(ID2D1DeviceContext7* ctx,
+    // 2) (pos, size, pivot)ë¡œ ì˜ì—­ ì§€ì •í•´ì„œ í˜ì´ë“œ
+    //    pos: ê¸°ì¤€ì (ë³´í†µ ì˜¤ë¸Œì íŠ¸ì˜ ì›”ë“œ/ìŠ¤í¬ë¦° ìœ„ì¹˜), 
+    //    size: í”½ì…€ í¬ê¸°, 
+    //    pivot: [0..1], (0.5,0.5=ì¤‘ì‹¬) 
+    void RenderRegionAt(ID2D1DeviceContext* ctx,
         D2D1_POINT_2F pos, D2D1_SIZE_F size,
         D2D1_POINT_2F pivot = { 0.5f, 0.5f })
     {
@@ -107,17 +107,17 @@ public:
         RenderRect(ctx, D2D1::RectF(left, top, right, bottom));
     }
 
-    // 3) ·ÎÄÃ »ç°¢ÇüÀ» ¿ùµå Çà·Ä·Î º¯È¯ÇØ¼­ ÆäÀÌµå (È¸Àü/½ºÄÉÀÏ ¹İ¿µ)
-    //    rectLocal: (0,0)-(w,h) °°Àº ·ÎÄÃ ¿µ¿ª
-    //    world:     ¿ÀºêÁ§Æ® ¿ùµå Çà·Ä (D2D1::Matrix3x2F)
-    void RenderRectTransformed(ID2D1DeviceContext7* ctx,
+    // 3) ë¡œì»¬ ì‚¬ê°í˜•ì„ ì›”ë“œ í–‰ë ¬ë¡œ ë³€í™˜í•´ì„œ í˜ì´ë“œ (íšŒì „/ìŠ¤ì¼€ì¼ ë°˜ì˜)
+    //    rectLocal: (0,0)-(w,h) ê°™ì€ ë¡œì»¬ ì˜ì—­
+    //    world:     ì˜¤ë¸Œì íŠ¸ ì›”ë“œ í–‰ë ¬ (D2D1::Matrix3x2F)
+    void RenderRectTransformed(ID2D1DeviceContext* ctx,
         D2D1_RECT_F rectLocal,
         D2D1_MATRIX_3X2_F world)
     {
         if ((m_state == State::None && m_currentAlpha <= 0.f) || m_currentAlpha <= 0.f) return;
         EnsureBrush(ctx);
 
-        // ÄÁÅØ½ºÆ®¿¡ ¿ùµå Çà·Ä Àû¿ë ¡æ ·ÎÄÃ ÁÂÇ¥·Î »ç°¢Çü Ã¤¿ì±â
+        // ì»¨í…ìŠ¤íŠ¸ì— ì›”ë“œ í–‰ë ¬ ì ìš© â†’ ë¡œì»¬ ì¢Œí‘œë¡œ ì‚¬ê°í˜• ì±„ìš°ê¸°
         D2D1_MATRIX_3X2_F prev;
         ctx->GetTransform(&prev);
         ctx->SetTransform(world * prev);
@@ -130,7 +130,7 @@ public:
 private:
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_brush;
 
-    void EnsureBrush(ID2D1DeviceContext7* ctx) {
+    void EnsureBrush(ID2D1DeviceContext* ctx) {
         if (!m_brush) {
             ctx->CreateSolidColorBrush(
                 D2D1::ColorF(m_currentColor.r, m_currentColor.g, m_currentColor.b, m_currentAlpha),
@@ -143,21 +143,21 @@ private:
     float m_duration;
     float m_elapsed;
 
-    // ¾ËÆÄ º¸°£¿ë
+    // ì•ŒíŒŒ ë³´ê°„ìš©
     float m_startAlpha;
     float m_targetAlpha;
     float m_currentAlpha;
 
-    // »ö»ó º¸°£¿ë
+    // ìƒ‰ìƒ ë³´ê°„ìš©
     D2D1_COLOR_F m_startColor;
     D2D1_COLOR_F m_targetColor;
     D2D1_COLOR_F m_currentColor;
-    // C++14¿ë clamp
+    // C++14ìš© clamp
     static float Clamp(float v, float lo, float hi) {
         return v < lo ? lo : (v > hi ? hi : v);
     }
 
-    // FadeIn/FadeOut È£Ãâ¿ë
+    // FadeIn/FadeOut í˜¸ì¶œìš©
     void StartFade(float duration,
         float fromAlpha, float toAlpha,
         D2D1_COLOR_F fromColor, D2D1_COLOR_F toColor)
@@ -175,3 +175,5 @@ private:
         m_state = State::Fading;
     }
 };
+
+

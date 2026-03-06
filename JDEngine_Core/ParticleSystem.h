@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include "framework.h"
 #include "MathUtil.h"
@@ -54,7 +54,7 @@ public:
 
     D2D1::ColorF defaultColor = D2D1::ColorF(1, 1, 1, 1);
 
-    ParticleSystem(ID2D1DeviceContext7* ctx) {
+    ParticleSystem(ID2D1DeviceContext* ctx) {
         ctx->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &brush);
         particleBitmap = AssetManager::Instance().GetTexture("blossom");
         dustBitmap = AssetManager::Instance().GetTexture("dust");
@@ -117,21 +117,21 @@ public:
     {
         for (int i = 0; i < count; ++i) {
             Particle p;
-            // 1) À§Ä¡: ¾ÆÀÌÄÜ ¿µ¿ª ³» ·£´ý
+            // 1) ìœ„ì¹˜: ì•„ì´ì½˜ ì˜ì—­ ë‚´ ëžœë¤
             float angle = RandomFloat(0, 2 * 3.14159265f);
             float dist = RandomFloat(0, radius);
             p.pos = { center.x + std::cos(angle) * dist,
                              center.y + std::sin(angle) * dist };
-            // 2) ¼Óµµ: °ÅÀÇ ¾ø°Å³ª ¾ÆÁÖ Âª°Ô ÆÛÁö°Ô
+            // 2) ì†ë„: ê±°ì˜ ì—†ê±°ë‚˜ ì•„ì£¼ ì§§ê²Œ í¼ì§€ê²Œ
             p.vel = { RandomFloat(-10, 10), RandomFloat(-10, 10) };
-            // 3) ¼ö¸í¡¤Å©±â¡¤¾ËÆÄ
+            // 3) ìˆ˜ëª…Â·í¬ê¸°Â·ì•ŒíŒŒ
             p.life = maxLife;
             p.size = RandomFloat(4, 8);
             p.imageScale = scale;
             p.alpha = 1.0f;
-            // 4) ÄÃ·¯: ³ë¶ûºû ½ºÆÄÅ¬
+            // 4) ì»¬ëŸ¬: ë…¸ëž‘ë¹› ìŠ¤íŒŒí´
             p.color = D2D1::ColorF(1.0f, 0.9f, 0.6f, 1.0f);
-            // 5) È¸Àü ¾ø¾îµµ µÊ
+            // 5) íšŒì „ ì—†ì–´ë„ ë¨
             p.rotation = 0;
             p.rotationSpeed = 0;
             particles.push_back(p);
@@ -143,14 +143,14 @@ public:
         for (int i = 0; i < count; ++i) {
             Particle p;
             p.pos = pos + Vector2F{ RandomFloat(-20.f, 20.f), RandomFloat(-10.f, 10.f) };
-            // ÃµÃµÈ÷ ¾Æ·¡·Î + ¾à°£ÀÇ ÁÂ/¿ì ¼Óµµ
+            // ì²œì²œížˆ ì•„ëž˜ë¡œ + ì•½ê°„ì˜ ì¢Œ/ìš° ì†ë„
             p.vel = { RandomFloat(-30.f, 30.f), RandomFloat(30.f, 60.f) };
-            p.life = maxLife;                 // UpdateLeaves¿¡¼­ ÀÌ °ª ±âÁØÀ¸·Î ¾ËÆÄ °è»ê
-            p.size = RandomFloat(16.f, 24.f); // ·»´õ¸µ ±âÁØ Å©±â(px)
+            p.life = maxLife;                 // UpdateLeavesì—ì„œ ì´ ê°’ ê¸°ì¤€ìœ¼ë¡œ ì•ŒíŒŒ ê³„ì‚°
+            p.size = RandomFloat(16.f, 24.f); // ë Œë”ë§ ê¸°ì¤€ í¬ê¸°(px)
             p.alpha = 1.f;
             p.imageScale = scale;
             p.rotation = RandomFloat(0.f, 360.f);
-            p.rotationSpeed = RandomFloat(-50.f, 50.f); // È¸ÀüÇÏ¸ç ¶³¾îÁö°Ô
+            p.rotationSpeed = RandomFloat(-50.f, 50.f); // íšŒì „í•˜ë©° ë–¨ì–´ì§€ê²Œ
             particles.push_back(p);
         }
     }
@@ -176,9 +176,9 @@ public:
     {
         for (int i = 0; i < count; ++i) {
             Particle p;
-            // ¹ß À§Ä¡¸¦ Áß½ÉÀ¸·Î »ìÂ¦ ·£´ý »êÆ÷
+            // ë°œ ìœ„ì¹˜ë¥¼ ì¤‘ì‹¬ìœ¼ë¡œ ì‚´ì§ ëžœë¤ ì‚°í¬
             p.pos = pos + Vector2F{ RandomFloat(-6.f, 6.f), RandomFloat(-3.f, 3.f) };
-            // ¿·À¸·Î ÆÛÁö´Â ¼Óµµ + À§·Î ¾ÆÁÖ Á¶±Ý(Áö¸é¿¡¼­ ÇÇ¾î¿À¸£µí)
+            // ì˜†ìœ¼ë¡œ í¼ì§€ëŠ” ì†ë„ + ìœ„ë¡œ ì•„ì£¼ ì¡°ê¸ˆ(ì§€ë©´ì—ì„œ í”¼ì–´ì˜¤ë¥´ë“¯)
             p.vel = { RandomFloat(-60.f, 60.f), RandomFloat(-10.f, 15.f) };
             p.life = maxLife;
             p.size = RandomFloat(10.f, 14.f);
@@ -196,11 +196,11 @@ public:
         p.pos = pos;
         p.vel = { 0.f, 0.f };
         p.life = maxLife;
-        p.size = baseSizePx;     // ·»´õ ±âÁØ Å©±â(px) ? ºñÆ®¸Ê ºñÀ²·Î È®´ë
+        p.size = baseSizePx;     // ë Œë” ê¸°ì¤€ í¬ê¸°(px) ? ë¹„íŠ¸ë§µ ë¹„ìœ¨ë¡œ í™•ëŒ€
         p.alpha = 1.f;
         p.imageScale = startScale;
         p.rotation = 0.f;
-        p.rotationSpeed = expandSpeed; //  È®»ê ¼Óµµ
+        p.rotationSpeed = expandSpeed; //  í™•ì‚° ì†ë„
         particles.push_back(p);
     }
 
@@ -223,17 +223,17 @@ public:
 
     void UpdateFalling(float dt, float screenW, float screenH) {
         for (auto it = particles.begin(); it != particles.end();) {
-            // 1) ¼ö¸í °¨¼Ò
+            // 1) ìˆ˜ëª… ê°ì†Œ
             it->life -= dt;
 
-            // 2) À§Ä¡ ¹× È¸Àü ¾÷µ¥ÀÌÆ®
+            // 2) ìœ„ì¹˜ ë° íšŒì „ ì—…ë°ì´íŠ¸
             it->pos += it->vel * dt;
             it->rotation += it->rotationSpeed * dt;
 
-            // 3) life ±â¹Ý ¾ËÆÄ °è»ê (maxLife = 4ÃÊ ±âÁØ)
+            // 3) life ê¸°ë°˜ ì•ŒíŒŒ ê³„ì‚° (maxLife = 4ì´ˆ ê¸°ì¤€)
             it->alpha = (it->life > 0.f) ? (it->life / 4.0f) : 0.f;
 
-            // 4) È­¸é ¾Æ·¡·Î ¹þ¾î³ª°Å³ª life Á¾·á ½Ã »èÁ¦
+            // 4) í™”ë©´ ì•„ëž˜ë¡œ ë²—ì–´ë‚˜ê±°ë‚˜ life ì¢…ë£Œ ì‹œ ì‚­ì œ
             bool expired = (it->life <= 0.f) || (it->pos.y > screenH + 50.f);
             if (expired) {
                 it = particles.erase(it);
@@ -263,7 +263,7 @@ public:
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
             it->pos += it->vel * dt;
-            // ¾ËÆÄ´Â life ºñÀ²·Î
+            // ì•ŒíŒŒëŠ” life ë¹„ìœ¨ë¡œ
             it->alpha = (it->life > 0) ? (it->life / 0.5f) : 0;
             if (it->life <= 0)
                 it = particles.erase(it);
@@ -274,26 +274,26 @@ public:
 
     void UpdateLeaves(float dt, float screenW, float screenH)
     {
-        const float MAX_LIFE = 4.0f; // SpawnLeaves¿¡¼­ ÁØ ±âº»°ª°ú ¸ÂÃç »ç¿ë
+        const float MAX_LIFE = 4.0f; // SpawnLeavesì—ì„œ ì¤€ ê¸°ë³¸ê°’ê³¼ ë§žì¶° ì‚¬ìš©
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
 
-            // Áß·ÂÀ¸·Î Á¶±Ý¾¿ ´õ »¡¶óÁö°Ô
+            // ì¤‘ë ¥ìœ¼ë¡œ ì¡°ê¸ˆì”© ë” ë¹¨ë¼ì§€ê²Œ
             it->vel.y -= 25.f * dt;
 
-            // ÁÂ¿ì Èçµé¸²(È¸Àü°ªÀ» À§»óÀ¸·Î ÀçÈ°¿ë)
+            // ì¢Œìš° í”ë“¤ë¦¼(íšŒì „ê°’ì„ ìœ„ìƒìœ¼ë¡œ ìž¬í™œìš©)
             float sway = (std::sin)(it->rotation * 3.14159265f / 180.f) * 30.f; // px/s
             it->pos.x += (it->vel.x + sway) * dt;
             it->pos.y -= it->vel.y * dt;
 
-            // È¸Àü
+            // íšŒì „
             it->rotation += it->rotationSpeed * dt;
 
-            // ÆäÀÌµå¾Æ¿ô(¼ö¸í ºñÀ²)
+            // íŽ˜ì´ë“œì•„ì›ƒ(ìˆ˜ëª… ë¹„ìœ¨)
             float t = (std::max)(0.f, it->life / MAX_LIFE);
             it->alpha = t;
 
-            // È­¸é ¾Æ·¡·Î »ç¶óÁö°Å³ª ¼ö¸í Á¾·á ½Ã »èÁ¦
+            // í™”ë©´ ì•„ëž˜ë¡œ ì‚¬ë¼ì§€ê±°ë‚˜ ìˆ˜ëª… ì¢…ë£Œ ì‹œ ì‚­ì œ
             bool expired = (it->life <= 0.f) || (it->pos.y > screenH + 50.f);
             if (expired) it = particles.erase(it);
             else ++it;
@@ -306,20 +306,20 @@ public:
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
 
-            // ºÎ·Â: À§·Î ´õ ºÎµå·´°Ô
+            // ë¶€ë ¥: ìœ„ë¡œ ë” ë¶€ë“œëŸ½ê²Œ
             it->vel.y -= 8.f * dt;
-            // ÁÂ¿ì µå¸®ÇÁÆ®
+            // ì¢Œìš° ë“œë¦¬í”„íŠ¸
             it->vel.x += RandomFloat(-5.f, 5.f) * dt;
 
             it->pos += it->vel * dt;
             it->rotation += it->rotationSpeed * dt;
 
-            // ¿¬±â´Â ÆÛÁöµí Ä¿Áø´Ù
+            // ì—°ê¸°ëŠ” í¼ì§€ë“¯ ì»¤ì§„ë‹¤
             it->imageScale += dt * 0.6f;
 
-            // ¾ËÆÄ´Â ¼ö¸í¿¡ ºñ·ÊÇØ °¨¼Ò
+            // ì•ŒíŒŒëŠ” ìˆ˜ëª…ì— ë¹„ë¡€í•´ ê°ì†Œ
             float t = (std::max)(0.f, it->life / MAX_LIFE);
-            it->alpha = t * 0.9f; // »ìÂ¦ ´ú ÁøÇÏ°Ô
+            it->alpha = t * 0.9f; // ì‚´ì§ ëœ ì§„í•˜ê²Œ
 
             bool off = it->life <= 0.f;
             if (off) it = particles.erase(it);
@@ -333,17 +333,17 @@ public:
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
 
-            // ¸¶Âû·Î ºü¸£°Ô °¨¼è
-            it->vel.x *= (1.f - 6.f * dt); // ¼öÆò °¨¼Ó °­ÇÏ°Ô
+            // ë§ˆì°°ë¡œ ë¹ ë¥´ê²Œ ê°ì‡ 
+            it->vel.x *= (1.f - 6.f * dt); // ìˆ˜í‰ ê°ì† ê°•í•˜ê²Œ
             it->vel.y *= (1.f - 3.f * dt);
 
             it->pos += it->vel * dt;
             it->rotation += it->rotationSpeed * dt;
 
-            // ±Þ°ÝÈ÷ ÆÛÁö´Ù°¡ »ç¶óÁü
+            // ê¸‰ê²©ížˆ í¼ì§€ë‹¤ê°€ ì‚¬ë¼ì§
             it->imageScale += dt * 1.2f;
 
-            // ÆäÀÌµå ¾Æ¿ô
+            // íŽ˜ì´ë“œ ì•„ì›ƒ
             float t = (std::max)(0.f, it->life / MAX_LIFE);
             it->alpha = t;
 
@@ -359,10 +359,10 @@ public:
         for (auto it = particles.begin(); it != particles.end();) {
             it->life -= dt;
 
-            // È®»ê
+            // í™•ì‚°
             it->imageScale += it->rotationSpeed * dt;
 
-            // ÆäÀÌµå¾Æ¿ô (³¡À¸·Î °¥¼ö·Ï ºü¸£°Ô »ç¶óÁö°Ô)
+            // íŽ˜ì´ë“œì•„ì›ƒ (ëìœ¼ë¡œ ê°ˆìˆ˜ë¡ ë¹ ë¥´ê²Œ ì‚¬ë¼ì§€ê²Œ)
             float t = (std::max)(0.f, it->life / MAX_LIFE);
             it->alpha = t * t;
 
@@ -371,7 +371,7 @@ public:
         }
     }
 
-    void Render(ID2D1DeviceContext7* ctx) {
+    void Render(ID2D1DeviceContext* ctx) {
         if (!particleBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -389,7 +389,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderDust(ID2D1DeviceContext7* ctx) {
+    void RenderDust(ID2D1DeviceContext* ctx) {
         if (!dustBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -416,7 +416,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderDust2(ID2D1DeviceContext7* ctx) {
+    void RenderDust2(ID2D1DeviceContext* ctx) {
         if (!dust2Bitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -444,7 +444,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderMouse(ID2D1DeviceContext7* ctx) {
+    void RenderMouse(ID2D1DeviceContext* ctx) {
         if (!MouseBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -461,7 +461,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderGlow(ID2D1DeviceContext7* ctx) {
+    void RenderGlow(ID2D1DeviceContext* ctx) {
         if (!MouseBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -482,7 +482,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderSparkle(ID2D1DeviceContext7* ctx) {
+    void RenderSparkle(ID2D1DeviceContext* ctx) {
         if (!sparkleBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
         D2D1_MATRIX_3X2_F oldTM; ctx->GetTransform(&oldTM);
@@ -504,26 +504,26 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderLeaves(ID2D1DeviceContext7* ctx, D2D1_MATRIX_3X2_F worldTransform)
+    void RenderLeaves(ID2D1DeviceContext* ctx, D2D1_MATRIX_3X2_F worldTransform)
     {
         if (!leafBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 
         for (auto& p : particles) {
-            // 1. ÀÌ ÆÄÆ¼Å¬¸¸À» À§ÇÑ º¯È¯ Çà·ÄÀ» °è»êÇÕ´Ï´Ù.
-            // Å©±â(Scale)
-            // È¸Àü(Rotation)
-            // ¿ùµå À§Ä¡·Î ÀÌµ¿(Translation) - GameObjectÃ³·³ Y ÁÂÇ¥ÀÇ ºÎÈ£¸¦ µÚÁý¾îÁÝ´Ï´Ù.
+            // 1. ì´ íŒŒí‹°í´ë§Œì„ ìœ„í•œ ë³€í™˜ í–‰ë ¬ì„ ê³„ì‚°í•©ë‹ˆë‹¤.
+            // í¬ê¸°(Scale)
+            // íšŒì „(Rotation)
+            // ì›”ë“œ ìœ„ì¹˜ë¡œ ì´ë™(Translation) - GameObjectì²˜ëŸ¼ Y ì¢Œí‘œì˜ ë¶€í˜¸ë¥¼ ë’¤ì§‘ì–´ì¤ë‹ˆë‹¤.
             auto S = D2D1::Matrix3x2F::Scale(p.imageScale, p.imageScale, { 0, 0 });
             auto R = D2D1::Matrix3x2F::Rotation(p.rotation, { 0, 0 });
             auto T = D2D1::Matrix3x2F::Translation(p.pos.x, -p.pos.y);
 
-            // ÆÄÆ¼Å¬ÀÇ ÃÖÁ¾ ¿ùµå Çà·Ä = Å©±â * È¸Àü * ÀÌµ¿
+            // íŒŒí‹°í´ì˜ ìµœì¢… ì›”ë“œ í–‰ë ¬ = í¬ê¸° * íšŒì „ * ì´ë™
             D2D1_MATRIX_3X2_F particleWorldMatrix = S * R * T;
 
-            // 2. ÃÖÁ¾ ·»´õ¸µ Çà·Ä = ÆÄÆ¼Å¬ ¿ùµå Çà·Ä * Ä«¸Þ¶ó ±âº» º¯È¯
-            //    (ÁÖÀÇ: Transform Å¬·¡½ºÀÇ YÃà ¹ÝÀü(-p.pos.y)Àº Ä«¸Þ¶ó ÆÄÀÌÇÁ¶óÀÎ¿¡ ÀÌ¹Ì Æ÷ÇÔµÇ¾î ÀÖÀ¸¹Ç·Î,
-            //     ¿©±â¼­´Â p.pos.y¸¦ ±×´ë·Î »ç¿ëÇØ¾ß ÇÕ´Ï´Ù. baseTransform¿¡ ±× ¿ªÇÒÀÌ µé¾îÀÖ½À´Ï´Ù.)
+            // 2. ìµœì¢… ë Œë”ë§ í–‰ë ¬ = íŒŒí‹°í´ ì›”ë“œ í–‰ë ¬ * ì¹´ë©”ë¼ ê¸°ë³¸ ë³€í™˜
+            //    (ì£¼ì˜: Transform í´ëž˜ìŠ¤ì˜ Yì¶• ë°˜ì „(-p.pos.y)ì€ ì¹´ë©”ë¼ íŒŒì´í”„ë¼ì¸ì— ì´ë¯¸ í¬í•¨ë˜ì–´ ìžˆìœ¼ë¯€ë¡œ,
+            //     ì—¬ê¸°ì„œëŠ” p.pos.yë¥¼ ê·¸ëŒ€ë¡œ ì‚¬ìš©í•´ì•¼ í•©ë‹ˆë‹¤. baseTransformì— ê·¸ ì—­í• ì´ ë“¤ì–´ìžˆìŠµë‹ˆë‹¤.)
             D2D1_MATRIX_3X2_F finalTransform = particleWorldMatrix * worldTransform;
 
             ctx->SetTransform(finalTransform);
@@ -537,7 +537,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderSmoke(ID2D1DeviceContext7* ctx, D2D1_MATRIX_3X2_F worldTransform)
+    void RenderSmoke(ID2D1DeviceContext* ctx, D2D1_MATRIX_3X2_F worldTransform)
     {
         if (!smokeBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
@@ -560,7 +560,7 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderFootDust(ID2D1DeviceContext7* ctx)
+    void RenderFootDust(ID2D1DeviceContext* ctx)
     {
         if (!footdustBitmap) return;
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
@@ -581,35 +581,35 @@ public:
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
     }
 
-    void RenderWaterWave(ID2D1DeviceContext7* ctx, D2D1_MATRIX_3X2_F worldTransform)
+    void RenderWaterWave(ID2D1DeviceContext* ctx, D2D1_MATRIX_3X2_F worldTransform)
     {
         if (!waveBitmap) return;
-        // ¹°ÆÄµ¿Àº »ìÂ¦ ¹ß±¤ ´À³¦µµ ¾î¿ï¸² ? °úÇÏ¸é SOURCE_OVER·Î ¹Ù²ãµµ OK
+        // ë¬¼íŒŒë™ì€ ì‚´ì§ ë°œê´‘ ëŠë‚Œë„ ì–´ìš¸ë¦¼ ? ê³¼í•˜ë©´ SOURCE_OVERë¡œ ë°”ê¿”ë„ OK
         ctx->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_ADD);
 
         for (auto& p : particles) {
 
 
-            // 1. ÀÌ ÆÄÆ¼Å¬¸¸À» À§ÇÑ º¯È¯ Çà·ÄÀ» °è»êÇÕ´Ï´Ù.
-            // Å©±â(Scale)
-            // È¸Àü(Rotation)
-            // ¿ùµå À§Ä¡·Î ÀÌµ¿(Translation) - GameObjectÃ³·³ Y ÁÂÇ¥ÀÇ ºÎÈ£¸¦ µÚÁý¾îÁÝ´Ï´Ù.
+            // 1. ì´ íŒŒí‹°í´ë§Œì„ ìœ„í•œ ë³€í™˜ í–‰ë ¬ì„ ê³„ì‚°í•©ë‹ˆë‹¤.
+            // í¬ê¸°(Scale)
+            // íšŒì „(Rotation)
+            // ì›”ë“œ ìœ„ì¹˜ë¡œ ì´ë™(Translation) - GameObjectì²˜ëŸ¼ Y ì¢Œí‘œì˜ ë¶€í˜¸ë¥¼ ë’¤ì§‘ì–´ì¤ë‹ˆë‹¤.
             auto S = D2D1::Matrix3x2F::Scale(p.imageScale, p.imageScale, { 0, 0 });
             auto R = D2D1::Matrix3x2F::Rotation(p.rotation, { 0, 0 });
             auto T = D2D1::Matrix3x2F::Translation(p.pos.x, -p.pos.y);
 
-            // ÆÄÆ¼Å¬ÀÇ ÃÖÁ¾ ¿ùµå Çà·Ä = Å©±â * È¸Àü * ÀÌµ¿
+            // íŒŒí‹°í´ì˜ ìµœì¢… ì›”ë“œ í–‰ë ¬ = í¬ê¸° * íšŒì „ * ì´ë™
             D2D1_MATRIX_3X2_F particleWorldMatrix = S * R * T;
 
-            // 2. ÃÖÁ¾ ·»´õ¸µ Çà·Ä = ÆÄÆ¼Å¬ ¿ùµå Çà·Ä * Ä«¸Þ¶ó ±âº» º¯È¯
-            //    (ÁÖÀÇ: Transform Å¬·¡½ºÀÇ YÃà ¹ÝÀü(-p.pos.y)Àº Ä«¸Þ¶ó ÆÄÀÌÇÁ¶óÀÎ¿¡ ÀÌ¹Ì Æ÷ÇÔµÇ¾î ÀÖÀ¸¹Ç·Î,
-            //     ¿©±â¼­´Â p.pos.y¸¦ ±×´ë·Î »ç¿ëÇØ¾ß ÇÕ´Ï´Ù. baseTransform¿¡ ±× ¿ªÇÒÀÌ µé¾îÀÖ½À´Ï´Ù.)
+            // 2. ìµœì¢… ë Œë”ë§ í–‰ë ¬ = íŒŒí‹°í´ ì›”ë“œ í–‰ë ¬ * ì¹´ë©”ë¼ ê¸°ë³¸ ë³€í™˜
+            //    (ì£¼ì˜: Transform í´ëž˜ìŠ¤ì˜ Yì¶• ë°˜ì „(-p.pos.y)ì€ ì¹´ë©”ë¼ íŒŒì´í”„ë¼ì¸ì— ì´ë¯¸ í¬í•¨ë˜ì–´ ìžˆìœ¼ë¯€ë¡œ,
+            //     ì—¬ê¸°ì„œëŠ” p.pos.yë¥¼ ê·¸ëŒ€ë¡œ ì‚¬ìš©í•´ì•¼ í•©ë‹ˆë‹¤. baseTransformì— ê·¸ ì—­í• ì´ ë“¤ì–´ìžˆìŠµë‹ˆë‹¤.)
             D2D1_MATRIX_3X2_F finalTransform = particleWorldMatrix * worldTransform;
 
             ctx->SetTransform(finalTransform);
 
-            // 3. ÆÄÆ¼Å¬À» '¿øÁ¡' ±âÁØÀ¸·Î ±×¸³´Ï´Ù.
-            float half = p.size * 0.5f; // imageScaleÀº Çà·Ä¿¡ Àû¿ëÇßÀ¸¹Ç·Î ¿©±â¼­ Á¦¿Ü
+            // 3. íŒŒí‹°í´ì„ 'ì›ì ' ê¸°ì¤€ìœ¼ë¡œ ê·¸ë¦½ë‹ˆë‹¤.
+            float half = p.size * 0.5f; // imageScaleì€ í–‰ë ¬ì— ì ìš©í–ˆìœ¼ë¯€ë¡œ ì—¬ê¸°ì„œ ì œì™¸
             D2D1_RECT_F dest = { -half, -half, half, half };
 
             ctx->DrawBitmap(waveBitmap, dest, p.alpha, D2D1_INTERPOLATION_MODE_LINEAR,
@@ -627,3 +627,4 @@ public:
         Particle p; p.life = life;
     }
 };
+

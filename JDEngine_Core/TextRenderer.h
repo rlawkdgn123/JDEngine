@@ -28,7 +28,7 @@ namespace JDComponent {
 
     public:
         // 렌더링 함수: 외부에서 월드 변환 행렬을 받아 텍스트를 그립니다.
-        void Render(ID2D1DeviceContext7* context, D2D1_MATRIX_3X2_F worldTransform);
+        void Render(ID2D1DeviceContext* context, D2D1_MATRIX_3X2_F worldTransform);
 
         // --- 프로퍼티 Getter/Setter ---
 

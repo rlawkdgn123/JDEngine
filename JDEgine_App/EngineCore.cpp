@@ -10,8 +10,7 @@
 /////////////////////////////////////////////////////////////////////////
 #include <shobjidl.h>            // IFileOpenDialog
 #include <filesystem>            // C++17 std::filesystem
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include <experimental/filesystem>//C++14
+//#include <experimental/filesystem>//C++14
 #include <assert.h>
 /////////////////////////////////////////////////////////////////////////
 #include "EngineCore.h"
@@ -38,24 +37,23 @@ std::wstring ConvertToWString(const std::string& str)
 
 std::string WStringToString(const std::wstring& wstr)
 {
-    try {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-        return conv.to_bytes(wstr);
-    }
-    catch (...) {
+    if (wstr.empty())
+        return {};
+
+    const int sizeNeeded = WideCharToMultiByte(
+        CP_UTF8, 0, wstr.data(), static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
+    if (sizeNeeded <= 0)
         return "[[ConversionError]]";
-    }
+
+    std::string utf8(sizeNeeded, '\0');
+    WideCharToMultiByte(
+        CP_UTF8, 0, wstr.data(), static_cast<int>(wstr.size()), &utf8[0], sizeNeeded, nullptr, nullptr);
+    return utf8;
 }
 
 std::string WStringToUTF8(const std::wstring& wstr)
 {
-    try {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-        return conv.to_bytes(wstr);
-    }
-    catch (...) {
-        return "[[ConversionError]]";
-    }
+    return WStringToString(wstr);
 }
 
 std::wstring UTF8ToWString(const std::string& utf8Str)

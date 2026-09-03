@@ -110,6 +110,7 @@ namespace JDScene {
         void InitGridCreateMenu();
         void ShowGridCreateMenu();
         void CloseGridCreateMenu();
+        void CloseGridInteractionUI();
 
         void ShowGridCreateInfo(JDGlobal::Contents::BuildingType buildType, std::wstring costText, std::wstring effectText);
         void CloseGridCreateInfo();

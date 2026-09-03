@@ -1096,6 +1096,7 @@ namespace JDScene {
                                 }
                             }
                             else {
+                                CloseGridInteractionUI();
                                 if (grid->IsExpanded()) {
                                     cout << "확장 가능한 미점유 지역입니다." << endl;
                                     if (m_buildSystem->GetChoiceCount() > 0) {
@@ -1114,6 +1115,8 @@ namespace JDScene {
                                 else {
                                     cout << "확장 불가능한 미점유 지역입니다." << endl;
                                 }
+                                SetSelectedObject(nullptr);
+                                return;
                             }
 
                             break;
@@ -1168,30 +1171,7 @@ namespace JDScene {
             if (!clicked)
             {
                 SetSelectedObject(nullptr);
-
-                // 창 닫기.
-                if (isGridBuild)
-                {
-                    CloseGridCreateMenu();
-                    CloseGridSettingMenu();
-                    CloseAwayMenu();
-                }
-
-                else if (isGridSetting)
-                {
-                    CloseGridCreateMenu();
-                    CloseGridSettingMenu();
-                    CloseAwayMenu();
-                }
-
-                else if (isAway)
-                {
-                    CloseGridCreateMenu();
-                    CloseGridSettingMenu();
-                    CloseAwayMenu();
-                }
-
-                if (m_isBarracksSelected) SetBarracksSelected(false);
+                CloseGridInteractionUI();
             }
         }
         /*if (state.rightClicked)
@@ -1605,6 +1585,20 @@ namespace JDScene {
         m_effectInfoText->SetActive(false);
         m_effectText->SetActive(false);
         m_effctImage->SetActive(false);
+    }
+
+    void GameScene::CloseGridInteractionUI()
+    {
+        isGridBuild = false;
+        isGridSetting = false;
+        isAway = false;
+        m_isBarracksSelected = false;
+        m_selectedTool = nullptr;
+        m_selectedCollider = nullptr;
+
+        CloseGridCreateMenu();
+        CloseGridSettingMenu();
+        CloseAwayMenu();
     }
 
     void GameScene::InitGridSettingMenu()

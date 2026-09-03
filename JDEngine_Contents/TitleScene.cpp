@@ -92,6 +92,7 @@ namespace JDScene {
         // GameStart 버튼
         auto gameStartHoverImage = CreateUIObject<Button>(L"GameStartHover_Image");
         gameStartHoverImage->SetTextureName("ART_GameStart01_Select_mouseover");
+        gameStartHoverImage->SetText(L"");
         gameStartHoverImage->SetSize({ 680, 68 });
         gameStartHoverImage->SetPosition({ -620, -35 });
         gameStartHoverImage->SetActive(false);
@@ -147,6 +148,7 @@ namespace JDScene {
         // Quit Game 버튼
         auto quitGameHoverImage = CreateUIObject<Button>(L"QuitGameHover_Image");
         quitGameHoverImage->SetTextureName("ART_GameStart01_Select_mouseover");
+        quitGameHoverImage->SetText(L"");
         quitGameHoverImage->SetSize({ 680, 68 });
         quitGameHoverImage->SetPosition({ -620, -197 });
         quitGameHoverImage->SetActive(false);
@@ -203,6 +205,7 @@ namespace JDScene {
         // Setting 버튼
         auto settingHoverImage = CreateUIObject<Button>(L"SettingHover_Image");
         settingHoverImage->SetTextureName("ART_GameStart01_Select_mouseover");
+        settingHoverImage->SetText(L"");
         settingHoverImage->SetSize({ 680, 68 });
         settingHoverImage->SetPosition({ -620, -115 });
         settingHoverImage->SetActive(false);

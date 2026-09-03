@@ -1432,26 +1432,23 @@ namespace JDScene {
         ////////////////////////////////////////////////////////////////////////////////
         // 툴팁 갱신
         
-        m_FoodText->SetText(L" 식량은 생산 인원 할당 / 군대 양성 / 원정 / 주거지 소모량 등에 사용됩니다.\n\n식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
-            L") = 낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
+        m_FoodText->SetText(L"식량\n용도  생산 인원 / 군대 양성 / 원정 / 주거지 유지\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_food) +
+            L"\n낚시터 생산  " + to_wstring(rs.GetResourcePerSec().m_food) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_food) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_food) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_food) + L"%");
 
-        m_WoodText->SetText(L"목재는 건축 / 군대 양성 / 원정 / 업그레이드 등에 사용됩니다.\n\n목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
-            L") = 제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
+        m_WoodText->SetText(L"목재\n용도  건축 / 군대 양성 / 원정 / 업그레이드\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
+            L"\n제재소 생산  " + to_wstring(rs.GetResourcePerSec().m_wood) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_wood) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_wood) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_wood) + L"%");
 
-        m_MineralText->SetText(L"광물은 군대 양성 / 원정 등에 사용됩니다.\n\n광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
-            L") = 광산 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_mineral) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
+        m_MineralText->SetText(L"광물\n용도  군대 양성 / 원정\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
+            L"\n광산 생산  " + to_wstring(rs.GetResourcePerSec().m_mineral) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_mineral) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_mineral) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%");
 
         m_expandCountText->SetText(to_wstring(m_buildSystem->GetChoiceCount()));
-        m_expandCountInfoText->SetText(L"전투에서 승리하면 얻는 보상으로, 미점유 지역을 클릭하여 영토를 확장할 수 있습니다.");
+        m_expandCountInfoText->SetText(L"영토 확장권\n\n전투 승리 보상으로 획득합니다.\n미점유 지역을 클릭해\n영토를 확장할 수 있습니다.");
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -4403,13 +4400,13 @@ namespace JDScene {
         auto& rs = ResourceSystem::Instance();
 
         Vector2F buttonPos;
-        Vector2F offset = Vector2F{ -105, 110 };
+        Vector2F offset = Vector2F{ -120, 135 };
         Vector2F uiPos;
         ////////////////////////////////////////////////////////////////////////////////
 
         m_PopulationUI = CreateUIObject<Image>(L"UI_PopulationInfo");
         m_PopulationUI->SetTextureName("ART_Information_Box_Expedition");
-        m_PopulationUI->SetSize({ 300, 150 });
+        m_PopulationUI->SetSize({ 400, 200 });
 
         buttonPos = m_buttonPop->GetPosition();
         uiPos = buttonPos - offset;
@@ -4419,10 +4416,10 @@ namespace JDScene {
         m_PopulationUI->SetActive(false);
 
         m_PopulationText = CreateUIObject<Text>(L"UI_PopulationInfoText");
-        m_PopulationText->SetText(L"인구 자원은 할당 가능 인구 / 최대 인구로 이뤄져있으며, 병력과 생산건물 할당에 사용됩니다.\n 할당 인구가 소모되면 다시 돌려받습니다.");
+        m_PopulationText->SetText(L"인구\n현재 인구 / 최대 인구\n\n병력과 생산 건물에 배치합니다.\n소모된 인구는 다시 돌아옵니다.");
         m_PopulationText->SetTextFormatName("Sebang_16");
         m_PopulationText->SetColor(D2D1::ColorF(0x2F3315));
-        m_PopulationText->SetSize({ 300, 50 });
+        m_PopulationText->SetSize({ 360, 160 });
         m_PopulationText->SetPosition(m_PopulationUI->GetComponent<RectTransform>()->GetPosition());
         m_PopulationText->SetActive(false);
 
@@ -4430,7 +4427,7 @@ namespace JDScene {
 
         m_FoodUI = CreateUIObject<Image>(L"UI_FoodInfo");
         m_FoodUI->SetTextureName("ART_Information_Box_Expedition");
-        m_FoodUI->SetSize({ 300, 150 });
+        m_FoodUI->SetSize({ 400, 200 });
 
         buttonPos = m_buttonFood->GetPosition();
         uiPos = buttonPos - offset;
@@ -4440,14 +4437,13 @@ namespace JDScene {
         m_FoodUI->SetActive(false);
 
         m_FoodText = CreateUIObject<Text>(L"UI_FoodInfoText");
-        m_FoodText->SetText(L"식량 자원은 다음과 같이 계산됩니다 :\n식량 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_food) +
-            L") = 낚시터 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_food) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_food) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_food) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_food) + L"%)");
+        m_FoodText->SetText(L"식량\n용도  생산 인원 / 군대 양성 / 원정 / 주거지 유지\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_food) +
+            L"\n낚시터 생산  " + to_wstring(rs.GetResourcePerSec().m_food) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_food) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_food) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_food) + L"%");
         m_FoodText->SetTextFormatName("Sebang_16");
         m_FoodText->SetColor(D2D1::ColorF(0x2F3315));
-        m_FoodText->SetSize({ 300, 50 });
+        m_FoodText->SetSize({ 360, 160 });
         m_FoodText->SetPosition(m_FoodUI->GetComponent<RectTransform>()->GetPosition());
         m_FoodText->SetActive(false);
 
@@ -4455,7 +4451,7 @@ namespace JDScene {
 
         m_WoodUI = CreateUIObject<Image>(L"UI_WoodInfo");
         m_WoodUI->SetTextureName("ART_Information_Box_Expedition");
-        m_WoodUI->SetSize({ 300, 150});
+        m_WoodUI->SetSize({ 400, 200 });
         
         buttonPos = m_buttonWood->GetPosition();
         uiPos = buttonPos - offset;
@@ -4465,14 +4461,13 @@ namespace JDScene {
         m_WoodUI->SetActive(false);
 
         m_WoodText = CreateUIObject<Text>(L"UI_WoodInfoText");
-        m_WoodText->SetText(L"목재 자원은 다음과 같이 계산됩니다 :\n목재 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
-            L") = 제재소 건물 초당 생산량(" + to_wstring(rs.GetResourcePerSec().m_wood) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_wood) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_wood) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_wood) + L"%)");
+        m_WoodText->SetText(L"목재\n용도  건축 / 군대 양성 / 원정 / 업그레이드\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_wood) +
+            L"\n제재소 생산  " + to_wstring(rs.GetResourcePerSec().m_wood) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_wood) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_wood) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_wood) + L"%");
         m_WoodText->SetTextFormatName("Sebang_16");
         m_WoodText->SetColor(D2D1::ColorF(0x2F3315));
-        m_WoodText->SetSize({ 300, 50 });
+        m_WoodText->SetSize({ 360, 160 });
         m_WoodText->SetPosition(m_WoodUI->GetComponent<RectTransform>()->GetPosition());
         m_WoodText->SetActive(false);
 
@@ -4480,7 +4475,7 @@ namespace JDScene {
 
         m_MineralUI = CreateUIObject<Image>(L"UI_MineralInfo");
         m_MineralUI->SetTextureName("ART_Information_Box_Expedition");
-        m_MineralUI->SetSize({ 300, 150 });
+        m_MineralUI->SetSize({ 400, 200 });
 
         buttonPos = m_buttonMineral->GetPosition();
         uiPos = buttonPos - offset;
@@ -4490,14 +4485,13 @@ namespace JDScene {
         m_MineralUI->SetActive(false);
 
         m_MineralText = CreateUIObject<Text>(L"UI_MineralInfoText");
-        m_MineralText->SetText(L"광물 자원은 다음과 같이 계산됩니다 :\n광물 총 생산량(" + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
-           L") = 광산 건물 초당 생산량("+to_wstring(rs.GetResourcePerSec().m_mineral) +
-            L") + 국가 보너스 (" + to_wstring(rs.GetNationBonus().m_mineral) +
-            L"%) + 자원 보너스 (" + to_wstring(rs.GetResourceBonus().m_mineral) +
-            L"%) + 시너지 보너스(" + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%)");
+        m_MineralText->SetText(L"광물\n용도  군대 양성 / 원정\n\n총 생산량  " + to_wstring(rs.GetTotalResourcePerSec().m_mineral) +
+            L"\n광산 생산  " + to_wstring(rs.GetResourcePerSec().m_mineral) +
+            L"\n보너스  국가 " + to_wstring(rs.GetNationBonus().m_mineral) + L"% / 자원 " +
+            to_wstring(rs.GetResourceBonus().m_mineral) + L"% / 시너지 " + to_wstring(rs.GetSynergyBonus().m_mineral) + L"%");
         m_MineralText->SetTextFormatName("Sebang_16");
         m_MineralText->SetColor(D2D1::ColorF(0x2F3315));
-        m_MineralText->SetSize({ 300, 50 });
+        m_MineralText->SetSize({ 360, 160 });
         m_MineralText->SetPosition(m_MineralUI->GetComponent<RectTransform>()->GetPosition());
         m_MineralText->SetActive(false);
 
@@ -4505,7 +4499,7 @@ namespace JDScene {
 
         m_expandCountUI = CreateUIObject<Image>(L"UI_ExpandInfo");
         m_expandCountUI->SetTextureName("ART_Information_Box_Expedition");
-        m_expandCountUI->SetSize({ 300, 150 });
+        m_expandCountUI->SetSize({ 400, 200 });
 
         buttonPos = m_buttonExpand->GetPosition();
         uiPos = buttonPos - offset;
@@ -4515,10 +4509,10 @@ namespace JDScene {
         m_expandCountUI->SetActive(false);
 
         m_expandCountInfoText = CreateUIObject<Text>(L"UI_ExpandInfoText");
-        m_expandCountInfoText->SetText(L"영토 확장권");
+        m_expandCountInfoText->SetText(L"영토 확장권\n\n전투 승리 보상으로 획득합니다.\n미점유 지역을 클릭해\n영토를 확장할 수 있습니다.");
         m_expandCountInfoText->SetTextFormatName("Sebang_16");
         m_expandCountInfoText->SetColor(D2D1::ColorF(0x2F3315));
-        m_expandCountInfoText->SetSize({ 160, 50 });
+        m_expandCountInfoText->SetSize({ 360, 160 });
         m_expandCountInfoText->SetPosition(m_expandCountUI->GetComponent<RectTransform>()->GetPosition());
         m_expandCountInfoText->SetActive(false);
 

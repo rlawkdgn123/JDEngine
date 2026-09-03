@@ -53,7 +53,6 @@ void BuildSystem::CreateGrid(SceneBase* curScene)
             //    시작점 + 중앙 오프셋 + (셀 크기 + 간격) * 인덱스 + 셀 중앙 보정
             float x = m_areaTopLeft.x + offsetX + (col * (squareCellSize + m_padding)) + (squareCellSize / 2.0f);
             float y = m_areaTopLeft.y - offsetY - (row * (squareCellSize + m_padding)) - (squareCellSize / 2.0f);
-
            
             box->GetComponent<Transform>()->SetPosition({ x, y });
             box->AddComponent<Editor_Clickable>();

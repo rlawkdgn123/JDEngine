@@ -31,18 +31,7 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# JD 엔진
-/JDEngine_App/x64
-/JDEngine_Base/x64
-/JDEngine_Core/x64
-/JDEngine_Doc/x64
-/JDEgine_App/x64
-/JDEngine_Common/x64
-/JDEngine_Contents/x64
-/JDEngine_Windows/x64
-x64/Debug/JDEgine_App.exe
-x64/Debug/JDEngine_Base.lib
-x64/Debug/JDEngine_Common.lib
-x64/Debug/JDEngine_Contents.lib
-x64/Debug/JDEngine_Core.lib
-x64/Debug/JDEngine_Windows.lib
+# Visual Studio 빌드 산출물
+**/x64/
+*.recipe
+*.FileListAbsolute.txt

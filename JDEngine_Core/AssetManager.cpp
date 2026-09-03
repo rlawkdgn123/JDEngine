@@ -1012,6 +1012,10 @@ void AssetManager::TextureSetUp() {
     {
         std::cout << "[ERROR] Tile_Stroke05 텍스처 로드 실패" << std::endl;
     }
+    if (!AssetManager::Instance().LoadTexture("Tile_Stroke06", L"../Resource/BATTLE/Tile_Stroke06.png"))
+    {
+        std::cout << "[ERROR] Tile_Stroke06 텍스처 로드 실패" << std::endl;
+    }
 
     // 이름
     if (!AssetManager::Instance().LoadTexture("ART_Building_Level", L"../Resource/BATTLE/ART_Building_Level.png"))

@@ -188,7 +188,7 @@ namespace JDGameObject {
             m_selectEffectTextureObj = scene.CreateGameObject<GameObject>((L"GameUI_SelectEffect" + this->GetName()));
             m_selectEffectTextureObj->SetTag(JDGameObject::GameObject::Tag::UI);
             m_selectEffectTextureObj->AddComponent<Editor_Clickable>();
-            m_selectEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke01", RenderLayerInfo{ SortingLayer::Grid, 4 });
+            m_selectEffectTextureObj->AddComponent<JDComponent::TextureRenderer>("Tile_Stroke06", RenderLayerInfo{ SortingLayer::Grid, 4 });
 
             // TODO : 그리드 계산해서 우하단으로 맞추기, + 사이즈
             m_selectEffectTextureObj->GetComponent<JDComponent::Transform>()->SetPosition(tr->GetWorldPosition());
